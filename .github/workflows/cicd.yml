@@ -69,7 +69,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build for production
+      - name: Build application
         run: npm run build
 
       - name: Run linters
