@@ -61,13 +61,16 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: Install Python
-        uses: actions/setup-python@v1
+      - name: Install Node.js
+        uses: actions/setup-node@v1
         with:
-          python-version: "3.9"
+          node-version: 14.15
 
-      - name: Install Tox
-        run: pip install tox;
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build for production
+        run: npm run build
 
       - name: Run linters
         run: npm test -- --ci --watchAll=false --coverage
