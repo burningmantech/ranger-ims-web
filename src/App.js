@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 const Home = lazy(() => import('./routes/Home'));
 
-class App extends React.Component {
+export default class App extends React.Component {
 
   constructor(props) {
     super(props);
@@ -23,5 +23,3 @@ class App extends React.Component {
   }
 
 }
-
-export default App;

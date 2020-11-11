@@ -4,30 +4,28 @@ import Home from './Home';
 function login (event) {}
 function logout (event) {}
 
-test('login for user=null', () => {
-  render(<Home user={null} login={login} logout={logout} />);
+test('initial state', () => {
+  render(<Home />);
 
-  const loginButton = document.getElementById("login")
-  expect(loginButton).not.toBeNull();
+  expect(document.getElementById("login")).not.toBeNull();
+  expect(document.getElementById("logout")).toBeNull();
 });
 
-test('no logout for user=null', () => {
-  render(<Home user={null} login={login} logout={logout} />);
+test('log in', () => {
+  render(<Home />);
 
-  const logoutButton = document.getElementById("logout")
-  expect(logoutButton).toBeNull();
+  document.getElementById("login").click();
+
+  expect(document.getElementById("login")).toBeNull();
+  expect(document.getElementById("logout")).not.toBeNull();
 });
 
-test('logout for user=Hubcap', () => {
-  render(<Home user={"Hubcap"} login={login} logout={logout} />);
+test('log out', () => {
+  render(<Home />);
 
-  const logoutButton = document.getElementById("logout")
-  expect(logoutButton).not.toBeNull();
-});
+  document.getElementById("login").click();
+  document.getElementById("logout").click();
 
-test('no login for user=Hubcap', () => {
-  render(<Home user={"Hubcap"} login={login} logout={logout} />);
-
-  const loginButton = document.getElementById("login")
-  expect(loginButton).toBeNull();
+  expect(document.getElementById("login")).not.toBeNull();
+  expect(document.getElementById("logout")).toBeNull();
 });
