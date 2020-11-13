@@ -11,7 +11,7 @@ test("loading", () => {
   expect(screen.queryByText("Loading...")).toBeInTheDocument();
 });
 
-test("load home", () => {
+test("loaded home", () => {
   render(<App />);
 
   expect(
