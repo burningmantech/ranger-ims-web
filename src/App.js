@@ -1,7 +1,7 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-const Home = lazy(() => import('./routes/Home'));
+const Home = lazy(() => import("./routes/Home"));
 
 export default class App extends React.Component {
 

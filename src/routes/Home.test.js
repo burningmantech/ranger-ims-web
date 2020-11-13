@@ -1,31 +1,16 @@
-import { render, screen } from '@testing-library/react';
-import Home from './Home';
+import "@testing-library/jest-dom/extend-expect";
+import { render, screen } from "@testing-library/react";
 
-function login (event) {}
-function logout (event) {}
+import Home from "./Home";
 
-test('initial state', () => {
+test("loading", () => {
   render(<Home />);
 
-  expect(document.getElementById("login")).not.toBeNull();
-  expect(document.getElementById("logout")).toBeNull();
+  expect(screen.queryByText("Loading...")).toBeInTheDocument();
 });
 
-test('log in', () => {
+test("loaded login", () => {
   render(<Home />);
 
-  document.getElementById("login").click();
-
-  expect(document.getElementById("login")).toBeNull();
-  expect(document.getElementById("logout")).not.toBeNull();
-});
-
-test('log out', () => {
-  render(<Home />);
-
-  document.getElementById("login").click();
-  document.getElementById("logout").click();
-
-  expect(document.getElementById("login")).not.toBeNull();
-  expect(document.getElementById("logout")).toBeNull();
+  expect(screen.queryByText("Log In")).toBeInTheDocument();
 });
