@@ -1,20 +1,21 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
-import { Router } from "react-router-dom";
-import { createMemoryHistory, Location } from "history";
 
 import App from "./App";
 
-test("loading", () => {
-  render(<App />);
+describe("App component", () => {
 
-  expect(screen.queryByText("Loading...")).toBeInTheDocument();
-});
+    test("loading", () => {
+      render(<App />);
 
-test("loaded home", () => {
-  render(<App />);
+      expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    });
 
-  expect(
-    screen.queryByText("Ranger Incident Management System")
-  ).toBeInTheDocument();
+    test("loaded home", async () => {
+      render(<App />);
+
+      expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
 });

@@ -3,14 +3,19 @@ import { render, screen } from "@testing-library/react";
 
 import Home from "./Home";
 
-test("loading", () => {
-  render(<Home />);
 
-  expect(screen.queryByText("Loading...")).toBeInTheDocument();
-});
+describe("Home component", () => {
 
-test("loaded login", () => {
-  render(<Home />);
+    test("loading", () => {
+      render(<Home user={null} />);
 
-  expect(screen.queryByText("Log In")).toBeInTheDocument();
+      expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    });
+
+    test("loaded login", async () => {
+      render(<Home user={null} />);
+
+      expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+    });
+
 });
