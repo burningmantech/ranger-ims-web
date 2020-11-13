@@ -41,7 +41,7 @@ describe("Login component", () => {
   });
 
   test("no user -> log in -> logged in message", async () => {
-    let user = "Cheese Butter";
+    let username = "Hubcap";
 
     class TestApp extends React.Component {
 
@@ -50,7 +50,7 @@ describe("Login component", () => {
         this.state = {user: null};
       }
 
-      login = (event) => { this.setState({ user: user }); }
+      login = (username, password) => { this.setState({ user: username }); }
 
       render() {
         const user = this.state.user;
@@ -66,7 +66,7 @@ describe("Login component", () => {
 
     expect(
       screen.queryByText(
-        "You are currently logged in as " + user, {exact: false}
+        "You are currently logged in as " + username, {exact: false}
       )
     ).toBeInTheDocument();
   });

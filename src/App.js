@@ -10,17 +10,13 @@ export default class App extends React.Component {
     this.state = {user: null};
   }
 
-  login = (event) => {
-    event.preventDefault()
-
-    console.log("Logging in...")
-    this.setState({ user: "Hubcap" });
+  login = (username, password) => {
+    console.log("Logging in as " + username + "...");
+    this.setState({user: username});
   }
 
-  logout = (event) => {
-    event.preventDefault()
-
-    console.log("Logging out...")
+  logout = () => {
+    console.log("Logging out from user " + this.state.user + "...")
     this.setState({user: null});
   }
 
