@@ -30,7 +30,7 @@ export default class Login extends React.Component {
       console.log("No login function defined.");
     }
     else {
-      await this.props.login(this.state.username, this.state.username);
+      await this.props.login(this.state.username, this.state.password);
     }
   }
 
@@ -77,7 +77,7 @@ export default class Login extends React.Component {
     }
     else {
       return (
-        <div>You are currently logged in as {user}</div>
+        <div>You are currently logged in as {user.username}</div>
       )
     }
   }

@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import React from "react";
 
+import User from "../auth";
 import Login from "./Login";
-
 
 describe("Login component", () => {
 
@@ -15,7 +15,7 @@ describe("Login component", () => {
   });
 
   test("user -> no login button", () => {
-    render(<Login user="Cheese Butter" />);
+    render(<Login user={new User("Cheese Butter")} />);
 
     expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
@@ -31,7 +31,7 @@ describe("Login component", () => {
   test("user -> logged in message", () => {
     let username = "Cheese Butter";
 
-    render(<Login user={username} />);
+    render(<Login user={new User(username)} />);
 
     expect(
       screen.queryByText(
@@ -51,13 +51,12 @@ describe("Login component", () => {
       }
 
       login = async (username, password) => {
-        this.setState({ user: username });
+        const user = new User(username);
+        this.setState({user: user});
       }
 
       render() {
-        const user = this.state.user;
-
-        return <Login user={user} login={this.login} />;
+        return <Login user={this.state.user} login={this.login} />;
       }
 
     }

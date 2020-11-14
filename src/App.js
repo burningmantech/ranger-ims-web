@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
+import User from "./auth";
+
 const Home = lazy(() => import("./routes/Home"));
 
 export default class App extends React.Component {
@@ -12,7 +14,7 @@ export default class App extends React.Component {
 
   login = async (username, password) => {
     console.log("Logging in as " + username + "...");
-    this.setState({user: username});
+    this.setState({user: new User(username)});
   }
 
   logout = async () => {
@@ -21,14 +23,16 @@ export default class App extends React.Component {
   }
 
   render() {
-    const user = this.state.user;
-
     return (
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <Route exact path="/">
-              <Home user={user} login={this.login} logout={this.logout} />
+              <Home
+                user={this.state.user}
+                login={this.login}
+                logout={this.logout}
+              />
             </Route>
           </Switch>
         </Suspense>
