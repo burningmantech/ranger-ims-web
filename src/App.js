@@ -10,12 +10,12 @@ export default class App extends React.Component {
     this.state = {user: null};
   }
 
-  login = (username, password) => {
+  login = async (username, password) => {
     console.log("Logging in as " + username + "...");
     this.setState({user: username});
   }
 
-  logout = () => {
+  logout = async () => {
     console.log("Logging out from user " + this.state.user + "...")
     this.setState({user: null});
   }

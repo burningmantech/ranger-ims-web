@@ -23,14 +23,14 @@ export default class Login extends React.Component {
     this.setState({password: event.target.value});
   }
 
-  onLogin = (event) => {
+  onLogin = async (event) => {
     event.preventDefault();
 
     if (this.props.login === undefined) {
       console.log("No login function defined.");
     }
     else {
-      this.props.login(this.state.username, this.state.username);
+      await this.props.login(this.state.username, this.state.username);
     }
   }
 
