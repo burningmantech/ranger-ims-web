@@ -41,7 +41,7 @@ describe("Login component", () => {
   });
 
   test("no user -> log in -> logged in message", async () => {
-    let username = "Hubcap";
+    let user = "Cheese Butter";
 
     class TestApp extends React.Component {
 
@@ -62,6 +62,7 @@ describe("Login component", () => {
 
     render(<TestApp />);
 
+    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.click(screen.getByText(/Log In/));
 
     expect(

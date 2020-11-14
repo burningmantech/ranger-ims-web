@@ -3,11 +3,24 @@ import React from "react";
 export default class Login extends React.Component {
 
   constructor(props) {
+    if (props.user === undefined) {
+      throw new Error("user is not defined");
+    }
+
     super(props);
 
-    if (props.user === undefined) {
-      throw "user is not defined";
-    }
+    this.state = {
+      username: (props.user === null) ? "" : props.user,
+      password: "",
+    };
+  }
+
+  onUsernameChange = (event) => {
+    this.setState({username: event.target.value});
+  }
+
+  onPasswordChange = (event) => {
+    this.setState({password: event.target.value});
   }
 
   onLogin = (event) => {
@@ -17,7 +30,7 @@ export default class Login extends React.Component {
       console.log("No login function defined.");
     }
     else {
-      this.props.login("Hubcap", "*");
+      this.props.login(this.state.username, this.state.username);
     }
   }
 
@@ -26,9 +39,40 @@ export default class Login extends React.Component {
 
     if (user === null) {
       return (
-        <button type="button" onClick={this.onLogin}>
-          Log In
-        </button>
+        <form id="login_form">
+
+          <p>Please provide your Ranger Secret Clubhouse credentials.</p>
+
+          <div className="login_field">
+            <label htmlFor="username_field">Ranger Handle or Email:</label>
+            <input
+              id="username_field"
+              type="text"
+              value={this.state.username}
+              inputMode="latin-name"
+              placeholder="Bucket"
+              autoComplete="username email"
+              minLength="1"
+              required={true}
+              onChange={this.onUsernameChange}
+            />
+          </div>
+
+          <div className="login_field">
+            <label htmlFor="password_field">Password:</label>
+            <input
+              id="password_field"
+              type="password"
+              inputMode="latin-prose"
+              placeholder="password"
+              autoComplete="current-password"
+              onChange={this.onPasswordChange}
+            />
+          </div>
+
+          <button onClick={this.onLogin}>Log In</button>
+
+        </form>
       );
     }
     else {
