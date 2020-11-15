@@ -76,9 +76,7 @@ export default class Login extends React.Component {
       );
     }
     else {
-      return (
-        <div>You are currently logged in as {user.username}</div>
-      )
+      return <>{this.props.children}</>;
     }
   }
 

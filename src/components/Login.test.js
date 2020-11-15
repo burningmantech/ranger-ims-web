@@ -29,19 +29,17 @@ describe("Login component", () => {
   });
 
   test("user -> logged in message", () => {
-    let username = "Cheese Butter";
+    const username = "Cheese Butter";
+    const content = "Hello, World!"
 
-    render(<Login user={new User(username)} />);
+    render(<Login user={new User(username)}>{content}</Login>);
 
-    expect(
-      screen.queryByText(
-        "You are currently logged in as " + username, {exact: false}
-      )
-    ).toBeInTheDocument();
+    expect(screen.queryByText(content)).toBeInTheDocument();
   });
 
   test("no user -> log in -> logged in message", async () => {
-    let username = "Cheese Butter";
+    const username = "Cheese Butter";
+    const content = "Hello, World!"
 
     class TestApp extends React.Component {
 
@@ -56,7 +54,9 @@ describe("Login component", () => {
       }
 
       render() {
-        return <Login user={this.state.user} login={this.login} />;
+        return (
+          <Login user={this.state.user} login={this.login}>{content}</Login>
+        );
       }
 
     }
@@ -66,11 +66,7 @@ describe("Login component", () => {
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.click(screen.getByText(/Log In/));
 
-    expect(
-      screen.queryByText(
-        "You are currently logged in as " + username, {exact: false}
-      )
-    ).toBeInTheDocument();
+    expect(screen.queryByText(content)).toBeInTheDocument();
   });
 
 });
