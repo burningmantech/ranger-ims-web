@@ -6,6 +6,7 @@ import React from "react";
 import User from "../auth";
 import Login from "./Login";
 
+
 describe("Login component", () => {
 
   test("no user -> login button", () => {

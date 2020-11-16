@@ -7,23 +7,14 @@ import Home from "./Home";
 
 describe("Home component", () => {
 
-  test("loading", () => {
-    render(<Home user={null} />);
-
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
-  });
-
-  test("loaded, no user", async () => {
-    render(<Home user={null} />);
-
-    expect(await screen.findByText(/Log In/)).toBeInTheDocument();
-  });
-
-  test("loaded, user", async () => {
+  test("user", async () => {
     const username = "Cheese Butter";
 
     render(<Home user={new User(username)} />);
 
-    expect(await screen.findByText(/Logged in stuff here/)).toBeInTheDocument();
+    expect(
+      await screen.findByText("Ranger Incident Management System")
+    ).toBeInTheDocument();
   });
+
 });

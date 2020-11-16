@@ -1,9 +1,14 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router, Redirect, Route, Switch
+} from "react-router-dom";
 
 import User from "./auth";
 
+
+const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
+
 
 export default class App extends React.Component {
 
@@ -28,11 +33,15 @@ export default class App extends React.Component {
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <Route exact path="/">
-              <Home
-                user={this.state.user}
+              <Redirect to="/ims/" />
+            </Route>
+            <Route exact path="/ims/">
+              <Login
                 login={this.login}
-                logout={this.logout}
-              />
+                user={this.state.user}
+              >
+                <Home user={this.state.user} />
+              </Login>
             </Route>
           </Switch>
         </Suspense>
