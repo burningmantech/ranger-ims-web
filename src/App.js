@@ -8,6 +8,7 @@ import User from "./auth";
 
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
+const NotFound = lazy(() => import("./routes/NotFound"));
 
 
 export default class App extends React.Component {
@@ -32,17 +33,24 @@ export default class App extends React.Component {
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
+
+            {/* Send root URL to Home screen URL */}
             <Route exact path="/">
               <Redirect to="/ims/" />
             </Route>
+
+            {/* Home Screen */}
             <Route exact path="/ims/">
-              <Login
-                login={this.login}
-                user={this.state.user}
-              >
+              <Login login={this.login} user={this.state.user}>
                 <Home user={this.state.user} />
               </Login>
             </Route>
+
+            {/* Not found */}
+            <Route path="*">
+              <NotFound />
+            </Route>
+
           </Switch>
         </Suspense>
       </Router>
