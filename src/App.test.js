@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 
 import User from "./auth";
 import App from "./App";
-import expectHome from "./routes/Home"
 
 
 describe("App component", () => {

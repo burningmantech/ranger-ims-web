@@ -24,7 +24,7 @@ export default class App extends React.Component {
   }
 
   logout = async () => {
-    console.log("Logging out from user " + this.state.user + "...")
+    console.log("Logging out as " + this.state.user + "...")
     this.setState({user: null});
   }
 

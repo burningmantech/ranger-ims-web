@@ -13,7 +13,7 @@ describe("Home component", () => {
     render(<Home user={new User(username)} />);
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      screen.queryByText("Ranger Incident Management System")
     ).toBeInTheDocument();
   });
 
