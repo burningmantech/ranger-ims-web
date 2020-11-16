@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import {
-  BrowserRouter as Router, Redirect, Route, Switch
+  BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
 import User from "./auth";
@@ -8,6 +8,7 @@ import User from "./auth";
 
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
+const Event = lazy(() => import("./routes/Event"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
 
@@ -46,6 +47,13 @@ export default class App extends React.Component {
               </Login>
             </Route>
 
+            {/* Event Screen */}
+            <Route exact path="/ims/event/:eventID/">
+              <Login login={this.login} user={this.state.user}>
+                <_Event />
+              </Login>
+            </Route>
+
             {/* Not found */}
             <Route path="*">
               <NotFound />
@@ -57,4 +65,10 @@ export default class App extends React.Component {
     );
   }
 
+}
+
+
+function _Event () {
+  let { eventID } = useParams();
+  return (<Event id={eventID} />);
 }
