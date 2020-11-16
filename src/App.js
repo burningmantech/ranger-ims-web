@@ -50,7 +50,7 @@ export default class App extends React.Component {
             {/* Event Screen */}
             <Route exact path="/ims/event/:eventID/">
               <Login login={this.login} user={this.state.user}>
-                <_Event />
+                <EventWithParams />
               </Login>
             </Route>
 
@@ -68,7 +68,7 @@ export default class App extends React.Component {
 }
 
 
-function _Event () {
+function EventWithParams () {
   let { eventID } = useParams();
   return (<Event id={eventID} />);
 }
