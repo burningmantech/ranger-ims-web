@@ -7,7 +7,14 @@ import Home from "./Home";
 
 describe("Home component", () => {
 
-  test("user", async () => {
+  // FIXME: this doesn't work...
+  // test("null user", async () => {
+  //   expect(
+  //     () => render(<Home user={null} />)
+  //   ).toThrow();
+  // });
+
+  test("heading", async () => {
     const username = "Cheese Butter";
 
     render(<Home user={new User(username)} />);
