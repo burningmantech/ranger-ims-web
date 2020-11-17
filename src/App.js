@@ -4,6 +4,7 @@ import {
 } from "react-router-dom";
 
 import User from "./auth";
+import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -34,7 +35,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Router>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loading />}>
           <Switch>
 
             {/* Send root URL to Home screen URL */}

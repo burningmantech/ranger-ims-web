@@ -3,11 +3,12 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import ModalBody from "react-bootstrap/ModalBody"
-import ModalDialog from "react-bootstrap/ModalDialog"
-import ModalFooter from "react-bootstrap/ModalFooter"
-import ModalHeader from "react-bootstrap/ModalHeader"
-import ModalTitle from "react-bootstrap/ModalTitle"
+import ModalBody from "react-bootstrap/ModalBody";
+import ModalDialog from "react-bootstrap/ModalDialog";
+import ModalFooter from "react-bootstrap/ModalFooter";
+import ModalHeader from "react-bootstrap/ModalHeader";
+import ModalTitle from "react-bootstrap/ModalTitle";
+
 
 export default class Login extends React.Component {
 
