@@ -1,5 +1,9 @@
 import React from "react";
 
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Modal from 'react-bootstrap/Modal';
+import ModalDialog from 'react-bootstrap/ModalDialog'
 
 export default class Login extends React.Component {
 
@@ -40,40 +44,52 @@ export default class Login extends React.Component {
 
     if (user === null) {
       return (
-        <form id="login_form">
+        <Container fluid={true}>
+          <ModalDialog>
 
-          <p>Please provide your Ranger Secret Clubhouse credentials.</p>
+            <Modal.Header>
+              <Modal.Title>Authorization Required</Modal.Title>
+            </Modal.Header>
 
-          <div className="login_field">
-            <label htmlFor="username_field">Ranger Handle or Email:</label>
-            <input
-              id="username_field"
-              type="text"
-              value={this.state.username}
-              inputMode="latin-name"
-              placeholder="Bucket"
-              autoComplete="username email"
-              minLength="1"
-              required={true}
-              onChange={this.onUsernameChange}
-            />
-          </div>
+            <Modal.Body>
 
-          <div className="login_field">
-            <label htmlFor="password_field">Password:</label>
-            <input
-              id="password_field"
-              type="password"
-              inputMode="latin-prose"
-              placeholder="password"
-              autoComplete="current-password"
-              onChange={this.onPasswordChange}
-            />
-          </div>
+                <p>Please provide your Ranger Secret Clubhouse credentials.</p>
 
-          <button onClick={this.onLogin}>Log In</button>
+                <div className="login_field">
+                  <label htmlFor="username_field">Ranger Handle or Email:</label>
+                  <input
+                    id="username_field"
+                    type="text"
+                    value={this.state.username}
+                    inputMode="latin-name"
+                    placeholder="Bucket"
+                    autoComplete="username email"
+                    minLength="1"
+                    required={true}
+                    onChange={this.onUsernameChange}
+                  />
+                </div>
 
-        </form>
+                <div className="login_field">
+                  <label htmlFor="password_field">Password:</label>
+                  <input
+                    id="password_field"
+                    type="password"
+                    inputMode="latin-prose"
+                    placeholder="password"
+                    autoComplete="current-password"
+                    onChange={this.onPasswordChange}
+                  />
+                </div>
+
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button variant="primary" onClick={this.onLogin}>Log In</Button>
+            </Modal.Footer>
+
+          </ModalDialog>
+        </Container>
       );
     }
     else {

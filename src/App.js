@@ -5,6 +5,8 @@ import {
 
 import User from "./auth";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+
 
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
