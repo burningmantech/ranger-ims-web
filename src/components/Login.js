@@ -70,7 +70,7 @@ export default class Login extends React.Component {
                     type="text"
                     value={this.state.username}
                   />
-                  <Form.Text className="text-muted">
+                  <Form.Text muted>
                     Must match your Ranger Secret Clubhouse profile.
                   </Form.Text>
                 </Form.Group>
