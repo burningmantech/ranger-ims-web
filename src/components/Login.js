@@ -50,14 +50,14 @@ export default class Login extends React.Component {
     if (user === null) {
       return (
         <Container>
-          <ModalDialog>
+          <Form onSubmit={this.onLogin}>
+            <ModalDialog>
 
-            <ModalHeader>
-              <ModalTitle>Authorization Required</ModalTitle>
-            </ModalHeader>
+              <ModalHeader>
+                <ModalTitle>Authorization Required</ModalTitle>
+              </ModalHeader>
 
-            <ModalBody>
-              <Form>
+              <ModalBody>
 
                 <Form.Group controlId="username_field">
                   <Form.Label>Ranger Handle or Email</Form.Label>
@@ -88,14 +88,14 @@ export default class Login extends React.Component {
                   />
                 </Form.Group>
 
-              </Form>
-            </ModalBody>
+              </ModalBody>
 
-            <ModalFooter>
-              <Button variant="primary" onClick={this.onLogin}>Log In</Button>
-            </ModalFooter>
+              <ModalFooter>
+                <Button variant="primary" type="submit">Log In</Button>
+              </ModalFooter>
 
-          </ModalDialog>
+            </ModalDialog>
+          </Form>
         </Container>
       );
     }
