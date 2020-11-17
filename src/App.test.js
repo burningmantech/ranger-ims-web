@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
-import User from "./auth";
+import { User } from "./auth";
 import App from "./App";
 
 

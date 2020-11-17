@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 
-import User from "../auth";
+import { User } from "../auth";
 import Home from "./Home";
 
 

@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
-import User from "./auth";
+import { User } from "./auth";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
