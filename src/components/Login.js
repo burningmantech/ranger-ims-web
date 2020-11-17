@@ -1,9 +1,12 @@
 import React from "react";
 
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Modal from 'react-bootstrap/Modal';
-import ModalDialog from 'react-bootstrap/ModalDialog'
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import ModalBody from "react-bootstrap/ModalBody"
+import ModalDialog from "react-bootstrap/ModalDialog"
+import ModalFooter from "react-bootstrap/ModalFooter"
+import ModalHeader from "react-bootstrap/ModalHeader"
+import ModalTitle from "react-bootstrap/ModalTitle"
 
 export default class Login extends React.Component {
 
@@ -47,11 +50,11 @@ export default class Login extends React.Component {
         <Container fluid={true}>
           <ModalDialog>
 
-            <Modal.Header>
-              <Modal.Title>Authorization Required</Modal.Title>
-            </Modal.Header>
+            <ModalHeader>
+              <ModalTitle>Authorization Required</ModalTitle>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
 
                 <p>Please provide your Ranger Secret Clubhouse credentials.</p>
 
@@ -82,11 +85,11 @@ export default class Login extends React.Component {
                   />
                 </div>
 
-            </Modal.Body>
+            </ModalBody>
 
-            <Modal.Footer>
+            <ModalFooter>
               <Button variant="primary" onClick={this.onLogin}>Log In</Button>
-            </Modal.Footer>
+            </ModalFooter>
 
           </ModalDialog>
         </Container>
