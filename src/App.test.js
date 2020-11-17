@@ -1,20 +1,39 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
-import { Router } from "react-router-dom";
-import { createMemoryHistory, Location } from "history";
+import userEvent from '@testing-library/user-event';
 
+import { User } from "./auth";
 import App from "./App";
 
-test("loading", () => {
-  render(<App />);
 
-  expect(screen.queryByText("Loading...")).toBeInTheDocument();
-});
+describe("App component", () => {
 
-test("loaded home", () => {
-  render(<App />);
+  test("loading", () => {
+    render(<App user={null} />);
 
-  expect(
-    screen.queryByText("Ranger Incident Management System")
-  ).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+  });
+
+  test("loaded home", async () => {
+    render(<App user={null} />);
+
+    expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+  });
+
+  test("loaded home -> log in", async () => {
+    const username = "Cheese Butter";
+
+    render(<App user={null} />);
+
+    expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+
+    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.click(screen.getByText(/Log In/));
+
+    expect(
+      await screen.findByText("Ranger Incident Management System")
+    ).toBeInTheDocument();
+  });
+
 });
