@@ -2,6 +2,7 @@ import React from "react";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
 import ModalBody from "react-bootstrap/ModalBody"
 import ModalDialog from "react-bootstrap/ModalDialog"
 import ModalFooter from "react-bootstrap/ModalFooter"
@@ -47,7 +48,7 @@ export default class Login extends React.Component {
 
     if (user === null) {
       return (
-        <Container fluid={true}>
+        <Container>
           <ModalDialog>
 
             <ModalHeader>
@@ -55,36 +56,38 @@ export default class Login extends React.Component {
             </ModalHeader>
 
             <ModalBody>
+              <Form>
 
-                <p>Please provide your Ranger Secret Clubhouse credentials.</p>
-
-                <div className="login_field">
-                  <label htmlFor="username_field">Ranger Handle or Email:</label>
-                  <input
-                    id="username_field"
+                <Form.Group controlId="username_field">
+                  <Form.Label>Ranger Handle or Email</Form.Label>
+                  <Form.Control
+                    autoComplete="username email"
+                    inputMode="latin-name"
+                    minLength="1"
+                    onChange={this.onUsernameChange}
+                    placeholder="Bucket"
+                    required={true}
                     type="text"
                     value={this.state.username}
-                    inputMode="latin-name"
-                    placeholder="Bucket"
-                    autoComplete="username email"
-                    minLength="1"
-                    required={true}
-                    onChange={this.onUsernameChange}
                   />
-                </div>
+                  <Form.Text className="text-muted">
+                    Must match your Ranger Secret Clubhouse profile.
+                  </Form.Text>
+                </Form.Group>
 
-                <div className="login_field">
-                  <label htmlFor="password_field">Password:</label>
-                  <input
-                    id="password_field"
-                    type="password"
-                    inputMode="latin-prose"
-                    placeholder="password"
+                <Form.Group controlId="password_field">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
                     autoComplete="current-password"
+                    inputMode="latin-prose"
                     onChange={this.onPasswordChange}
+                    placeholder="…password…"
+                    type="password"
+                    value={this.state.password}
                   />
-                </div>
+                </Form.Group>
 
+              </Form>
             </ModalBody>
 
             <ModalFooter>
