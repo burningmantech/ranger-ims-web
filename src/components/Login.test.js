@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import React from "react";
+import { Component } from "react";
 
 import { User } from "../auth";
 import Login from "./Login";
@@ -42,7 +42,7 @@ describe("Login component", () => {
     const username = "Cheese Butter";
     const content = "Hello, World!"
 
-    class TestApp extends React.Component {
+    class TestApp extends Component {
 
       constructor(props) {
         super(props);

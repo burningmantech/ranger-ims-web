@@ -1,7 +1,7 @@
-import React from "react";
+import { Component } from "react";
 
 
-export default class Event extends React.Component {
+export default class Event extends Component {
 
   constructor(props) {
     if (props.id === undefined) {

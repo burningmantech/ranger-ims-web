@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import { Component, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
@@ -15,7 +15,7 @@ const Event = lazy(() => import("./routes/Event"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
 
-export default class App extends React.Component {
+export default class App extends Component {
 
   constructor(props) {
     super(props);
