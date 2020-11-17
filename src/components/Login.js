@@ -1,4 +1,4 @@
-import React from "react";
+import { Component } from "react";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -10,7 +10,7 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
 
-export default class Login extends React.Component {
+export default class Login extends Component {
 
   constructor(props) {
     if (props.user === undefined) {

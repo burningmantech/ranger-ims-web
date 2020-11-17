@@ -1,10 +1,10 @@
-import React from "react";
+import { Component } from "react";
 
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 
 
-export default class Loading extends React.Component {
+export default class Loading extends Component {
 
   render() {
     return (

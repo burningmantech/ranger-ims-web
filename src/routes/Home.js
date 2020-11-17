@@ -1,7 +1,7 @@
-import React from "react";
+import { Component } from "react";
 
 
-export default class Home extends React.Component {
+export default class Home extends Component {
 
   constructor(props) {
     if (props.user === undefined) {
