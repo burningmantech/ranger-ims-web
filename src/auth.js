@@ -14,13 +14,18 @@ export class TestAuthentationSource {
   static timeout = 1000 * 60 * 5;  // 5 minutes
 
   login = async (username, credentials) => {
-    const expiration = new Date();
-    expiration.setTime(expiration.getTime() + TestAuthentationSource.timeout);
+    if (credentials.password === username) {
+      const expiration = new Date();
+      expiration.setTime(expiration.getTime() + TestAuthentationSource.timeout);
 
-    return {
-      user: new User(username),
-      expiration: expiration,
-    };
+      return {
+        user: new User(username),
+        expiration: expiration,
+      };
+    }
+    else {
+      return null;
+    }
   }
 
   logout = async () => { return true; }
@@ -47,7 +52,7 @@ export class Authenticator {
     console.log("Logging in as " + username + "...");
     const result = await this.source.login(username, credentials);
 
-    if (result.user) {
+    if (result !== null) {
       this.user = result.user;
       this.expiration = result.expiration;
       console.log(
@@ -76,10 +81,6 @@ export class Authenticator {
 }
 
 
-const testAuthenticationSource = new TestAuthentationSource();
-const testAuthenticator = new Authenticator(testAuthenticationSource);
-
-export const authenticator = testAuthenticator;
 export const AuthenticatorContext = createContext();
 
 AuthenticatorContext.displayName = "GlobalAuthenticatorContext"

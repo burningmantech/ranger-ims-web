@@ -62,15 +62,40 @@ describe("Login component", () => {
     const authenticator = testAuthenticator();
     const content = "Hello, World!"
     const username = "Cheese Butter";
+    const password = username;
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 
     const message = await screen.findByText(content);
 
     expect(message).toBeInTheDocument();
+  });
+
+  test("no user -> invalid log in -> no logged in message", async () => {
+    const authenticator = testAuthenticator();
+    const content = "Hello, World!"
+    const username = "Cheese Butter";
+    const password = "Not My Password";
+
+    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
+
+    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Password/), password);
+    await userEvent.click(screen.getByText(/Log In/));
+
+    try {
+      const message = await screen.findByText(content);
+      expect(message).not.toBeInTheDocument();
+    }
+    catch(e) {
+      expect(e.name).toEqual("TestingLibraryElementError");
+    }
+
+    expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
 });
