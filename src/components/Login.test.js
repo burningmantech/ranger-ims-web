@@ -3,71 +3,74 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { User } from "../auth";
+import {
+  Authenticator,
+  AuthenticatorContext,
+  TestAuthentationSource,
+  User,
+} from "../auth";
 import Login from "./Login";
+
+
+function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
+  return render(
+    (
+      <AuthenticatorContext.Provider value={authenticator}>
+        {ui}
+      </AuthenticatorContext.Provider>
+    ),
+    renderOptions
+  );
+}
+
+
+function testAuthenticator(user) {
+  const authenticator = new Authenticator(new TestAuthentationSource());
+  if (user !== undefined) {
+    authenticator.user = user;
+  }
+  return authenticator;
+}
 
 
 describe("Login component", () => {
 
   test("no user -> login button", () => {
-    render(<Login user={null} />);
+    renderWithAuthenticator(<Login />, testAuthenticator());
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
   test("user -> no login button", () => {
-    render(<Login user={new User("Cheese Butter")} />);
+    const authenticator = testAuthenticator(new User("Cheese Butter"));
+
+    renderWithAuthenticator(<Login />, authenticator);
 
     expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
 
-  test("no user -> no logged in message", () => {
-    render(<Login user={null} />);
-
-    expect(
-      screen.queryByText("/You are currently logged in as /")
-    ).not.toBeInTheDocument();
-  });
-
   test("user -> logged in message", () => {
-    const username = "Cheese Butter";
-    const content = "Hello, World!"
+    const authenticator = testAuthenticator(new User("Cheese Butter"));
+    const content = "Hello, World!";
 
-    render(<Login user={new User(username)}>{content}</Login>);
+    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
 
     expect(screen.queryByText(content)).toBeInTheDocument();
   });
 
   test("no user -> log in -> logged in message", async () => {
-    const username = "Cheese Butter";
+    const authenticator = testAuthenticator();
     const content = "Hello, World!"
+    const username = "Cheese Butter";
 
-    class TestApp extends Component {
-
-      constructor(props) {
-        super(props);
-        this.state = {user: null};
-      }
-
-      login = async (username, password) => {
-        const user = new User(username);
-        this.setState({user: user});
-      }
-
-      render() {
-        return (
-          <Login user={this.state.user} login={this.login}>{content}</Login>
-        );
-      }
-
-    }
-
-    render(<TestApp />);
+    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.click(screen.getByText(/Log In/));
 
-    expect(screen.queryByText(content)).toBeInTheDocument();
+    const message = await screen.findByText(content);
+
+    expect(message).toBeInTheDocument();
   });
 
 });

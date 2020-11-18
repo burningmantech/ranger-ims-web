@@ -9,13 +9,13 @@ import App from "./App";
 describe("App component", () => {
 
   test("loading", () => {
-    render(<App user={null} />);
+    render(<App />);
 
     expect(screen.queryByText("Loading...")).toBeInTheDocument();
   });
 
   test("loaded home", async () => {
-    render(<App user={null} />);
+    render(<App />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
     expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
@@ -24,16 +24,16 @@ describe("App component", () => {
   test("loaded home -> log in", async () => {
     const username = "Cheese Butter";
 
-    render(<App user={null} />);
+    render(<App />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.click(screen.getByText(/Log In/));
 
-    expect(
-      await screen.findByText("Ranger Incident Management System")
-    ).toBeInTheDocument();
+    const title = await screen.findByText("Ranger Incident Management System")
+
+    expect(title).toBeInTheDocument();
   });
 
 });
