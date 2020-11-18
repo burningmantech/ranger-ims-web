@@ -3,7 +3,9 @@ import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
-import { AuthenticatorContext, authenticator } from "./auth";
+import {
+  Authenticator, AuthenticatorContext, TestAuthentationSource
+} from "./auth";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -17,7 +19,14 @@ const NotFound = lazy(() => import("./routes/NotFound"));
 
 export default class App extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.authenticator = new Authenticator(new TestAuthentationSource());
+  }
+
   render() {
+
     return (
       <Router>
         <Suspense fallback={<Loading />}>
@@ -28,7 +37,7 @@ export default class App extends Component {
               <Redirect to="/ims/" />
             </Route>
 
-            <AuthenticatorContext.Provider value={authenticator}>
+            <AuthenticatorContext.Provider value={this.authenticator}>
 
               {/* Home Screen */}
               <Route exact path="/ims/">
