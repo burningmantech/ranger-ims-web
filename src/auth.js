@@ -2,6 +2,10 @@ import { createContext } from "react";
 
 export class User {
 
+  static fromJSON = (json) => {
+    return new User(json.username, json.credentials);
+  }
+
   constructor(username, credentials = {}) {
     if (username === undefined) {
       throw new Error("username is not defined");
@@ -12,6 +16,10 @@ export class User {
 
     this.username = username;
     this.credentials = credentials;
+  }
+
+  asJSON = () => {
+    return {username: this.username, credentials: this.credentials};
   }
 
 }
