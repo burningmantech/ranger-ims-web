@@ -119,4 +119,22 @@ describe("Authenticator", () => {
     expect(authenticator.isLoggedIn()).toBe(false);
   });
 
+  test("logout", async () => {
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+    const result = await authenticator.login(username, {password: password});
+
+    expect(result).toBe(true);
+    expect(authenticator.isLoggedIn()).toBe(true);
+
+    await authenticator.logout();
+
+    expect(authenticator.user).toBe(null);
+    expect(authenticator.expiration).toBe(null);
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+  });
+
 });
