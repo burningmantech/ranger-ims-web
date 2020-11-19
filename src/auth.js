@@ -2,8 +2,16 @@ import { createContext } from "react";
 
 export class User {
 
-  constructor(username) {
+  constructor(username, credentials = {}) {
+    if (username === undefined) {
+      throw new Error("username is not defined");
+    }
+    if (username === null) {
+      throw new Error("username is null");
+    }
+
     this.username = username;
+    this.credentials = credentials;
   }
 
 }
