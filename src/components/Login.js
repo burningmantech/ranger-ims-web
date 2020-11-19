@@ -9,19 +9,21 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
+import { AuthenticatorContext } from "../auth";
+
 
 export default class Login extends Component {
 
-  constructor(props) {
-    if (props.user === undefined) {
-      throw new Error("user is not defined");
-    }
+  static contextType = AuthenticatorContext;
 
+  constructor(props) {
     super(props);
 
     this.state = {
-      username: (props.user === null) ? "" : props.user,
+      username: "",
       password: "",
+      failed: false,
+      succeeded: false,
     };
   }
 
@@ -33,24 +35,30 @@ export default class Login extends Component {
     this.setState({password: event.target.value});
   }
 
-  onLogin = async (event) => {
-    event.preventDefault();
-
-    if (this.props.login === undefined) {
-      console.log("No login function defined.");
-    }
-    else {
-      await this.props.login(this.state.username, this.state.password);
-    }
-  }
-
   render() {
-    const user = this.props.user;
+    const component = this;
+    const authenticator = this.context;
 
-    if (user === null) {
+    const username = this.state.username;
+    const password = this.state.password;
+
+    if (authenticator.user === null) {
+      async function onLogin(event) {
+        event.preventDefault();
+        const result = await authenticator.login(
+          username, {password: password}
+        );
+        if (result) {
+          component.setState({succeeded: true});  // To cause a re-render.
+        }
+        else {
+          component.setState({failed: true});
+        }
+      }
+
       return (
         <Container>
-          <Form onSubmit={this.onLogin}>
+          <Form onSubmit={onLogin}>
             <ModalDialog>
 
               <ModalHeader>
@@ -69,7 +77,7 @@ export default class Login extends Component {
                     placeholder="Bucket"
                     required={true}
                     type="text"
-                    value={this.state.username}
+                    value={username}
                   />
                   <Form.Text muted>
                     Must match your Ranger Secret Clubhouse profile.
@@ -84,7 +92,7 @@ export default class Login extends Component {
                     onChange={this.onPasswordChange}
                     placeholder="…password…"
                     type="password"
-                    value={this.state.password}
+                    value={password}
                   />
                 </Form.Group>
 

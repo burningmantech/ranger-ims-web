@@ -8,32 +8,57 @@ import App from "./App";
 
 describe("App component", () => {
 
-  test("loading", () => {
-    render(<App user={null} />);
+  test("loading...", () => {
+    render(<App />);
 
     expect(screen.queryByText("Loading...")).toBeInTheDocument();
   });
 
-  test("loaded home", async () => {
-    render(<App user={null} />);
+  test("load home", async () => {
+    render(<App />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
     expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
   });
 
-  test("loaded home -> log in", async () => {
+  test("load home -> log in -> content", async () => {
     const username = "Cheese Butter";
+    const password = username;
 
-    render(<App user={null} />);
+    render(<App />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 
-    expect(
-      await screen.findByText("Ranger Incident Management System")
-    ).toBeInTheDocument();
+    const title = await screen.findByText("Ranger Incident Management System")
+
+    expect(title).toBeInTheDocument();
+  });
+
+  test("load home -> invalid log in -> no content", async () => {
+    const username = "Cheese Butter";
+    const password = "Not My Password";
+
+    render(<App />);
+
+    expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+
+    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Password/), password);
+    await userEvent.click(screen.getByText(/Log In/));
+
+    try {
+      const title = await screen.findByText("Ranger Incident Management System")
+      expect(title).not.toBeInTheDocument();
+    }
+    catch (e) {
+      expect(e.name).toEqual("TestingLibraryElementError");
+    }
+
+    expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
 });

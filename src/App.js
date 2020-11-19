@@ -3,7 +3,9 @@ import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
-import { User } from "./auth";
+import {
+  Authenticator, AuthenticatorContext, TestAuthentationSource
+} from "./auth";
 import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,20 +21,12 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {user: null};
-  }
 
-  login = async (username, password) => {
-    console.log("Logging in as " + username + "...");
-    this.setState({user: new User(username)});
-  }
-
-  logout = async () => {
-    console.log("Logging out as " + this.state.user + "...")
-    this.setState({user: null});
+    this.authenticator = new Authenticator(new TestAuthentationSource());
   }
 
   render() {
+
     return (
       <Router>
         <Suspense fallback={<Loading />}>
@@ -43,19 +37,23 @@ export default class App extends Component {
               <Redirect to="/ims/" />
             </Route>
 
-            {/* Home Screen */}
-            <Route exact path="/ims/">
-              <Login login={this.login} user={this.state.user}>
-                <Home user={this.state.user} />
-              </Login>
-            </Route>
+            <AuthenticatorContext.Provider value={this.authenticator}>
 
-            {/* Event Screen */}
-            <Route exact path="/ims/event/:eventID/">
-              <Login login={this.login} user={this.state.user}>
-                <EventWithParams />
-              </Login>
-            </Route>
+              {/* Home Screen */}
+              <Route exact path="/ims/">
+                <Login>
+                  <Home />
+                </Login>
+              </Route>
+
+              {/* Event Screen */}
+              <Route exact path="/ims/event/:eventID/">
+                <Login>
+                  <EventWithParams />
+                </Login>
+              </Route>
+
+            </AuthenticatorContext.Provider>
 
             {/* Not found */}
             <Route path="*">
@@ -71,7 +69,7 @@ export default class App extends Component {
 }
 
 
-function EventWithParams () {
+function EventWithParams() {
   let { eventID } = useParams();
   return (<Event id={eventID} />);
 }
