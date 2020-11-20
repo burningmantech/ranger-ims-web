@@ -209,6 +209,7 @@ describe("Authenticator", () => {
 
     authenticator.loadFromStorage();
 
+    expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
     expect(authenticator.expiration).toBeNull();
   });
@@ -221,8 +222,51 @@ describe("Authenticator", () => {
 
     authenticator.loadFromStorage();
 
+    expect(authenticator.isLoggedIn()).toBe(true);
     expect(authenticator.user.asJSON()).toEqual(user.asJSON());
     expect(authenticator.expiration).toBeSameAsMoment(expiration);
+  });
+
+  test("loadFromStorage, populated, missing class", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.removeItem(Authenticator.STORE_KEY_CLASS);
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, missing user", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.removeItem(Authenticator.STORE_KEY_USER);
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, missing expiration", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.removeItem(Authenticator.STORE_KEY_EXPIRATION);
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
   });
 
   test("valid login -> user", async () => {
