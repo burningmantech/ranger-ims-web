@@ -3,8 +3,16 @@ import moment from "moment";
 import { createContext } from "react";
 
 
+/*
+ * Authenticated user
+ * - username: user identifier
+ * - credentials: re-usable credentials to submit to server requests
+ */
 export class User {
 
+  /*
+   * Deserialize a User from JSON.
+   */
   static fromJSON = (json) => {
     if (json.username === undefined) {
       throw new SyntaxError("No username provided.");
@@ -28,6 +36,9 @@ export class User {
     this.credentials = credentials;
   }
 
+  /*
+   * Serialize a User as JSON.
+   */
   asJSON = () => {
     return {username: this.username, credentials: this.credentials};
   }
@@ -35,10 +46,23 @@ export class User {
 }
 
 
+/*
+ * Test authentication source
+ * - timeout: duration of time that credentials will be valid for
+ */
 export class TestAuthentationSource {
 
   static timeout = moment.duration(5, "minutes");
 
+  /*
+   * Logs into an authentication source.
+   * - username: user identifier
+   * - credentials: credentials for logging in: a dictionary with a password key
+   *   that contains the password for the user.
+   *
+   * NOTE: the login credentials passed to this method are not the same as the
+   *    re-usable credentials in the created User object.
+   */
   login = async (username, credentials) => {
     if (credentials.password === username) {
       const expiration = moment().add(TestAuthentationSource.timeout);
@@ -58,6 +82,11 @@ export class TestAuthentationSource {
 }
 
 
+/*
+ * Authenticator
+ * Manages the mechanisms for obtaining authenticated users from an
+ * authentication source.
+ */
 export class Authenticator {
 
   static STORE_KEY_CLASS = "ims.auth.class";
@@ -129,6 +158,9 @@ export class Authenticator {
     }
   }
 
+  /*
+   * Authenticate a user and keep the resulting credentials.
+   */
   login = async (username, credentials) => {
     console.log(`Logging in as ${username}...`);
     const result = await this.source.login(username, credentials);
@@ -148,6 +180,9 @@ export class Authenticator {
     }
   }
 
+  /*
+   * Dispose of user credentials.
+   */
   logout = async () => {
     console.log(`Logging out as ${this.user.username}...`)
     await this.source.logout();
@@ -155,6 +190,9 @@ export class Authenticator {
     this.expiration = null;
   }
 
+  /*
+   * Determine whether we have a with non-expired credentials.
+   */
   isLoggedIn = () => {
     this.loadFromStorage();
     return (this.user !== null);

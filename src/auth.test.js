@@ -125,6 +125,9 @@ describe("TestAuthentationSource", () => {
 });
 
 
+/*
+ * Make sure that we have no stored credentials.
+ */
 function verifyCleanAuthStorage() {
   const store = window.localStorage;
 
@@ -141,6 +144,9 @@ function verifyCleanAuthStorage() {
 }
 
 
+/*
+ * Populate stored credentials.
+ */
 async function populateAuthStorage(username, credentials, source) {
   if (!username) {
     username = "Cheese Butter";
