@@ -124,49 +124,68 @@ export class Authenticator {
     }
 
     const store = window.localStorage;
-    const sourceClass = store.getItem(Authenticator.STORE_KEY_CLASS);
+    const sourceClass = Authenticator._sourceClassFromStorage()
 
-    if (!sourceClass) {
+    if (sourceClass === null) {
       console.log("No stored credentials found.");
+      return;
     }
-    else if (sourceClass !== this.source.constructor.name) {
+
+    if (sourceClass !== this.source.constructor.name) {
       console.log("Ignoring stored credentials from class: " + sourceClass);
+      return;
     }
-    else {
-      const userJSONText = store.getItem(Authenticator.STORE_KEY_USER);
-      const expirationText = store.getItem(Authenticator.STORE_KEY_EXPIRATION);
 
-      if (!userJSONText) {
-        console.log("ERROR: No user found in stored credentials.");
-        return;
-      }
+    console.log("Loading stored credentials...")
 
-      if (!expirationText) {
-        console.log("ERROR: No expiration found in stored credentials.");
-        return;
-      }
+    const user = Authenticator._userFromStorage();
+    if (user === null) { return; }
 
-      console.log("Loading stored credentials...")
+    const expiration = Authenticator._expirationFromStorage();
+    if (expiration === null) { return; }
 
-      let user;
-      try {
-        const userJSON = JSON.parse(userJSONText);
-        user = User.fromJSON(userJSON);
-      }
-      catch {
-        console.log("ERROR: Invalid user in stored credentials.");
-        return;
-      }
+    this.user = user;
+    this.expiration = expiration;
+  }
 
-      const expiration = moment(expirationText, moment.ISO_8601, true);
-      if (!expiration.isValid()) {
-        console.log("ERROR: Invalid expiration in stored credentials.");
-        return;
-      }
-
-      this.user = user
-      this.expiration = expiration;
+  static _sourceClassFromStorage = () => {
+    const store = window.localStorage;
+    const sourceClass = store.getItem(Authenticator.STORE_KEY_CLASS);
+    if (!sourceClass) {
+      return null;
     }
+    return sourceClass;
+  }
+
+  static _userFromStorage = () => {
+    const store = window.localStorage;
+    const userJSONText = store.getItem(Authenticator.STORE_KEY_USER);
+    try {
+      const userJSON = JSON.parse(userJSONText);
+      return User.fromJSON(userJSON);
+    }
+    catch {
+      console.log("ERROR: Invalid user in stored credentials.");
+      return null;
+    }
+  }
+
+  static _expirationFromStorage = () => {
+    const store = window.localStorage;
+    const expirationText = store.getItem(Authenticator.STORE_KEY_EXPIRATION);
+
+    if (!expirationText) {
+      console.log("ERROR: No expiration found in stored credentials.");
+      return null;
+    }
+
+    const expiration = moment(expirationText, moment.ISO_8601, true);
+    if (!expiration.isValid()) {
+      console.log("ERROR: Invalid expiration in stored credentials.");
+      return null;
+    }
+
+    return expiration;
   }
 
   /*
