@@ -6,6 +6,13 @@ import { createContext } from "react";
 export class User {
 
   static fromJSON = (json) => {
+    if (json.username === undefined) {
+      throw new SyntaxError("No username provided.");
+    }
+    if (json.credentials === undefined) {
+      throw new SyntaxError("No username provided.");
+    }
+
     return new User(json.username, json.credentials);
   }
 
@@ -91,26 +98,37 @@ export class Authenticator {
 
       if (!userJSONText) {
         console.log("ERROR: No user found in stored credentials.");
-      }
-      else if (!expirationText) {
-        console.log("ERROR: No expiration found in stored credentials.");
-      }
-      else {
-        console.log("Loading stored credentials...")
-
-        const userJSON = JSON.parse(userJSONText);
-        const user = User.fromJSON(userJSON);
-
-        const expiration = moment(expirationText);
-
-        this.user = user
-        this.expiration = expiration;
-
         return;
       }
 
-      this.user = null;
-      this.expiration = null;
+      if (!expirationText) {
+        console.log("ERROR: No expiration found in stored credentials.");
+        return;
+      }
+
+      console.log("Loading stored credentials...")
+
+      let user;
+      try {
+        const userJSON = JSON.parse(userJSONText);
+        user = User.fromJSON(userJSON);
+      }
+      catch(e) {
+        if (e.name === "SyntaxError") {
+          console.log("ERROR: Invalid user in stored credentials.");
+          return;
+        }
+        else { throw e; }
+      }
+
+      const expiration = moment(expirationText, moment.ISO_8601, true);
+      if (!expiration.isValid()) {
+        console.log("ERROR: Invalid expiration in stored credentials.");
+        return;
+      }
+
+      this.user = user
+      this.expiration = expiration;
     }
   }
 

@@ -255,6 +255,34 @@ describe("Authenticator", () => {
     expect(authenticator.expiration).toBeNull();
   });
 
+  test("loadFromStorage, populated, bogus user (invalid JSON)", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.setItem(Authenticator.STORE_KEY_USER, "*");
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, bogus user (incorrect JSON)", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.setItem(Authenticator.STORE_KEY_USER, "{}");
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
   test("loadFromStorage, populated, missing expiration", async () => {
     verifyCleanAuthStorage();
 
@@ -262,6 +290,20 @@ describe("Authenticator", () => {
     const authenticator = new Authenticator(source);
 
     window.localStorage.removeItem(Authenticator.STORE_KEY_EXPIRATION);
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, bogus expiration", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.setItem(Authenticator.STORE_KEY_EXPIRATION, "*");
     authenticator.loadFromStorage();
 
     expect(authenticator.isLoggedIn()).toBe(false);
