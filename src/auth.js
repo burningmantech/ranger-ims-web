@@ -113,12 +113,9 @@ export class Authenticator {
         const userJSON = JSON.parse(userJSONText);
         user = User.fromJSON(userJSON);
       }
-      catch(e) {
-        if (e.name === "SyntaxError") {
-          console.log("ERROR: Invalid user in stored credentials.");
-          return;
-        }
-        else { throw e; }
+      catch {
+        console.log("ERROR: Invalid user in stored credentials.");
+        return;
       }
 
       const expiration = moment(expirationText, moment.ISO_8601, true);
