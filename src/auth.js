@@ -10,7 +10,7 @@ export class User {
       throw new SyntaxError("No username provided.");
     }
     if (json.credentials === undefined) {
-      throw new SyntaxError("No username provided.");
+      throw new SyntaxError("No credentials provided.");
     }
 
     return new User(json.username, json.credentials);

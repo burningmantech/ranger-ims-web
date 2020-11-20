@@ -269,13 +269,31 @@ describe("Authenticator", () => {
     expect(authenticator.expiration).toBeNull();
   });
 
-  test("loadFromStorage, populated, bogus user (incorrect JSON)", async () => {
+  test("loadFromStorage, populated, bogus user (no username)", async () => {
     verifyCleanAuthStorage();
 
     const { source, user, expiration } = await populateAuthStorage();
     const authenticator = new Authenticator(source);
 
-    window.localStorage.setItem(Authenticator.STORE_KEY_USER, "{}");
+    window.localStorage.setItem(
+      Authenticator.STORE_KEY_USER, JSON.stringify({credentials: {}})
+    );
+    authenticator.loadFromStorage();
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, bogus user (no credentials)", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user, expiration } = await populateAuthStorage();
+    const authenticator = new Authenticator(source);
+
+    window.localStorage.setItem(
+      Authenticator.STORE_KEY_USER, JSON.stringify({username: "Hubcap"})
+    );
     authenticator.loadFromStorage();
 
     expect(authenticator.isLoggedIn()).toBe(false);
