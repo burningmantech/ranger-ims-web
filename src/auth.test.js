@@ -170,19 +170,10 @@ async function populateAuthStorage(username, credentials, source) {
 }
 
 
-function cleanAuthStorage() {
-  const store = window.localStorage;
-
-  store.removeItem(Authenticator.STORE_KEY_CLASS);
-  store.removeItem(Authenticator.STORE_KEY_USER);
-  store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
-}
-
-
 describe("Authenticator", () => {
 
   afterEach(() => {
-    cleanAuthStorage();
+    Authenticator.eraseStorage();
   });
 
   test("authentication source is defined", () => {
@@ -205,6 +196,26 @@ describe("Authenticator", () => {
     expect(authenticator.source).toBe(source);
     expect(authenticator.user).toBeNull();
     expect(authenticator.expiration).toBeNull();
+  });
+
+  test("eraseStorage", () => {
+    verifyCleanAuthStorage();
+
+    const username = "Cheese Butter";
+    const credentials = {};
+    const user = new User(username, credentials);
+    const expiration = moment();
+    const store = window.localStorage;
+
+    store.setItem(Authenticator.STORE_KEY_CLASS, "SomeAuthentationSource");
+    store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON()));
+    store.setItem(Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString());
+
+    Authenticator.eraseStorage();
+
+    expect(store.getItem(Authenticator.STORE_KEY_CLASS)).toBeNull();
+    expect(store.getItem(Authenticator.STORE_KEY_USER)).toBeNull();
+    expect(store.getItem(Authenticator.STORE_KEY_EXPIRATION)).toBeNull();
   });
 
   test("loadFromStorage, empty", async () => {
