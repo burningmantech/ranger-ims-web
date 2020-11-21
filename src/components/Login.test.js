@@ -35,6 +35,10 @@ function testAuthenticator(user) {
 
 describe("Login component", () => {
 
+  afterEach(() => {
+    Authenticator.eraseStorage();
+  });
+
   test("no user -> login button", () => {
     renderWithAuthenticator(<Login />, testAuthenticator());
 
