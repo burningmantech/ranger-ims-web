@@ -470,6 +470,31 @@ describe("Authenticator", () => {
     expect(authenticator.isLoggedIn()).toBe(false);
   });
 
+  test("invalid login after prior login keeps user", async () => {
+    const username = "user";
+    const goodPassword = username;
+    const badPassword = "Not My Password";
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+    let result;
+
+    result = await authenticator.login(
+      username, {password: goodPassword}
+    );
+
+    if (!result) { throw new Error("login failed"); }
+
+    result = await authenticator.login(
+      username, {password: badPassword}
+    );
+
+    if (result) { throw new Error("login failed to fail"); }
+
+    expect(authenticator.user.username).toEqual(username);
+
+    expect(authenticator.isLoggedIn()).toBe(true);
+  });
+
   test("logout", async () => {
     const username = "user";
     const password = username;
