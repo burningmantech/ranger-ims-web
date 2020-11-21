@@ -198,7 +198,7 @@ describe("Authenticator", () => {
     expect(authenticator.expiration).toBeNull();
   });
 
-  test("eraseStorage", () => {
+  test("_eraseStorage", () => {
     verifyCleanAuthStorage();
 
     const username = "Cheese Butter";
@@ -216,6 +216,46 @@ describe("Authenticator", () => {
     expect(store.getItem(Authenticator.STORE_KEY_CLASS)).toBeNull();
     expect(store.getItem(Authenticator.STORE_KEY_USER)).toBeNull();
     expect(store.getItem(Authenticator.STORE_KEY_EXPIRATION)).toBeNull();
+  });
+
+  test("saveToStorage, logged in", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "Cheese Butter";
+    const credentials = {password: username};
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+    const now = moment();
+
+    const result = await authenticator.login(username, credentials);
+
+    if (!result) { throw new Error("login failed"); }
+
+    // Make sure we don't have accidental side effects from login
+    verifyCleanAuthStorage();
+
+    authenticator.saveToStorage();
+
+    expect(Authenticator._sourceClassFromStorage()).toEqual(
+      source.constructor.name
+    );
+    expect(Authenticator._userFromStorage().username).toEqual(username);
+    expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
+  });
+
+  test("saveToStorage, not logged in", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "Cheese Butter";
+    const credentials = {password: username};
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    authenticator.saveToStorage();
+
+    expect(Authenticator._sourceClassFromStorage()).toBeNull();
+    expect(Authenticator._userFromStorage()).toBeNull();
+    expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
   test("loadFromStorage, empty", async () => {

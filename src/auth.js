@@ -109,13 +109,42 @@ export class Authenticator {
   /*
    * Remove stored credentials.
    */
-  static eraseStorage = () => {
   eraseStorage = () => {
+    Authenticator._eraseStorage();
+  }
+
+  static _eraseStorage = () => {
     const store = window.localStorage;
 
     store.removeItem(Authenticator.STORE_KEY_CLASS);
     store.removeItem(Authenticator.STORE_KEY_USER);
     store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
+  }
+
+  /*
+   * Write state to local storage.
+   */
+  saveToStorage = () => {
+    if (this.isLoggedIn()) {
+      Authenticator._saveToStorage(
+        this.source.constructor.name, this.user, this.expiration
+      );
+    }
+    else {
+      Authenticator._eraseStorage();
+    }
+  }
+
+  static _saveToStorage = (className, user, expiration) => {
+    const store = window.localStorage;
+
+    store.setItem(Authenticator.STORE_KEY_CLASS, className);
+    store.setItem(
+      Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON())
+    );
+    store.setItem(
+      Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString()
+    );
   }
 
   /*
