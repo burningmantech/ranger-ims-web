@@ -93,6 +93,19 @@ export class Authenticator {
   static STORE_KEY_USER = "ims.auth.user";
   static STORE_KEY_EXPIRATION = "ims.auth.expiration";
 
+  /*
+   * Remove stored credentials.
+   */
+  static eraseStorage = () => {
+    console.log("Removing credentials from local storage.");
+
+    const store = window.localStorage;
+
+    store.removeItem(Authenticator.STORE_KEY_CLASS);
+    store.removeItem(Authenticator.STORE_KEY_USER);
+    store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
+  }
+
   constructor(source) {
     if (source === undefined) {
       throw new Error("authentication source is not defined");
@@ -104,23 +117,7 @@ export class Authenticator {
     this.source = source;
     this.user = null;
     this.expiration = null;
-  }
-
-  /*
-   * Remove stored credentials.
-   */
-  eraseStorage = () => {
-    Authenticator._eraseStorage();
-  }
-
-  static _eraseStorage = () => {
-    console.log("Removing credentials from local storage.");
-
-    const store = window.localStorage;
-
-    store.removeItem(Authenticator.STORE_KEY_CLASS);
-    store.removeItem(Authenticator.STORE_KEY_USER);
-    store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
+    this.loadFromStorage();
   }
 
   /*
@@ -133,7 +130,7 @@ export class Authenticator {
       );
     }
     else {
-      Authenticator._eraseStorage();
+      Authenticator.eraseStorage();
     }
   }
 
