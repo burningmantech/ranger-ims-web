@@ -227,7 +227,7 @@ describe("Authenticator", () => {
     const authenticator = new Authenticator(source);
     const now = moment();
 
-    const result = await authenticator.login(username, credentials);
+    const result = await authenticator._login(username, credentials);
 
     if (!result) { throw new Error("login failed"); }
 
@@ -239,11 +239,12 @@ describe("Authenticator", () => {
     expect(Authenticator._sourceClassFromStorage()).toEqual(
       source.constructor.name
     );
+    expect(Authenticator._userFromStorage()).not.toBeNull();
     expect(Authenticator._userFromStorage().username).toEqual(username);
     expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
   });
 
-  test("saveToStorage, not logged in", async () => {
+  test("saveToStorage, not logged in", () => {
     verifyCleanAuthStorage();
 
     const username = "Cheese Butter";
@@ -258,7 +259,7 @@ describe("Authenticator", () => {
     expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
-  test("loadFromStorage, empty", async () => {
+  test("loadFromStorage, empty", () => {
     verifyCleanAuthStorage();
 
     const source = new TestAuthentationSource();
@@ -399,8 +400,6 @@ describe("Authenticator", () => {
 
     if (!result) { throw new Error("login failed"); }
 
-    authenticator1.saveToStorage();
-
     const authenticator2 = new Authenticator(source);
 
     authenticator2.loadFromStorage();
@@ -416,9 +415,10 @@ describe("Authenticator", () => {
     const password = username;
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
+
     const result = await authenticator.login(username, {password: password});
 
-    expect(result).toBe(true);
+    if (!result) { throw new Error("login failed"); }
 
     const user = authenticator.user;
 
@@ -434,13 +434,30 @@ describe("Authenticator", () => {
     const now = moment();
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
+
     const result = await authenticator.login(username, {password: password});
 
-    expect(result).toBe(true);
+    if (!result) { throw new Error("login failed"); }
 
     const expiration = authenticator.expiration;
 
     expect(expiration).toBeAfterMoment(now);
+  });
+
+  test("valid login -> stored", async () => {
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+    const now = moment();
+
+    const result = await authenticator.login(username, {password: password});
+
+    if (!result) { throw new Error("login failed"); }
+
+    expect(Authenticator._userFromStorage()).not.toBeNull();
+    expect(Authenticator._userFromStorage().username).toEqual(username);
+    expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
   });
 
   test("invalid login", async () => {
@@ -448,9 +465,10 @@ describe("Authenticator", () => {
     const password = "Not My Password";
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
+
     const result = await authenticator.login(username, {password: password});
 
-    expect(result).toBe(false);
+    if (result) { throw new Error("login failed to fail"); }
 
     expect(authenticator.user).toBe(null);
     expect(authenticator.expiration).toBe(null);
@@ -463,10 +481,11 @@ describe("Authenticator", () => {
     const password = username;
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
+
     const result = await authenticator.login(username, {password: password});
 
-    expect(result).toBe(true);
-    expect(authenticator.isLoggedIn()).toBe(true);
+    if (!result) { throw new Error("login failed"); }
+    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
 
     await authenticator.logout();
 
@@ -474,6 +493,23 @@ describe("Authenticator", () => {
     expect(authenticator.expiration).toBe(null);
 
     expect(authenticator.isLoggedIn()).toBe(false);
+  });
+
+  test("logout -> stored", async () => {
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    const result = await authenticator.login(username, {password: password});
+
+    if (!result) { throw new Error("login failed"); }
+    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
+
+    await authenticator.logout();
+
+    expect(Authenticator._userFromStorage()).toBeNull();
+    expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
 });

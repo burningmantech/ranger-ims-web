@@ -114,6 +114,8 @@ export class Authenticator {
   }
 
   static _eraseStorage = () => {
+    console.log("Removing credentials from local storage.");
+
     const store = window.localStorage;
 
     store.removeItem(Authenticator.STORE_KEY_CLASS);
@@ -136,6 +138,8 @@ export class Authenticator {
   }
 
   static _saveToStorage = (className, user, expiration) => {
+    console.log("Saving credentials in local storage.");
+
     const store = window.localStorage;
 
     store.setItem(Authenticator.STORE_KEY_CLASS, className);
@@ -220,6 +224,12 @@ export class Authenticator {
    * Authenticate a user and keep the resulting credentials.
    */
   login = async (username, credentials) => {
+    const result = await this._login(username, credentials);
+    this.saveToStorage();
+    return result;
+  }
+
+  _login = async (username, credentials) => {
     console.log(`Logging in as ${username}...`);
     const result = await this.source.login(username, credentials);
 
@@ -242,6 +252,12 @@ export class Authenticator {
    * Dispose of user credentials.
    */
   logout = async () => {
+    const result = await this._logout();
+    this.saveToStorage();
+    return result;
+  }
+
+  _logout = async () => {
     console.log(`Logging out as ${this.user.username}...`)
     await this.source.logout();
     this.user = null;
@@ -252,7 +268,6 @@ export class Authenticator {
    * Determine whether we have a with non-expired credentials.
    */
   isLoggedIn = () => {
-    this.loadFromStorage();
     return (this.user !== null);
   }
 
