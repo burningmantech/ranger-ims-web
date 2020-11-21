@@ -386,6 +386,31 @@ describe("Authenticator", () => {
     expect(authenticator.expiration).toBeNull();
   });
 
+  test("load and save round-trip", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "Cheese Butter";
+    const credentials = {password: username};
+    const source = new TestAuthentationSource();
+    const authenticator1 = new Authenticator(source);
+    const now = moment();
+
+    const result = await authenticator1.login(username, credentials);
+
+    if (!result) { throw new Error("login failed"); }
+
+    authenticator1.saveToStorage();
+
+    const authenticator2 = new Authenticator(source);
+
+    authenticator2.loadFromStorage();
+
+    expect(authenticator2.user.asJSON()).toEqual(authenticator1.user.asJSON());
+    expect(authenticator2.expiration).toBeSameAsMoment(
+      authenticator1.expiration
+    );
+  });
+
   test("valid login -> user", async () => {
     const username = "user";
     const password = username;

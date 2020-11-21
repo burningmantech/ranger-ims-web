@@ -151,11 +151,6 @@ export class Authenticator {
    * Load state from local storage.
    */
   loadFromStorage = () => {
-    if (this.user !== null) {
-      // Already loaded
-      return;
-    }
-
     const store = window.localStorage;
     const sourceClass = Authenticator._sourceClassFromStorage()
 
