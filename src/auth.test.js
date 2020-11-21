@@ -173,7 +173,7 @@ async function populateAuthStorage(username, credentials, source) {
 describe("Authenticator", () => {
 
   afterEach(() => {
-    Authenticator.eraseStorage();
+    Authenticator._eraseStorage();
   });
 
   test("authentication source is defined", () => {
@@ -211,7 +211,7 @@ describe("Authenticator", () => {
     store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON()));
     store.setItem(Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString());
 
-    Authenticator.eraseStorage();
+    Authenticator._eraseStorage();
 
     expect(store.getItem(Authenticator.STORE_KEY_CLASS)).toBeNull();
     expect(store.getItem(Authenticator.STORE_KEY_USER)).toBeNull();

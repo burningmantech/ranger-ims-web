@@ -110,6 +110,7 @@ export class Authenticator {
    * Remove stored credentials.
    */
   static eraseStorage = () => {
+  eraseStorage = () => {
     const store = window.localStorage;
 
     store.removeItem(Authenticator.STORE_KEY_CLASS);
@@ -117,6 +118,9 @@ export class Authenticator {
     store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
   }
 
+  /*
+   * Load state from local storage.
+   */
   loadFromStorage = () => {
     if (this.user !== null) {
       // Already loaded
