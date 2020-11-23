@@ -1,7 +1,9 @@
 import { Component } from "react";
 
 import Image from "react-bootstrap/Image";
+import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { URL } from "../../URL";
 import logo from "../../logo.svg";
@@ -21,8 +23,25 @@ export default class NavigationBar extends Component {
           />
         </Navbar.Brand>
 
-        -Event-
-        -User-
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+
+        <Navbar.Collapse id="responsive-navbar-nav">
+
+          <Nav className="mr-auto">
+            <NavDropdown title="Event" id="nav-events-dropdown">
+              <NavDropdown.Item href="#events/2020">2020</NavDropdown.Item>
+              <NavDropdown.Item href="#events/2019">2019</NavDropdown.Item>
+              <NavDropdown.Item href="#events/2018">2018</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+
+          <Nav>
+            <NavDropdown title="Bucket" id="nav-user-dropdown">
+              <NavDropdown.Item href="#logout">Log Out</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+
+        </Navbar.Collapse>
       </Navbar>
     );
   }
