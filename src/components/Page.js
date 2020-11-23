@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import Container from "react-bootstrap/Container";
 
-import NavigationBar from "../components/Navbar";
+import NavigationBar from "../components/nav/NavigationBar";
 
 
 export default class Home extends Component {

@@ -3,8 +3,8 @@ import { Component } from "react";
 import Image from "react-bootstrap/Image";
 import Navbar from "react-bootstrap/Navbar";
 
-import { URL } from "../URL";
-import logo from "../logo.svg";
+import { URL } from "../../URL";
+import logo from "../../logo.svg";
 
 
 export default class NavigationBar extends Component {
