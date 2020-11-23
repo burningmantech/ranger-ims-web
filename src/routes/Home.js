@@ -1,8 +1,5 @@
 import { Component } from "react";
 
-import Container from "react-bootstrap/Container";
-
-import NavigationBar from "../components/Navbar";
 import Page from "../components/Page";
 
 
