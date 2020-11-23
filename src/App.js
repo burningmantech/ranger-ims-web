@@ -3,14 +3,14 @@ import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import {
   Authenticator, AuthenticatorContext, TestAuthentationSource
 } from "./auth";
-import Loading from "./components/Loading";
-
-import "bootstrap/dist/css/bootstrap.min.css";
-
 import { URL } from "./URL";
+
+import Loading from "./components/Loading";
 
 
 const Login = lazy(() => import("./components/Login"));
