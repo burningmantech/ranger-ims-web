@@ -10,6 +10,8 @@ import Loading from "./components/Loading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { rootURL, homeURL, eventURL } from "./urls";
+
 
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
@@ -33,21 +35,21 @@ export default class App extends Component {
           <Switch>
 
             {/* Send root URL to Home screen URL */}
-            <Route exact path="/">
-              <Redirect to="/ims/" />
+            <Route exact path={rootURL}>
+              <Redirect to={homeURL} />
             </Route>
 
             <AuthenticatorContext.Provider value={this.authenticator}>
 
               {/* Home Screen */}
-              <Route exact path="/ims/">
+              <Route exact path={homeURL}>
                 <Login>
                   <Home />
                 </Login>
               </Route>
 
               {/* Event Screen */}
-              <Route exact path="/ims/event/:eventID/">
+              <Route exact path={`${eventURL}:eventID/`}>
                 <Login>
                   <EventWithParams />
                 </Login>
