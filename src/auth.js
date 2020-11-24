@@ -264,7 +264,24 @@ export class Authenticator {
    * Determine whether we have a with non-expired credentials.
    */
   isLoggedIn = () => {
-    return (this.user !== null);
+    if (this.user === null) {
+      return false;
+    }
+    else if (moment().isAfter(this.expiration)) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  loggedInUser = () => {
+    if (this.isLoggedIn()) {
+      return this.user;
+    }
+    else {
+      return null;
+    }
   }
 
 }
