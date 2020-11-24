@@ -42,7 +42,10 @@ export default class Login extends Component {
     const username = this.state.username;
     const password = this.state.password;
 
-    if (authenticator.user === null) {
+    if (authenticator.isLoggedIn()) {
+      return <>{this.props.children}</>;
+    }
+    else {
       async function onLogin(event) {
         event.preventDefault();
         const result = await authenticator.login(
@@ -106,9 +109,6 @@ export default class Login extends Component {
           </Form>
         </Container>
       );
-    }
-    else {
-      return <>{this.props.children}</>;
     }
   }
 
