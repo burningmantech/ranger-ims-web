@@ -1,10 +1,10 @@
 const rootURL = "/";
 const homeURL = `${rootURL}ims/`;
-const eventURL = `${homeURL}event/`;
+const eventsURL = `${homeURL}events/`;
 
 export const URL = {
   root: rootURL,
   home: homeURL,
-  event: eventURL,
+  event: eventsURL,
 }
 Object.freeze(URL);
