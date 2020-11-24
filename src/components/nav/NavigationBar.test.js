@@ -36,4 +36,16 @@ describe("Navbar component", () => {
     expect(link.href).toEqual(`http://localhost${URL.home}`);
   });
 
+  test("includes events dropdown", () => {
+    render(<NavigationBar />);
+
+    expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
+  });
+
+  test("includes user dropdown", () => {
+    render(<NavigationBar />);
+
+    expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
+  });
+
 });
