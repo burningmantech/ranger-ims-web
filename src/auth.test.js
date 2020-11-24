@@ -531,4 +531,94 @@ describe("Authenticator", () => {
     expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
+  test("isLoggedIn, valid", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    // Authenticate via source and set attributes directly, since we are not
+    // trying to test Authenticator.login() here.
+    const result = await source.login(username, {password: password});
+
+    authenticator.user = result.user;
+    authenticator.expiration = result.expiration;
+
+    expect(authenticator.isLoggedIn()).toBe(true);
+  });
+
+  test("isLoggedIn, null user", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    // Authenticate via source and set attributes directly, since we are not
+    // trying to test Authenticator.login() here.
+    const result = await source.login(username, {password: password});
+
+    authenticator.user = null;
+    authenticator.expiration = result.expiration;
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+  });
+
+  test("isLoggedIn, expired", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    // Authenticate via source and set attributes directly, since we are not
+    // trying to test Authenticator.login() here.
+    const result = await source.login(username, {password: password});
+
+    authenticator.user = result.user;
+    authenticator.expiration = moment().subtract(1, "second");
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+  });
+
+  test("loggedInUser, valid", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    // Authenticate via source and set attributes directly, since we are not
+    // trying to test Authenticator.login() here.
+    const result = await source.login(username, {password: password});
+
+    authenticator.user = result.user;
+    authenticator.expiration = result.expiration;
+
+    expect(authenticator.loggedInUser()).toBe(authenticator.user);
+  });
+
+  test("loggedInUser, expired", async () => {
+    verifyCleanAuthStorage();
+
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    // Authenticate via source and set attributes directly, since we are not
+    // trying to test Authenticator.login() here.
+    const result = await source.login(username, {password: password});
+
+    authenticator.user = result.user;
+    authenticator.expiration = moment().subtract(1, "second");
+
+    expect(authenticator.loggedInUser()).toBeNull();
+  });
+
 });
