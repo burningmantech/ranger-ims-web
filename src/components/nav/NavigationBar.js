@@ -7,6 +7,8 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { URL } from "../../URL";
 
+import LoginDropdown from "./LoginDropdown";
+
 import logo from "../../logo.svg";
 
 
@@ -29,18 +31,14 @@ export default class NavigationBar extends Component {
         <Navbar.Collapse id="responsive_navbar_nav">
 
           <Nav className="mr-auto">
-            <NavDropdown title="Event" id="nav_events_dropdown">
+            <NavDropdown title="No Event Selected" id="nav_events_dropdown">
               <NavDropdown.Item href="#events/2020">2020</NavDropdown.Item>
               <NavDropdown.Item href="#events/2019">2019</NavDropdown.Item>
               <NavDropdown.Item href="#events/2018">2018</NavDropdown.Item>
             </NavDropdown>
           </Nav>
 
-          <Nav>
-            <NavDropdown title="Bucket" id="nav_user_dropdown">
-              <NavDropdown.Item href="#logout">Log Out</NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
+          <Nav><LoginDropdown /></Nav>
 
         </Navbar.Collapse>
       </Navbar>

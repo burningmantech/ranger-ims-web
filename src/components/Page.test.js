@@ -8,7 +8,7 @@ import Page from "./Page";
 
 describe("Page component", () => {
 
-  test("page container", () => {
+  test("id", () => {
     render(<Page />);
 
     expect(document.getElementById("page")).toBeInTheDocument();
