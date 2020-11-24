@@ -24,7 +24,7 @@ export default class LoginDropdown extends Component {
     }
 
     if (user === null) {
-      if (authenticator.user !== null) {
+      if (authenticator !== undefined && authenticator.user !== null) {
         const elapsed = moment.duration(
           moment() - authenticator.expiration
         ).humanize();
