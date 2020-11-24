@@ -38,9 +38,12 @@ export default class LoginDropdown extends Component {
       );
     }
     else {
+      async function onLogout(eventKey, event) {
+        await authenticator.logout();
+      }
       return (
         <NavDropdown title={user.username} id="nav_user_dropdown">
-          <NavDropdown.Item href="#logout">Log Out</NavDropdown.Item>
+          <NavDropdown.Item onSelect={onLogout}>Log Out</NavDropdown.Item>
         </NavDropdown>
       );
     }
