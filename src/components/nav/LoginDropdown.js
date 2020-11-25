@@ -13,8 +13,15 @@ export default class LoginDropdown extends Component {
   static contextType = AuthenticatorContext;
 
   render() {
+    let authenticator;
+    if (this.context === undefined) {
+      authenticator = undefined;
+    }
+    else {
+      authenticator = this.context.authenticator;
+    }
+
     let user;
-    const authenticator = this.context;
     if (authenticator === undefined) {
       console.log("No authenticator context available.");
       user = null;

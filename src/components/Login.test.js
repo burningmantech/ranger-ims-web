@@ -15,7 +15,7 @@ import Login from "./Login";
 function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
   return render(
     (
-      <AuthenticatorContext.Provider value={authenticator}>
+      <AuthenticatorContext.Provider value={{authenticator: authenticator}}>
         {ui}
       </AuthenticatorContext.Provider>
     ),

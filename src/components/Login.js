@@ -37,7 +37,7 @@ export default class Login extends Component {
 
   render() {
     const component = this;
-    const authenticator = this.context;
+    const authenticator = this.context.authenticator;
 
     const username = this.state.username;
     const password = this.state.password;

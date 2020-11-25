@@ -118,6 +118,13 @@ export class Authenticator {
     this.user = null;
     this.expiration = null;
     this.loadFromStorage();
+    this.delegate = null;
+  }
+
+  notifyDelegate = () => {
+    if (this.delegate !== null) {
+      this.delegate();
+    }
   }
 
   /*
@@ -236,6 +243,7 @@ export class Authenticator {
         "Logged in as " + this.user.username +
         " until " + this.expiration.toISOString()
       );
+      this.notifyDelegate();
       return true;
     }
     else {
@@ -258,6 +266,7 @@ export class Authenticator {
     await this.source.logout();
     this.user = null;
     this.expiration = null;
+    this.notifyDelegate();
   }
 
   /*

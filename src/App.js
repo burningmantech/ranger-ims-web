@@ -25,6 +25,15 @@ export default class App extends Component {
     super(props);
 
     this.authenticator = new Authenticator(new TestAuthentationSource());
+
+    this.state = {
+      user: this.authenticator.user,
+    }
+
+    // Get notified when login/logout happens
+    this.authenticator.delegate = () => {
+      this.setState({user: this.authenticator.user})
+    }
   }
 
   render() {
@@ -39,7 +48,9 @@ export default class App extends Component {
               <Redirect to={URL.home} />
             </Route>
 
-            <AuthenticatorContext.Provider value={this.authenticator}>
+            <AuthenticatorContext.Provider
+              value={{authenticator: this.authenticator}}
+            >
 
               {/* Home Screen */}
               <Route exact path={URL.home}>
@@ -71,6 +82,7 @@ export default class App extends Component {
 }
 
 
+/* FIXME: figure out how to use params from the Event class */
 function EventWithParams() {
   let { eventID } = useParams();
   return (<Event id={eventID} />);
