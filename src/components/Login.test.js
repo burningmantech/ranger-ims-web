@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
@@ -24,6 +26,7 @@ function testAuthenticator(user) {
   const authenticator = new Authenticator(new TestAuthentationSource());
   if (user !== undefined) {
     authenticator.user = user;
+    authenticator.expiration = moment().add(1, "hour")
   }
   return authenticator;
 }

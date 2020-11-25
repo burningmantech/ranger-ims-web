@@ -278,6 +278,9 @@ export class Authenticator {
     if (this.user === null) {
       return false;
     }
+    if (this.expiration === null) {
+      return false;
+    }
     else if (moment().isAfter(this.expiration)) {
       return false;
     }
