@@ -119,7 +119,11 @@ export class Authenticator {
     this.delegate = null;
   }
 
-  notifyDelegate = () => {
+  /*
+   * Call the registered delegate function to provide a notification of a change
+   * in user-logged-in state.
+   */
+  _notifyDelegate = () => {
     if (this.delegate !== null) {
       this.delegate();
     }
@@ -241,7 +245,7 @@ export class Authenticator {
         "Logged in as " + this.user.username +
         " until " + this.expiration.toISOString()
       );
-      this.notifyDelegate();
+      this._notifyDelegate();
       return true;
     }
     else {
@@ -264,7 +268,7 @@ export class Authenticator {
     await this.source.logout();
     this.user = null;
     this.expiration = null;
-    this.notifyDelegate();
+    this._notifyDelegate();
   }
 
   /*

@@ -454,6 +454,22 @@ describe("Authenticator", () => {
     expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
   });
 
+  test("valid login -> notify delegate", async () => {
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    let notified = false;
+    authenticator.delegate = () => { notified = true; }
+
+    const result = await authenticator.login(username, {password: password});
+
+    if (!result) { throw new Error("login failed"); }
+
+    expect(notified).toBe(true);
+  });
+
   test("invalid login", async () => {
     const username = "user";
     const password = "Not My Password";
@@ -529,6 +545,25 @@ describe("Authenticator", () => {
 
     expect(Authenticator._userFromStorage()).toBeNull();
     expect(Authenticator._expirationFromStorage()).toBeNull();
+  });
+
+  test("valid login -> notify delegate", async () => {
+    const username = "user";
+    const password = username;
+    const source = new TestAuthentationSource();
+    const authenticator = new Authenticator(source);
+
+    const result = await authenticator.login(username, {password: password});
+
+    if (!result) { throw new Error("login failed"); }
+    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
+
+    let notified = false;
+    authenticator.delegate = () => { notified = true; }
+
+    await authenticator.logout();
+
+    expect(notified).toBe(true);
   });
 
   test("isLoggedIn, valid", async () => {
