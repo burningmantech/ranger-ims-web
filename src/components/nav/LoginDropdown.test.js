@@ -56,6 +56,31 @@ describe("LoginDropdown component", () => {
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
+  test("expired user -> not logged in message", () => {
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(new User(username));
+    authenticator.expiration = moment().subtract(1, "second")
+
+    renderWithAuthenticator(<LoginDropdown />, authenticator);
+
+    expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
+  });
+
+  test("expired user -> console message", () => {
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(new User(username));
+    authenticator.expiration = moment().subtract(1, "second")
+
+    console.log = jest.fn();
+
+    renderWithAuthenticator(<LoginDropdown />, authenticator);
+
+    expect(console.log).toHaveBeenCalledWith(
+      `Previously authenticated as ${username}, ` +
+      `expired ${authenticator.expiration} (a few seconds ago)`
+    );
+  });
+
   test("user -> log out item", () => {
     const username = "Cheese Butter";
 

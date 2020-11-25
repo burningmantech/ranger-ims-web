@@ -44,6 +44,16 @@ describe("Login component", () => {
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
+  test("expired user -> login button", () => {
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(new User(username));
+    authenticator.expiration = moment().subtract(1, "second")
+
+    renderWithAuthenticator(<Login />, authenticator);
+
+    expect(screen.queryByText("Log In")).toBeInTheDocument();
+  });
+
   test("user -> no login button", () => {
     const authenticator = testAuthenticator(new User("Cheese Butter"));
 
