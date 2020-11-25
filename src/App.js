@@ -5,9 +5,8 @@ import {
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import {
-  Authenticator, AuthenticatorContext, TestAuthentationSource
-} from "./auth";
+import { Authenticator, TestAuthentationSource } from "./auth";
+import { AuthenticatorContext } from "./context";
 import { URL } from "./URL";
 
 import Loading from "./components/Loading";

@@ -9,7 +9,7 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
-import { AuthenticatorContext } from "../auth";
+import { AuthenticatorContext } from "../context";
 
 
 export default class Login extends Component {

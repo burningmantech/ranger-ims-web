@@ -1,7 +1,5 @@
 import moment from "moment";
 
-import { createContext } from "react";
-
 
 /*
  * Authenticated user
@@ -294,8 +292,3 @@ export class Authenticator {
   }
 
 }
-
-
-export const AuthenticatorContext = createContext();
-
-AuthenticatorContext.displayName = "GlobalAuthenticatorContext"

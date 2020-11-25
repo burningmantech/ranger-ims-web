@@ -3,12 +3,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import {
-  Authenticator,
-  AuthenticatorContext,
-  TestAuthentationSource,
-  User,
-} from "../auth";
+import { Authenticator, TestAuthentationSource, User } from "../auth";
+import { AuthenticatorContext } from "../context";
 import Login from "./Login";
 
 
