@@ -3,12 +3,13 @@ import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
 } from "react-router-dom";
 
-import {
-  Authenticator, AuthenticatorContext, TestAuthentationSource
-} from "./auth";
-import Loading from "./components/Loading";
-
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import { Authenticator, TestAuthentationSource } from "./auth";
+import { AuthenticatorContext } from "./context";
+import { URL } from "./URL";
+
+import Loading from "./components/Loading";
 
 
 const Login = lazy(() => import("./components/Login"));
@@ -23,6 +24,15 @@ export default class App extends Component {
     super(props);
 
     this.authenticator = new Authenticator(new TestAuthentationSource());
+
+    this.state = {
+      user: this.authenticator.user,
+    }
+
+    // Get notified when login/logout happens
+    this.authenticator.delegate = () => {
+      this.setState({user: this.authenticator.user})
+    }
   }
 
   render() {
@@ -33,21 +43,23 @@ export default class App extends Component {
           <Switch>
 
             {/* Send root URL to Home screen URL */}
-            <Route exact path="/">
-              <Redirect to="/ims/" />
+            <Route exact path={URL.root}>
+              <Redirect to={URL.home} />
             </Route>
 
-            <AuthenticatorContext.Provider value={this.authenticator}>
+            <AuthenticatorContext.Provider
+              value={{authenticator: this.authenticator}}
+            >
 
               {/* Home Screen */}
-              <Route exact path="/ims/">
+              <Route exact path={URL.home}>
                 <Login>
                   <Home />
                 </Login>
               </Route>
 
               {/* Event Screen */}
-              <Route exact path="/ims/event/:eventID/">
+              <Route exact path={`${URL.event}:eventID/`}>
                 <Login>
                   <EventWithParams />
                 </Login>
@@ -69,6 +81,7 @@ export default class App extends Component {
 }
 
 
+/* FIXME: figure out how to use params from the Event class */
 function EventWithParams() {
   let { eventID } = useParams();
   return (<Event id={eventID} />);

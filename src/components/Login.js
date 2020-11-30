@@ -9,7 +9,7 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
-import { AuthenticatorContext } from "../auth";
+import { AuthenticatorContext } from "../context";
 
 
 export default class Login extends Component {
@@ -37,12 +37,15 @@ export default class Login extends Component {
 
   render() {
     const component = this;
-    const authenticator = this.context;
+    const authenticator = this.context.authenticator;
 
     const username = this.state.username;
     const password = this.state.password;
 
-    if (authenticator.user === null) {
+    if (authenticator.isLoggedIn()) {
+      return <>{this.props.children}</>;
+    }
+    else {
       async function onLogin(event) {
         event.preventDefault();
         const result = await authenticator.login(
@@ -106,9 +109,6 @@ export default class Login extends Component {
           </Form>
         </Container>
       );
-    }
-    else {
-      return <>{this.props.children}</>;
     }
   }
 

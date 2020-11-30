@@ -1,5 +1,7 @@
 import { Component } from "react";
 
+import Page from "../components/Page";
+
 
 export default class Event extends Component {
 
@@ -13,7 +15,9 @@ export default class Event extends Component {
 
   render() {
     return (
-      <h1>Event: {this.props.id}</h1>
+      <Page>
+        <h1>Event: {this.props.id}</h1>
+      </Page>
     );
   }
 

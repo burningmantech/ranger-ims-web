@@ -1,7 +1,5 @@
 import moment from "moment";
 
-import { createContext } from "react";
-
 
 /*
  * Authenticated user
@@ -118,6 +116,17 @@ export class Authenticator {
     this.user = null;
     this.expiration = null;
     this.loadFromStorage();
+    this.delegate = null;
+  }
+
+  /*
+   * Call the registered delegate function to provide a notification of a change
+   * in user-logged-in state.
+   */
+  _notifyDelegate = () => {
+    if (this.delegate !== null) {
+      this.delegate();
+    }
   }
 
   /*
@@ -236,6 +245,7 @@ export class Authenticator {
         "Logged in as " + this.user.username +
         " until " + this.expiration.toISOString()
       );
+      this._notifyDelegate();
       return true;
     }
     else {
@@ -258,18 +268,34 @@ export class Authenticator {
     await this.source.logout();
     this.user = null;
     this.expiration = null;
+    this._notifyDelegate();
   }
 
   /*
    * Determine whether we have a with non-expired credentials.
    */
   isLoggedIn = () => {
-    return (this.user !== null);
+    if (this.user === null) {
+      return false;
+    }
+    if (this.expiration === null) {
+      return false;
+    }
+    else if (moment().isAfter(this.expiration)) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  loggedInUser = () => {
+    if (this.isLoggedIn()) {
+      return this.user;
+    }
+    else {
+      return null;
+    }
   }
 
 }
-
-
-export const AuthenticatorContext = createContext();
-
-AuthenticatorContext.displayName = "GlobalAuthenticatorContext"

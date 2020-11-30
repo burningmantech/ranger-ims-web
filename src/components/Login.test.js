@@ -1,21 +1,19 @@
+import moment from "moment";
+
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import {
-  Authenticator,
-  AuthenticatorContext,
-  TestAuthentationSource,
-  User,
-} from "../auth";
+import { Authenticator, TestAuthentationSource, User } from "../auth";
+import { AuthenticatorContext } from "../context";
 import Login from "./Login";
 
 
 function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
   return render(
     (
-      <AuthenticatorContext.Provider value={authenticator}>
+      <AuthenticatorContext.Provider value={{authenticator: authenticator}}>
         {ui}
       </AuthenticatorContext.Provider>
     ),
@@ -28,6 +26,7 @@ function testAuthenticator(user) {
   const authenticator = new Authenticator(new TestAuthentationSource());
   if (user !== undefined) {
     authenticator.user = user;
+    authenticator.expiration = moment().add(1, "hour")
   }
   return authenticator;
 }
@@ -41,6 +40,16 @@ describe("Login component", () => {
 
   test("no user -> login button", () => {
     renderWithAuthenticator(<Login />, testAuthenticator());
+
+    expect(screen.queryByText("Log In")).toBeInTheDocument();
+  });
+
+  test("expired user -> login button", () => {
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(new User(username));
+    authenticator.expiration = moment().subtract(1, "second")
+
+    renderWithAuthenticator(<Login />, authenticator);
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
