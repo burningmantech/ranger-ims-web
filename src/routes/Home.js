@@ -5,7 +5,7 @@ import Page from "../components/Page";
 
 export default class Home extends Component {
 
-  render() {
+  render = () => {
     return (
       <Page>
         <h1>Ranger Incident Management System</h1>

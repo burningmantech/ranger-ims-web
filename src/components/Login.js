@@ -35,7 +35,7 @@ export default class Login extends Component {
     this.setState({password: event.target.value});
   }
 
-  render() {
+  render = () => {
     const component = this;
     const authenticator = this.context.authenticator;
 

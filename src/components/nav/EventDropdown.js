@@ -5,7 +5,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 export default class EventDropdown extends Component {
 
-  render() {
+  render = () => {
     return (
       <NavDropdown title="Event" id="nav_events_dropdown">
         <NavDropdown.Item href="#events/2020">2020</NavDropdown.Item>

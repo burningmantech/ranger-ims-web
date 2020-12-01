@@ -5,7 +5,7 @@ import Page from "../components/Page";
 
 export default class NotFound extends Component {
 
-  render() {
+  render = () => {
     return (
       <Page>
         Resource not found: <code>{window.location.href}</code>

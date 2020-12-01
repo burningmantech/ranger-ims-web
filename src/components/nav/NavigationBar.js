@@ -14,7 +14,7 @@ import logo from "../../logo.svg";
 
 export default class NavigationBar extends Component {
 
-  render() {
+  render = () => {
     return (
       <Navbar id={this.props.id}>
         <Navbar.Brand href={URL.home} id="nav_home_link">
