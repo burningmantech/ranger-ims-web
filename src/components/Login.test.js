@@ -17,7 +17,7 @@ function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
         {ui}
       </AuthenticatorContext.Provider>
     ),
-    renderOptions
+    ...renderOptions
   );
 }
 
