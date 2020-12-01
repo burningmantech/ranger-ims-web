@@ -6,6 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { AuthenticatorContext } from "../../context";
+import { URL } from "../../URL";
 
 
 export default class LoginDropdown extends Component {
@@ -50,6 +51,7 @@ export default class LoginDropdown extends Component {
       }
       return (
         <NavDropdown title={user.username} id="nav_user_dropdown">
+          <NavDropdown.Item href={URL.admin}>Admin</NavDropdown.Item>
           <NavDropdown.Item onSelect={onLogout}>Log Out</NavDropdown.Item>
         </NavDropdown>
       );
