@@ -15,6 +15,7 @@ import Loading from "./components/Loading";
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
 const Event = lazy(() => import("./routes/Event"));
+const Admin = lazy(() => import("./routes/Admin"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
 
@@ -62,6 +63,13 @@ export default class App extends Component {
               <Route exact path={`${URL.event}:eventID/`}>
                 <Login>
                   <EventWithParams />
+                </Login>
+              </Route>
+
+              {/* Admin Console */}
+              <Route exact path={URL.admin}>
+                <Login>
+                  <Admin />
                 </Login>
               </Route>
 
