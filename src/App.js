@@ -26,7 +26,7 @@ export default class App extends Component {
     super(props);
 
     this.authenticator = new Authenticator(new TestAuthentationSource());
-    this.ims = new IncidentManagementSystem("http://localhost/ims/api/bag");
+    this.ims = new IncidentManagementSystem("/ims/api/bag");
 
     this.state = {
       user: this.authenticator.user,
@@ -38,7 +38,7 @@ export default class App extends Component {
     }
   }
 
-  render() {
+  render = () => {
     const authContextValue = {authenticator: this.authenticator};
     const imsContextValue = {ims: this.ims};
 
