@@ -10,20 +10,8 @@ import { Component } from "react";
 import { URL } from "../../URL";
 
 import { Authenticator, TestAuthentationSource, User } from "../../auth";
-import { AuthenticatorContext } from "../../context";
+import { renderWithAuthenticator } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";
-
-
-function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
-  return render(
-    (
-      <AuthenticatorContext.Provider value={{authenticator: authenticator}}>
-        {ui}
-      </AuthenticatorContext.Provider>
-    ),
-    renderOptions
-  );
-}
 
 
 function testAuthenticator(user) {

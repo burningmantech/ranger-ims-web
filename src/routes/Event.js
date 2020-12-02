@@ -13,7 +13,7 @@ export default class Event extends Component {
     super(props);
   }
 
-  render() {
+  render = () => {
     return (
       <Page>
         <h1>Event: {this.props.id}</h1>
