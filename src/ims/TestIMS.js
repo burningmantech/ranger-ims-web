@@ -4,6 +4,7 @@ import IncidentManagementSystem from "./IMS";
 export const theBag = {
   urls: {
     bag: "/ims/api/bag",
+    event: "/ims/api/events/<eventID>/",
     events: "/ims/api/events/",
   },
 }
