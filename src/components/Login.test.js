@@ -6,20 +6,8 @@ import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
 import { Authenticator, TestAuthentationSource, User } from "../auth";
-import { AuthenticatorContext } from "../context";
+import { renderWithAuthenticator } from "../contextTesting";
 import Login from "./Login";
-
-
-function renderWithAuthenticator (content, authenticator, ...renderOptions) {
-  return render(
-    (
-      <AuthenticatorContext.Provider value={{authenticator: authenticator}}>
-        {content}
-      </AuthenticatorContext.Provider>
-    ),
-    ...renderOptions
-  );
-}
 
 
 function testAuthenticator(user) {
