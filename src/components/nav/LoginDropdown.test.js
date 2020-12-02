@@ -14,11 +14,11 @@ import { AuthenticatorContext } from "../../context";
 import LoginDropdown from "./LoginDropdown";
 
 
-function renderWithAuthenticator (ui, authenticator, ...renderOptions) {
+function renderWithAuthenticator (content, authenticator, ...renderOptions) {
   return render(
     (
       <AuthenticatorContext.Provider value={{authenticator: authenticator}}>
-        {ui}
+        {content}
       </AuthenticatorContext.Provider>
     ),
     ...renderOptions
