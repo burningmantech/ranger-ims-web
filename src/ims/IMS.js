@@ -14,7 +14,7 @@ export default class IncidentManagementSystem {
   }
 
   _loadBag = async () => {
-    console.log("Retrieving bag from IMS server.");
+    console.log("Retrieving bag from IMS server...");
 
     const headers = new Headers({
       // "User-Agent": "ranger-ims-web",
@@ -29,6 +29,8 @@ export default class IncidentManagementSystem {
     );
     const response = await this._fetch(request);
     const bag = await response.json();
+
+    console.log("IMS bag: " + JSON.stringify(bag));
 
     if (bag.urls == null) {
       throw new Error("Bag does not have URLs");
