@@ -12,6 +12,8 @@ import { URL } from "./URL";
 
 import Loading from "./components/Loading";
 
+import "./App.css";
+
 
 const Login = lazy(() => import("./components/Login"));
 const Home = lazy(() => import("./routes/Home"));
