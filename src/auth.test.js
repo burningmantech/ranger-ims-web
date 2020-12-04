@@ -3,38 +3,6 @@ import moment from "moment";
 import { Authenticator, TestAuthentationSource, User } from "./auth";
 
 
-expect.extend({
-  toBeAfterMoment(received, other) {
-    if (received.isAfter(other)) {
-      return {
-        message: () => `expected ${received} not to be after ${other}`,
-        pass: true,
-      }
-    }
-    else {
-      return {
-        message: () => `expected ${received} to be after ${other}`,
-        pass: false,
-      }
-    }
-  },
-  toBeSameAsMoment(received, other) {
-    if (received.isSame(other)) {
-      return {
-        message: () => `expected ${received} not to be the same as ${other}`,
-        pass: true,
-      }
-    }
-    else {
-      return {
-        message: () => `expected ${received} to be the same as ${other}`,
-        pass: false,
-      }
-    }
-  },
-});
-
-
 describe("User", () => {
 
   test("username is defined", () => {

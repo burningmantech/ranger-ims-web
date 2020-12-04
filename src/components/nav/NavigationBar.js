@@ -4,7 +4,7 @@ import Image from "react-bootstrap/Image";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 
-import { URL } from "../../URL";
+import { URLs } from "../../URLs";
 
 import EventDropdown from "./EventDropdown";
 import LoginDropdown from "./LoginDropdown";
@@ -17,7 +17,7 @@ export default class NavigationBar extends Component {
   render = () => {
     return (
       <Navbar id={this.props.id}>
-        <Navbar.Brand href={URL.home} id="nav_home_link">
+        <Navbar.Brand href={URLs.home} id="nav_home_link">
           <Image id="nav_home_image"
             width="50"
             height="33"

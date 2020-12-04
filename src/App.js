@@ -8,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Authenticator, TestAuthentationSource } from "./auth";
 import { AuthenticatorContext, IMSContext } from "./context";
 import IncidentManagementSystem from "./ims/IMS";
-import { URL } from "./URL";
+import { URLs } from "./URLs";
 
 import Loading from "./components/Loading";
 
@@ -21,6 +21,8 @@ const Event = lazy(() => import("./routes/Event"));
 const Admin = lazy(() => import("./routes/Admin"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
+const imsURL = new URL("http://localhost/ims/api/bag");
+
 
 export default class App extends Component {
 
@@ -28,7 +30,7 @@ export default class App extends Component {
     super(props);
 
     this.authenticator = new Authenticator(new TestAuthentationSource());
-    this.ims = new IncidentManagementSystem("/ims/api/bag");
+    this.ims = new IncidentManagementSystem(imsURL);
 
     this.state = {
       user: this.authenticator.user,
@@ -50,29 +52,29 @@ export default class App extends Component {
           <Switch>
 
             {/* Send root URL to Home screen URL */}
-            <Route exact path={URL.root}>
-              <Redirect to={URL.home} />
+            <Route exact path={URLs.root}>
+              <Redirect to={URLs.home} />
             </Route>
 
             <AuthenticatorContext.Provider value={authContextValue}>
               <IMSContext.Provider value={imsContextValue}>
 
                 {/* Home Screen */}
-                <Route exact path={URL.home}>
+                <Route exact path={URLs.home}>
                   <Login>
                     <Home />
                   </Login>
                 </Route>
 
                 {/* Event Screen */}
-                <Route exact path={`${URL.event}:eventID/`}>
+                <Route exact path={`${URLs.event}:eventID/`}>
                   <Login>
                     <EventWithParams />
                   </Login>
                 </Route>
 
                 {/* Admin Console */}
-                <Route exact path={URL.admin}>
+                <Route exact path={URLs.admin}>
                   <Login>
                     <Admin />
                   </Login>

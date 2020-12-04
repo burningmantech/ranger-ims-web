@@ -7,8 +7,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { URL } from "../../URL";
-
 import { Authenticator, TestAuthentationSource, User } from "../../auth";
 import { renderWithAuthenticator } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";

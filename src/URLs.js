@@ -3,10 +3,10 @@ const homeURL = `${rootURL}ims/`;
 const eventsURL = `${homeURL}events/`;
 const adminURL = `${homeURL}admin/`;
 
-export const URL = {
+export const URLs = {
   root: rootURL,
   home: homeURL,
   event: eventsURL,
   admin: adminURL,
 }
-Object.freeze(URL);
+Object.freeze(URLs);
