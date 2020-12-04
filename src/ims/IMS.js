@@ -17,8 +17,7 @@ export default class IncidentManagementSystem {
     console.log("Retrieving bag from IMS server...");
 
     const headers = new Headers({
-      // "User-Agent": "ranger-ims-web",
-      // "Content-Type": "application/json",
+      "Content-Type": "application/json",
     });
     const request = new Request(
       this.bagURL,

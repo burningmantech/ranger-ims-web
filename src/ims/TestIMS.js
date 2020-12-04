@@ -12,7 +12,14 @@ export const theBag = {
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
+  constructor(bagURL) {
+    super(bagURL);
+    this.requestsReceived = [];
+  }
+
   _fetch = async (request) => {
+    this.requestsReceived.push(request);
+
     const url = new URL(request.url);
 
     switch (url.pathname) {

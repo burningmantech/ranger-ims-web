@@ -40,7 +40,20 @@ describe("IMS", () => {
     expect(ims._bag).toBeNull();
   });
 
-  test("load bag, check urls", async () => {
+  test("load bag: request content type", async () => {
+    const now = moment();
+    const ims = testIncidentManagementSystem();
+
+    const bag = await ims.bag();
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.headers.has("Content-Type")).toBe(true);
+  });
+
+  test("load bag: retrieved urls", async () => {
     const now = moment();
     const ims = testIncidentManagementSystem();
 
