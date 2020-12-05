@@ -1,3 +1,4 @@
+import { TestAuthentationSource } from "../auth";
 import IncidentManagementSystem from "./IMS";
 
 
@@ -15,7 +16,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
   constructor(bagURL) {
     super(bagURL);
+
     this.requestsReceived = [];
+    this._authenticationSource = new TestAuthentationSource();
+  }
+
+  _notFoundResponse = () => {
+    return new Response(
+      "Resource not found",
+      { status: 404, headers: { "Content-Type": "text/plain" } },
+    )
   }
 
   _jsonResponse = (json) => {
@@ -25,11 +35,19 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     )
   }
 
-  _notFoundResponse = () => {
-    return new Response(
-      "Resource not found",
-      { status: 404, headers: { "Content-Type": "text/plain" } },
-    )
+  _authResponse = (request) => {
+    const requestJSON = JSON.stringify(request.json());
+    const username = requestJSON.identification;
+    const password = requestJSON.password;
+
+    console.log("Request JSON: " + requestJSON);
+
+    return this._jsonResponse({
+      token: "JWT_TOKEN_GOES_HERE",
+      person_id: "PERSON_ID_GOES_HERE",
+      username: "USERNAME_GOES_HERE",
+      expires_in: "EXPIRES_IN_GOES_HERE",
+    });
   }
 
   _fetch = async (request) => {
@@ -43,7 +61,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case theBag.urls.bag:
         return this._jsonResponse(theBag);
       case theBag.urls.auth:
-        return this._jsonResponse("");
+        return this._authResponse(request);
       default:
         console.log("Not found: " + url.pathname);
         return this._notFoundResponse();

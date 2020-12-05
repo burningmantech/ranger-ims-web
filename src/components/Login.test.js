@@ -14,7 +14,7 @@ function testAuthenticator(user) {
   const authenticator = new Authenticator(new TestAuthentationSource());
   if (user !== undefined) {
     authenticator.user = user;
-    authenticator.expiration = moment().add(1, "hour")
+    authenticator.user.credentials.expiration = moment().add(1, "hour")
   }
   return authenticator;
 }
@@ -35,7 +35,7 @@ describe("Login component", () => {
   test("expired user -> login button", () => {
     const username = "Cheese Butter";
     const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<Login />, authenticator);
 

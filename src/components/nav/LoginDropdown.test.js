@@ -16,7 +16,7 @@ function testAuthenticator(user) {
   const authenticator = new Authenticator(new TestAuthentationSource());
   if (user !== undefined) {
     authenticator.user = user;
-    authenticator.expiration = moment().add(1, "hour")
+    authenticator.user.credentials.expiration = moment().add(1, "hour")
   }
   return authenticator;
 }
@@ -45,7 +45,7 @@ describe("LoginDropdown component", () => {
   test("expired user -> not logged in message", () => {
     const username = "Cheese Butter";
     const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<LoginDropdown />, authenticator);
 
@@ -55,7 +55,9 @@ describe("LoginDropdown component", () => {
   test("expired user -> console message", () => {
     const username = "Cheese Butter";
     const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    const expiration = moment().subtract(1, "second");
+
+    authenticator.user.credentials.expiration = expiration;
 
     console.log = jest.fn();
 
@@ -63,7 +65,7 @@ describe("LoginDropdown component", () => {
 
     expect(console.log).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
-      `expired ${authenticator.expiration} (a few seconds ago)`
+      `expired ${expiration} (a few seconds ago)`
     );
   });
 

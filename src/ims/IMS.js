@@ -67,7 +67,10 @@ export default class IncidentManagementSystem {
     return this._bag;
   }
 
-  /* Authentication login hook for Authenticator */
+  /*
+   * Authentication source login hook for Authenticator.
+   * See TestAuthentationSource.login for an example.
+   */
   login = async (username, credentials) => {
     if (username == null) {
       throw new Error("username is required")
@@ -84,13 +87,16 @@ export default class IncidentManagementSystem {
     const bag = await this.bag();
     const url = bag.urls.auth;
     const imsCredentials = await this._fetchJSON(url);
+    const user = new User(username, imsCredentials);
+    this._user = user;
 
-    this._user = new User(username, imsCredentials);
-
-    return imsCredentials;
+    return user;
   }
 
-  /* Authentication logout hook for Authenticator */
+  /*
+   * Authentication source logout hook for Authenticator.
+   * See TestAuthentationSource.login for an example.
+   */
   logout = async () => { return true; }
 
 }
