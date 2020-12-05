@@ -71,8 +71,8 @@ describe("IMS", () => {
     const ims = testIncidentManagementSystem();
     const bag = await ims.bag();
 
-    expect(bag).not.toBeUndefined();
-    expect(bag.urls).not.toBeUndefined();
+    expect(bag).toBeDefined();
+    expect(bag.urls).toBeDefined();
 
     for (const name in theBag.urls) {
       expect(bag.urls[name]).toEqual(theBag.urls[name]);
@@ -131,6 +131,24 @@ describe("IMS", () => {
     expect(request).toBeJSONRequest();
   });
 
+  // test("login: request user & password", async () => {
+  //   const username = "Hubcap"
+  //   const password = username
+  //   const ims = testIncidentManagementSystem();
+
+  //   await ims.login(username, {password: password});
+
+  //   expect(ims.requestsReceived).toHaveLength(2);
+
+  //   const request = ims.requestsReceived[1];
+  //   const json = await request.json();
+
+  //   expect(json.username).toBeDefined();
+  //   expect(json.username).not.toBeNull();
+  //   expect(json.password).toBeDefined();
+  //   expect(json.password).not.toBeNull();
+  // });
+
   test("login -> user", async () => {
     const username = "Hubcap"
     const password = username
@@ -140,10 +158,20 @@ describe("IMS", () => {
     await ims.login(username, {password: password});
 
     expect(ims.user).not.toBeNull();
-    expect(ims.user.username).not.toBeNull();
   });
 
-  test("login -> non-expired credentials", async () => {
+  test("login -> credentials with token", async () => {
+    const username = "Hubcap"
+    const password = username
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+
+    expect(ims.user).not.toBeNull();
+    expect(ims.user.credentials.token).toBeTruthy();
+  });
+
+  test("login -> credentials not expired", async () => {
     const username = "Hubcap"
     const password = username
     const ims = testIncidentManagementSystem();

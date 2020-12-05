@@ -11,7 +11,7 @@ describe("Event component", () => {
 
     render(<Event id={eventID} />);
 
-    expect(screen.queryByText("Event: " + eventID)).toBeInTheDocument();
+    expect(screen.queryByText(`Event: ${eventID}`)).toBeInTheDocument();
   });
 
 });

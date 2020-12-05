@@ -12,11 +12,12 @@ import { renderWithAuthenticator } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";
 
 
-function testAuthenticator(user) {
+function testAuthenticator(username) {
   const authenticator = new Authenticator(new TestAuthentationSource());
-  if (user !== undefined) {
-    authenticator.user = user;
-    authenticator.user.credentials.expiration = moment().add(1, "hour")
+  if (username !== undefined) {
+    authenticator.user = new User(
+      username, { expiration: moment().add(1, "hour") }
+    );
   }
   return authenticator;
 }
@@ -44,7 +45,7 @@ describe("LoginDropdown component", () => {
 
   test("expired user -> not logged in message", () => {
     const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
+    const authenticator = testAuthenticator(username);
     authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<LoginDropdown />, authenticator);
@@ -54,7 +55,7 @@ describe("LoginDropdown component", () => {
 
   test("expired user -> console message", () => {
     const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
+    const authenticator = testAuthenticator(username);
     const expiration = moment().subtract(1, "second");
 
     authenticator.user.credentials.expiration = expiration;
@@ -73,7 +74,7 @@ describe("LoginDropdown component", () => {
     const username = "Cheese Butter";
 
     renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(new User(username))
+      <LoginDropdown />, testAuthenticator(username)
     );
 
     expect(screen.queryByText(username)).toBeInTheDocument();
@@ -83,7 +84,7 @@ describe("LoginDropdown component", () => {
     const username = "Cheese Butter";
 
     renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(new User(username))
+      <LoginDropdown />, testAuthenticator(username)
     );
 
     await act(async () => {
@@ -95,7 +96,7 @@ describe("LoginDropdown component", () => {
 
   test("log out item -> log out", async () => {
     const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
+    const authenticator = testAuthenticator(username);
 
     let notified = false;
     authenticator.delegate = () => { notified = true; }

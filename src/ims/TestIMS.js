@@ -37,24 +37,21 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     )
   }
 
-  _authResponse = (request) => {
-    const requestJSON = JSON.stringify(request.json());
+  _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
     const password = requestJSON.password;
     const expiration = moment().add(TestAuthentationSource.timeout);
 
-    console.log("Request JSON: " + requestJSON);
-
     return this._jsonResponse({
       token: "JWT_TOKEN_GOES_HERE",
       person_id: "PERSON_ID_GOES_HERE",
-      username: "USERNAME_GOES_HERE",
+      username: username,
       expires_in: expiration.toISOString(),
     });
   }
 
   _fetch = async (request) => {
-    console.log("Issuing (fake) request to: " + request.url);
+    console.log(`Issuing request: ${request.method} ${request.url}`);
 
     this.requestsReceived.push(request);
 
@@ -62,13 +59,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     switch (url.pathname) {
       case theBag.urls.bag:
-        return this._jsonResponse(theBag);
+        if (request.method === "GET") {
+          return this._jsonResponse(theBag);
+        }
       case theBag.urls.auth:
-        return this._authResponse(request);
-      default:
-        console.log("Not found: " + url.pathname);
-        return this._notFoundResponse();
+        if (request.method === "POST") {
+          return await this._authResponse(await request.json());
+        }
     }
+
+    throw new Error(`Unexpected request: ${request.method} ${url.pathname}`);
   }
 }
 

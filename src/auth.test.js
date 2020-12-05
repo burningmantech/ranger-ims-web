@@ -5,17 +5,21 @@ import { Authenticator, TestAuthentationSource, User } from "./auth";
 
 describe("User", () => {
 
-  test("username is defined", () => {
-    const message = "username is not defined";
+  test("username is required", () => {
+    const message = "username is required";
 
     expect(() => {new User()}).toThrow(message);
     expect(() => {new User(undefined, {})}).toThrow(message);
+    expect(() => {new User(null, {})}).toThrow(message);
   });
 
-  test("username is not null", () => {
-    const message = "username is null";
+  test("credentials is required", () => {
+    const username = "Cheese Butter";
+    const message = "credentials is required";
 
-    expect(() => {new User(null, {})}).toThrow(message);
+    expect(() => {new User(username)}).toThrow(message);
+    expect(() => {new User(username, undefined)}).toThrow(message);
+    expect(() => {new User(username, null)}).toThrow(message);
   });
 
   test("toJSON", () => {
@@ -92,6 +96,7 @@ describe("TestAuthentationSource", () => {
 
     const expiration = user.credentials.expiration;
 
+    expect(expiration).toBeDefined();
     expect(expiration).not.toBeNull();
     expect(expiration).toBeAfterMoment(now);
   });
@@ -155,16 +160,11 @@ describe("Authenticator", () => {
     Authenticator.eraseStorage();
   });
 
-  test("authentication source is defined", () => {
-    const message = "authentication source is not defined";
+  test("authentication source is required", () => {
+    const message = "authentication source is required";
 
     expect(() => {new Authenticator()}).toThrow(message);
     expect(() => {new Authenticator(undefined)}).toThrow(message);
-  });
-
-  test("authentication source is not null", () => {
-    const message = "authentication source is null";
-
     expect(() => {new Authenticator(null)}).toThrow(message);
   });
 
@@ -180,7 +180,7 @@ describe("Authenticator", () => {
     verifyCleanAuthStorage();
 
     const username = "Cheese Butter";
-    const credentials = {};
+    const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const expiration = moment();
     const store = window.localStorage;
@@ -198,7 +198,7 @@ describe("Authenticator", () => {
     verifyCleanAuthStorage();
 
     const username = "Cheese Butter";
-    const credentials = {password: username};
+    const credentials = { password: username };
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
     const now = moment();

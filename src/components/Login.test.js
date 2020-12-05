@@ -10,11 +10,12 @@ import { renderWithAuthenticator } from "../contextTesting";
 import Login from "./Login";
 
 
-function testAuthenticator(user) {
+function testAuthenticator(username) {
   const authenticator = new Authenticator(new TestAuthentationSource());
-  if (user !== undefined) {
-    authenticator.user = user;
-    authenticator.user.credentials.expiration = moment().add(1, "hour")
+  if (username !== undefined) {
+    authenticator.user = new User(
+      username, { expiration: moment().add(1, "hour") }
+    );
   }
   return authenticator;
 }
@@ -34,7 +35,7 @@ describe("Login component", () => {
 
   test("expired user -> login button", () => {
     const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
+    const authenticator = testAuthenticator(username);
     authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<Login />, authenticator);
@@ -43,7 +44,8 @@ describe("Login component", () => {
   });
 
   test("user -> no login button", () => {
-    const authenticator = testAuthenticator(new User("Cheese Butter"));
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(username);
 
     renderWithAuthenticator(<Login />, authenticator);
 
@@ -51,7 +53,8 @@ describe("Login component", () => {
   });
 
   test("user -> logged in message", () => {
-    const authenticator = testAuthenticator(new User("Cheese Butter"));
+    const username = "Cheese Butter";
+    const authenticator = testAuthenticator(username);
     const content = "Hello, World!";
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);

@@ -12,27 +12,26 @@ export class User {
    * Deserialize a User from JSON.
    */
   static fromJSON = (json) => {
-    if (json.username === undefined) {
-      throw new Error("No username provided.");
+    if (json.credentials != null) {
+      json.credentials.expiration = moment(json.credentials.expiration);
     }
-    if (json.credentials === undefined) {
-      throw new Error("No credentials provided.");
-    }
-    if (json.credentials.expiration === undefined) {
-      throw new Error("No expiration provided in credentials.");
-    }
-
-    json.credentials.expiration = moment(json.credentials.expiration);
-
     return new User(json.username, json.credentials);
   }
 
-  constructor(username, credentials = {}) {
-    if (username === undefined) {
-      throw new Error("username is not defined");
+  constructor(username, credentials) {
+    if (username == null) {
+      throw new Error("username is required");
     }
-    if (username === null) {
-      throw new Error("username is null");
+    if (credentials == null) {
+      throw new Error("credentials is required");
+    }
+    if (credentials.expiration == null) {
+      throw new Error("credentials.expiration is required");
+    }
+    if (! credentials.expiration.isValid()) {
+      throw new Error(
+        `credentials.expiration is not valid: ${credentials.expiration}`
+      );
     }
 
     this.username = username;
@@ -67,19 +66,13 @@ export class TestAuthentationSource {
    *    re-usable credentials in the created User object.
    */
   login = async (username, credentials) => {
-    if (credentials.password === username) {
-      const expiration = moment().add(TestAuthentationSource.timeout);
-
-      return new User(
-        username,
-        {
-          expiration: expiration,
-        }
-      );
-    }
-    else {
+    if (credentials.password !== username) {
       return null;
     }
+
+    const expiration = moment().add(TestAuthentationSource.timeout);
+
+    return new User(username, { expiration: expiration });
   }
 
   logout = async () => { return true; }
@@ -110,11 +103,8 @@ export class Authenticator {
   }
 
   constructor(source) {
-    if (source === undefined) {
-      throw new Error("authentication source is not defined");
-    }
-    if (source === null) {
-      throw new Error("authentication source is null");
+    if (source == null) {
+      throw new Error("authentication source is required");
     }
 
     this.source = source;
@@ -168,7 +158,7 @@ export class Authenticator {
     }
 
     if (sourceClass !== this.source.constructor.name) {
-      console.log("Ignoring stored credentials from class: " + sourceClass);
+      console.log(`Ignoring stored credentials from class: ${sourceClass}`);
       return;
     }
 
@@ -183,7 +173,7 @@ export class Authenticator {
   static _sourceClassFromStorage = () => {
     const store = window.localStorage;
     const sourceClass = store.getItem(Authenticator.STORE_KEY_CLASS);
-    if (!sourceClass) {
+    if (sourceClass == null) {
       return null;
     }
     return sourceClass;
@@ -217,8 +207,8 @@ export class Authenticator {
 
     if (user !== null) {
       console.log(
-        "Logged in as " + user.username +
-        " until " + user.credentials.expiration.toISOString()
+        `Logged in as ${user.username} until ` +
+        user.credentials.expiration.toISOString()
       );
       this.user = user;
       this._notifyDelegate();
@@ -256,7 +246,7 @@ export class Authenticator {
     }
 
     const expiration = user.credentials.expiration;
-    if (expiration === null) {
+    if (expiration == null) {
       return false;
     }
     else if (moment().isAfter(expiration)) {

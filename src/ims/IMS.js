@@ -15,31 +15,38 @@ export default class IncidentManagementSystem {
     this._bag = null;
   }
 
-  _fetch = async (request) => {
-    console.log("Issuing request: " + request);
-    return await fetch(request);
+  _fetch = (request) => {
+    console.log(`Issuing request: ${request.method} ${request.url}`);
+    return fetch(request);
   }
 
-  _fetchJSON = async (url, headers={}, json="") => {
+  _fetchJSON = async (url, headers={}, json=null) => {
     if (headers["Content-Type"] === undefined) {
       headers["Content-Type"] = "application/json";
     }
     else if (headers["Content-Type"] !== "application/json") {
-      throw new Error("Not JSON content-type: " + headers["Content-Type"]);
+      throw new Error(`Not JSON content-type: ${headers["Content-Type"]}`);
     }
 
     if (typeof(url) === "string") {
       url = this.bagURL.origin + url;
     }
 
-    const request = new Request(
-      url, { mode: "no-cors", headers: new Headers(headers) }
-    );
+    const requestOptions = { mode: "no-cors", headers: new Headers(headers) }
+    if (json == null) {
+      requestOptions.method = "GET";
+    }
+    else {
+      requestOptions.method = "POST";
+      requestOptions.body = JSON.stringify(json);
+    }
+
+    const request = new Request(url, requestOptions);
     const response = await this._fetch(request);
 
     const responseContentType = response.headers.get("Content-Type");
     if (responseContentType !== "application/json") {
-      throw new Error("Response type is not JSON: " + responseContentType);
+      throw new Error(`Response type is not JSON: ${responseContentType}`);
     }
 
     return await response.json();
@@ -50,10 +57,8 @@ export default class IncidentManagementSystem {
 
     const bag = await this._fetchJSON(this.bagURL);
 
-    console.log("IMS bag: " + JSON.stringify(bag));
-
     if (bag.urls == null) {
-      throw new Error("Bag does not have URLs: " + bag);
+      throw new Error(`Bag does not have URLs: ${bag}`);
     }
 
     return bag;
@@ -86,23 +91,37 @@ export default class IncidentManagementSystem {
 
     console.log("Authenticating to IMS server...");
 
+    const requestJSON = {
+      identification: username, password: credentials.password
+    };
     const bag = await this.bag();
     const url = bag.urls.auth;
-    const result = await this._fetchJSON(url);
+    const responseJSON = await this._fetchJSON(url, {}, requestJSON);
 
-    console.log("IMS Credentials: " + JSON.stringify(result));
+    if (responseJSON.username !== username) {
+      throw new Error(
+        `username in retrieved credentials (${responseJSON.username}) ` +
+        `does not match username submitted (${username})`
+      );
+    }
 
-    if (result.expires_in == null) {
+    if (responseJSON.token == null) {
+      throw new Error("No token in retrieved credentials");
+    }
+
+    if (responseJSON.expires_in == null) {
       throw new Error("No expiration in retrieved credentials");
     }
-    const expiration = moment(result.expires_in);
+    const expiration = moment(responseJSON.expires_in);
     if (! expiration.isValid()) {
       throw new Error(
-        "Invalid expiration in retrieved credentials: " + result.expires_in
+        "Invalid expiration in retrieved credentials: " +
+        responseJSON.expires_in
       );
     }
 
     const imsCredentials = {
+      token: responseJSON.token,
       expiration: expiration,
     }
 

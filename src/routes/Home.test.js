@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 
@@ -17,7 +19,9 @@ describe("Home component", () => {
   test("heading", async () => {
     const username = "Cheese Butter";
 
-    render(<Home user={new User(username)} />);
+    render(
+      <Home user={new User(username, { expiration: moment().add(1, "hour")})} />
+    );
 
     expect(
       screen.queryByText("Ranger Incident Management System")
