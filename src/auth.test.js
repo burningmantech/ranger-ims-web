@@ -364,7 +364,6 @@ describe("Authenticator", () => {
     const user = authenticator.user;
 
     expect(user.username).toEqual(username);
-    expect(user.credentials).not.toBeNull();
 
     expect(authenticator.isLoggedIn()).toBe(true);
   });

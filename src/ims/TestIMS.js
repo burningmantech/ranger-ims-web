@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import { TestAuthentationSource } from "../auth";
 import IncidentManagementSystem from "./IMS";
 
@@ -39,6 +41,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const requestJSON = JSON.stringify(request.json());
     const username = requestJSON.identification;
     const password = requestJSON.password;
+    const expiration = moment().add(TestAuthentationSource.timeout);
 
     console.log("Request JSON: " + requestJSON);
 
@@ -46,7 +49,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       token: "JWT_TOKEN_GOES_HERE",
       person_id: "PERSON_ID_GOES_HERE",
       username: "USERNAME_GOES_HERE",
-      expires_in: "EXPIRES_IN_GOES_HERE",
+      expires_in: expiration.toISOString(),
     });
   }
 

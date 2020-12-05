@@ -103,25 +103,26 @@ describe("IMS", () => {
 
   test("login: credentials may not be undefined", async () => {
     const username = "Hubcap"
-    const ims = testIncidentManagementSystem();
     const message = "credentials is required";
+    const ims = testIncidentManagementSystem();
 
     await expect(ims.login(username)).toRejectWithMessage(message);
   });
 
   test("login: credentials may not be null", async () => {
     const username = "Hubcap"
-    const ims = testIncidentManagementSystem();
     const message = "credentials is required";
+    const ims = testIncidentManagementSystem();
 
     await expect(ims.login(username, null)).toRejectWithMessage(message);
   });
 
   test("login: request content type", async () => {
-    const ims = testIncidentManagementSystem();
     const username = "Hubcap"
     const password = username
-    const credentials = await ims.login(username, {password: password});
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
 
     expect(ims.requestsReceived).toHaveLength(2);
 
@@ -130,24 +131,28 @@ describe("IMS", () => {
     expect(request).toBeJSONRequest();
   });
 
-  // test("login -> returned credentials match those in stored user", async () => {
-  //   const ims = testIncidentManagementSystem();
-  //   const username = "Hubcap"
-  //   const password = username
-  //   const credentials = await ims.login(username, {password: password});
+  test("login -> user", async () => {
+    const username = "Hubcap"
+    const password = username
+    const ims = testIncidentManagementSystem();
+    const now = moment();
 
-  //   expect(ims._user.credentials).toBe(credentials);
-  // });
+    await ims.login(username, {password: password});
 
-  // test("login -> returned credentials ...", async () => {
-  //   const ims = testIncidentManagementSystem();
-  //   const username = "Hubcap"
-  //   const password = username
-  //   const credentials = await ims.login(username, {password: password});
+    expect(ims.user).not.toBeNull();
+    expect(ims.user.username).not.toBeNull();
+  });
 
-  //   console.log("credentials: " + JSON.stringify(credentials));
+  test("login -> non-expired credentials", async () => {
+    const username = "Hubcap"
+    const password = username
+    const ims = testIncidentManagementSystem();
+    const now = moment();
 
-  //   expect(true).toBe(false);
-  // });
+    await ims.login(username, {password: password});
+
+    expect(ims.user).not.toBeNull();
+    expect(ims.user.credentials.expiration).toBeAfterMoment(now);
+  });
 
 });

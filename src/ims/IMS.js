@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import { User } from "../auth";
 
 
@@ -8,9 +10,9 @@ export default class IncidentManagementSystem {
       throw new TypeError("bagURL must be URL");
     }
 
+    this.user = null;
     this.bagURL = bagURL;
     this._bag = null;
-    this._user = null;
   }
 
   _fetch = async (request) => {
@@ -86,11 +88,25 @@ export default class IncidentManagementSystem {
 
     const bag = await this.bag();
     const url = bag.urls.auth;
-    const imsCredentials = await this._fetchJSON(url);
-    const user = new User(username, imsCredentials);
-    this._user = user;
+    const result = await this._fetchJSON(url);
 
-    return user;
+    console.log("IMS Credentials: " + JSON.stringify(result));
+
+    if (result.expires_in == null) {
+      throw new Error("No expiration in retrieved credentials");
+    }
+    const expiration = moment(result.expires_in);
+    if (! expiration.isValid()) {
+      throw new Error(
+        "Invalid expiration in retrieved credentials: " + result.expires_in
+      );
+    }
+
+    const imsCredentials = {
+      expiration: expiration,
+    }
+
+    this.user = new User(username, imsCredentials);
   }
 
   /*
