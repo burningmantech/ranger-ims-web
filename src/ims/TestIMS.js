@@ -64,7 +64,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
       case theBag.urls.auth:
         if (request.method === "POST") {
-          return await this._authResponse(await request.json());
+          const requestJSON = await request.json();
+          request._json = requestJSON;
+          return await this._authResponse(requestJSON);
         }
     }
 

@@ -131,23 +131,23 @@ describe("IMS", () => {
     expect(request).toBeJSONRequest();
   });
 
-  // test("login: request user & password", async () => {
-  //   const username = "Hubcap"
-  //   const password = username
-  //   const ims = testIncidentManagementSystem();
+  test("login: request body", async () => {
+    const username = "Hubcap"
+    const password = username
+    const ims = testIncidentManagementSystem();
 
-  //   await ims.login(username, {password: password});
+    await ims.login(username, {password: password});
 
-  //   expect(ims.requestsReceived).toHaveLength(2);
+    expect(ims.requestsReceived).toHaveLength(2);
 
-  //   const request = ims.requestsReceived[1];
-  //   const json = await request.json();
+    const request = ims.requestsReceived[1];
+    const json = request._json;
 
-  //   expect(json.username).toBeDefined();
-  //   expect(json.username).not.toBeNull();
-  //   expect(json.password).toBeDefined();
-  //   expect(json.password).not.toBeNull();
-  // });
+    expect(json.identification).toBeDefined();
+    expect(json.identification).not.toBeNull();
+    expect(json.password).toBeDefined();
+    expect(json.password).not.toBeNull();
+  });
 
   test("login -> user", async () => {
     const username = "Hubcap"
