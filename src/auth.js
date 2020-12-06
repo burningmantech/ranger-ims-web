@@ -28,11 +28,6 @@ export class User {
     if (credentials.expiration == null) {
       throw new Error("credentials.expiration is required");
     }
-    if (! credentials.expiration.isValid()) {
-      throw new Error(
-        `credentials.expiration is not valid: ${credentials.expiration}`
-      );
-    }
 
     this.username = username;
     this.credentials = credentials;
@@ -237,7 +232,7 @@ export class Authenticator {
   }
 
   /*
-   * Determine whether we have a with non-expired credentials.
+   * Determine whether we have a user with non-expired credentials.
    */
   isLoggedIn = () => {
     const user = this.user;
@@ -246,10 +241,7 @@ export class Authenticator {
     }
 
     const expiration = user.credentials.expiration;
-    if (expiration == null) {
-      return false;
-    }
-    else if (moment().isAfter(expiration)) {
+    if (moment().isAfter(expiration)) {
       return false;
     }
     else {

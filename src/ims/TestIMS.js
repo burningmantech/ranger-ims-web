@@ -23,12 +23,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this._authenticationSource = new TestAuthentationSource();
   }
 
-  _notFoundResponse = () => {
-    return new Response(
-      "Resource not found",
-      { status: 404, headers: { "Content-Type": "text/plain" } },
-    )
-  }
+  // _notFoundResponse = () => {
+  //   return new Response(
+  //     "Resource not found",
+  //     { status: 404, headers: { "Content-Type": "text/plain" } },
+  //   )
+  // }
 
   _jsonResponse = (json) => {
     return new Response(
@@ -70,6 +70,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
     }
 
+    /* istanbul ignore next */
     throw new Error(`Unexpected request: ${request.method} ${url.pathname}`);
   }
 }

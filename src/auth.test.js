@@ -22,6 +22,13 @@ describe("User", () => {
     expect(() => {new User(username, null)}).toThrow(message);
   });
 
+  test("credentials.expiration is required", () => {
+    const username = "Cheese Butter";
+    const message = "credentials.expiration is required";
+
+    expect(() => {new User(username, {})}).toThrow(message);
+  });
+
   test("toJSON", () => {
     const username = "Cheese Butter";
     const credentials = {
@@ -266,6 +273,19 @@ describe("Authenticator", () => {
     const { source, user } = await populateAuthStorage();
 
     window.localStorage.removeItem(Authenticator.STORE_KEY_CLASS);
+
+    const authenticator = new Authenticator(source);
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
+  });
+
+  test("loadFromStorage, populated, unknown class", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user } = await populateAuthStorage();
+
+    window.localStorage.setItem(Authenticator.STORE_KEY_CLASS, "XYZZY");
 
     const authenticator = new Authenticator(source);
 
