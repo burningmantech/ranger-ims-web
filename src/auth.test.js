@@ -14,7 +14,7 @@ describe("User", () => {
   });
 
   test("credentials is required", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const message = "credentials is required";
 
     expect(() => {new User(username)}).toThrow(message);
@@ -23,14 +23,14 @@ describe("User", () => {
   });
 
   test("credentials.expiration is required", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const message = "credentials.expiration is required";
 
     expect(() => {new User(username, {})}).toThrow(message);
   });
 
   test("toJSON", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {
       number: 1,
       text: "text",
@@ -46,7 +46,7 @@ describe("User", () => {
   });
 
   test("fromJSON", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {
       number: 1,
       text: "text",
@@ -63,7 +63,7 @@ describe("User", () => {
   });
 
   test("JSON round-trip through text", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {
       number: 1,
       text: "text",
@@ -141,7 +141,7 @@ function verifyCleanAuthStorage() {
  */
 async function populateAuthStorage(username, credentials, source) {
   if (!username) {
-    username = "Cheese Butter";
+    username = "Hubcap";
   }
   if (!credentials) {
     credentials = {password: username};
@@ -186,7 +186,7 @@ describe("Authenticator", () => {
   test("eraseStorage", () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const expiration = moment();
@@ -204,7 +204,7 @@ describe("Authenticator", () => {
   test("saveToStorage, logged in", async () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = { password: username };
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
@@ -232,7 +232,7 @@ describe("Authenticator", () => {
   test("saveToStorage, not logged in", () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {password: username};
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
@@ -352,7 +352,7 @@ describe("Authenticator", () => {
   test("load and save round-trip", async () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {password: username};
     const source = new TestAuthentationSource();
     const authenticator1 = new Authenticator(source);

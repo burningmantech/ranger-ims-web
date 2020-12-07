@@ -315,7 +315,7 @@ describe("IMS", () => {
 
   test("login: response with no token", async () => {
     const message = "No token in retrieved credentials";
-    const username = "Token";
+    const username = "No Token";
     const password = username;
     const ims = testIncidentManagementSystem();
 

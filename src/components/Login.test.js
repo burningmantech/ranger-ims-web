@@ -34,7 +34,7 @@ describe("Login component", () => {
   });
 
   test("expired user -> login button", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
     authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
@@ -44,7 +44,7 @@ describe("Login component", () => {
   });
 
   test("user -> no login button", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
 
     renderWithAuthenticator(<Login />, authenticator);
@@ -53,7 +53,7 @@ describe("Login component", () => {
   });
 
   test("user -> logged in message", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
     const content = "Hello, World!";
 
@@ -65,7 +65,7 @@ describe("Login component", () => {
   test("no user -> log in -> logged in message", async () => {
     const authenticator = testAuthenticator();
     const content = "Hello, World!"
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = username;
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);
@@ -82,7 +82,7 @@ describe("Login component", () => {
   test("no user -> invalid log in -> no logged in message", async () => {
     const authenticator = testAuthenticator();
     const content = "Hello, World!"
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = "Not My Password";
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);

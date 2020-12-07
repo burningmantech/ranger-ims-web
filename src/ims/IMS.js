@@ -87,13 +87,19 @@ export default class IncidentManagementSystem {
       throw new Error("password is required")
     }
 
-    console.log("Authenticating to IMS server...");
+    const bag = await this.bag();
+
+    console.log(`Authenticating to IMS server as ${username}...`);
 
     const requestJSON = {
       identification: username, password: credentials.password
     };
-    const bag = await this.bag();
     const responseJSON = await this._fetchJSON(bag.urls.auth, requestJSON, {});
+
+    if (responseJSON.status === "invalid-credentials") {
+      console.log(`Sent invalid credentials for ${username}`);
+      return;
+    }
 
     if (responseJSON.username !== username) {
       throw new Error(
@@ -123,6 +129,8 @@ export default class IncidentManagementSystem {
     }
 
     this.user = new User(username, imsCredentials);
+
+    return this.user;
   }
 
   /*

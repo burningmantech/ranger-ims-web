@@ -5,9 +5,8 @@ import {
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Authenticator, TestAuthentationSource } from "./auth";
+import { Authenticator } from "./auth";
 import { AuthenticatorContext, IMSContext } from "./context";
-import IncidentManagementSystem from "./ims/IMS";
 import { URLs } from "./URLs";
 
 import Loading from "./components/Loading";
@@ -21,16 +20,17 @@ const Event = lazy(() => import("./routes/Event"));
 const Admin = lazy(() => import("./routes/Admin"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
-const imsURL = "/ims/api/bag";
-
 
 export default class App extends Component {
 
   constructor(props) {
     super(props);
 
-    this.authenticator = new Authenticator(new TestAuthentationSource());
-    this.ims = new IncidentManagementSystem(imsURL);
+    if (props.ims == null) {
+      throw new Error("ims is required");
+    }
+
+    this.authenticator = new Authenticator(props.ims);
 
     this.state = {
       user: this.authenticator.user,
@@ -44,7 +44,7 @@ export default class App extends Component {
 
   render = () => {
     const authContextValue = {authenticator: this.authenticator};
-    const imsContextValue = {ims: this.ims};
+    const imsContextValue = {ims: this.props.ims};
 
     return (
       <Router>

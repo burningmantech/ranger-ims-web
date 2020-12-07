@@ -17,7 +17,7 @@ describe("Home component", () => {
   // });
 
   test("heading", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
 
     render(
       <Home user={new User(username, { expiration: moment().add(1, "hour")})} />

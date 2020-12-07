@@ -39,33 +39,46 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     )
   }
 
+  _authFailedResponse = () => {
+    return new Response(
+      JSON.stringify({ status: "invalid-credentials" }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    )
+  }
+
   _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
     const password = requestJSON.password;
     const expiration = moment().add(TestAuthentationSource.timeout);
 
-    let responseUsername;
-    if (username === "XYZZY") {
-      responseUsername = "Cretin";
-    }
-    else {
-      responseUsername = username;
-    }
-
     const responseJSON = {
       person_id: "PERSON_ID_GOES_HERE",
-      username: responseUsername,
+      username: username,
+      token: "JWT_TOKEN_GOES_HERE",
+      expires_in: expiration.toISOString(),
     };
 
-    if (username !== "Token") {
-      responseJSON.token = "JWT_TOKEN_GOES_HERE";
+    if (username != password) {
+      return this._authFailedResponse();
     }
 
-    if (username === "Friend of Larry") {
-      responseJSON.expires_in = "Whenever you like, dude.";
-    }
-    else if (username !== "Forever") {
-      responseJSON.expires_in = expiration.toISOString();
+    switch (username) {
+      case "Hubcap":
+        break
+      case "XYZZY":
+        responseJSON.username = "Cretin";
+        break;
+      case "No Token":
+        delete responseJSON.token;
+        break;
+      case "Friend of Larry":
+        responseJSON.expires_in = "Whenever you like, dude.";
+        break;
+      case "Forever":
+        delete responseJSON.expires_in;
+        break;
+      default:
+        return this._authFailedResponse();
     }
 
     return this._jsonResponse(responseJSON);

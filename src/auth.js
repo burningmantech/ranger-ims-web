@@ -200,7 +200,11 @@ export class Authenticator {
     console.log(`Logging in as ${username}...`);
     const user = await this.source.login(username, credentials);
 
-    if (user !== null) {
+    if (user == null) {
+      console.log("Login failed." + user)
+      return false;
+    }
+    else {
       console.log(
         `Logged in as ${user.username} until ` +
         user.credentials.expiration.toISOString()
@@ -208,10 +212,6 @@ export class Authenticator {
       this.user = user;
       this._notifyDelegate();
       return true;
-    }
-    else {
-      console.log("Login failed.")
-      return false;
     }
   }
 

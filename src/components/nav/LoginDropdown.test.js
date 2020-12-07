@@ -44,7 +44,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("expired user -> not logged in message", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
     authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
@@ -54,7 +54,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("expired user -> console message", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
     const expiration = moment().subtract(1, "second");
 
@@ -71,7 +71,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("user -> log out item", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
 
     renderWithAuthenticator(
       <LoginDropdown />, testAuthenticator(username)
@@ -81,7 +81,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("activate user menu -> log out item", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
 
     renderWithAuthenticator(
       <LoginDropdown />, testAuthenticator(username)
@@ -95,7 +95,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("log out item -> log out", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const authenticator = testAuthenticator(username);
 
     let notified = false;
