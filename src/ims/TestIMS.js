@@ -21,6 +21,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     this.requestsReceived = [];
     this._authenticationSource = new TestAuthentationSource();
+
+    fetch = jest.fn(this._mockFetch);
   }
 
   _notFoundResponse = () => {
@@ -50,8 +52,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     });
   }
 
-  _fetch = async (request) => {
-    console.log(`Issuing request: ${request.method} ${request.url}`);
+  _mockFetch = async (request) => {
+    // console.log(`Issuing request: ${request.method} ${request.url}`);
 
     this.requestsReceived.push(request);
 
@@ -63,6 +65,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._jsonResponse(theBag);
         }
       case theBag.urls.auth:
+        /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
