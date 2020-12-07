@@ -44,12 +44,31 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const password = requestJSON.password;
     const expiration = moment().add(TestAuthentationSource.timeout);
 
-    return this._jsonResponse({
-      token: "JWT_TOKEN_GOES_HERE",
+    let responseUsername;
+    if (username === "XYZZY") {
+      responseUsername = "Cretin";
+    }
+    else {
+      responseUsername = username;
+    }
+
+    const responseJSON = {
       person_id: "PERSON_ID_GOES_HERE",
-      username: username,
-      expires_in: expiration.toISOString(),
-    });
+      username: responseUsername,
+    };
+
+    if (username !== "Token") {
+      responseJSON.token = "JWT_TOKEN_GOES_HERE";
+    }
+
+    if (username === "Friend of Larry") {
+      responseJSON.expires_in = "Whenever you like, dude.";
+    }
+    else if (username !== "Forever") {
+      responseJSON.expires_in = expiration.toISOString();
+    }
+
+    return this._jsonResponse(responseJSON);
   }
 
   _mockFetch = async (request) => {
@@ -73,6 +92,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
       case "/none":
         return await this._notFoundResponse();
+      case "/janky_bag":
+        return this._jsonResponse("{}");
     }
 
     /* istanbul ignore next */
@@ -81,8 +102,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 }
 
 
-export function testIncidentManagementSystem() {
-  return new TestIncidentManagementSystem(
-    new URL("https://localhost/ims/api/bag")
-  );
+export function testIncidentManagementSystem(
+  bagURL="https://localhost/ims/api/bag"
+) {
+  return new TestIncidentManagementSystem(new URL(bagURL));
 }

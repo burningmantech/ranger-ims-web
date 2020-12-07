@@ -204,39 +204,48 @@ describe("IMS", () => {
     expect(bag2).toBe(bag1);
   });
 
-  test("login: username may not be undefined", async () => {
+  test("load bag: no URLs in response", async () => {
+    const message = "Bag does not have URLs: {}";
+    const ims = testIncidentManagementSystem("https://localhost/janky_bag");
+    await expect(ims.bag()).toRejectWithMessage(message);
+  });
+
+  test("login: username is required", async () => {
     const message = "username is required";
     const ims = testIncidentManagementSystem();
 
     await expect(ims.login()).toRejectWithMessage(message);
-  });
-
-  test("login: username may not be null", async () => {
-    const message = "username is required";
-    const ims = testIncidentManagementSystem();
-
+    await expect(ims.login(undefined)).toRejectWithMessage(message);
     await expect(ims.login(null)).toRejectWithMessage(message);
   });
 
-  test("login: credentials may not be undefined", async () => {
-    const username = "Hubcap"
+  test("login: credentials is required", async () => {
+    const username = "Hubcap";
     const message = "credentials is required";
     const ims = testIncidentManagementSystem();
 
     await expect(ims.login(username)).toRejectWithMessage(message);
-  });
-
-  test("login: credentials may not be null", async () => {
-    const username = "Hubcap"
-    const message = "credentials is required";
-    const ims = testIncidentManagementSystem();
-
+    await expect(ims.login(username, undefined)).toRejectWithMessage(message);
     await expect(ims.login(username, null)).toRejectWithMessage(message);
   });
 
+  test("login: password is required", async () => {
+    const username = "Hubcap";
+    const message = "password is required";
+    const ims = testIncidentManagementSystem();
+
+    await expect(ims.login(username, {})).toRejectWithMessage(message);
+    await expect(
+      ims.login(username, {password: undefined})
+    ).toRejectWithMessage(message);
+    await expect(
+      ims.login(username, {password: null})
+    ).toRejectWithMessage(message);
+  });
+
   test("login: request content type", async () => {
-    const username = "Hubcap"
-    const password = username
+    const username = "Hubcap";
+    const password = username;
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
@@ -249,8 +258,8 @@ describe("IMS", () => {
   });
 
   test("login: request body", async () => {
-    const username = "Hubcap"
-    const password = username
+    const username = "Hubcap";
+    const password = username;
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
@@ -267,8 +276,8 @@ describe("IMS", () => {
   });
 
   test("login -> user", async () => {
-    const username = "Hubcap"
-    const password = username
+    const username = "Hubcap";
+    const password = username;
     const ims = testIncidentManagementSystem();
     const now = moment();
 
@@ -278,8 +287,8 @@ describe("IMS", () => {
   });
 
   test("login -> credentials with token", async () => {
-    const username = "Hubcap"
-    const password = username
+    const username = "Hubcap";
+    const password = username;
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
@@ -289,8 +298,8 @@ describe("IMS", () => {
   });
 
   test("login -> credentials not expired", async () => {
-    const username = "Hubcap"
-    const password = username
+    const username = "Hubcap";
+    const password = username;
     const ims = testIncidentManagementSystem();
     const now = moment();
 
@@ -298,6 +307,55 @@ describe("IMS", () => {
 
     expect(ims.user).not.toBeNull();
     expect(ims.user.credentials.expiration).toBeAfterMoment(now);
+  });
+
+  test("login: response with non-matching username", async () => {
+    const message = (
+      "username in retrieved credentials (Cretin) " +
+      "does not match username submitted (XYZZY)"
+    );
+    const username = "XYZZY";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(message);
+  });
+
+  test("login: response with no token", async () => {
+    const message = "No token in retrieved credentials";
+    const username = "Token";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(message);
+  });
+
+  test("login: response with no expiration", async () => {
+    const message = "No expiration in retrieved credentials";
+    const username = "Forever";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(message);
+  });
+
+  test("login: response with invalid expiration", async () => {
+    const message = (
+      "Invalid expiration in retrieved credentials: Whenever you like, dude."
+    );
+    const username = "Friend of Larry";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(message);
   });
 
 });

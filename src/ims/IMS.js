@@ -52,24 +52,20 @@ export default class IncidentManagementSystem {
     return await response.json();
   }
 
-  _loadBag = async () => {
-    console.log("Retrieving bag from IMS server...");
-
-    const bag = await this._fetchJSON(this.bagURL);
-
-    if (bag.urls == null) {
-      throw new Error(`Bag does not have URLs: ${bag}`);
-    }
-
-    return bag;
-  }
-
   bag = async () => {
     if (this._bag !== null) {
       return this._bag;
     }
     else {
-      this._bag = await this._loadBag();
+      console.log("Retrieving bag from IMS server...");
+
+      const bag = await this._fetchJSON(this.bagURL);
+
+      if (bag.urls == null) {
+        throw new Error(`Bag does not have URLs: ${bag}`);
+      }
+
+      this._bag = bag;
     }
     return this._bag;
   }
@@ -95,8 +91,7 @@ export default class IncidentManagementSystem {
       identification: username, password: credentials.password
     };
     const bag = await this.bag();
-    const url = bag.urls.auth;
-    const responseJSON = await this._fetchJSON(url, requestJSON, {});
+    const responseJSON = await this._fetchJSON(bag.urls.auth, requestJSON, {});
 
     if (responseJSON.username !== username) {
       throw new Error(
