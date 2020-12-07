@@ -55,6 +55,123 @@ describe("IMS", () => {
     expect(ims._bag).toBeNull();
   });
 
+  test("_fetchJSON: default content type", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request).toBeJSONRequest();
+  });
+
+  test("_fetchJSON: JSON content type given", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(
+      ims.bagURL, null, { "Content-Type": "application/json" }
+    );
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request).toBeJSONRequest();
+  });
+
+  test("_fetchJSON: JSON content type not given", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request).toBeJSONRequest();
+  });
+
+  test("_fetchJSON: non-JSON content type", async () => {
+    const message = "Not JSON content-type: text/plain";
+    const ims = testIncidentManagementSystem();
+
+    expect(
+      ims._fetchJSON(ims.bagURL, null, { "Content-Type": "text/plain" })
+    ).toRejectWithMessage(message);
+  });
+
+  test("_fetchJSON: object URL", async () => {
+    const url = new URL("https://localhost/ims/api/bag");
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(url);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.url).toEqual(url.toString());
+  });
+
+  test("_fetchJSON: string full URL", async () => {
+    const url = "https://localhost/ims/api/bag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(url);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.url).toEqual(url);
+  });
+
+  test("_fetchJSON: string path URL", async () => {
+    const url = "/ims/api/bag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(url);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.url).toEqual(ims.bagURL.origin + url);
+  });
+
+  test("_fetchJSON: with no JSON -> GET request", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.method).toEqual("GET");
+  });
+
+  test("_fetchJSON: with JSON -> POST request", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL, {});
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.method).toEqual("POST");
+  });
+
+  test("_fetchJSON: non-JSON response", async () => {
+    const message = "Response type is not JSON: text/plain";
+    const ims = testIncidentManagementSystem();
+
+    await expect(ims._fetchJSON("/none")).toRejectWithMessage(message);
+  });
+
   test("load bag: request content type", async () => {
     const ims = testIncidentManagementSystem();
     const bag = await ims.bag();

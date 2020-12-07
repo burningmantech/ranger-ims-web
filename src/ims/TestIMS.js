@@ -23,12 +23,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this._authenticationSource = new TestAuthentationSource();
   }
 
-  // _notFoundResponse = () => {
-  //   return new Response(
-  //     "Resource not found",
-  //     { status: 404, headers: { "Content-Type": "text/plain" } },
-  //   )
-  // }
+  _notFoundResponse = () => {
+    return new Response(
+      "Resource not found",
+      { status: 404, headers: { "Content-Type": "text/plain" } },
+    )
+  }
 
   _jsonResponse = (json) => {
     return new Response(
@@ -68,6 +68,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           request._json = requestJSON;
           return await this._authResponse(requestJSON);
         }
+      case "/none":
+        return await this._notFoundResponse();
     }
 
     /* istanbul ignore next */

@@ -20,7 +20,7 @@ export default class IncidentManagementSystem {
     return fetch(request);
   }
 
-  _fetchJSON = async (url, headers={}, json=null) => {
+  _fetchJSON = async (url, json=null, headers={}) => {
     if (headers["Content-Type"] === undefined) {
       headers["Content-Type"] = "application/json";
     }
@@ -28,7 +28,7 @@ export default class IncidentManagementSystem {
       throw new Error(`Not JSON content-type: ${headers["Content-Type"]}`);
     }
 
-    if (typeof(url) === "string") {
+    if (typeof(url) === "string" && url[0] === "/") {
       url = this.bagURL.origin + url;
     }
 
@@ -96,7 +96,7 @@ export default class IncidentManagementSystem {
     };
     const bag = await this.bag();
     const url = bag.urls.auth;
-    const responseJSON = await this._fetchJSON(url, {}, requestJSON);
+    const responseJSON = await this._fetchJSON(url, requestJSON, {});
 
     if (responseJSON.username !== username) {
       throw new Error(
