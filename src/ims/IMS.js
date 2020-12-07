@@ -135,8 +135,12 @@ export default class IncidentManagementSystem {
 
   /*
    * Authentication source logout hook for Authenticator.
-   * See TestAuthentationSource.login for an example.
+   * See TestAuthentationSource.logout for an example.
    */
-  logout = async () => { return true; }
+  logout = async () => {
+    // FIXME: this should tell the server that the token we are using is no
+    // longer needed.
+    return true;
+  }
 
 }

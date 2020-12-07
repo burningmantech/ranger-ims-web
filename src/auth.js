@@ -58,7 +58,7 @@ export class TestAuthentationSource {
    *   that contains the password for the user.
    *
    * NOTE: the login credentials passed to this method are not the same as the
-   *    re-usable credentials in the created User object.
+   * re-usable credentials in the created User object.
    */
   login = async (username, credentials) => {
     if (credentials.password !== username) {
@@ -70,6 +70,14 @@ export class TestAuthentationSource {
     return new User(username, { expiration: expiration });
   }
 
+  /*
+   * Logs out from an authentication source.
+   *
+   * NOTE: Authenticator should dispose of any credentials on its own, so the
+   * purpose of this is to notify the source that those credentials are no
+   * longer in use, in case it wants to invalidate them in the event that
+   * someone attempts to use them later.
+   */
   logout = async () => { return true; }
 
 }
