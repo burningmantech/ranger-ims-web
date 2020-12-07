@@ -10,10 +10,6 @@ export default class IncidentManagementSystem {
       throw new Error("bagURL is required");
     }
 
-    if (typeof(bagURL) !== "string") {
-      throw new TypeError("bagURL must be string");
-    }
-
     this.user = null;
     this.bagURL = bagURL;
     this._bag = null;
