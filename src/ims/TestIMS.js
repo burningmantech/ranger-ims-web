@@ -72,13 +72,18 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   _mockFetch = async (request) => {
-    // console.log(`Issuing request: ${request.method} ${request.url}`);
-
     this.requestsReceived.push(request);
 
-    const url = new URL(request.url);
+    let path;
+    try {
+      const url = new URL(request.url);
+      path = url.pathname;
+    }
+    catch {
+      path = request.url;
+    }
 
-    switch (url.pathname) {
+    switch (path) {
       case theBag.urls.bag:
         if (request.method === "GET") {
           return this._jsonResponse(theBag);
@@ -97,13 +102,11 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     }
 
     /* istanbul ignore next */
-    throw new Error(`Unexpected request: ${request.method} ${url.pathname}`);
+    throw new Error(`Unexpected request: ${request.method} ${path}`);
   }
 }
 
 
-export function testIncidentManagementSystem(
-  bagURL="https://localhost/ims/api/bag"
-) {
-  return new TestIncidentManagementSystem(new URL(bagURL));
+export function testIncidentManagementSystem(bagURL="/ims/api/bag") {
+  return new TestIncidentManagementSystem(bagURL);
 }

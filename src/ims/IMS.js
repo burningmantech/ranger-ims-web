@@ -6,8 +6,12 @@ import { User } from "../auth";
 export default class IncidentManagementSystem {
 
   constructor(bagURL) {
-    if (bagURL.constructor !== URL) {
-      throw new TypeError("bagURL must be URL");
+    if (! bagURL) {
+      throw new Error("bagURL is required");
+    }
+
+    if (typeof(bagURL) !== "string") {
+      throw new TypeError("bagURL must be string");
     }
 
     this.user = null;
@@ -28,8 +32,10 @@ export default class IncidentManagementSystem {
       throw new Error(`Not JSON content-type: ${headers["Content-Type"]}`);
     }
 
-    if (typeof(url) === "string" && url[0] === "/") {
-      url = this.bagURL.origin + url;
+    if (! typeof(bagURL) === "string") {
+      if (typeof(url) === "string" && url[0] === "/") {
+        url = this.bagURL.origin + url;
+      }
     }
 
     const requestOptions = { mode: "no-cors", headers: new Headers(headers) }

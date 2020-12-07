@@ -36,20 +36,23 @@ expect.extend({
 describe("IMS", () => {
 
   test("bagURL", () => {
-    const url = new URL("https://localhost/ims/api/bag");
+    const url = "/ims/api/bag";
     const ims = new IncidentManagementSystem(url);
 
     expect(ims.bagURL).toEqual(url);
   });
 
-  test("bagURL may not be empty string", () => {
-    const message = "bagURL must be URL";
+  test("bagURL is required", () => {
+    const message = "bagURL is required";
 
+    expect(() => {new IncidentManagementSystem()}).toThrow(message);
+    expect(() => {new IncidentManagementSystem(undefined)}).toThrow(message);
+    expect(() => {new IncidentManagementSystem(null)}).toThrow(message);
     expect(() => {new IncidentManagementSystem("")}).toThrow(message);
   });
 
   test("initial state", () => {
-    const url = new URL("https://localhost/ims/api/bag");
+    const url = "/ims/api/bag";
     const ims = new IncidentManagementSystem(url);
 
     expect(ims._bag).toBeNull();
@@ -102,19 +105,6 @@ describe("IMS", () => {
     ).toRejectWithMessage(message);
   });
 
-  test("_fetchJSON: object URL", async () => {
-    const url = new URL("https://localhost/ims/api/bag");
-    const ims = testIncidentManagementSystem();
-
-    await ims._fetchJSON(url);
-
-    expect(ims.requestsReceived).toHaveLength(1);
-
-    const request = ims.requestsReceived[0];
-
-    expect(request.url).toEqual(url.toString());
-  });
-
   test("_fetchJSON: string full URL", async () => {
     const url = "https://localhost/ims/api/bag";
     const ims = testIncidentManagementSystem();
@@ -138,7 +128,7 @@ describe("IMS", () => {
 
     const request = ims.requestsReceived[0];
 
-    expect(request.url).toEqual(ims.bagURL.origin + url);
+    expect(request.url).toEqual(url);
   });
 
   test("_fetchJSON: with no JSON -> GET request", async () => {
@@ -206,7 +196,7 @@ describe("IMS", () => {
 
   test("load bag: no URLs in response", async () => {
     const message = "Bag does not have URLs: {}";
-    const ims = testIncidentManagementSystem("https://localhost/janky_bag");
+    const ims = testIncidentManagementSystem("/janky_bag");
     await expect(ims.bag()).toRejectWithMessage(message);
   });
 

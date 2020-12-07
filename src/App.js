@@ -21,7 +21,7 @@ const Event = lazy(() => import("./routes/Event"));
 const Admin = lazy(() => import("./routes/Admin"));
 const NotFound = lazy(() => import("./routes/NotFound"));
 
-const imsURL = new URL("http://localhost/ims/api/bag");
+const imsURL = "/ims/api/bag";
 
 
 export default class App extends Component {
