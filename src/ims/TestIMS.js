@@ -1,9 +1,13 @@
+import moment from "moment";
+
+import { TestAuthentationSource } from "../auth";
 import IncidentManagementSystem from "./IMS";
 
 
 export const theBag = {
   urls: {
     bag: "/ims/api/bag",
+    auth: "/ims/api/auth",
     event: "/ims/api/events/<eventID>/",
     events: "/ims/api/events/",
   },
@@ -12,19 +16,110 @@ export const theBag = {
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
-  _fetch = async (request) => {
-    const url = new URL(request.url);
+  constructor(bagURL) {
+    super(bagURL);
 
-    switch (url.pathname) {
-      case theBag.urls.bag:
-        return new Response(JSON.stringify(theBag));
-      default:
-        throw new Error(`Unexpected request: ${request.method} ${request.url}`);
+    this.requestsReceived = [];
+    this._authenticationSource = new TestAuthentationSource();
+
+    fetch = jest.fn(this._mockFetch);
+  }
+
+  _notFoundResponse = () => {
+    return new Response(
+      "Resource not found",
+      { status: 404, headers: { "Content-Type": "text/plain" } },
+    )
+  }
+
+  _jsonResponse = (json) => {
+    return new Response(
+      JSON.stringify(json),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    )
+  }
+
+  _authFailedResponse = () => {
+    return new Response(
+      JSON.stringify({ status: "invalid-credentials" }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    )
+  }
+
+  _authResponse = (requestJSON) => {
+    const username = requestJSON.identification;
+    const password = requestJSON.password;
+    const expiration = moment().add(TestAuthentationSource.timeout);
+
+    const responseJSON = {
+      person_id: "PERSON_ID_GOES_HERE",
+      username: username,
+      token: "JWT_TOKEN_GOES_HERE",
+      expires_in: expiration.toISOString(),
+    };
+
+    if (username != password) {
+      return this._authFailedResponse();
     }
+
+    switch (username) {
+      case "Hubcap":
+        break
+      case "XYZZY":
+        responseJSON.username = "Cretin";
+        break;
+      case "No Token":
+        delete responseJSON.token;
+        break;
+      case "Friend of Larry":
+        responseJSON.expires_in = "Whenever you like, dude.";
+        break;
+      case "Forever":
+        delete responseJSON.expires_in;
+        break;
+      default:
+        return this._authFailedResponse();
+    }
+
+    return this._jsonResponse(responseJSON);
+  }
+
+  _mockFetch = async (request) => {
+    this.requestsReceived.push(request);
+
+    let path;
+    try {
+      const url = new URL(request.url);
+      path = url.pathname;
+    }
+    catch {
+      path = request.url;
+    }
+
+    switch (path) {
+      case theBag.urls.bag:
+        if (request.method === "GET") {
+          return this._jsonResponse(theBag);
+        }
+      case theBag.urls.auth:
+        /* istanbul ignore else */
+        if (request.method === "POST") {
+          const requestJSON = await request.json();
+          request._json = requestJSON;
+          return await this._authResponse(requestJSON);
+        }
+      case "/none":
+        return await this._notFoundResponse();
+      case "/janky_bag":
+        return this._jsonResponse("{}");
+    }
+
+    /* istanbul ignore next */
+    throw new Error(`Unexpected request: ${request.method} ${path}`);
   }
 }
 
 
-export function testIncidentManagementSystem() {
-  return new TestIncidentManagementSystem("https://localhost/ims/api/bag");
+export function testIncidentManagementSystem(bagURL="/ims/api/bag") {
+  return new TestIncidentManagementSystem(bagURL);
 }

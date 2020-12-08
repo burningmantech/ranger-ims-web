@@ -7,18 +7,17 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { URL } from "../../URL";
-
 import { Authenticator, TestAuthentationSource, User } from "../../auth";
 import { renderWithAuthenticator } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";
 
 
-function testAuthenticator(user) {
+function testAuthenticator(username) {
   const authenticator = new Authenticator(new TestAuthentationSource());
-  if (user !== undefined) {
-    authenticator.user = user;
-    authenticator.expiration = moment().add(1, "hour")
+  if (username !== undefined) {
+    authenticator.user = new User(
+      username, { expiration: moment().add(1, "hour") }
+    );
   }
   return authenticator;
 }
@@ -45,9 +44,9 @@ describe("LoginDropdown component", () => {
   });
 
   test("expired user -> not logged in message", () => {
-    const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
+    authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<LoginDropdown />, authenticator);
 
@@ -55,9 +54,11 @@ describe("LoginDropdown component", () => {
   });
 
   test("expired user -> console message", () => {
-    const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
+    const expiration = moment().subtract(1, "second");
+
+    authenticator.user.credentials.expiration = expiration;
 
     console.log = jest.fn();
 
@@ -65,25 +66,25 @@ describe("LoginDropdown component", () => {
 
     expect(console.log).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
-      `expired ${authenticator.expiration} (a few seconds ago)`
+      `expired ${expiration} (a few seconds ago)`
     );
   });
 
   test("user -> log out item", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
 
     renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(new User(username))
+      <LoginDropdown />, testAuthenticator(username)
     );
 
     expect(screen.queryByText(username)).toBeInTheDocument();
   });
 
   test("activate user menu -> log out item", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
 
     renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(new User(username))
+      <LoginDropdown />, testAuthenticator(username)
     );
 
     await act(async () => {
@@ -94,8 +95,8 @@ describe("LoginDropdown component", () => {
   });
 
   test("log out item -> log out", async () => {
-    const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
 
     let notified = false;
     authenticator.delegate = () => { notified = true; }

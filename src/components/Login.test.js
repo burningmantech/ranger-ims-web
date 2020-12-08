@@ -10,11 +10,12 @@ import { renderWithAuthenticator } from "../contextTesting";
 import Login from "./Login";
 
 
-function testAuthenticator(user) {
+function testAuthenticator(username) {
   const authenticator = new Authenticator(new TestAuthentationSource());
-  if (user !== undefined) {
-    authenticator.user = user;
-    authenticator.expiration = moment().add(1, "hour")
+  if (username !== undefined) {
+    authenticator.user = new User(
+      username, { expiration: moment().add(1, "hour") }
+    );
   }
   return authenticator;
 }
@@ -33,9 +34,9 @@ describe("Login component", () => {
   });
 
   test("expired user -> login button", () => {
-    const username = "Cheese Butter";
-    const authenticator = testAuthenticator(new User(username));
-    authenticator.expiration = moment().subtract(1, "second")
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
+    authenticator.user.credentials.expiration = moment().subtract(1, "second")
 
     renderWithAuthenticator(<Login />, authenticator);
 
@@ -43,7 +44,8 @@ describe("Login component", () => {
   });
 
   test("user -> no login button", () => {
-    const authenticator = testAuthenticator(new User("Cheese Butter"));
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
 
     renderWithAuthenticator(<Login />, authenticator);
 
@@ -51,7 +53,8 @@ describe("Login component", () => {
   });
 
   test("user -> logged in message", () => {
-    const authenticator = testAuthenticator(new User("Cheese Butter"));
+    const username = "Hubcap";
+    const authenticator = testAuthenticator(username);
     const content = "Hello, World!";
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);
@@ -62,7 +65,7 @@ describe("Login component", () => {
   test("no user -> log in -> logged in message", async () => {
     const authenticator = testAuthenticator();
     const content = "Hello, World!"
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = username;
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);
@@ -79,7 +82,7 @@ describe("Login component", () => {
   test("no user -> invalid log in -> no logged in message", async () => {
     const authenticator = testAuthenticator();
     const content = "Hello, World!"
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = "Not My Password";
 
     renderWithAuthenticator(<Login>{content}</Login>, authenticator);

@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { URL } from "../../URL";
+import { URLs } from "../../URLs";
 
 import NavigationBar from "./NavigationBar";
 
@@ -33,7 +33,7 @@ describe("Navbar component", () => {
     const link = document.getElementById("nav_home_link");
 
     expect(link).toBeInTheDocument();
-    expect(link.href).toEqual(`http://localhost${URL.home}`);
+    expect(link.href).toEqual(`http://localhost${URLs.home}`);
   });
 
   test("includes events dropdown", () => {

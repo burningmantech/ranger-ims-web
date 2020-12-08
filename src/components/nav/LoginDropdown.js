@@ -6,7 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { AuthenticatorContext } from "../../context";
-import { URL } from "../../URL";
+import { URLs } from "../../URLs";
 
 
 export default class LoginDropdown extends Component {
@@ -33,12 +33,11 @@ export default class LoginDropdown extends Component {
 
     if (user === null) {
       if (authenticator !== undefined && authenticator.user !== null) {
-        const elapsed = moment.duration(
-          moment() - authenticator.expiration
-        ).humanize();
+        const expiration = authenticator.user.credentials.expiration;
+        const elapsed = moment.duration(moment() - expiration).humanize();
         console.log(
           `Previously authenticated as ${authenticator.user.username}, ` +
-          `expired ${authenticator.expiration} (${elapsed} ago)`
+          `expired ${expiration} (${elapsed} ago)`
         );
       }
       return (
@@ -51,7 +50,7 @@ export default class LoginDropdown extends Component {
       }
       return (
         <NavDropdown title={user.username} id="nav_user_dropdown">
-          <NavDropdown.Item href={URL.admin}>Admin</NavDropdown.Item>
+          <NavDropdown.Item href={URLs.admin}>Admin</NavDropdown.Item>
           <NavDropdown.Item onSelect={onLogout}>Log Out</NavDropdown.Item>
         </NavDropdown>
       );

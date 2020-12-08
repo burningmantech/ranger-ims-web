@@ -12,22 +12,21 @@ export class User {
    * Deserialize a User from JSON.
    */
   static fromJSON = (json) => {
-    if (json.username === undefined) {
-      throw new SyntaxError("No username provided.");
+    if (json.credentials != null) {
+      json.credentials.expiration = moment(json.credentials.expiration);
     }
-    if (json.credentials === undefined) {
-      throw new SyntaxError("No credentials provided.");
-    }
-
     return new User(json.username, json.credentials);
   }
 
-  constructor(username, credentials = {}) {
-    if (username === undefined) {
-      throw new Error("username is not defined");
+  constructor(username, credentials) {
+    if (username == null) {
+      throw new Error("username is required");
     }
-    if (username === null) {
-      throw new Error("username is null");
+    if (credentials == null) {
+      throw new Error("credentials is required");
+    }
+    if (credentials.expiration == null) {
+      throw new Error("credentials.expiration is required");
     }
 
     this.username = username;
@@ -37,7 +36,7 @@ export class User {
   /*
    * Serialize a User as JSON.
    */
-  asJSON = () => {
+  toJSON = () => {
     return {username: this.username, credentials: this.credentials};
   }
 
@@ -59,22 +58,26 @@ export class TestAuthentationSource {
    *   that contains the password for the user.
    *
    * NOTE: the login credentials passed to this method are not the same as the
-   *    re-usable credentials in the created User object.
+   * re-usable credentials in the created User object.
    */
   login = async (username, credentials) => {
-    if (credentials.password === username) {
-      const expiration = moment().add(TestAuthentationSource.timeout);
-
-      return {
-        user: new User(username),
-        expiration: expiration,
-      };
-    }
-    else {
+    if (credentials.password !== username) {
       return null;
     }
+
+    const expiration = moment().add(TestAuthentationSource.timeout);
+
+    return new User(username, { expiration: expiration });
   }
 
+  /*
+   * Logs out from an authentication source.
+   *
+   * NOTE: Authenticator should dispose of any credentials on its own, so the
+   * purpose of this is to notify the source that those credentials are no
+   * longer in use, in case it wants to invalidate them in the event that
+   * someone attempts to use them later.
+   */
   logout = async () => { return true; }
 
 }
@@ -89,7 +92,6 @@ export class Authenticator {
 
   static STORE_KEY_CLASS = "ims.auth.class";
   static STORE_KEY_USER = "ims.auth.user";
-  static STORE_KEY_EXPIRATION = "ims.auth.expiration";
 
   /*
    * Remove stored credentials.
@@ -101,20 +103,15 @@ export class Authenticator {
 
     store.removeItem(Authenticator.STORE_KEY_CLASS);
     store.removeItem(Authenticator.STORE_KEY_USER);
-    store.removeItem(Authenticator.STORE_KEY_EXPIRATION);
   }
 
   constructor(source) {
-    if (source === undefined) {
-      throw new Error("authentication source is not defined");
-    }
-    if (source === null) {
-      throw new Error("authentication source is null");
+    if (source == null) {
+      throw new Error("authentication source is required");
     }
 
     this.source = source;
     this.user = null;
-    this.expiration = null;
     this.loadFromStorage();
     this.delegate = null;
   }
@@ -134,26 +131,21 @@ export class Authenticator {
    */
   saveToStorage = () => {
     if (this.isLoggedIn()) {
-      Authenticator._saveToStorage(
-        this.source.constructor.name, this.user, this.expiration
-      );
+      Authenticator._saveToStorage(this.source.constructor.name, this.user);
     }
     else {
       Authenticator.eraseStorage();
     }
   }
 
-  static _saveToStorage = (className, user, expiration) => {
+  static _saveToStorage = (className, user) => {
     console.log("Saving credentials in local storage.");
 
     const store = window.localStorage;
 
     store.setItem(Authenticator.STORE_KEY_CLASS, className);
     store.setItem(
-      Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON())
-    );
-    store.setItem(
-      Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString()
+      Authenticator.STORE_KEY_USER, JSON.stringify(user.toJSON())
     );
   }
 
@@ -169,7 +161,7 @@ export class Authenticator {
     }
 
     if (sourceClass !== this.source.constructor.name) {
-      console.log("Ignoring stored credentials from class: " + sourceClass);
+      console.log(`Ignoring stored credentials from class: ${sourceClass}`);
       return;
     }
 
@@ -178,17 +170,13 @@ export class Authenticator {
     const user = Authenticator._userFromStorage();
     if (user === null) { return; }
 
-    const expiration = Authenticator._expirationFromStorage();
-    if (expiration === null) { return; }
-
     this.user = user;
-    this.expiration = expiration;
   }
 
   static _sourceClassFromStorage = () => {
     const store = window.localStorage;
     const sourceClass = store.getItem(Authenticator.STORE_KEY_CLASS);
-    if (!sourceClass) {
+    if (sourceClass == null) {
       return null;
     }
     return sourceClass;
@@ -207,24 +195,6 @@ export class Authenticator {
     }
   }
 
-  static _expirationFromStorage = () => {
-    const store = window.localStorage;
-    const expirationText = store.getItem(Authenticator.STORE_KEY_EXPIRATION);
-
-    if (!expirationText) {
-      console.log("ERROR: No expiration found in stored credentials.");
-      return null;
-    }
-
-    const expiration = moment(expirationText, moment.ISO_8601, true);
-    if (!expiration.isValid()) {
-      console.log("ERROR: Invalid expiration in stored credentials.");
-      return null;
-    }
-
-    return expiration;
-  }
-
   /*
    * Authenticate a user and keep the resulting credentials.
    */
@@ -236,21 +206,20 @@ export class Authenticator {
 
   _login = async (username, credentials) => {
     console.log(`Logging in as ${username}...`);
-    const result = await this.source.login(username, credentials);
+    const user = await this.source.login(username, credentials);
 
-    if (result !== null) {
-      this.user = result.user;
-      this.expiration = result.expiration;
-      console.log(
-        "Logged in as " + this.user.username +
-        " until " + this.expiration.toISOString()
-      );
-      this._notifyDelegate();
-      return true;
+    if (user == null) {
+      console.log("Login failed." + user)
+      return false;
     }
     else {
-      console.log("Login failed.")
-      return false;
+      console.log(
+        `Logged in as ${user.username} until ` +
+        user.credentials.expiration.toISOString()
+      );
+      this.user = user;
+      this._notifyDelegate();
+      return true;
     }
   }
 
@@ -267,21 +236,20 @@ export class Authenticator {
     console.log(`Logging out as ${this.user.username}...`)
     await this.source.logout();
     this.user = null;
-    this.expiration = null;
     this._notifyDelegate();
   }
 
   /*
-   * Determine whether we have a with non-expired credentials.
+   * Determine whether we have a user with non-expired credentials.
    */
   isLoggedIn = () => {
-    if (this.user === null) {
+    const user = this.user;
+    if (user === null) {
       return false;
     }
-    if (this.expiration === null) {
-      return false;
-    }
-    else if (moment().isAfter(this.expiration)) {
+
+    const expiration = user.credentials.expiration;
+    if (moment().isAfter(expiration)) {
       return false;
     }
     else {

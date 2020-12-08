@@ -3,81 +3,80 @@ import moment from "moment";
 import { Authenticator, TestAuthentationSource, User } from "./auth";
 
 
-expect.extend({
-  toBeAfterMoment(received, other) {
-    if (received.isAfter(other)) {
-      return {
-        message: () => `expected ${received} not to be after ${other}`,
-        pass: true,
-      }
-    }
-    else {
-      return {
-        message: () => `expected ${received} to be after ${other}`,
-        pass: false,
-      }
-    }
-  },
-  toBeSameAsMoment(received, other) {
-    if (received.isSame(other)) {
-      return {
-        message: () => `expected ${received} not to be the same as ${other}`,
-        pass: true,
-      }
-    }
-    else {
-      return {
-        message: () => `expected ${received} to be the same as ${other}`,
-        pass: false,
-      }
-    }
-  },
-});
-
-
 describe("User", () => {
 
-  test("username is defined", () => {
-    const message = "username is not defined";
+  test("username is required", () => {
+    const message = "username is required";
 
     expect(() => {new User()}).toThrow(message);
     expect(() => {new User(undefined, {})}).toThrow(message);
-  });
-
-  test("username is not null", () => {
-    const message = "username is null";
-
     expect(() => {new User(null, {})}).toThrow(message);
   });
 
-  test("asJSON", () => {
-    const username = "Cheese Butter";
+  test("credentials is required", () => {
+    const username = "Hubcap";
+    const message = "credentials is required";
+
+    expect(() => {new User(username)}).toThrow(message);
+    expect(() => {new User(username, undefined)}).toThrow(message);
+    expect(() => {new User(username, null)}).toThrow(message);
+  });
+
+  test("credentials.expiration is required", () => {
+    const username = "Hubcap";
+    const message = "credentials.expiration is required";
+
+    expect(() => {new User(username, {})}).toThrow(message);
+  });
+
+  test("toJSON", () => {
+    const username = "Hubcap";
     const credentials = {
       number: 1,
       text: "text",
       array: [1, 2, 3],
       dict: {a: 1},
+      expiration: moment(),
     };
     const user = new User(username, credentials);
     const userJSON = {username: username, credentials: credentials};
+    const result = user.toJSON();
 
-    expect(user.asJSON()).toEqual(userJSON);
+    expect(result).toEqual(userJSON);
   });
 
   test("fromJSON", () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {
       number: 1,
       text: "text",
       array: [1, 2, 3],
       dict: {a: 1},
+      expiration: moment(),
     };
     const user = new User(username, credentials);
-    const userJSON = user.asJSON();
+    const userJSON = user.toJSON();
     const result = User.fromJSON(userJSON);
-    const resultJSON = result.asJSON();
+    const resultJSON = result.toJSON();
 
     expect(resultJSON).toEqual(userJSON);
+  });
+
+  test("JSON round-trip through text", () => {
+    const username = "Hubcap";
+    const credentials = {
+      number: 1,
+      text: "text",
+      array: [1, 2, 3],
+      dict: {a: 1},
+      expiration: moment(),
+    };
+    const user = new User(username, credentials);
+    const userJSONText = JSON.stringify(user.toJSON());
+    const result = User.fromJSON(JSON.parse(userJSONText));
+    const resultJSON = result.toJSON();
+
+    expect(JSON.stringify(resultJSON)).toEqual(userJSONText);
   });
 
 });
@@ -89,14 +88,10 @@ describe("TestAuthentationSource", () => {
     const username = "user";
     const password = username;
     const source = new TestAuthentationSource();
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
 
-    expect(result).not.toBeNull();
-
-    const user = result.user;
-
+    expect(user).not.toBeNull();
     expect(user.username).toEqual(username);
-    expect(user.credentials).toEqual({});
   });
 
   test("valid login -> expiration", async () => {
@@ -104,12 +99,12 @@ describe("TestAuthentationSource", () => {
     const password = username;
     const now = moment();
     const source = new TestAuthentationSource();
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
 
-    expect(result).not.toBeNull();
+    const expiration = user.credentials.expiration;
 
-    const expiration = result.expiration;
-
+    expect(expiration).toBeDefined();
+    expect(expiration).not.toBeNull();
     expect(expiration).toBeAfterMoment(now);
   });
 
@@ -117,9 +112,9 @@ describe("TestAuthentationSource", () => {
     const username = "user";
     const password = "Not My Password";
     const source = new TestAuthentationSource();
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
 
-    expect(result).toBeNull();
+    expect(user).toBeNull();
   });
 
 });
@@ -138,9 +133,6 @@ function verifyCleanAuthStorage() {
   if (store.getItem(Authenticator.STORE_KEY_USER)) {
     throw new Error("Found user in local storage.");
   }
-  if (store.getItem(Authenticator.STORE_KEY_EXPIRATION)) {
-    throw new Error("Found expiration in local storage.");
-  }
 }
 
 
@@ -149,7 +141,7 @@ function verifyCleanAuthStorage() {
  */
 async function populateAuthStorage(username, credentials, source) {
   if (!username) {
-    username = "Cheese Butter";
+    username = "Hubcap";
   }
   if (!credentials) {
     credentials = {password: username};
@@ -158,15 +150,14 @@ async function populateAuthStorage(username, credentials, source) {
     source = new TestAuthentationSource();
   }
 
-  const {user, expiration} = await source.login(username, credentials);
+  const user = await source.login(username, credentials);
 
   const store = window.localStorage;
 
   store.setItem(Authenticator.STORE_KEY_CLASS, source.constructor.name);
-  store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON()));
-  store.setItem(Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString());
+  store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.toJSON()));
 
-  return {source: source, user: user, expiration: expiration};
+  return {source: source, user: user};
 }
 
 
@@ -176,16 +167,11 @@ describe("Authenticator", () => {
     Authenticator.eraseStorage();
   });
 
-  test("authentication source is defined", () => {
-    const message = "authentication source is not defined";
+  test("authentication source is required", () => {
+    const message = "authentication source is required";
 
     expect(() => {new Authenticator()}).toThrow(message);
     expect(() => {new Authenticator(undefined)}).toThrow(message);
-  });
-
-  test("authentication source is not null", () => {
-    const message = "authentication source is null";
-
     expect(() => {new Authenticator(null)}).toThrow(message);
   });
 
@@ -195,34 +181,31 @@ describe("Authenticator", () => {
 
     expect(authenticator.source).toBe(source);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("eraseStorage", () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
-    const credentials = {};
+    const username = "Hubcap";
+    const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const expiration = moment();
     const store = window.localStorage;
 
     store.setItem(Authenticator.STORE_KEY_CLASS, "SomeAuthentationSource");
-    store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.asJSON()));
-    store.setItem(Authenticator.STORE_KEY_EXPIRATION, expiration.toISOString());
+    store.setItem(Authenticator.STORE_KEY_USER, JSON.stringify(user.toJSON()));
 
     Authenticator.eraseStorage();
 
     expect(store.getItem(Authenticator.STORE_KEY_CLASS)).toBeNull();
     expect(store.getItem(Authenticator.STORE_KEY_USER)).toBeNull();
-    expect(store.getItem(Authenticator.STORE_KEY_EXPIRATION)).toBeNull();
   });
 
   test("saveToStorage, logged in", async () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
-    const credentials = {password: username};
+    const username = "Hubcap";
+    const credentials = { password: username };
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
     const now = moment();
@@ -239,15 +222,17 @@ describe("Authenticator", () => {
     expect(Authenticator._sourceClassFromStorage()).toEqual(
       source.constructor.name
     );
-    expect(Authenticator._userFromStorage()).not.toBeNull();
-    expect(Authenticator._userFromStorage().username).toEqual(username);
-    expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
+
+    const user = Authenticator._userFromStorage();
+
+    expect(user).not.toBeNull();
+    expect(user.username).toEqual(username);
   });
 
   test("saveToStorage, not logged in", () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {password: username};
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
@@ -256,7 +241,6 @@ describe("Authenticator", () => {
 
     expect(Authenticator._sourceClassFromStorage()).toBeNull();
     expect(Authenticator._userFromStorage()).toBeNull();
-    expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
   test("loadFromStorage, empty", () => {
@@ -267,24 +251,26 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("loadFromStorage, populated, valid", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
     const authenticator = new Authenticator(source);
 
     expect(authenticator.isLoggedIn()).toBe(true);
-    expect(authenticator.user.asJSON()).toEqual(user.asJSON());
-    expect(authenticator.expiration).toBeSameAsMoment(expiration);
+    expect(
+      JSON.stringify(authenticator.user.toJSON())
+    ).toEqual(
+      JSON.stringify(user.toJSON())
+    );
   });
 
   test("loadFromStorage, populated, missing class", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
 
     window.localStorage.removeItem(Authenticator.STORE_KEY_CLASS);
 
@@ -292,13 +278,25 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
+  });
+
+  test("loadFromStorage, populated, unknown class", async () => {
+    verifyCleanAuthStorage();
+
+    const { source, user } = await populateAuthStorage();
+
+    window.localStorage.setItem(Authenticator.STORE_KEY_CLASS, "XYZZY");
+
+    const authenticator = new Authenticator(source);
+
+    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.user).toBeNull();
   });
 
   test("loadFromStorage, populated, missing user", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
 
     window.localStorage.removeItem(Authenticator.STORE_KEY_USER);
 
@@ -306,13 +304,12 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("loadFromStorage, populated, bogus user (invalid JSON)", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
 
     window.localStorage.setItem(Authenticator.STORE_KEY_USER, "*");
 
@@ -320,13 +317,12 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("loadFromStorage, populated, bogus user (no username)", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
 
     window.localStorage.setItem(
       Authenticator.STORE_KEY_USER, JSON.stringify({credentials: {}})
@@ -336,13 +332,12 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("loadFromStorage, populated, bogus user (no credentials)", async () => {
     verifyCleanAuthStorage();
 
-    const { source, user, expiration } = await populateAuthStorage();
+    const { source, user } = await populateAuthStorage();
 
     window.localStorage.setItem(
       Authenticator.STORE_KEY_USER, JSON.stringify({username: "Hubcap"})
@@ -352,41 +347,12 @@ describe("Authenticator", () => {
 
     expect(authenticator.isLoggedIn()).toBe(false);
     expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
-  });
-
-  test("loadFromStorage, populated, missing expiration", async () => {
-    verifyCleanAuthStorage();
-
-    const { source, user, expiration } = await populateAuthStorage();
-
-    window.localStorage.removeItem(Authenticator.STORE_KEY_EXPIRATION);
-
-    const authenticator = new Authenticator(source);
-
-    expect(authenticator.isLoggedIn()).toBe(false);
-    expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
-  });
-
-  test("loadFromStorage, populated, bogus expiration", async () => {
-    verifyCleanAuthStorage();
-
-    const { source, user, expiration } = await populateAuthStorage();
-
-    window.localStorage.setItem(Authenticator.STORE_KEY_EXPIRATION, "*");
-
-    const authenticator = new Authenticator(source);
-
-    expect(authenticator.isLoggedIn()).toBe(false);
-    expect(authenticator.user).toBeNull();
-    expect(authenticator.expiration).toBeNull();
   });
 
   test("load and save round-trip", async () => {
     verifyCleanAuthStorage();
 
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const credentials = {password: username};
     const source = new TestAuthentationSource();
     const authenticator1 = new Authenticator(source);
@@ -398,9 +364,10 @@ describe("Authenticator", () => {
 
     const authenticator2 = new Authenticator(source);
 
-    expect(authenticator2.user.asJSON()).toEqual(authenticator1.user.asJSON());
-    expect(authenticator2.expiration).toBeSameAsMoment(
-      authenticator1.expiration
+    expect(
+      JSON.stringify(authenticator2.user.toJSON())
+    ).toEqual(
+      JSON.stringify(authenticator1.user.toJSON())
     );
   });
 
@@ -417,7 +384,6 @@ describe("Authenticator", () => {
     const user = authenticator.user;
 
     expect(user.username).toEqual(username);
-    expect(user.credentials).toEqual({});
 
     expect(authenticator.isLoggedIn()).toBe(true);
   });
@@ -433,7 +399,7 @@ describe("Authenticator", () => {
 
     if (!result) { throw new Error("login failed"); }
 
-    const expiration = authenticator.expiration;
+    const expiration = authenticator.user.credentials.expiration;
 
     expect(expiration).toBeAfterMoment(now);
   });
@@ -449,9 +415,10 @@ describe("Authenticator", () => {
 
     if (!result) { throw new Error("login failed"); }
 
-    expect(Authenticator._userFromStorage()).not.toBeNull();
-    expect(Authenticator._userFromStorage().username).toEqual(username);
-    expect(Authenticator._expirationFromStorage()).toBeAfterMoment(now);
+    const user = Authenticator._userFromStorage();
+
+    expect(user).not.toBeNull();
+    expect(user.username).toEqual(username);
   });
 
   test("valid login -> notify delegate", async () => {
@@ -481,8 +448,6 @@ describe("Authenticator", () => {
     if (result) { throw new Error("login failed to fail"); }
 
     expect(authenticator.user).toBe(null);
-    expect(authenticator.expiration).toBe(null);
-
     expect(authenticator.isLoggedIn()).toBe(false);
   });
 
@@ -507,7 +472,6 @@ describe("Authenticator", () => {
     if (result) { throw new Error("login failed to fail"); }
 
     expect(authenticator.user.username).toEqual(username);
-
     expect(authenticator.isLoggedIn()).toBe(true);
   });
 
@@ -525,8 +489,6 @@ describe("Authenticator", () => {
     await authenticator.logout();
 
     expect(authenticator.user).toBe(null);
-    expect(authenticator.expiration).toBe(null);
-
     expect(authenticator.isLoggedIn()).toBe(false);
   });
 
@@ -544,7 +506,6 @@ describe("Authenticator", () => {
     await authenticator.logout();
 
     expect(Authenticator._userFromStorage()).toBeNull();
-    expect(Authenticator._expirationFromStorage()).toBeNull();
   });
 
   test("valid login -> notify delegate", async () => {
@@ -576,10 +537,9 @@ describe("Authenticator", () => {
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
 
-    authenticator.user = result.user;
-    authenticator.expiration = result.expiration;
+    authenticator.user = user;
 
     expect(authenticator.isLoggedIn()).toBe(true);
   });
@@ -592,12 +552,7 @@ describe("Authenticator", () => {
     const source = new TestAuthentationSource();
     const authenticator = new Authenticator(source);
 
-    // Authenticate via source and set attributes directly, since we are not
-    // trying to test Authenticator.login() here.
-    const result = await source.login(username, {password: password});
-
     authenticator.user = null;
-    authenticator.expiration = result.expiration;
 
     expect(authenticator.isLoggedIn()).toBe(false);
   });
@@ -612,10 +567,10 @@ describe("Authenticator", () => {
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
+    user.credentials.expiration = moment().subtract(1, "second");
 
-    authenticator.user = result.user;
-    authenticator.expiration = moment().subtract(1, "second");
+    authenticator.user = user;
 
     expect(authenticator.isLoggedIn()).toBe(false);
   });
@@ -630,12 +585,11 @@ describe("Authenticator", () => {
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
 
-    authenticator.user = result.user;
-    authenticator.expiration = result.expiration;
+    authenticator.user = user;
 
-    expect(authenticator.loggedInUser()).toBe(authenticator.user);
+    expect(authenticator.loggedInUser()).toBe(user);
   });
 
   test("loggedInUser, expired", async () => {
@@ -648,10 +602,10 @@ describe("Authenticator", () => {
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const result = await source.login(username, {password: password});
+    const user = await source.login(username, {password: password});
+    user.credentials.expiration = moment().subtract(1, "second");
 
-    authenticator.user = result.user;
-    authenticator.expiration = moment().subtract(1, "second");
+    authenticator.user = user;
 
     expect(authenticator.loggedInUser()).toBeNull();
   });

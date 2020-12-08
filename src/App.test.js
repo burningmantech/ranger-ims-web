@@ -2,7 +2,8 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
-import { Authenticator, User } from "./auth";
+import { Authenticator } from "./auth";
+import { testIncidentManagementSystem } from "./ims/TestIMS";
 import App from "./App";
 
 
@@ -12,24 +13,28 @@ describe("App component", () => {
     Authenticator.eraseStorage();
   });
 
+  test("no ims", () => {
+    expect(() => {new App({})}).toThrow("ims is required");
+  });
+
   test("loading...", () => {
-    render(<App />);
+    render(<App ims={testIncidentManagementSystem()} />);
 
     expect(screen.queryByText("Loading...")).toBeInTheDocument();
   });
 
   test("load home", async () => {
-    render(<App />);
+    render(<App ims={testIncidentManagementSystem()} />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
     expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
   });
 
   test("load home -> log in -> content", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = username;
 
-    render(<App />);
+    render(<App ims={testIncidentManagementSystem()} />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -37,16 +42,16 @@ describe("App component", () => {
     await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 
-    const title = await screen.findByText("Ranger Incident Management System")
+    const title = await screen.findByText("Ranger Incident Management System");
 
     expect(title).toBeInTheDocument();
   });
 
   test("load home -> invalid log in -> no content", async () => {
-    const username = "Cheese Butter";
+    const username = "Hubcap";
     const password = "Not My Password";
 
-    render(<App />);
+    render(<App ims={testIncidentManagementSystem()} />);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -55,7 +60,9 @@ describe("App component", () => {
     await userEvent.click(screen.getByText(/Log In/));
 
     try {
-      const title = await screen.findByText("Ranger Incident Management System")
+      const title = await screen.findByText(
+        "Ranger Incident Management System"
+      );
       expect(title).not.toBeInTheDocument();
     }
     catch (e) {

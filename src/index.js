@@ -5,11 +5,16 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
+import IncidentManagementSystem from "./ims/IMS";
 import reportWebVitals from "./reportWebVitals";
+
+const imsBagURL = "/ims/api/bag";
+
+const ims = new IncidentManagementSystem(imsBagURL);
 
 ReactDOM.render(
   <StrictMode>
-    <App />
+    <App ims={ims} />
   </StrictMode>,
   document.getElementById("root")
 );

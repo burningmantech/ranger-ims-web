@@ -27,7 +27,7 @@ export default class BagTable extends Component {
     }
 
     const ims = context.ims;
-    if (ims === undefined) {
+    if (ims == null) {
       throw new Error("No IMS.");
     }
 
