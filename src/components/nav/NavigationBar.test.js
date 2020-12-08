@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
 import { URLs } from "../../URLs";
+import { renderWithIMS } from "../../contextTesting";
+import { testIncidentManagementSystem } from "../../ims/TestIMS";
 
 import NavigationBar from "./NavigationBar";
 
@@ -13,7 +15,7 @@ describe("Navbar component", () => {
   test("id", () => {
     const navID = "who-what";
 
-    render(<NavigationBar id={navID} />);
+    renderWithIMS(<NavigationBar id={navID} />, testIncidentManagementSystem());
 
     expect(document.getElementById(navID)).toBeInTheDocument();
   });
@@ -22,13 +24,13 @@ describe("Navbar component", () => {
   test("includes logo", () => {
     const navID = "nav_home_image";
 
-    render(<NavigationBar id={navID} />);
+    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
 
     expect(document.getElementById(navID)).toBeInTheDocument();
   });
 
   test("includes link to home", () => {
-    render(<NavigationBar />);
+    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
 
     const link = document.getElementById("nav_home_link");
 
@@ -37,13 +39,13 @@ describe("Navbar component", () => {
   });
 
   test("includes events dropdown", () => {
-    render(<NavigationBar />);
+    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
 
   test("includes user dropdown", () => {
-    render(<NavigationBar />);
+    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });

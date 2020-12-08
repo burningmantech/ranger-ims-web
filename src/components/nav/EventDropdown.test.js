@@ -4,13 +4,16 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
+import { renderWithIMS } from "../../contextTesting";
+import { testIncidentManagementSystem } from "../../ims/TestIMS";
+
 import EventDropdown from "./EventDropdown";
 
 
 describe("EventDropdown component", () => {
 
   test("id", () => {
-    render(<EventDropdown />);
+    renderWithIMS(<EventDropdown />, testIncidentManagementSystem());
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
