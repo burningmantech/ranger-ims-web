@@ -28,12 +28,6 @@ export default class IncidentManagementSystem {
       throw new Error(`Not JSON content-type: ${headers["Content-Type"]}`);
     }
 
-    if (! typeof(bagURL) === "string") {
-      if (typeof(url) === "string" && url[0] === "/") {
-        url = this.bagURL.origin + url;
-      }
-    }
-
     const requestOptions = { mode: "no-cors", headers: new Headers(headers) }
     if (json == null) {
       requestOptions.method = "GET";
