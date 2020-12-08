@@ -13,6 +13,10 @@ describe("App component", () => {
     Authenticator.eraseStorage();
   });
 
+  test("no ims", () => {
+    expect(() => {new App({})}).toThrow("ims is required");
+  });
+
   test("loading...", () => {
     render(<App ims={testIncidentManagementSystem()} />);
 
