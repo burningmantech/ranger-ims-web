@@ -110,6 +110,13 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return await this._authResponse(requestJSON);
         }
         break;
+      case "/echo_json":
+        if (request.method === "POST") {
+          const requestJSON = await request.json();
+          request._json = requestJSON;
+          return await this._jsonResponse(requestJSON);
+        }
+        break;
       case "/none":
         return await this._notFoundResponse();
       case "/janky_bag":

@@ -146,7 +146,7 @@ describe("IMS", () => {
   test("_fetchJSON: with JSON -> POST request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL, {});
+    await ims._fetchJSON("/echo_json", {});
 
     expect(ims.requestsReceived).toHaveLength(1);
 
