@@ -110,10 +110,11 @@ export default class IncidentManagementSystem {
     }
 
     if (responseJSON.username !== username) {
-      throw new Error(
-        `username in retrieved credentials (${responseJSON.username}) ` +
-        `does not match username submitted (${username})`
+      console.log(
+        `Using username in retrieved credentials (${responseJSON.username}), ` +
+        `which differs from submitted username (${username})`
       );
+      username = responseJSON.username;
     }
 
     if (responseJSON.token == null) {

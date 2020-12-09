@@ -299,18 +299,14 @@ describe("IMS", () => {
     expect(ims.user.credentials.expiration).toBeAfterMoment(now);
   });
 
-  test("login: response with non-matching username", async () => {
-    const message = (
-      "username in retrieved credentials (Cretin) " +
-      "does not match username submitted (XYZZY)"
-    );
+  test("login: response with different username", async () => {
     const username = "XYZZY";
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await expect(
-      ims.login(username, {password: password})
-    ).toRejectWithMessage(message);
+    await ims.login(username, {password: password});
+
+    expect(ims.user.username).toEqual("Cretin");
   });
 
   test("login: response with no token", async () => {
