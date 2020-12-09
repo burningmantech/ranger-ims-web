@@ -101,6 +101,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         if (request.method === "GET") {
           return this._jsonResponse(theBag);
         }
+        break;
       case theBag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
@@ -108,6 +109,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           request._json = requestJSON;
           return await this._authResponse(requestJSON);
         }
+        break;
       case "/none":
         return await this._notFoundResponse();
       case "/janky_bag":
