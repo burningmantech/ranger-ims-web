@@ -48,6 +48,10 @@ export default class IncidentManagementSystem {
     return await response.json();
   }
 
+  ////
+  //  Configuration
+  ////
+
   bag = async () => {
     if (this._bag !== null) {
       return this._bag;
@@ -65,6 +69,10 @@ export default class IncidentManagementSystem {
     }
     return this._bag;
   }
+
+  ////
+  //  Authentication
+  ////
 
   /*
    * Authentication source login hook for Authenticator.
@@ -135,6 +143,14 @@ export default class IncidentManagementSystem {
     // FIXME: this should tell the server that the token we are using is no
     // longer needed.
     return true;
+  }
+
+  ////
+  //  Data
+  ////
+
+  events = async () => {
+    return [2018, 2019, 2020];
   }
 
 }
