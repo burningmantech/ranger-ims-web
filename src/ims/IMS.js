@@ -21,11 +21,17 @@ export default class IncidentManagementSystem {
   }
 
   _fetchJSON = async (url, json=null, headers={}) => {
-    if (headers["Content-Type"] === undefined) {
-      headers["Content-Type"] = "application/json";
+    const requestHeaders = new Headers(headers);
+
+    // Ensure content type is JSON
+    if (requestHeaders.has("Content-Type")) {
+      const contentType = requestHeaders.get("Content-Type");
+      if (contentType !== "application/json") {
+        throw new Error(`Not JSON content-type: ${contentType}`);
+      }
     }
-    else if (headers["Content-Type"] !== "application/json") {
-      throw new Error(`Not JSON content-type: ${headers["Content-Type"]}`);
+    else {
+      requestHeaders.set("Content-Type", "application/json");
     }
 
     const requestOptions = { mode: "no-cors", headers: new Headers(headers) }
@@ -34,7 +40,7 @@ export default class IncidentManagementSystem {
     }
     else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(json);
+      requestOptions.body = JSON.stringify(json);;
     }
 
     const request = new Request(url, requestOptions);
