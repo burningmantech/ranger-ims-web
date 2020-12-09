@@ -34,7 +34,7 @@ export default class IncidentManagementSystem {
       requestHeaders.set("Content-Type", "application/json");
     }
 
-    const requestOptions = { mode: "no-cors", headers: new Headers(headers) }
+    const requestOptions = { headers: requestHeaders };
     if (json == null) {
       requestOptions.method = "GET";
     }
