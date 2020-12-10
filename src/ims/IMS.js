@@ -103,7 +103,7 @@ export default class IncidentManagementSystem {
     const requestJSON = {
       identification: username, password: credentials.password
     };
-    const responseJSON = await this._fetchJSON(bag.urls.auth, requestJSON, {});
+    const responseJSON = await this._fetchJSON(bag.urls.auth, requestJSON);
 
     if (responseJSON.status === "invalid-credentials") {
       console.log(`Sent invalid credentials for ${username}`);
@@ -163,7 +163,9 @@ export default class IncidentManagementSystem {
   ////
 
   events = async () => {
-    return [2018, 2019, 2020];
+    const bag = await this.bag();
+    const events = await this._fetchJSON(bag.urls.events);
+    return events;
   }
 
 }

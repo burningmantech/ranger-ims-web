@@ -113,6 +113,17 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return await this._authResponse(requestJSON);
         }
         break;
+      case theBag.urls.events:
+        /* istanbul ignore else */
+        if (request.method === "GET") {
+          return this._jsonResponse([
+            { id: "1", name: "Event One" },
+            { id: "2", name: "Event Two" },
+            { id: "3", name: "Event Three" },
+            { id: "4", name: "Event Four" },
+          ]);
+        }
+        break;
       case "/echo_json":
         if (request.method === "POST") {
           const requestJSON = await request.json();
