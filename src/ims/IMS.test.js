@@ -331,32 +331,6 @@ describe("IMS", () => {
     ).toRejectWithMessage(message);
   });
 
-  test("login: response with invalid expiration", async () => {
-    const message = (
-      "Invalid expiration in retrieved credentials: Whenever you like, dude."
-    );
-    const username = "Friend of Larry";
-    const password = username;
-    const ims = testIncidentManagementSystem();
-
-    await expect(
-      ims.login(username, {password: password})
-    ).toRejectWithMessage(message);
-  });
-
-  test("login: response with invalid expiration", async () => {
-    const message = (
-      "Invalid expiration in retrieved credentials: Whenever you like, dude."
-    );
-    const username = "Friend of Larry";
-    const password = username;
-    const ims = testIncidentManagementSystem();
-
-    await expect(
-      ims.login(username, {password: password})
-    ).toRejectWithMessage(message);
-  });
-
   test("login -> user -> logout", async () => {
     const username = "Hubcap";
     const password = username;

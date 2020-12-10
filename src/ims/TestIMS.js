@@ -1,3 +1,4 @@
+import jwtSign from "jsonwebtoken/sign";
 import moment from "moment";
 
 import { TestAuthentationSource } from "../auth";
@@ -51,34 +52,36 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const password = requestJSON.password;
     const expiration = moment().add(TestAuthentationSource.timeout);
 
-    const responseJSON = {
-      person_id: "PERSON_ID_GOES_HERE",
-      username: username,
-      token: "JWT_TOKEN_GOES_HERE",
-      expires_in: expiration.toISOString(),
-    };
-
     if (username != password) {
       return this._authFailedResponse();
     }
 
-    switch (username) {
-      case "Hubcap":
-        break
-      case "XYZZY":
-        responseJSON.username = "Cretin";
-        break;
-      case "No Token":
-        delete responseJSON.token;
-        break;
-      case "Friend of Larry":
-        responseJSON.expires_in = "Whenever you like, dude.";
-        break;
-      case "Forever":
-        delete responseJSON.expires_in;
-        break;
-      default:
-        return this._authFailedResponse();
+    const responseJSON = {
+      username: username,
+    };
+
+    if (username != "No Token") {
+      const now = Date.now() / 1000;
+      const jwtPayload = {
+        // iss: "TestIMS",
+        // sub: "PERSON_ID_GOES_HERE",
+        exp: now + 60,
+        // iat: now,
+        prefered_username: username,
+      }
+      switch (username) {
+        case "Hubcap":
+          break;
+        case "XYZZY":
+          jwtPayload.prefered_username = "Cretin";
+          break;
+        case "Forever":
+          delete jwtPayload.exp;
+          break;
+        default:
+          return this._authFailedResponse();
+      }
+      responseJSON.token = jwtSign(jwtPayload, "SEKRET");
     }
 
     return this._jsonResponse(responseJSON);

@@ -1,3 +1,4 @@
+import jwtDecode from "jsonwebtoken/decode";
 import moment from "moment";
 
 import { User } from "../auth";
@@ -109,31 +110,36 @@ export default class IncidentManagementSystem {
       return;
     }
 
-    if (responseJSON.username !== username) {
-      console.log(
-        `Using username in retrieved credentials (${responseJSON.username}), ` +
-        `which differs from submitted username (${username})`
-      );
-      username = responseJSON.username;
-    }
+    const token = responseJSON.token;
 
-    if (responseJSON.token == null) {
+    if (token == null) {
       throw new Error("No token in retrieved credentials");
     }
 
-    if (responseJSON.expires_in == null) {
-      throw new Error("No expiration in retrieved credentials");
-    }
-    const expiration = moment(responseJSON.expires_in);
-    if (! expiration.isValid()) {
-      throw new Error(
-        "Invalid expiration in retrieved credentials: " +
-        responseJSON.expires_in
+    const jwt = jwtDecode(token);
+    // const personID = jwt.sub;
+    // const issuer = jwt.iss;
+    // const issued = moment.unix(jwt.iat);
+
+    console.log("JWT: " + JSON.stringify(jwt));
+
+    // Use username preferred by the IMS server
+    const preferredUsername = jwt.prefered_username;
+    if (preferredUsername != null && preferredUsername !== username) {
+      console.log(
+        `Using username in retrieved credentials (${preferredUsername}), ` +
+        `which differs from submitted username (${username})`
       );
+      username = preferredUsername;
     }
 
+    if (jwt.exp == null) {
+      throw new Error("No expiration in retrieved credentials");
+    }
+    const expiration = moment.unix(jwt.exp);
+
     const imsCredentials = {
-      token: responseJSON.token,
+      token: token,
       expiration: expiration,
     }
 
