@@ -33,12 +33,12 @@ export default class App extends Component {
     this.authenticator = new Authenticator(props.ims);
 
     this.state = {
-      user: this.authenticator.user,
+      user: this.authenticator.source.user,
     }
 
     // Get notified when login/logout happens
     this.authenticator.delegate = () => {
-      this.setState({user: this.authenticator.user})
+      this.setState({user: this.authenticator.source.user})
     }
   }
 

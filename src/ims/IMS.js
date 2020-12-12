@@ -120,8 +120,6 @@ export default class IncidentManagementSystem {
     // const issuer = jwt.iss;
     // const issued = moment.unix(jwt.iat);
 
-    console.log("JWT: " + JSON.stringify(jwt));
-
     // Use username preferred by the IMS server
     const preferredUsername = jwt.prefered_username;
     if (preferredUsername != null && preferredUsername !== username) {
@@ -153,6 +151,7 @@ export default class IncidentManagementSystem {
   logout = async () => {
     // FIXME: this should tell the server that the token we are using is no
     // longer needed.
+    this.user = null;
     return true;
   }
 

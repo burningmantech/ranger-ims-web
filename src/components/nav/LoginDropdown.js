@@ -32,11 +32,12 @@ export default class LoginDropdown extends Component {
     }
 
     if (user === null) {
-      if (authenticator !== undefined && authenticator.user !== null) {
-        const expiration = authenticator.user.credentials.expiration;
+      if (authenticator !== undefined && authenticator.source.user !== null) {
+        const oldUser = authenticator.source.user;
+        const expiration = oldUser.credentials.expiration;
         const elapsed = moment.duration(moment() - expiration).humanize();
         console.log(
-          `Previously authenticated as ${authenticator.user.username}, ` +
+          `Previously authenticated as ${oldUser.username}, ` +
           `expired ${expiration} (${elapsed} ago)`
         );
       }

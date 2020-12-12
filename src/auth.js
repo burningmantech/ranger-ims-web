@@ -71,7 +71,6 @@ export class Authenticator {
     }
 
     this.source = source;
-    this.user = null;
     this.loadFromStorage();
     this.delegate = null;
   }
@@ -91,7 +90,9 @@ export class Authenticator {
    */
   saveToStorage = () => {
     if (this.isLoggedIn()) {
-      Authenticator._saveToStorage(this.source.constructor.name, this.user);
+      Authenticator._saveToStorage(
+        this.source.constructor.name, this.source.user
+      );
     }
     else {
       Authenticator.eraseStorage();
@@ -130,7 +131,7 @@ export class Authenticator {
     const user = Authenticator._userFromStorage();
     if (user === null) { return; }
 
-    this.user = user;
+    this.source.user = user;
   }
 
   static _sourceClassFromStorage = () => {
@@ -174,7 +175,7 @@ export class Authenticator {
         `Logged in as ${user.username} until ` +
         user.credentials.expiration.toISOString() + "."
       );
-      this.user = user;
+      this.source.user = user;
       this._notifyDelegate();
     }
     else {
@@ -195,9 +196,8 @@ export class Authenticator {
   }
 
   _logout = async () => {
-    console.log(`Logging out as ${this.user.username}...`)
+    console.log(`Logging out as ${this.source.user.username}...`)
     await this.source.logout();
-    this.user = null;
     this._notifyDelegate();
   }
 
@@ -205,7 +205,7 @@ export class Authenticator {
    * Determine whether we have a user with non-expired credentials.
    */
   isLoggedIn = () => {
-    const user = this.user;
+    const user = this.source.user;
     if (user === null) {
       return false;
     }
@@ -221,7 +221,7 @@ export class Authenticator {
 
   loggedInUser = () => {
     if (this.isLoggedIn()) {
-      return this.user;
+      return this.source.user;
     }
     else {
       return null;

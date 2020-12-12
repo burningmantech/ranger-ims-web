@@ -11,14 +11,15 @@ import { renderWithAuthenticator } from "../contextTesting";
 import Login from "./Login";
 
 
-function testAuthenticator(username) {
-  const authenticator = new Authenticator(testIncidentManagementSystem());
+const testAuthenticator = (username) => {
+  const source = testIncidentManagementSystem();
   if (username !== undefined) {
-    authenticator.user = new User(
+    source.user = new User(
       username, { expiration: moment().add(1, "hour") }
     );
   }
-  return authenticator;
+
+  return new Authenticator(source);
 }
 
 
@@ -37,7 +38,9 @@ describe("Login component", () => {
   test("expired user -> login button", () => {
     const username = "Hubcap";
     const authenticator = testAuthenticator(username);
-    authenticator.user.credentials.expiration = moment().subtract(1, "second")
+    authenticator.source.user.credentials.expiration = (
+      moment().subtract(1, "second")
+    );
 
     renderWithAuthenticator(<Login />, authenticator);
 
