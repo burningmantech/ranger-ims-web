@@ -1,7 +1,6 @@
 import jwtSign from "jsonwebtoken/sign";
 import moment from "moment";
 
-import { TestAuthentationSource } from "../auth";
 import IncidentManagementSystem from "./IMS";
 
 
@@ -17,11 +16,12 @@ export const theBag = {
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
+  static timeout = moment.duration(5, "minutes");
+
   constructor(bagURL) {
     super(bagURL);
 
     this.requestsReceived = [];
-    this._authenticationSource = new TestAuthentationSource();
 
     fetch = jest.fn(this._mockFetch);
   }
@@ -50,7 +50,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
     const password = requestJSON.password;
-    const expiration = moment().add(TestAuthentationSource.timeout);
+    const expiration = moment().add(TestIncidentManagementSystem.timeout);
 
     if (username != password) {
       return this._authFailedResponse();

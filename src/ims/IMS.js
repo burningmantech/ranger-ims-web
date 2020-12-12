@@ -83,7 +83,6 @@ export default class IncidentManagementSystem {
 
   /*
    * Authentication source login hook for Authenticator.
-   * See TestAuthentationSource.login for an example.
    */
   login = async (username, credentials) => {
     if (username == null) {
@@ -107,7 +106,7 @@ export default class IncidentManagementSystem {
 
     if (responseJSON.status === "invalid-credentials") {
       console.log(`Sent invalid credentials for ${username}`);
-      return;
+      return false;
     }
 
     const token = responseJSON.token;
@@ -145,12 +144,11 @@ export default class IncidentManagementSystem {
 
     this.user = new User(username, imsCredentials);
 
-    return this.user;
+    return true;
   }
 
   /*
    * Authentication source logout hook for Authenticator.
-   * See TestAuthentationSource.logout for an example.
    */
   logout = async () => {
     // FIXME: this should tell the server that the token we are using is no

@@ -7,13 +7,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { Authenticator, TestAuthentationSource, User } from "../../auth";
+import { Authenticator, User } from "../../auth";
+import { testIncidentManagementSystem } from "../../ims/TestIMS";
 import { renderWithAuthenticator } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";
 
 
 function testAuthenticator(username) {
-  const authenticator = new Authenticator(new TestAuthentationSource());
+  const authenticator = new Authenticator(testIncidentManagementSystem());
   if (username !== undefined) {
     authenticator.user = new User(
       username, { expiration: moment().add(1, "hour") }

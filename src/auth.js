@@ -44,46 +44,6 @@ export class User {
 
 
 /*
- * Test authentication source
- * - timeout: duration of time that credentials will be valid for
- */
-export class TestAuthentationSource {
-
-  static timeout = moment.duration(5, "minutes");
-
-  /*
-   * Logs into an authentication source.
-   * - username: user identifier
-   * - credentials: credentials for logging in: a dictionary with a password key
-   *   that contains the password for the user.
-   *
-   * NOTE: the login credentials passed to this method are not the same as the
-   * re-usable credentials in the created User object.
-   */
-  login = async (username, credentials) => {
-    if (credentials.password !== username) {
-      return null;
-    }
-
-    const expiration = moment().add(TestAuthentationSource.timeout);
-
-    return new User(username, { expiration: expiration });
-  }
-
-  /*
-   * Logs out from an authentication source.
-   *
-   * NOTE: Authenticator should dispose of any credentials on its own, so the
-   * purpose of this is to notify the source that those credentials are no
-   * longer in use, in case it wants to invalidate them in the event that
-   * someone attempts to use them later.
-   */
-  logout = async () => { return true; }
-
-}
-
-
-/*
  * Authenticator
  * Manages the mechanisms for obtaining authenticated users from an
  * authentication source.
@@ -206,21 +166,23 @@ export class Authenticator {
 
   _login = async (username, credentials) => {
     console.log(`Logging in as ${username}...`);
-    const user = await this.source.login(username, credentials);
+    const result = await this.source.login(username, credentials);
+    const user = this.source.user;
 
-    if (user == null) {
-      console.log("Login failed." + user)
-      return false;
-    }
-    else {
+    if (result) {
       console.log(
         `Logged in as ${user.username} until ` +
-        user.credentials.expiration.toISOString()
+        user.credentials.expiration.toISOString() + "."
       );
       this.user = user;
       this._notifyDelegate();
-      return true;
     }
+    else {
+      console.log("Login failed." + result);
+      // We'll leave the previous user intact here...
+    }
+
+    return result;
   }
 
   /*

@@ -1,6 +1,7 @@
 import moment from "moment";
 
-import { Authenticator, TestAuthentationSource, User } from "./auth";
+import { Authenticator, User } from "./auth";
+import { testIncidentManagementSystem } from "./ims/TestIMS";
 
 
 describe("User", () => {
@@ -82,44 +83,6 @@ describe("User", () => {
 });
 
 
-describe("TestAuthentationSource", () => {
-
-  test("valid login -> user", async () => {
-    const username = "user";
-    const password = username;
-    const source = new TestAuthentationSource();
-    const user = await source.login(username, {password: password});
-
-    expect(user).not.toBeNull();
-    expect(user.username).toEqual(username);
-  });
-
-  test("valid login -> expiration", async () => {
-    const username = "user";
-    const password = username;
-    const now = moment();
-    const source = new TestAuthentationSource();
-    const user = await source.login(username, {password: password});
-
-    const expiration = user.credentials.expiration;
-
-    expect(expiration).toBeDefined();
-    expect(expiration).not.toBeNull();
-    expect(expiration).toBeAfterMoment(now);
-  });
-
-  test("invalid login -> null", async () => {
-    const username = "user";
-    const password = "Not My Password";
-    const source = new TestAuthentationSource();
-    const user = await source.login(username, {password: password});
-
-    expect(user).toBeNull();
-  });
-
-});
-
-
 /*
  * Make sure that we have no stored credentials.
  */
@@ -147,11 +110,12 @@ async function populateAuthStorage(username, credentials, source) {
     credentials = {password: username};
   }
   if (!source) {
-    source = new TestAuthentationSource();
+    source = testIncidentManagementSystem();
   }
 
-  const user = await source.login(username, credentials);
+  await source.login(username, credentials);
 
+  const user = source.user;
   const store = window.localStorage;
 
   store.setItem(Authenticator.STORE_KEY_CLASS, source.constructor.name);
@@ -176,7 +140,7 @@ describe("Authenticator", () => {
   });
 
   test("initial state", () => {
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     expect(authenticator.source).toBe(source);
@@ -206,7 +170,7 @@ describe("Authenticator", () => {
 
     const username = "Hubcap";
     const credentials = { password: username };
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
     const now = moment();
 
@@ -234,7 +198,7 @@ describe("Authenticator", () => {
 
     const username = "Hubcap";
     const credentials = {password: username};
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     authenticator.saveToStorage();
@@ -246,7 +210,7 @@ describe("Authenticator", () => {
   test("loadFromStorage, empty", () => {
     verifyCleanAuthStorage();
 
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     expect(authenticator.isLoggedIn()).toBe(false);
@@ -354,7 +318,7 @@ describe("Authenticator", () => {
 
     const username = "Hubcap";
     const credentials = {password: username};
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator1 = new Authenticator(source);
     const now = moment();
 
@@ -372,9 +336,9 @@ describe("Authenticator", () => {
   });
 
   test("valid login -> user", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -389,10 +353,10 @@ describe("Authenticator", () => {
   });
 
   test("valid login -> expiration", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
     const now = moment();
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -405,9 +369,9 @@ describe("Authenticator", () => {
   });
 
   test("valid login -> stored", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
     const now = moment();
 
@@ -422,9 +386,9 @@ describe("Authenticator", () => {
   });
 
   test("valid login -> notify delegate", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     let notified = false;
@@ -438,9 +402,9 @@ describe("Authenticator", () => {
   });
 
   test("invalid login", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = "Not My Password";
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -452,10 +416,10 @@ describe("Authenticator", () => {
   });
 
   test("invalid login after prior login keeps user", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const goodPassword = username;
     const badPassword = "Not My Password";
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
     let result;
 
@@ -476,9 +440,9 @@ describe("Authenticator", () => {
   });
 
   test("logout", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -493,9 +457,9 @@ describe("Authenticator", () => {
   });
 
   test("logout -> stored", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -509,9 +473,9 @@ describe("Authenticator", () => {
   });
 
   test("valid login -> notify delegate", async () => {
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     const result = await authenticator.login(username, {password: password});
@@ -530,16 +494,16 @@ describe("Authenticator", () => {
   test("isLoggedIn, valid", async () => {
     verifyCleanAuthStorage();
 
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const user = await source.login(username, {password: password});
+    await source.login(username, {password: password});
 
-    authenticator.user = user;
+    authenticator.user = source.user;
 
     expect(authenticator.isLoggedIn()).toBe(true);
   });
@@ -547,9 +511,9 @@ describe("Authenticator", () => {
   test("isLoggedIn, null user", async () => {
     verifyCleanAuthStorage();
 
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     authenticator.user = null;
@@ -560,17 +524,17 @@ describe("Authenticator", () => {
   test("isLoggedIn, expired", async () => {
     verifyCleanAuthStorage();
 
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const user = await source.login(username, {password: password});
-    user.credentials.expiration = moment().subtract(1, "second");
+    await source.login(username, {password: password});
+    source.user.credentials.expiration = moment().subtract(1, "second");
 
-    authenticator.user = user;
+    authenticator.user = source.user;
 
     expect(authenticator.isLoggedIn()).toBe(false);
   });
@@ -578,34 +542,33 @@ describe("Authenticator", () => {
   test("loggedInUser, valid", async () => {
     verifyCleanAuthStorage();
 
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const user = await source.login(username, {password: password});
+    await source.login(username, {password: password});
+    authenticator.user = source.user;
 
-    authenticator.user = user;
-
-    expect(authenticator.loggedInUser()).toBe(user);
+    expect(authenticator.loggedInUser()).toBe(source.user);
   });
 
   test("loggedInUser, expired", async () => {
     verifyCleanAuthStorage();
 
-    const username = "user";
+    const username = "Hubcap";
     const password = username;
-    const source = new TestAuthentationSource();
+    const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
     // Authenticate via source and set attributes directly, since we are not
     // trying to test Authenticator.login() here.
-    const user = await source.login(username, {password: password});
-    user.credentials.expiration = moment().subtract(1, "second");
+    await source.login(username, {password: password});
+    source.user.credentials.expiration = moment().subtract(1, "second");
 
-    authenticator.user = user;
+    authenticator.user = source.user;
 
     expect(authenticator.loggedInUser()).toBeNull();
   });
