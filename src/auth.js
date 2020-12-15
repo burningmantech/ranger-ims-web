@@ -179,7 +179,7 @@ export class Authenticator {
       this._notifyDelegate();
     }
     else {
-      console.log("Login failed." + result);
+      console.log("Login failed.");
       // We'll leave the previous user intact here...
     }
 

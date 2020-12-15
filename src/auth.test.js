@@ -414,7 +414,7 @@ describe("Authenticator", () => {
     expect(notified).toBe(true);
   });
 
-  test("invalid login", async () => {
+  test("invalid login, first attempt", async () => {
     const username = "Hubcap";
     const password = "Not My Password";
     const source = testIncidentManagementSystem();
