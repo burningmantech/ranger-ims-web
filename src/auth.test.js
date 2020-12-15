@@ -212,7 +212,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem();
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -225,7 +225,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(true);
+    expect(authenticator.source.isLoggedIn()).toBe(true);
   });
 
   test("loadFromStorage, populated, missing class", async () => {
@@ -240,7 +240,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -256,7 +256,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -272,7 +272,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -288,7 +288,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -306,7 +306,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -324,7 +324,7 @@ describe("Authenticator", () => {
     const source = testIncidentManagementSystem()
     const authenticator = new Authenticator(source);
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
     expect(source.user).toBeNull();
   });
 
@@ -362,7 +362,7 @@ describe("Authenticator", () => {
 
     expect(source.user.username).toEqual(username);
 
-    expect(authenticator.isLoggedIn()).toBe(true);
+    expect(authenticator.source.isLoggedIn()).toBe(true);
   });
 
   test("valid login -> expiration", async () => {
@@ -425,7 +425,7 @@ describe("Authenticator", () => {
     if (result) { throw new Error("login failed to fail"); }
 
     expect(source.user).toBe(null);
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
   });
 
   test("invalid login after prior login keeps user", async () => {
@@ -449,7 +449,7 @@ describe("Authenticator", () => {
     if (result) { throw new Error("login failed to fail"); }
 
     expect(source.user.username).toEqual(username);
-    expect(authenticator.isLoggedIn()).toBe(true);
+    expect(authenticator.source.isLoggedIn()).toBe(true);
   });
 
   test("logout", async () => {
@@ -461,12 +461,14 @@ describe("Authenticator", () => {
     const result = await authenticator.login(username, {password: password});
 
     if (!result) { throw new Error("login failed"); }
-    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
+    if (!authenticator.source.isLoggedIn()) {
+      throw new Error("isLoggedIn() fail?");
+    }
 
     await authenticator.logout();
 
     expect(source.user).toBe(null);
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
   });
 
   test("logout -> stored", async () => {
@@ -478,7 +480,9 @@ describe("Authenticator", () => {
     const result = await authenticator.login(username, {password: password});
 
     if (!result) { throw new Error("login failed"); }
-    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
+    if (!authenticator.source.isLoggedIn()) {
+      throw new Error("isLoggedIn() fail?");
+    }
 
     await authenticator.logout();
 
@@ -494,7 +498,9 @@ describe("Authenticator", () => {
     const result = await authenticator.login(username, {password: password});
 
     if (!result) { throw new Error("login failed"); }
-    if (!authenticator.isLoggedIn()) { throw new Error("isLoggedIn() fail?"); }
+    if (!authenticator.source.isLoggedIn()) {
+      throw new Error("isLoggedIn() fail?");
+    }
 
     let notified = false;
     authenticator.delegate = () => { notified = true; }
@@ -516,7 +522,7 @@ describe("Authenticator", () => {
     // trying to test Authenticator.login() here.
     await source.login(username, {password: password});
 
-    expect(authenticator.isLoggedIn()).toBe(true);
+    expect(authenticator.source.isLoggedIn()).toBe(true);
   });
 
   test("isLoggedIn, null user", async () => {
@@ -529,7 +535,7 @@ describe("Authenticator", () => {
 
     source.user = null;
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
   });
 
   test("isLoggedIn, expired", async () => {
@@ -545,7 +551,7 @@ describe("Authenticator", () => {
     await source.login(username, {password: password});
     source.user.credentials.expiration = moment().subtract(1, "second");
 
-    expect(authenticator.isLoggedIn()).toBe(false);
+    expect(authenticator.source.isLoggedIn()).toBe(false);
   });
 
   test("loggedInUser, valid", async () => {

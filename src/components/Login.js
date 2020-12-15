@@ -40,7 +40,7 @@ export default class Login extends Component {
     const component = this;
     const authenticator = this.context.authenticator;
 
-    if (authenticator.isLoggedIn()) {
+    if (authenticator.source.isLoggedIn()) {
       return <>{this.props.children}</>;
     }
     else {

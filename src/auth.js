@@ -89,7 +89,7 @@ export class Authenticator {
    * Write state to local storage.
    */
   saveToStorage = () => {
-    if (this.isLoggedIn()) {
+    if (this.source.isLoggedIn()) {
       Authenticator._saveToStorage(
         this.source.constructor.name, this.source.user
       );
@@ -201,26 +201,8 @@ export class Authenticator {
     this._notifyDelegate();
   }
 
-  /*
-   * Determine whether we have a user with non-expired credentials.
-   */
-  isLoggedIn = () => {
-    const user = this.source.user;
-    if (user === null) {
-      return false;
-    }
-
-    const expiration = user.credentials.expiration;
-    if (moment().isAfter(expiration)) {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
   loggedInUser = () => {
-    if (this.isLoggedIn()) {
+    if (this.source.isLoggedIn()) {
       return this.source.user;
     }
     else {

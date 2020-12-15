@@ -195,6 +195,18 @@ export default class IncidentManagementSystem {
     return true;
   }
 
+  /*
+   * Determine whether we have a user with non-expired credentials.
+   */
+  isLoggedIn = () => {
+    const user = this.user;
+    if (user === null) {
+      return false;
+    }
+
+    return moment().isBefore(user.credentials.expiration);
+  }
+
   ////
   //  Data
   ////
