@@ -29,7 +29,20 @@ export default class EventDropdown extends Component {
       throw new Error(`No IMS provided to ${this.constructor.name}.`);
     }
 
-    this.setState({ events: await ims.events() });
+    let events;
+    try {
+      events = await ims.events();
+    }
+    catch (e) {
+      if (e.message === "Failed to retrieve events.") {
+        events = null;
+      }
+      else {
+        throw e;
+      }
+    }
+
+    this.setState({ events: events });
   }
 
   render = () => {
@@ -37,11 +50,27 @@ export default class EventDropdown extends Component {
       const events = this.state.events;
 
       if (events === undefined) {
-        return <NavDropdown.Item>Loading Events…</NavDropdown.Item>
+        return (
+          <NavDropdown.Item className="text-warning">
+            Loading Events…
+          </NavDropdown.Item>
+        );
+      }
+
+      if (events === null) {
+        return (
+          <NavDropdown.Item className="text-danger">
+            Error Loading Events
+          </NavDropdown.Item>
+        );
       }
 
       if (events.length === 0) {
-        return <NavDropdown.Item>No Events Found</NavDropdown.Item>
+        return (
+          <NavDropdown.Item className="text-info">
+            No Events Found
+          </NavDropdown.Item>
+        );
       }
 
       return events.map(
@@ -50,7 +79,7 @@ export default class EventDropdown extends Component {
             <NavDropdown.Item key={id} href="#events/{id}">
               {id}
             </NavDropdown.Item>
-          )
+          );
         }
       );
     }
