@@ -159,7 +159,9 @@ describe("IMS", () => {
     const message = "Response type is not JSON: text/plain";
     const ims = testIncidentManagementSystem();
 
-    await expect(ims._fetchJSON("/none")).toRejectWithMessage(message);
+    const response = await ims._fetchJSON("/none");
+
+    expect(response.status).toEqual(404);
   });
 
   test("load bag: request content type", async () => {

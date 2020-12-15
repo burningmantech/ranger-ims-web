@@ -16,9 +16,39 @@ export default class IncidentManagementSystem {
     this._bag = null;
   }
 
-  _fetch = (request) => {
-    console.log(`Issuing request: ${request.method} ${request.url}`);
-    return fetch(request);
+  _fetch = async (request) => {
+    let type;
+    if (this.user === null) {
+      type = "unauthenticated";
+    }
+    else {
+      type = "authenticated";
+      request.headers.set(
+        "Authorization", `Bearer ${this.user.credentials.token}`
+      );
+    }
+
+    console.log(`Issuing ${type} request: ${request.method} ${request.url}`);
+    const response = await fetch(request);
+
+    if (! response.ok) {
+      if (response.status === 401) {
+        if (this.user === null) {
+          console.log(`Authentication required for resource: ${request.url}`);
+        }
+        else {
+          console.log(`Authentication failed for resource: ${request.url}`);
+        }
+      }
+      else {
+        console.log(
+          "Non-OK response from server " +
+          `(${response.status}: ${response.statusText})`
+        );
+      }
+    }
+
+    return response;
   }
 
   _fetchJSON = async (url, json=null, headers={}) => {
@@ -49,10 +79,10 @@ export default class IncidentManagementSystem {
 
     const responseContentType = response.headers.get("Content-Type");
     if (responseContentType !== "application/json") {
-      throw new Error(`Response type is not JSON: ${responseContentType}`);
+      console.log(`Response type is not JSON: ${responseContentType}`);
     }
 
-    return await response.json();
+    return response;
   }
 
   ////
@@ -66,7 +96,11 @@ export default class IncidentManagementSystem {
     else {
       console.log("Retrieving bag from IMS server...");
 
-      const bag = await this._fetchJSON(this.bagURL);
+      const response = await this._fetchJSON(this.bagURL);
+      if (! response.ok) {
+        throw new Error("Failed to retrieve bag.");
+      }
+      const bag = await response.json();
 
       if (bag.urls == null) {
         throw new Error(`Bag does not have URLs: ${bag}`);
@@ -102,13 +136,22 @@ export default class IncidentManagementSystem {
     const requestJSON = {
       identification: username, password: credentials.password
     };
-    const responseJSON = await this._fetchJSON(bag.urls.auth, requestJSON);
+    const response = await this._fetchJSON(bag.urls.auth, requestJSON);
 
-    if (responseJSON.status === "invalid-credentials") {
-      console.log(`Sent invalid credentials for ${username}`);
-      return false;
+    // Authentication failure yields a 401 response with a JSON error.
+    if (response.status === 401) {
+      const responseJSON = await response.json();
+      if (responseJSON.status === "invalid-credentials") {
+        console.log(`Sent invalid credentials for ${username}`);
+        return false;
+      }
     }
 
+    if (! response.ok) {
+      throw new Error("Failed to authenticate.");
+    }
+
+    const responseJSON = await response.json();
     const token = responseJSON.token;
 
     if (token == null) {
@@ -135,10 +178,7 @@ export default class IncidentManagementSystem {
     }
     const expiration = moment.unix(jwt.exp);
 
-    const imsCredentials = {
-      token: token,
-      expiration: expiration,
-    }
+    const imsCredentials = { token: token, expiration: expiration };
 
     this.user = new User(username, imsCredentials);
 
@@ -161,7 +201,11 @@ export default class IncidentManagementSystem {
 
   events = async () => {
     const bag = await this.bag();
-    const events = await this._fetchJSON(bag.urls.events);
+    const response = await this._fetchJSON(bag.urls.events);
+    if (! response.ok) {
+      throw new Error("Failed to retrieve events.");
+    }
+    const events = await response.json();
     return events;
   }
 
