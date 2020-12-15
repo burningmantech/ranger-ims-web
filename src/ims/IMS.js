@@ -17,27 +17,30 @@ export default class IncidentManagementSystem {
   }
 
   _fetch = async (request) => {
-    let type;
-    if (this.user === null) {
-      type = "unauthenticated";
-    }
-    else {
-      type = "authenticated";
+    let authenticated;
+    if (this.isLoggedIn()) {
+      authenticated = true;
       request.headers.set(
         "Authorization", `Bearer ${this.user.credentials.token}`
       );
     }
+    else {
+      authenticated = false;
+    }
 
-    console.log(`Issuing ${type} request: ${request.method} ${request.url}`);
+    console.log(
+      `Issuing ${authenticated ? "authenticated" : "unauthenticated"} ` +
+      `request: ${request.method} ${request.url}`
+    );
     const response = await fetch(request);
 
     if (! response.ok) {
       if (response.status === 401) {
-        if (this.user === null) {
-          console.log(`Authentication required for resource: ${request.url}`);
+        if (authenticated) {
+          console.log(`Authentication failed for resource: ${request.url}`);
         }
         else {
-          console.log(`Authentication failed for resource: ${request.url}`);
+          console.log(`Authentication required for resource: ${request.url}`);
         }
       }
       else {
