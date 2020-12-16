@@ -40,6 +40,13 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     )
   }
 
+  _textResponse = (json) => {
+    return new Response(
+      "Hello!",
+      { status: 200, headers: { "Content-Type": "text/plain" } },
+    )
+  }
+
   _authFailedResponse = () => {
     return new Response(
       JSON.stringify({ status: "invalid-credentials" }),
@@ -133,6 +140,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         break;
       case "/none":
         return await this._notFoundResponse();
+      case "/not_authenticated":
+        return await this._authFailedResponse();
+      case "/hello":
+        return await this._textResponse();
       case "/janky_bag":
         return this._jsonResponse("{}");
     }

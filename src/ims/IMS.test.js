@@ -193,13 +193,12 @@ describe("IMS HTTP requests", () => {
     expect(response.status).toEqual(404);
   });
 
-  test("_fetchJSON: not authenticated", async () => {
-    const username = "Hubcap";
-    const password = username;
+  test("_fetchJSON: not authenticated -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSON(ims.bagURL);
 
+    expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
     const request = ims.requestsReceived[0];
@@ -207,23 +206,53 @@ describe("IMS HTTP requests", () => {
     expect(request).not.toBeJWTAuthenticatedRequest();
   });
 
-  test("_fetchJSON: authenticated", async () => {
+  test("_fetchJSON: authenticated -> OK", async () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
-
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
-    await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSON(ims.bagURL);
 
+    expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
     const request = ims.requestsReceived[0];
 
     expect(request).toBeJWTAuthenticatedRequest();
+  });
+
+  test("_fetchJSON: not authenticated -> 401", async () => {
+    const ims = testIncidentManagementSystem();
+
+    const response = await ims._fetchJSON("/not_authenticated");
+
+    expect(response.status).toEqual(401);
+  });
+
+  test("_fetchJSON: authenticated -> 401", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+    // Clear out request tracking from login
+    ims.requestsReceived = [];
+
+    const response = await ims._fetchJSON("/not_authenticated");
+
+    expect(response.status).toEqual(401);
+  });
+
+  test("_fetchJSON: non-JSON response", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await expect(
+      async () => {await ims._fetchJSON("/hello")}
+    ).toThrow("Response type is not JSON: text/plain")
   });
 
 });
