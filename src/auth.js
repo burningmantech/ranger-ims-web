@@ -126,10 +126,10 @@ export class Authenticator {
       return;
     }
 
-    console.log("Loading stored credentials...")
-
     const user = Authenticator._userFromStorage();
     if (user === null) { return; }
+
+    console.log(`Loaded stored credentials for ${user}`)
 
     this.source.user = user;
   }

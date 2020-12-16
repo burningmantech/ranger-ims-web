@@ -162,15 +162,18 @@ export default class IncidentManagementSystem {
     }
 
     const jwt = jwtDecode(token);
+
+    // Available but unused claims:
     // const personID = jwt.sub;
     // const issuer = jwt.iss;
     // const issued = moment.unix(jwt.iat);
 
     // Use username preferred by the IMS server
-    const preferredUsername = jwt.prefered_username;
+    const preferredUsername = jwt.preferred_username;
     if (preferredUsername != null && preferredUsername !== username) {
       console.log(
-        `Using username in retrieved credentials (${preferredUsername}), ` +
+        "Using preferred username in retrieved credentials " +
+        `(${preferredUsername}), ` +
         `which differs from submitted username (${username})`
       );
       username = preferredUsername;
