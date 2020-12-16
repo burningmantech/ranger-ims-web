@@ -142,6 +142,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           delete jwtPayload.exp;
           break;
         default:
+          /* istanbul ignore next */
           return this._authFailedResponse();
       }
       responseJSON.token = jwtSign(jwtPayload, "SEKRET");
@@ -164,9 +165,11 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     switch (path) {
       case theBag.urls.bag:
+        /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(theBag);
         }
+        /* istanbul ignore next */
         break;
       case theBag.urls.auth:
         /* istanbul ignore else */
@@ -175,12 +178,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           request._json = requestJSON;
           return await this._authResponse(requestJSON);
         }
+        /* istanbul ignore next */
         break;
       case theBag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(this._testEvents);
         }
+        /* istanbul ignore next */
         break;
       case "/not_found":
         return await this._notFoundResponse();
@@ -193,11 +198,13 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case "/forbidden":
         return await this._forbiddenResponse();
       case "/json_echo":
+        /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
           return await this._jsonResponse(requestJSON);
         }
+        /* istanbul ignore next */
         break;
       case "/text_hello":
         return await this._textResponse();
