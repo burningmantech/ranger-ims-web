@@ -149,16 +149,35 @@ export default class IncidentManagementSystem {
     );
 
     // Authentication failure yields a 401 response with a JSON error.
+    let failureReason;
     if (response.status === 401) {
-      const responseJSON = await response.json();
-      if (responseJSON.status === "invalid-credentials") {
-        console.log(`Credentials for ${username} are invalid.`);
-        return false;
+      let responseJSON;
+      try {
+        responseJSON = await response.json();
       }
+      catch (e) {
+        responseJSON = null;
+      }
+
+      if (responseJSON === null) {
+        failureReason = "non-JSON response for login";
+      }
+      else {
+        if (responseJSON.status === "invalid-credentials") {
+          console.log(`Credentials for ${username} are invalid.`);
+          return false;
+        }
+        failureReason = `unknown JSON error status: ${responseJSON.status}`;
+      }
+    }
+    else {
+      failureReason = (
+        `HTTP error status ${response.status} ${response.statusText}`
+      );
     }
 
     if (! response.ok) {
-      throw new Error("Failed to authenticate.");
+      throw new Error(`Failed to authenticate: ${failureReason}`);
     }
 
     const responseJSON = await response.json();

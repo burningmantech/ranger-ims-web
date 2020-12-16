@@ -70,10 +70,10 @@ export default class EventDropdown extends Component {
       }
 
       return events.map(
-        (id) => {
+        (event) => {
           return (
-            <NavDropdown.Item key={id} href="#events/{id}">
-              {id}
+            <NavDropdown.Item key={event.id} href="#events/{id}">
+              {event.name}
             </NavDropdown.Item>
           );
         }

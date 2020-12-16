@@ -21,6 +21,13 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   constructor(bagURL) {
     super(bagURL);
 
+    this._testEvents = ([
+      { id: "1", name: "Event One" },
+      { id: "2", name: "Event Two" },
+      { id: "3", name: "Event Three" },
+      { id: "4", name: "Event Four" },
+    ])
+
     this.requestsReceived = [];
 
     fetch = jest.fn(this._mockFetch);
@@ -29,21 +36,77 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   _notFoundResponse = () => {
     return new Response(
       "Resource not found",
-      { status: 404, headers: { "Content-Type": "text/plain" } },
+      {
+        status: 404,
+        statusText: "Resource Not Found",
+        headers: { "Content-Type": "text/plain" }
+      },
     )
   }
 
-  _jsonResponse = (json) => {
+  _authTextResponse = () => {
     return new Response(
-      JSON.stringify(json),
-      { status: 200, headers: { "Content-Type": "application/json" } },
+      "Authentication required.",
+      {
+        status: 401,
+        statusText: "Authentication Required",
+        headers: { "Content-Type": "text/plain" }
+      },
+    )
+  }
+
+  _authJSONResponse = () => {
+    return new Response(
+      JSON.stringify({}),
+      {
+        status: 401,
+        statusText: "Authentication Required",
+        headers: { "Content-Type": "application/json" }
+      },
     )
   }
 
   _authFailedResponse = () => {
     return new Response(
       JSON.stringify({ status: "invalid-credentials" }),
-      { status: 401, headers: { "Content-Type": "application/json" } },
+      {
+        status: 401,
+        statusText: "Authentication Failed",
+        headers: { "Content-Type": "application/json" }
+      },
+    )
+  }
+
+  _forbiddenResponse = () => {
+    return new Response(
+      "No soup for you!",
+      {
+        status: 403,
+        statusText: "Forbidden",
+        headers: { "Content-Type": "text/plain" }
+      },
+    )
+  }
+
+  _jsonResponse = (json) => {
+    return new Response(
+      JSON.stringify(json),
+      {
+        status: 200,
+        statusText: "Okay, here's some JSON",
+        headers: { "Content-Type": "application/json" }
+      },
+    )
+  }
+
+  _textResponse = (json) => {
+    return new Response(
+      "Hello!",
+      {
+        status: 200,
+        statusText: "Okay, here's some text",
+        headers: { "Content-Type": "text/plain" }
+      },
     )
   }
 
@@ -116,29 +179,44 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case theBag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
-          return this._jsonResponse([
-            { id: "1", name: "Event One" },
-            { id: "2", name: "Event Two" },
-            { id: "3", name: "Event Three" },
-            { id: "4", name: "Event Four" },
-          ]);
+          return this._jsonResponse(this._testEvents);
         }
         break;
-      case "/echo_json":
+      case "/not_found":
+        return await this._notFoundResponse();
+      case "/auth_fail_text":
+        return await this._authTextResponse();
+      case "/auth_fail_json_no_status":
+        return await this._authJSONResponse();
+      case "/auth_fail_json":
+        return await this._authFailedResponse();
+      case "/forbidden":
+        return await this._forbiddenResponse();
+      case "/json_echo":
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
           return await this._jsonResponse(requestJSON);
         }
         break;
-      case "/none":
-        return await this._notFoundResponse();
+      case "/text_hello":
+        return await this._textResponse();
       case "/janky_bag":
         return this._jsonResponse("{}");
     }
 
     /* istanbul ignore next */
     throw new Error(`Unexpected request: ${request.method} ${path}`);
+  }
+
+  // For testing
+  asHubcap = async () => {
+    const username = "Hubcap";
+    const password = username;
+
+    await this.login(username, {password: password});
+
+    return this;
   }
 }
 

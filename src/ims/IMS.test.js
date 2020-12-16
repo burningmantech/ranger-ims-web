@@ -57,7 +57,7 @@ expect.extend({
 });
 
 
-describe("IMS init", () => {
+describe("IMS: init", () => {
 
   test("bagURL", () => {
     const url = "/ims/api/bag";
@@ -85,7 +85,7 @@ describe("IMS init", () => {
 });
 
 
-describe("IMS HTTP requests", () => {
+describe("IMS: HTTP requests", () => {
 
   test("_fetchJSON: default content type", async () => {
     const ims = testIncidentManagementSystem();
@@ -126,12 +126,11 @@ describe("IMS HTTP requests", () => {
   });
 
   test("_fetchJSON: non-JSON content type", async () => {
-    const message = "Not JSON content-type: text/plain";
     const ims = testIncidentManagementSystem();
 
     expect(
       ims._fetchJSON(ims.bagURL, null, { "Content-Type": "text/plain" })
-    ).toRejectWithMessage(message);
+    ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
   test("_fetchJSON: string full URL", async () => {
@@ -175,7 +174,7 @@ describe("IMS HTTP requests", () => {
   test("_fetchJSON: with JSON -> POST request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON("/echo_json", {});
+    await ims._fetchJSON("/json_echo", {});
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -184,22 +183,28 @@ describe("IMS HTTP requests", () => {
     expect(request.method).toEqual("POST");
   });
 
-  test("_fetchJSON: non-JSON response", async () => {
-    const message = "Response type is not JSON: text/plain";
+  test("_fetchJSON: non-JSON response -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
-    const response = await ims._fetchJSON("/none");
+    await expect(
+      ims._fetchJSON("/text_hello")
+    ).toRejectWithMessage("Response type is not JSON: text/plain")
+  });
+
+  test("_fetchJSON: non-JSON response -> non-OK", async () => {
+    const ims = testIncidentManagementSystem();
+
+    const response = await ims._fetchJSON("/not_found");
 
     expect(response.status).toEqual(404);
   });
 
-  test("_fetchJSON: not authenticated", async () => {
-    const username = "Hubcap";
-    const password = username;
+  test("_fetchJSON: not authenticated -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSON(ims.bagURL);
 
+    expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
     const request = ims.requestsReceived[0];
@@ -207,18 +212,18 @@ describe("IMS HTTP requests", () => {
     expect(request).not.toBeJWTAuthenticatedRequest();
   });
 
-  test("_fetchJSON: authenticated", async () => {
+  test("_fetchJSON: authenticated -> OK", async () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
-
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
-    await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSON(ims.bagURL);
 
+    expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
     const request = ims.requestsReceived[0];
@@ -226,10 +231,32 @@ describe("IMS HTTP requests", () => {
     expect(request).toBeJWTAuthenticatedRequest();
   });
 
+  test("_fetchJSON: not authenticated -> 401 JSON with status", async () => {
+    const ims = testIncidentManagementSystem();
+
+    const response = await ims._fetchJSON("/auth_fail_json");
+
+    expect(response.status).toEqual(401);
+  });
+
+  test("_fetchJSON: authenticated -> 401 text", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+    // Clear out request tracking from login
+    ims.requestsReceived = [];
+
+    const response = await ims._fetchJSON("/auth_fail_json");
+
+    expect(response.status).toEqual(401);
+  });
+
 });
 
 
-describe("IMS bag", () => {
+describe("IMS: bag", () => {
 
   test("load bag: request content type", async () => {
     const ims = testIncidentManagementSystem();
@@ -263,15 +290,19 @@ describe("IMS bag", () => {
   });
 
   test("load bag: no URLs in response", async () => {
-    const message = "Bag does not have URLs: {}";
     const ims = testIncidentManagementSystem("/janky_bag");
-    await expect(ims.bag()).toRejectWithMessage(message);
+    await expect(ims.bag()).toRejectWithMessage("Bag does not have URLs: {}");
+  });
+
+  test("load bag: non-OK response", async () => {
+    const ims = testIncidentManagementSystem("/forbidden");
+    await expect(ims.bag()).toRejectWithMessage("Failed to retrieve bag.");
   });
 
 });
 
 
-describe("IMS authentication", () => {
+describe("IMS: authentication", () => {
 
   test("login: username is required", async () => {
     const message = "username is required";
@@ -343,9 +374,72 @@ describe("IMS authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, {password: password});
+    const result = await ims.login(username, {password: password});
 
+    expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
+  });
+
+  test("login -> auth failed (bad credentials)", async () => {
+    const username = "Hubcap";
+    const password = "Not My Password";
+    const ims = testIncidentManagementSystem();
+
+    const result = await ims.login(username, {password: password});
+
+    expect(result).toBe(false);
+    expect(ims.user).toBeNull();
+  });
+
+  test("login -> auth failed (non-401)", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    // Need a non-401 error status
+    const bag = await ims.bag();
+    bag.urls.auth = "/forbidden";
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(
+      "Failed to authenticate: HTTP error status 403 Forbidden"
+    );
+    expect(ims.user).toBeNull();
+  });
+
+  test("login -> auth failed (non-JSON)", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    // Need a non-401 error status
+    const bag = await ims.bag();
+    bag.urls.auth = "/auth_fail_text";
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(
+      "Failed to authenticate: non-JSON response for login"
+    );
+    expect(ims.user).toBeNull();
+  });
+
+  test("login -> auth failed (JSON without status)", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    // Need a non-401 error status
+    const bag = await ims.bag();
+    bag.urls.auth = "/auth_fail_json_no_status";
+
+    await expect(
+      ims.login(username, {password: password})
+    ).toRejectWithMessage(
+      "Failed to authenticate: unknown JSON error status: undefined"
+    );
+    expect(ims.user).toBeNull();
   });
 
   test("login -> credentials with token", async () => {
@@ -353,20 +447,22 @@ describe("IMS authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, {password: password});
+    const result = await ims.login(username, {password: password});
 
+    expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
     expect(ims.user.credentials.token).toBeTruthy();
   });
 
-  test("login -> credentials not expired", async () => {
+  test("login -> result credentials are not expired", async () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
     const now = moment();
 
-    await ims.login(username, {password: password});
+    const result = await ims.login(username, {password: password});
 
+    expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
     expect(ims.user.credentials.expiration).toBeAfterMoment(now);
   });
@@ -376,31 +472,30 @@ describe("IMS authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, {password: password});
+    const result = await ims.login(username, {password: password});
 
+    expect(result).toBe(true);
     expect(ims.user.username).toEqual("Cretin");
   });
 
   test("login: response with no token", async () => {
-    const message = "No token in retrieved credentials";
     const username = "No Token";
     const password = username;
     const ims = testIncidentManagementSystem();
 
     await expect(
       ims.login(username, {password: password})
-    ).toRejectWithMessage(message);
+    ).toRejectWithMessage("No token in retrieved credentials");
   });
 
   test("login: response with no expiration", async () => {
-    const message = "No expiration in retrieved credentials";
     const username = "Forever";
     const password = username;
     const ims = testIncidentManagementSystem();
 
     await expect(
       ims.login(username, {password: password})
-    ).toRejectWithMessage(message);
+    ).toRejectWithMessage("No expiration in retrieved credentials");
   });
 
   test("login -> user -> logout", async () => {
@@ -413,6 +508,68 @@ describe("IMS authentication", () => {
     const result = await ims.logout();
 
     expect(result).toBe(true);
+  });
+
+  test("isLoggedIn(), not logged in", async () => {
+    const ims = testIncidentManagementSystem();
+
+    expect(ims.isLoggedIn()).toBe(false);
+  });
+
+  test("isLoggedIn(), logged in", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+
+    expect(ims.isLoggedIn()).toBe(true);
+  });
+
+  test("isLoggedIn(), missing expiration", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+
+    delete ims.user.credentials.expiration;
+
+    expect(ims.isLoggedIn()).toBe(false);
+  });
+
+  test("isLoggedIn(), expired", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+
+    ims.user.credentials.expiration = moment().subtract(1, "second");
+
+    expect(ims.isLoggedIn()).toBe(false);
+  });
+
+});
+
+
+describe("IMS: events", () => {
+
+  test("events(), ok", async () => {
+    const ims = await testIncidentManagementSystem().asHubcap();
+
+    const events = await ims.events();
+
+    expect(events).toEqual(ims._testEvents);
+  });
+
+  test("events(), failed", async () => {
+    const ims = await testIncidentManagementSystem().asHubcap();
+
+    const bag = await ims.bag();
+    bag.urls.events = "/forbidden";
+
+    await expect(ims.events()).toRejectWithMessage("Failed to retrieve events.")
   });
 
 });
