@@ -34,12 +34,8 @@ export default class EventDropdown extends Component {
       events = await ims.events();
     }
     catch (e) {
-      if (e.message === "Failed to retrieve events.") {
-        events = null;
-      }
-      else {
-        throw e;
-      }
+      console.log(`Unable to fetch events: {e}`);
+      events = null;
     }
 
     this.setState({ events: events });
