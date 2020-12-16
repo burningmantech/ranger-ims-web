@@ -33,6 +33,10 @@ export class User {
     this.credentials = credentials;
   }
 
+  toString = () => {
+    return this.username;
+  }
+
   /*
    * Serialize a User as JSON.
    */
