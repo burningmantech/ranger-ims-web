@@ -67,13 +67,13 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         // sub: "PERSON_ID_GOES_HERE",
         exp: now + 60,
         // iat: now,
-        prefered_username: username,
+        preferred_username: username,
       }
       switch (username) {
         case "Hubcap":
           break;
         case "XYZZY":
-          jwtPayload.prefered_username = "Cretin";
+          jwtPayload.preferred_username = "Cretin";
           break;
         case "Forever":
           delete jwtPayload.exp;
