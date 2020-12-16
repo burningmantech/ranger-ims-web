@@ -33,7 +33,7 @@ expect.extend({
 });
 
 
-describe("IMS", () => {
+describe("IMS init", () => {
 
   test("bagURL", () => {
     const url = "/ims/api/bag";
@@ -57,6 +57,11 @@ describe("IMS", () => {
 
     expect(ims._bag).toBeNull();
   });
+
+});
+
+
+describe("IMS HTTP requests", () => {
 
   test("_fetchJSON: default content type", async () => {
     const ims = testIncidentManagementSystem();
@@ -164,6 +169,11 @@ describe("IMS", () => {
     expect(response.status).toEqual(404);
   });
 
+});
+
+
+describe("IMS bag", () => {
+
   test("load bag: request content type", async () => {
     const ims = testIncidentManagementSystem();
     const bag = await ims.bag();
@@ -201,6 +211,11 @@ describe("IMS", () => {
     const ims = testIncidentManagementSystem("/janky_bag");
     await expect(ims.bag()).toRejectWithMessage(message);
   });
+
+});
+
+
+describe("IMS authentication", () => {
 
   test("login: username is required", async () => {
     const message = "username is required";
