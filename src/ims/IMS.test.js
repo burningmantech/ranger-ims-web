@@ -30,6 +30,30 @@ expect.extend({
     }
   },
 
+  toBeJWTAuthenticatedRequest(request) {
+    if (!request.headers.has("Authorization")) {
+      return {
+        message: () => "Request has no Authorization header",
+        pass: false,
+      }
+    }
+
+    const authorization = request.headers.get("Authorization");
+    if (! authorization.startsWith("Bearer ")) {
+      return {
+        message: () => (
+          `Request authorization lacks bearer token: ${authorization}`
+        ),
+        pass: false,
+      }
+    }
+
+    return {
+      message: () => "Request has authorization with bearer token",
+      pass: true,
+    }
+  },
+
 });
 
 
@@ -169,6 +193,39 @@ describe("IMS HTTP requests", () => {
     expect(response.status).toEqual(404);
   });
 
+  test("_fetchJSON: not authenticated", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request).not.toBeJWTAuthenticatedRequest();
+  });
+
+  test("_fetchJSON: authenticated", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+
+    // Clear out request tracking from login
+    ims.requestsReceived = [];
+
+    await ims._fetchJSON(ims.bagURL);
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request).toBeJWTAuthenticatedRequest();
+  });
+
 });
 
 
@@ -186,7 +243,6 @@ describe("IMS bag", () => {
   });
 
   test("load bag: retrieved urls", async () => {
-    const now = moment();
     const ims = testIncidentManagementSystem();
     const bag = await ims.bag();
 
@@ -286,7 +342,6 @@ describe("IMS authentication", () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
-    const now = moment();
 
     await ims.login(username, {password: password});
 
@@ -352,7 +407,6 @@ describe("IMS authentication", () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
-    const now = moment();
 
     await ims.login(username, {password: password});
 
