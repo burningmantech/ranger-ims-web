@@ -170,23 +170,10 @@ export class Authenticator {
   }
 
   _login = async (username, credentials) => {
-    console.log(`Logging in as ${username}...`);
     const result = await this.source.login(username, credentials);
-    const user = this.source.user;
-
     if (result) {
-      console.log(
-        `Logged in as ${user.username} until ` +
-        user.credentials.expiration.toISOString() + "."
-      );
-      this.source.user = user;
       this._notifyDelegate();
     }
-    else {
-      console.log("Login failed.");
-      // We'll leave the previous user intact here...
-    }
-
     return result;
   }
 
@@ -200,7 +187,6 @@ export class Authenticator {
   }
 
   _logout = async () => {
-    console.log(`Logging out as ${this.source.user.username}...`)
     await this.source.logout();
     this._notifyDelegate();
   }

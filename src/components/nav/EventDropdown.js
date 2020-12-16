@@ -34,7 +34,7 @@ export default class EventDropdown extends Component {
       events = await ims.events();
     }
     catch (e) {
-      console.log(`Unable to fetch events: {e}`);
+      console.log(`Unable to load ${this.constructor.name}: ${e}`);
       events = null;
     }
 
