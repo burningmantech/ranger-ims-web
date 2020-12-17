@@ -7,7 +7,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { User } from "../../auth";
+import { User } from "../../ims/IMS";
 import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
 import LoginDropdown from "./LoginDropdown";
 

@@ -1,6 +1,7 @@
 import moment from "moment";
 
-import { Authenticator, User } from "./auth";
+import { Authenticator } from "./auth";
+import { User } from "./ims/IMS";
 import { testIncidentManagementSystem } from "./ims/TestIMS";
 
 

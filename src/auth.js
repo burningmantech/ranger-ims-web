@@ -1,50 +1,6 @@
 import moment from "moment";
 
-
-/*
- * Authenticated user
- * - username: user identifier
- * - credentials: re-usable credentials to submit to server requests
- */
-export class User {
-
-  /*
-   * Deserialize a User from JSON.
-   */
-  static fromJSON = (json) => {
-    if (json.credentials != null) {
-      json.credentials.expiration = moment(json.credentials.expiration);
-    }
-    return new User(json.username, json.credentials);
-  }
-
-  constructor(username, credentials) {
-    if (username == null) {
-      throw new Error("username is required");
-    }
-    if (credentials == null) {
-      throw new Error("credentials is required");
-    }
-    if (credentials.expiration == null) {
-      throw new Error("credentials.expiration is required");
-    }
-
-    this.username = username;
-    this.credentials = credentials;
-  }
-
-  toString = () => {
-    return this.username;
-  }
-
-  /*
-   * Serialize a User as JSON.
-   */
-  toJSON = () => {
-    return {username: this.username, credentials: this.credentials};
-  }
-
-}
+import { User } from "./ims/IMS";
 
 
 /*
@@ -154,8 +110,8 @@ export class Authenticator {
       const userJSON = JSON.parse(userJSONText);
       return User.fromJSON(userJSON);
     }
-    catch {
-      console.log("ERROR: Invalid user in stored credentials.");
+    catch (e) {
+      console.log(`ERROR: Invalid user in stored credentials: ${e}`);
       return null;
     }
   }

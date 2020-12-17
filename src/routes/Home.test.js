@@ -3,7 +3,7 @@ import moment from "moment";
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 
-import { User } from "../auth";
+import { User } from "../ims/IMS";
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import Home from "./Home";
