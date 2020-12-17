@@ -21,6 +21,7 @@ describe("CredentialStore", () => {
 
   test("initial state", () => {
     const store = new CredentialStore(TEST_STORE_KEY);
+
     expect(store.key).toEqual(TEST_STORE_KEY);
   });
 
@@ -36,7 +37,13 @@ describe("CredentialStore", () => {
     expect(jsonText).toEqual(JSON.stringify({ user: user.toJSON() }));
   });
 
-  test("loadCredentials", () => {
+  test("loadCredentials, empty", () => {
+    const store = new CredentialStore(TEST_STORE_KEY);
+
+    expect(store.loadCredentials()).toBeNull();
+  });
+
+  test("loadCredentials, valid", () => {
     const username = "Hubcap";
     const credentials = { expiration: moment() };
     const user = new User(username, credentials);
@@ -48,6 +55,36 @@ describe("CredentialStore", () => {
     expect(
       JSON.stringify(userFromStore.toJSON())
     ).toEqual(JSON.stringify(user.toJSON()));
+  });
+
+  test("loadCredentials, invalid JSON", () => {
+    window.localStorage.setItem(TEST_STORE_KEY, "*");
+
+    const store = new CredentialStore(TEST_STORE_KEY);
+
+    expect(
+      () => { store.loadCredentials() }
+    ).toThrow("Unable to parse JSON for stored credentials: ");
+  });
+
+  test("loadCredentials, missing user", () => {
+    window.localStorage.setItem(TEST_STORE_KEY, "{}");
+
+    const store = new CredentialStore(TEST_STORE_KEY);
+
+    expect(
+      () => { store.loadCredentials() }
+    ).toThrow("No user data in stored credentials.");
+  });
+
+  test("loadCredentials, invalid user", () => {
+    window.localStorage.setItem(TEST_STORE_KEY, '{"user": {}}');
+
+    const store = new CredentialStore(TEST_STORE_KEY);
+
+    expect(
+      () => { store.loadCredentials() }
+    ).toThrow("Invalid user data in stored credentials: ");
   });
 
   test("removeCredentials", () => {

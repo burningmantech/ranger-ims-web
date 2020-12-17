@@ -31,6 +31,10 @@ export default class CredentialStore {
       return null;
     }
 
+    if (json.user == null) {
+      throw new Error("No user data in stored credentials.");
+    }
+
     try {
       const user = User.fromJSON(json.user);
       console.log(`Loaded credentials for user ${user} from local storage.`);
