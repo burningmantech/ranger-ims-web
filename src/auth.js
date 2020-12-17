@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { User } from "./ims/IMS";
+import User from "./ims/User";
 
 
 /*

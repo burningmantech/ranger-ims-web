@@ -1,7 +1,8 @@
 import jwtSign from "jsonwebtoken/sign";
 import moment from "moment";
 
-import IncidentManagementSystem, { User } from "./IMS";
+import User from "./User";
+import IncidentManagementSystem from "./IMS";
 import { IMSContext } from "./context";
 
 import { render } from "@testing-library/react";
