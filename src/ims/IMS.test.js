@@ -555,6 +555,26 @@ describe("IMS: authentication", () => {
 });
 
 
+describe("IMS: delegate", () => {
+
+  test("login -> notify delegate", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    let notified = false;
+    ims.delegate = () => { notified = true; }
+
+    const result = await ims.login(username, {password: password});
+
+    if (!result) { throw new Error("login failed"); }
+
+    expect(notified).toBe(true);
+  });
+
+});
+
+
 describe("IMS: events", () => {
 
   test("events(), ok", async () => {
