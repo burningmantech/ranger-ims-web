@@ -13,7 +13,7 @@ import Login from "./Login";
 describe("Login component", () => {
 
   afterEach(() => {
-    Authenticator.eraseStorage();
+    testIncidentManagementSystem().logout();
   });
 
   test("no user -> login button", () => {
