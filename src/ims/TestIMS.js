@@ -1,8 +1,11 @@
 import jwtSign from "jsonwebtoken/sign";
 import moment from "moment";
 
-import IncidentManagementSystem from "./IMS";
 import { User } from "../auth";
+import IncidentManagementSystem from "./IMS";
+import { IMSContext } from "./context";
+
+import { render } from "@testing-library/react";
 
 
 export const theBag = {
@@ -239,4 +242,16 @@ export function testIncidentManagementSystem(username) {
   }
 
   return ims;
+}
+
+
+export const renderWithIMS = (content, ims, ...renderOptions) => {
+  return render(
+    (
+      <IMSContext.Provider value={{ims: ims}}>
+        {content}
+      </IMSContext.Provider>
+    ),
+    ...renderOptions
+  );
 }

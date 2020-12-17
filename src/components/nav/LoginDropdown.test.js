@@ -8,8 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
 import { User } from "../../auth";
-import { testIncidentManagementSystem } from "../../ims/TestIMS";
-import { renderWithIMS } from "../../contextTesting";
+import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
 import LoginDropdown from "./LoginDropdown";
 
 

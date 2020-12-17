@@ -6,8 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
 import { Authenticator, User } from "../auth";
-import { testIncidentManagementSystem } from "../ims/TestIMS";
-import { renderWithIMS } from "../contextTesting";
+import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 import Login from "./Login";
 
 

@@ -3,8 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { renderWithIMS } from "../contextTesting";
-import { testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import Page from "./Page";
 
