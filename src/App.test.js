@@ -10,7 +10,7 @@ import App from "./App";
 describe("App component", () => {
 
   afterEach(() => {
-    Authenticator.eraseStorage();
+    testIncidentManagementSystem().logout();
   });
 
   test("no ims", () => {
