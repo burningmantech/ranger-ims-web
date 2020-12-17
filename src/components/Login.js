@@ -10,12 +10,12 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
-import { AuthenticatorContext } from "../context";
+import { IMSContext } from "../context";
 
 
 export default class Login extends Component {
 
-  static contextType = AuthenticatorContext;
+  static contextType = IMSContext;
 
   constructor(props) {
     super(props);
@@ -38,9 +38,9 @@ export default class Login extends Component {
 
   render = () => {
     const component = this;
-    const authenticator = this.context.authenticator;
+    const ims = this.context.ims;
 
-    if (authenticator.source.isLoggedIn()) {
+    if (ims.isLoggedIn()) {
       return <>{this.props.children}</>;
     }
     else {
@@ -52,9 +52,7 @@ export default class Login extends Component {
         event.preventDefault();
         let result;
         try {
-          result = await authenticator.login(
-            username, {password: password}
-          );
+          result = await ims.login(username, {password: password});
         }
         catch (e) {
           const errorMessage = e.message;

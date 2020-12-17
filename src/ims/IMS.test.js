@@ -290,12 +290,14 @@ describe("IMS: bag", () => {
   });
 
   test("load bag: no URLs in response", async () => {
-    const ims = testIncidentManagementSystem("/janky_bag");
+    const ims = testIncidentManagementSystem();
+    ims.bagURL = "/janky_bag";
     await expect(ims.bag()).toRejectWithMessage("Bag does not have URLs: {}");
   });
 
   test("load bag: non-OK response", async () => {
-    const ims = testIncidentManagementSystem("/forbidden");
+    const ims = testIncidentManagementSystem();
+    ims.bagURL = "/forbidden";
     await expect(ims.bag()).toRejectWithMessage("Failed to retrieve bag.");
   });
 

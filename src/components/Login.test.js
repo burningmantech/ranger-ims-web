@@ -7,20 +7,8 @@ import { Component } from "react";
 
 import { Authenticator, User } from "../auth";
 import { testIncidentManagementSystem } from "../ims/TestIMS";
-import { renderWithAuthenticator } from "../contextTesting";
+import { renderWithIMS } from "../contextTesting";
 import Login from "./Login";
-
-
-const testAuthenticator = (username) => {
-  const source = testIncidentManagementSystem();
-  if (username !== undefined) {
-    source.user = new User(
-      username, { expiration: moment().add(1, "hour") }
-    );
-  }
-
-  return new Authenticator(source);
-}
 
 
 describe("Login component", () => {
@@ -30,49 +18,47 @@ describe("Login component", () => {
   });
 
   test("no user -> login button", () => {
-    renderWithAuthenticator(<Login />, testAuthenticator());
+    renderWithIMS(<Login />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
   test("expired user -> login button", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
-    authenticator.source.user.credentials.expiration = (
-      moment().subtract(1, "second")
-    );
+    const ims = testIncidentManagementSystem(username);
+    ims.user.credentials.expiration = moment().subtract(1, "second");
 
-    renderWithAuthenticator(<Login />, authenticator);
+    renderWithIMS(<Login />, ims);
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
 
   test("user -> no login button", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
 
-    renderWithAuthenticator(<Login />, authenticator);
+    renderWithIMS(<Login />, ims);
 
     expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
 
   test("user -> logged in message", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
     const content = "Hello, World!";
 
-    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
+    renderWithIMS(<Login>{content}</Login>, ims);
 
     expect(screen.queryByText(content)).toBeInTheDocument();
   });
 
   test("no user -> log in -> logged in message", async () => {
-    const authenticator = testAuthenticator();
+    const ims = testIncidentManagementSystem();
     const content = "Hello, World!"
     const username = "Hubcap";
     const password = username;
 
-    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
+    renderWithIMS(<Login>{content}</Login>, ims);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);
@@ -84,12 +70,12 @@ describe("Login component", () => {
   });
 
   test("no user -> invalid log in -> no logged in message", async () => {
-    const authenticator = testAuthenticator();
+    const ims = testIncidentManagementSystem();
     const content = "Hello, World!"
     const username = "Hubcap";
     const password = "Not My Password";
 
-    renderWithAuthenticator(<Login>{content}</Login>, authenticator);
+    renderWithIMS(<Login>{content}</Login>, ims);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);

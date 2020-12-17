@@ -11,9 +11,20 @@ export default class IncidentManagementSystem {
       throw new Error("bagURL is required");
     }
 
-    this.user = null;
     this.bagURL = bagURL;
+    this.delegate = null;
+    this.user = null;
     this._bag = null;
+  }
+
+  /*
+   * Call the registered delegate function to provide a notification of a change
+   * in user-logged-in state.
+   */
+  _notifyDelegate = () => {
+    if (this.delegate !== null) {
+      this.delegate();
+    }
   }
 
   _fetch = async (request, suppressLogout=false) => {
@@ -123,9 +134,6 @@ export default class IncidentManagementSystem {
   //  Authentication
   ////
 
-  /*
-   * Authentication source login hook for Authenticator.
-   */
   login = async (username, credentials) => {
     if (username == null) {
       throw new Error("username is required")
@@ -213,6 +221,7 @@ export default class IncidentManagementSystem {
     const imsCredentials = { token: token, expiration: expiration };
 
     this.user = new User(username, imsCredentials);
+    this._notifyDelegate();
 
     console.log(
       `Logged in as ${this.user} until ${expiration.toISOString()}.`
@@ -221,14 +230,12 @@ export default class IncidentManagementSystem {
     return true;
   }
 
-  /*
-   * Authentication source logout hook for Authenticator.
-   */
   logout = async () => {
     console.log(`Logging out as ${this.user}...`);
     // FIXME: this should tell the server that the token we are using is no
     // longer needed.
     this.user = null;
+    this._notifyDelegate();
     return true;
   }
 

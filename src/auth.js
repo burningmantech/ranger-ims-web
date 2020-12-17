@@ -191,13 +191,4 @@ export class Authenticator {
     this._notifyDelegate();
   }
 
-  loggedInUser = () => {
-    if (this.source.isLoggedIn()) {
-      return this.source.user;
-    }
-    else {
-      return null;
-    }
-  }
-
 }

@@ -7,22 +7,10 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { Authenticator, User } from "../../auth";
+import { User } from "../../auth";
 import { testIncidentManagementSystem } from "../../ims/TestIMS";
-import { renderWithAuthenticator } from "../../contextTesting";
+import { renderWithIMS } from "../../contextTesting";
 import LoginDropdown from "./LoginDropdown";
-
-
-const testAuthenticator = (username) => {
-  const source = testIncidentManagementSystem();
-  if (username !== undefined) {
-    source.user = new User(
-      username, { expiration: moment().add(1, "hour") }
-    );
-  }
-
-  return new Authenticator(source);
-}
 
 
 describe("LoginDropdown component", () => {
@@ -33,40 +21,39 @@ describe("LoginDropdown component", () => {
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });
 
-  test("no authenticator -> not logged in message", () => {
+  test("no IMS -> not logged in message", () => {
     render(<LoginDropdown />);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("no user -> not logged in message", () => {
-    renderWithAuthenticator(<LoginDropdown />, testAuthenticator());
+    renderWithIMS(<LoginDropdown />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> not logged in message", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
-    authenticator.source.user.credentials.expiration = (
-      moment().subtract(1, "second")
-    );
+    const ims = testIncidentManagementSystem(username);
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    ims.user.credentials.expiration = moment().subtract(1, "second");
+
+    renderWithIMS(<LoginDropdown />, ims);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> console message", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
     const expiration = moment().subtract(1, "second");
 
-    authenticator.source.user.credentials.expiration = expiration;
+    ims.user.credentials.expiration = expiration;
 
     console.log = jest.fn();
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    renderWithIMS(<LoginDropdown />, ims);
 
     expect(console.log).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
@@ -77,8 +64,8 @@ describe("LoginDropdown component", () => {
   test("user -> log out item", () => {
     const username = "Hubcap";
 
-    renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(username)
+    renderWithIMS(
+      <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
     expect(screen.queryByText(username)).toBeInTheDocument();
@@ -87,8 +74,8 @@ describe("LoginDropdown component", () => {
   test("activate user menu -> log out item", async () => {
     const username = "Hubcap";
 
-    renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(username)
+    renderWithIMS(
+      <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
     await act(async () => {
@@ -100,12 +87,12 @@ describe("LoginDropdown component", () => {
 
   test("log out item -> log out", async () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
 
     let notified = false;
-    authenticator.delegate = () => { notified = true; }
+    ims.delegate = () => { notified = true; }
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    renderWithIMS(<LoginDropdown />, ims);
 
     await act(async () => {
       await userEvent.click(screen.getByText(username))

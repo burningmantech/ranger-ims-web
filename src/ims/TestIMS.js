@@ -2,6 +2,7 @@ import jwtSign from "jsonwebtoken/sign";
 import moment from "moment";
 
 import IncidentManagementSystem from "./IMS";
+import { User } from "../auth";
 
 
 export const theBag = {
@@ -228,6 +229,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 }
 
 
-export function testIncidentManagementSystem(bagURL="/ims/api/bag") {
-  return new TestIncidentManagementSystem(bagURL);
+export function testIncidentManagementSystem(username) {
+  const ims = new TestIncidentManagementSystem("/ims/api/bag");
+
+  if (username !== undefined) {
+    ims.user = new User(
+      username, { expiration: moment().add(1, "hour") }
+    );
+  }
+
+  return ims;
 }
