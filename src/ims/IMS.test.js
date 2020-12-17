@@ -560,15 +560,6 @@ describe("IMS: authentication", () => {
     expect(ims.isLoggedIn()).toBe(false);
   });
 
-});
-
-
-describe("IMS: delegate", () => {
-
-  afterEach(() => {
-    testIncidentManagementSystem().logout();
-  });
-
   test("login -> notify delegate", async () => {
     const username = "Hubcap";
     const password = username;
@@ -578,7 +569,6 @@ describe("IMS: delegate", () => {
     ims.delegate = () => { notified = true; }
 
     const result = await ims.login(username, {password: password});
-    if (!result) { throw new Error("login failed"); }
 
     expect(notified).toBe(true);
   });
@@ -598,10 +588,37 @@ describe("IMS: delegate", () => {
     expect(notified).toBe(true);
   });
 
+  test("login -> stored", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+    const storedUser = ims._credentialStore.loadCredentials();
+
+    expect(storedUser.username).toEqual(username);
+  });
+
+  test("logout -> stored", async () => {
+    const username = "Hubcap";
+    const password = username;
+    const ims = testIncidentManagementSystem();
+
+    await ims.login(username, {password: password});
+    await ims.logout();
+    const storedUser = ims._credentialStore.loadCredentials();
+
+    expect(storedUser).toBeNull();
+  });
+
 });
 
 
 describe("IMS: events", () => {
+
+  afterEach(() => {
+    testIncidentManagementSystem().logout();
+  });
 
   test("events(), ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
