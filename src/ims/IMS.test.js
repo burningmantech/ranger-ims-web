@@ -79,6 +79,10 @@ describe("IMS: init", () => {
     const url = "/ims/api/bag";
     const ims = new IncidentManagementSystem(url);
 
+    expect(ims.bagURL).toEqual(url);
+    expect(ims.delegate).toBeNull();
+    expect(ims.user).toBeNull();
+    expect(ims._credentialStore).not.toBeNull();
     expect(ims._bag).toBeNull();
   });
 
@@ -305,6 +309,10 @@ describe("IMS: bag", () => {
 
 
 describe("IMS: authentication", () => {
+
+  afterEach(() => {
+    testIncidentManagementSystem().logout();
+  });
 
   test("login: username is required", async () => {
     const message = "username is required";
@@ -556,6 +564,10 @@ describe("IMS: authentication", () => {
 
 
 describe("IMS: delegate", () => {
+
+  afterEach(() => {
+    testIncidentManagementSystem().logout();
+  });
 
   test("login -> notify delegate", async () => {
     const username = "Hubcap";

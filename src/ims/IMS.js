@@ -2,9 +2,12 @@ import jwtDecode from "jsonwebtoken/decode";
 import moment from "moment";
 
 import User from "./User";
+import CredentialStore from "./store/CredentialStore";
 
 
 export default class IncidentManagementSystem {
+
+  static _credentialStoreKey = "org.burningman.rangers.ims.credentials";
 
   constructor(bagURL) {
     if (! bagURL) {
@@ -13,9 +16,20 @@ export default class IncidentManagementSystem {
 
     Object.defineProperty(this, "user", {
       enumerable: true,
-      get: () => { return this._user },
-      set: (value) => {
-        this._user = value;
+      get: () => {
+        if (this._user === undefined) {
+          this._user = this._credentialStore.loadCredentials();
+        }
+        return this._user;
+      },
+      set: (user) => {
+        this._user = user;
+        if (user === null) {
+          this._credentialStore.removeCredentials();
+        }
+        else {
+          this._credentialStore.storeCredentials(user);
+        }
         if (this.delegate !== null) {
           this.delegate();
         }
@@ -24,7 +38,7 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
-    this.user = null;
+    this._credentialStore = new CredentialStore(this._credentialStoreKey);
     this._bag = null;
   }
 
