@@ -5,8 +5,8 @@ import {
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { IMSContext } from "./context";
 import { URLs } from "./URLs";
+import { IMSContext } from "./ims/context";
 
 import Loading from "./components/Loading";
 

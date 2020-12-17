@@ -1,8 +1,8 @@
 import { Component } from "react";
 
-import { IMSContext } from "../../context";
-
 import NavDropdown from "react-bootstrap/NavDropdown";
+
+import { IMSContext } from "../../ims/context";
 
 
 export default class EventDropdown extends Component {

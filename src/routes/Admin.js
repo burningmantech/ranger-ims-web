@@ -1,6 +1,6 @@
 import { Component } from "react";
 
-import { IMSContext } from "../context";
+import { IMSContext } from "../ims/context";
 
 import BagTable from "../components/BagTable";
 import Page from "../components/Page";

@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 
-import { IMSContext } from "./context";
+import { IMSContext } from "./ims/context";
 
 
 export const renderWithIMS = (content, ims, ...renderOptions) => {

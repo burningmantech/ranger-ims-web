@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import Table from "react-bootstrap/Table";
 
-import { IMSContext } from "../context";
+import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 
