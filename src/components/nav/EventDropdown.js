@@ -15,7 +15,14 @@ export default class EventDropdown extends Component {
   }
 
   componentDidMount = () => {
-    this.fetch();  // no await needed
+    this._setEvents = (events) => { this.setState({ events: events }) };
+    this._fetchPromise = this.fetch();  // no await needed
+  }
+
+  componentWillUnmount = () => {
+    this._setEvents = (events) => {
+      console.log(`Received events after ${this.constructor.name} unmounted.`);
+    };
   }
 
   fetch = async () => {
@@ -37,8 +44,7 @@ export default class EventDropdown extends Component {
       console.log(`Unable to load ${this.constructor.name}: ${e}`);
       events = null;
     }
-
-    this.setState({ events: events });
+    this._setEvents(events);
   }
 
   render = () => {
