@@ -42,7 +42,7 @@ export default class IncidentManagementSystem {
     this._bag = null;
   }
 
-  _fetch = async (request, suppressLogout=false) => {
+  _fetch = async (request) => {
     let authenticated;
     if (this.isLoggedIn()) {
       authenticated = true;
@@ -64,9 +64,7 @@ export default class IncidentManagementSystem {
       if (response.status === 401) {
         if (authenticated) {
           console.log(`Authentication failed for resource: ${request.url}`);
-          if (! suppressLogout) {
-            await this.logout();
-          }
+          await this.logout();
         }
         else {
           console.log(`Authentication required for resource: ${request.url}`);
@@ -83,7 +81,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchJSON = async (url, json=null, headers={}, suppressLogout=false) => {
+  _fetchJSON = async (url, json=null, headers={}) => {
     const requestHeaders = new Headers(headers);
 
     // Ensure content type is JSON
@@ -107,7 +105,7 @@ export default class IncidentManagementSystem {
     }
 
     const request = new Request(url, requestOptions);
-    const response = await this._fetch(request, suppressLogout);
+    const response = await this._fetch(request);
 
     if (response.ok) {
       const responseContentType = response.headers.get("Content-Type");
