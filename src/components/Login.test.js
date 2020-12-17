@@ -5,7 +5,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { Authenticator, User } from "../auth";
+import User from "../ims/User";
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 import Login from "./Login";
 
