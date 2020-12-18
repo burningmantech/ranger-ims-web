@@ -6,7 +6,8 @@ const adminURL = `${homeURL}admin/`;
 export const URLs = {
   root: rootURL,
   home: homeURL,
-  event: eventsURL,
+  events: eventsURL,
+  event: (event) => { return `${eventsURL}${event.id}/`; },
   admin: adminURL,
 }
 Object.freeze(URLs);

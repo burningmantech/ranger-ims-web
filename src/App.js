@@ -62,7 +62,7 @@ export default class App extends Component {
               </Route>
 
               {/* Event Screen */}
-              <Route exact path={`${URLs.event}:eventID/`}>
+              <Route exact path={`${URLs.events}:eventID/`}>
                 <Login>
                   <EventWithParams />
                 </Login>

@@ -2,6 +2,7 @@ import { Component } from "react";
 
 import NavDropdown from "react-bootstrap/NavDropdown";
 
+import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
 
 
@@ -78,7 +79,7 @@ export default class EventDropdown extends Component {
       return events.map(
         (event) => {
           return (
-            <NavDropdown.Item key={event.id} href="#events/{id}">
+            <NavDropdown.Item key={event.id} href={URLs.event(event)}>
               {event.name}
             </NavDropdown.Item>
           );
