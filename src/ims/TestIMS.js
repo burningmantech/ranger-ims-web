@@ -145,8 +145,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         case "Forever":
           delete jwtPayload.exp;
           break;
+        /* istanbul ignore next */
         default:
-          /* istanbul ignore next */
           return this._authFailedResponse();
       }
       responseJSON.token = jwtSign(jwtPayload, "SEKRET");
