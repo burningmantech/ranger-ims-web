@@ -5,9 +5,8 @@ import {
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Authenticator } from "./auth";
-import { AuthenticatorContext, IMSContext } from "./context";
 import { URLs } from "./URLs";
+import { IMSContext } from "./ims/context";
 
 import Loading from "./components/Loading";
 
@@ -30,20 +29,17 @@ export default class App extends Component {
       throw new Error("ims is required");
     }
 
-    this.authenticator = new Authenticator(props.ims);
-
     this.state = {
-      user: this.authenticator.user,
+      user: props.ims.user,
     }
 
     // Get notified when login/logout happens
-    this.authenticator.delegate = () => {
-      this.setState({user: this.authenticator.user})
+    props.ims.delegate = () => {
+      this.setState({ user: props.ims.user })
     }
   }
 
   render = () => {
-    const authContextValue = {authenticator: this.authenticator};
     const imsContextValue = {ims: this.props.ims};
 
     return (
@@ -56,32 +52,30 @@ export default class App extends Component {
               <Redirect to={URLs.home} />
             </Route>
 
-            <AuthenticatorContext.Provider value={authContextValue}>
-              <IMSContext.Provider value={imsContextValue}>
+            <IMSContext.Provider value={imsContextValue}>
 
-                {/* Home Screen */}
-                <Route exact path={URLs.home}>
-                  <Login>
-                    <Home />
-                  </Login>
-                </Route>
+              {/* Home Screen */}
+              <Route exact path={URLs.home}>
+                <Login>
+                  <Home />
+                </Login>
+              </Route>
 
-                {/* Event Screen */}
-                <Route exact path={`${URLs.event}:eventID/`}>
-                  <Login>
-                    <EventWithParams />
-                  </Login>
-                </Route>
+              {/* Event Screen */}
+              <Route exact path={`${URLs.events}:eventID/`}>
+                <Login>
+                  <EventWithParams />
+                </Login>
+              </Route>
 
-                {/* Admin Console */}
-                <Route exact path={URLs.admin}>
-                  <Login>
-                    <Admin />
-                  </Login>
-                </Route>
+              {/* Admin Console */}
+              <Route exact path={URLs.admin}>
+                <Login>
+                  <Admin />
+                </Login>
+              </Route>
 
-              </IMSContext.Provider>
-            </AuthenticatorContext.Provider>
+            </IMSContext.Provider>
 
             {/* Not found */}
             <Route path="*">

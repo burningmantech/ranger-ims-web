@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import Table from "react-bootstrap/Table";
 
-import { IMSContext } from "../context";
+import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 
@@ -17,18 +17,18 @@ export default class BagTable extends Component {
   }
 
   componentDidMount = () => {
-    this.fetchBag();  // no await needed
+    this.fetch();  // no await needed
   }
 
-  fetchBag = async () => {
+  fetch = async () => {
     const context = this.context;
     if (context === undefined) {
-      throw new Error("No context.");
+      throw new Error(`No context provided to ${this.constructor.name}.`);
     }
 
     const ims = context.ims;
     if (ims == null) {
-      throw new Error("No IMS.");
+      throw new Error(`No IMS provided to ${this.constructor.name}.`);
     }
 
     this.setState({ bag: await ims.bag() });

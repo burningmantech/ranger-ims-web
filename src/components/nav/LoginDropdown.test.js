@@ -7,20 +7,9 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Component } from "react";
 
-import { Authenticator, TestAuthentationSource, User } from "../../auth";
-import { renderWithAuthenticator } from "../../contextTesting";
+import User from "../../ims/User";
+import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
 import LoginDropdown from "./LoginDropdown";
-
-
-function testAuthenticator(username) {
-  const authenticator = new Authenticator(new TestAuthentationSource());
-  if (username !== undefined) {
-    authenticator.user = new User(
-      username, { expiration: moment().add(1, "hour") }
-    );
-  }
-  return authenticator;
-}
 
 
 describe("LoginDropdown component", () => {
@@ -31,40 +20,41 @@ describe("LoginDropdown component", () => {
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });
 
-  test("no authenticator -> not logged in message", () => {
+  test("no IMS -> not logged in message", () => {
     render(<LoginDropdown />);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("no user -> not logged in message", () => {
-    renderWithAuthenticator(<LoginDropdown />, testAuthenticator());
+    renderWithIMS(<LoginDropdown />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> not logged in message", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
-    authenticator.user.credentials.expiration = moment().subtract(1, "second")
+    const ims = testIncidentManagementSystem(username);
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    ims.user.credentials.expiration = moment().subtract(1, "second");
+
+    renderWithIMS(<LoginDropdown />, ims);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> console message", () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
     const expiration = moment().subtract(1, "second");
 
-    authenticator.user.credentials.expiration = expiration;
+    ims.user.credentials.expiration = expiration;
 
-    console.log = jest.fn();
+    const spy = jest.spyOn(console, "debug");
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    renderWithIMS(<LoginDropdown />, ims);
 
-    expect(console.log).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
       `expired ${expiration} (a few seconds ago)`
     );
@@ -73,8 +63,8 @@ describe("LoginDropdown component", () => {
   test("user -> log out item", () => {
     const username = "Hubcap";
 
-    renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(username)
+    renderWithIMS(
+      <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
     expect(screen.queryByText(username)).toBeInTheDocument();
@@ -83,8 +73,8 @@ describe("LoginDropdown component", () => {
   test("activate user menu -> log out item", async () => {
     const username = "Hubcap";
 
-    renderWithAuthenticator(
-      <LoginDropdown />, testAuthenticator(username)
+    renderWithIMS(
+      <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
     await act(async () => {
@@ -96,12 +86,12 @@ describe("LoginDropdown component", () => {
 
   test("log out item -> log out", async () => {
     const username = "Hubcap";
-    const authenticator = testAuthenticator(username);
+    const ims = testIncidentManagementSystem(username);
 
     let notified = false;
-    authenticator.delegate = () => { notified = true; }
+    ims.delegate = () => { notified = true; }
 
-    renderWithAuthenticator(<LoginDropdown />, authenticator);
+    renderWithIMS(<LoginDropdown />, ims);
 
     await act(async () => {
       await userEvent.click(screen.getByText(username))

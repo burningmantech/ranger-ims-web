@@ -5,38 +5,44 @@ import { Component } from "react";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
-import { AuthenticatorContext } from "../../context";
 import { URLs } from "../../URLs";
+import { IMSContext } from "../../ims/context";
 
 
 export default class LoginDropdown extends Component {
 
-  static contextType = AuthenticatorContext;
+  static contextType = IMSContext;
 
   render = () => {
-    let authenticator;
+    let ims;
     if (this.context === undefined) {
-      authenticator = undefined;
+      ims = undefined;
     }
     else {
-      authenticator = this.context.authenticator;
+      ims = this.context.ims;
     }
 
     let user;
-    if (authenticator === undefined) {
-      console.log("No authenticator context available.");
+    if (ims === undefined) {
+      console.error("No IMS context available.");
       user = null;
     }
     else {
-      user = authenticator.loggedInUser();
+      if (ims.isLoggedIn()) {
+        user = ims.user;
+      }
+      else {
+        user = null;
+      }
     }
 
     if (user === null) {
-      if (authenticator !== undefined && authenticator.user !== null) {
-        const expiration = authenticator.user.credentials.expiration;
+      if (ims !== undefined && ims.user !== null) {
+        const oldUser = ims.user;
+        const expiration = oldUser.credentials.expiration;
         const elapsed = moment.duration(moment() - expiration).humanize();
-        console.log(
-          `Previously authenticated as ${authenticator.user.username}, ` +
+        console.debug(
+          `Previously authenticated as ${oldUser}, ` +
           `expired ${expiration} (${elapsed} ago)`
         );
       }
@@ -46,7 +52,7 @@ export default class LoginDropdown extends Component {
     }
     else {
       async function onLogout(eventKey, event) {
-        await authenticator.logout();
+        await ims.logout();
       }
       return (
         <NavDropdown title={user.username} id="nav_user_dropdown">

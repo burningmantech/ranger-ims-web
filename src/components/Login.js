@@ -1,5 +1,6 @@
 import { Component } from "react";
 
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -9,12 +10,12 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
-import { AuthenticatorContext } from "../context";
+import { IMSContext } from "../ims/context";
 
 
 export default class Login extends Component {
 
-  static contextType = AuthenticatorContext;
+  static contextType = IMSContext;
 
   constructor(props) {
     super(props);
@@ -37,26 +38,47 @@ export default class Login extends Component {
 
   render = () => {
     const component = this;
-    const authenticator = this.context.authenticator;
+    const ims = this.context.ims;
 
-    const username = this.state.username;
-    const password = this.state.password;
-
-    if (authenticator.isLoggedIn()) {
+    if (ims.isLoggedIn()) {
       return <>{this.props.children}</>;
     }
     else {
+      const username = this.state.username;
+      const password = this.state.password;
+      const errorMessage = this.state.errorMessage;
+
       async function onLogin(event) {
         event.preventDefault();
-        const result = await authenticator.login(
-          username, {password: password}
-        );
+        let result;
+        try {
+          result = await ims.login(username, {password: password});
+        }
+        catch (e) {
+          const errorMessage = e.message;
+          console.error(`Login failed: ${errorMessage}`);
+          component.setState({errorMessage: errorMessage});
+          return;
+        }
         if (result) {
           component.setState({succeeded: true});  // To cause a re-render.
         }
         else {
           component.setState({failed: true});
         }
+      }
+
+      let Error;
+      if (errorMessage === undefined) {
+        Error = "";
+      }
+      else {
+        Error = (
+          <Alert variant="danger">
+            <Alert.Heading>Login Failed</Alert.Heading>
+            <code>{errorMessage}</code>
+          </Alert>
+        );
       }
 
       return (
@@ -69,6 +91,8 @@ export default class Login extends Component {
               </ModalHeader>
 
               <ModalBody>
+
+                {Error}
 
                 <Form.Group controlId="username_field">
                   <Form.Label>Ranger Handle or Email</Form.Label>
