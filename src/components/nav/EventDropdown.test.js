@@ -75,13 +75,12 @@ describe("EventDropdown component", () => {
 
     container.unmount();
 
-    const log = console.debug;
-    console.debug = jest.fn((message) => { log(message); });
+    const spy = jest.spyOn(console, "debug");
 
     done();
     await promise;
 
-    expect(console.debug).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       "Received events after TestEventDropdown unmounted."
     );
   });
@@ -93,8 +92,7 @@ describe("EventDropdown component", () => {
       () => { throw new Error("Can't load events because reasons..."); }
     );
 
-    const log = console.error;
-    console.error = jest.fn((message) => { log(message); });
+    const spy = jest.spyOn(console, "error");
 
     await act(async () => {
       renderWithIMS(<EventDropdown />, ims);
@@ -103,7 +101,7 @@ describe("EventDropdown component", () => {
 
     expect(screen.queryByText("Error Loading Events")).toBeInTheDocument();
 
-    expect(console.error).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       "Unable to load EventDropdown: Can't load events because reasons..."
     );
   });

@@ -50,12 +50,11 @@ describe("LoginDropdown component", () => {
 
     ims.user.credentials.expiration = expiration;
 
-    const log = console.debug;
-    console.debug = jest.fn((message) => { log(message); });
+    const spy = jest.spyOn(console, "debug");
 
     renderWithIMS(<LoginDropdown />, ims);
 
-    expect(console.debug).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
       `expired ${expiration} (a few seconds ago)`
     );
