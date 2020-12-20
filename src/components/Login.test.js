@@ -41,7 +41,7 @@ describe("Login component", () => {
     expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
 
-  test("user -> logged in message", () => {
+  test("user -> content", () => {
     const username = "Hubcap";
     const ims = testIncidentManagementSystem(username);
     const content = "Hello, World!";
@@ -51,7 +51,7 @@ describe("Login component", () => {
     expect(screen.queryByText(content)).toBeInTheDocument();
   });
 
-  test("no user -> log in -> logged in message", async () => {
+  test("no user -> log in -> content", async () => {
     const ims = testIncidentManagementSystem();
     const content = "Hello, World!"
     const username = "Hubcap";
@@ -63,12 +63,10 @@ describe("Login component", () => {
     await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 
-    const message = await screen.findByText(content);
-
-    expect(message).toBeInTheDocument();
+    expect(await screen.findByText(content)).toBeInTheDocument();
   });
 
-  test("no user -> invalid log in -> no logged in message", async () => {
+  test("no user -> invalid log in -> no content", async () => {
     const ims = testIncidentManagementSystem();
     const content = "Hello, World!"
     const username = "Hubcap";
@@ -81,14 +79,32 @@ describe("Login component", () => {
     await userEvent.click(screen.getByText(/Log In/));
 
     try {
-      const message = await screen.findByText(content);
-      expect(message).not.toBeInTheDocument();
+      const element = await screen.findByText(content);
+      expect(element).not.toBeInTheDocument();
     }
     catch(e) {
       expect(e.name).toEqual("TestingLibraryElementError");
     }
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
+  });
+
+  test("no user -> log in exception -> error message", async () => {
+    const message = "Whoops! Something went wrong...";
+    const ims = testIncidentManagementSystem();
+    const content = "Hello, World!"
+    const username = "Hubcap";
+    const password = username;
+
+    ims.login = jest.fn(() => { throw new Error(message); });
+
+    renderWithIMS(<Login>{content}</Login>, ims);
+
+    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Password/), password);
+    await userEvent.click(screen.getByText(/Log In/));
+
+    expect(await screen.findByText(message)).toBeInTheDocument();
   });
 
 });

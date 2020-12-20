@@ -24,7 +24,7 @@ export default class LoginDropdown extends Component {
 
     let user;
     if (ims === undefined) {
-      console.log("No IMS context available.");
+      console.error("No IMS context available.");
       user = null;
     }
     else {
@@ -41,7 +41,7 @@ export default class LoginDropdown extends Component {
         const oldUser = ims.user;
         const expiration = oldUser.credentials.expiration;
         const elapsed = moment.duration(moment() - expiration).humanize();
-        console.log(
+        console.debug(
           `Previously authenticated as ${oldUser}, ` +
           `expired ${expiration} (${elapsed} ago)`
         );

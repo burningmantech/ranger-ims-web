@@ -56,7 +56,7 @@ export default class Login extends Component {
         }
         catch (e) {
           const errorMessage = e.message;
-          console.log(`ERROR: Login failed: ${errorMessage}`);
+          console.error(`Login failed: ${errorMessage}`);
           component.setState({errorMessage: errorMessage});
           return;
         }

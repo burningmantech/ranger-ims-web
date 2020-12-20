@@ -74,7 +74,7 @@ describe("CredentialStore", () => {
 
     expect(
       () => { store.loadCredentials() }
-    ).toThrow("No user data in stored credentials.");
+    ).toThrow("No user data in cached credentials.");
   });
 
   test("loadCredentials, invalid user", () => {
@@ -84,7 +84,7 @@ describe("CredentialStore", () => {
 
     expect(
       () => { store.loadCredentials() }
-    ).toThrow("Invalid user data in stored credentials: ");
+    ).toThrow("Invalid user data in cached credentials: ");
   });
 
   test("removeCredentials", () => {

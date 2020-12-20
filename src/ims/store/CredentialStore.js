@@ -10,7 +10,7 @@ export default class CredentialStore {
 
   storeCredentials = (user) => {
     this._storage.setItem(this.key, JSON.stringify({ user: user.toJSON() }));
-    console.log(`Stored credentials for user ${user} in local storage.`);
+    console.debug(`Stored credentials for user ${user} in local storage.`);
   }
 
   loadCredentials = () => {
@@ -25,27 +25,27 @@ export default class CredentialStore {
     }
 
     if (json === null) {
-      console.log("No credentials found in local storage.");
+      console.debug("No cached credentials found in local storage.");
       return null;
     }
 
     if (json.user == null) {
-      throw new Error("No user data in stored credentials.");
+      throw new Error("No user data in cached credentials.");
     }
 
     try {
       const user = User.fromJSON(json.user);
-      console.log(`Loaded credentials for user ${user} from local storage.`);
+      console.log(`Loaded cached credentials for user ${user}.`);
       return user;
     }
     catch (e) {
-      throw new Error(`Invalid user data in stored credentials: ${e}`);
+      throw new Error(`Invalid user data in cached credentials: ${e}`);
     }
   }
 
   removeCredentials = () => {
     this._storage.removeItem(this.key);
-    console.log("Removed stored credentials.");
+    console.debug("Removed stored credentials.");
   }
 
 }

@@ -55,4 +55,36 @@ describe("EventDropdown component", () => {
     }
   });
 
+  test("events load after unmount", async () => {
+    const ims = testIncidentManagementSystem();
+
+    let completed;
+    const promise = new Promise((resolve, reject) => { completed = resolve; });
+
+    class TestEventDropdown extends EventDropdown {
+      fetch = () => {
+        console.info("Starting fetch...");
+        return promise.then(() => {
+          console.info("...done fetching");
+          this._setEvents([]);
+        });
+      }
+    }
+
+    const component = (<TestEventDropdown />);
+    const container = renderWithIMS(component, ims);
+
+    container.unmount();
+
+    const log = console.debug;
+    console.debug = jest.fn((message) => { log(message); });
+
+    completed();
+    await promise;
+
+    expect(console.debug).toHaveBeenCalledWith(
+      "Received events after TestEventDropdown unmounted."
+    );
+  });
+
 });

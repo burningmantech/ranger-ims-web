@@ -22,7 +22,9 @@ export default class EventDropdown extends Component {
 
   componentWillUnmount = () => {
     this._setEvents = (events) => {
-      console.log(`Received events after ${this.constructor.name} unmounted.`);
+      console.debug(
+        `Received events after ${this.constructor.name} unmounted.`
+      );
     };
   }
 
@@ -42,7 +44,7 @@ export default class EventDropdown extends Component {
       events = await ims.events();
     }
     catch (e) {
-      console.log(`Unable to load ${this.constructor.name}: ${e}`);
+      console.error(`Unable to load ${this.constructor.name}: ${e}`);
       events = null;
     }
     this._setEvents(events);

@@ -7,7 +7,7 @@ import CredentialStore from "./store/CredentialStore";
 
 export default class IncidentManagementSystem {
 
-  static _credentialStoreKey = "org.burningman.rangers.ims.credentials";
+  static _credentialStoreKey = "credentials";
 
   constructor(bagURL) {
     if (! bagURL) {
@@ -54,7 +54,7 @@ export default class IncidentManagementSystem {
       authenticated = false;
     }
 
-    console.log(
+    console.debug(
       `Issuing ${authenticated ? "authenticated" : "unauthenticated"} ` +
       `request: ${request.method} ${request.url}`
     );
@@ -63,15 +63,15 @@ export default class IncidentManagementSystem {
     if (! response.ok) {
       if (response.status === 401) {
         if (authenticated) {
-          console.log(`Authentication failed for resource: ${request.url}`);
+          console.warn(`Authentication failed for resource: ${request.url}`);
           await this.logout();
         }
         else {
-          console.log(`Authentication required for resource: ${request.url}`);
+          console.debug(`Authentication required for resource: ${request.url}`);
         }
       }
       else {
-        console.log(
+        console.error(
           "Non-OK response from server " +
           `(${response.status}: ${response.statusText})`
         );
@@ -126,7 +126,7 @@ export default class IncidentManagementSystem {
       return this._bag;
     }
     else {
-      console.log("Retrieving bag from IMS server...");
+      console.debug("Retrieving bag from IMS server...");
 
       const response = await this._fetchJSON(this.bagURL);
       if (! response.ok) {
@@ -160,7 +160,7 @@ export default class IncidentManagementSystem {
 
     const bag = await this.bag();
 
-    console.log(`Authenticating to IMS server as ${username}...`);
+    console.info(`Authenticating to IMS server as ${username}...`);
 
     const requestJSON = {
       identification: username, password: credentials.password
@@ -185,7 +185,7 @@ export default class IncidentManagementSystem {
       }
       else {
         if (responseJSON.status === "invalid-credentials") {
-          console.log(`Credentials for ${username} are invalid.`);
+          console.warn(`Credentials for ${username} are invalid.`);
           return false;
         }
         failureReason = `unknown JSON error status: ${responseJSON.status}`;
@@ -218,7 +218,7 @@ export default class IncidentManagementSystem {
     // Use username preferred by the IMS server
     const preferredUsername = jwt.preferred_username;
     if (preferredUsername != null && preferredUsername !== username) {
-      console.log(
+      console.debug(
         "Using preferred username in retrieved credentials " +
         `(${preferredUsername}), ` +
         `which differs from submitted username (${username})`
@@ -235,7 +235,7 @@ export default class IncidentManagementSystem {
 
     this.user = new User(username, imsCredentials);
 
-    console.log(
+    console.info(
       `Logged in as ${this.user} until ${expiration.toISOString()}.`
     );
 
@@ -243,7 +243,7 @@ export default class IncidentManagementSystem {
   }
 
   logout = async () => {
-    console.log(`Logging out as ${this.user}...`);
+    console.info(`Logging out as ${this.user}...`);
     // FIXME: this should tell the server that the token we are using is no
     // longer needed.
     this.user = null;
