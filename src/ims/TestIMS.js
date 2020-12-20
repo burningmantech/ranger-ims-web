@@ -25,12 +25,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   constructor(bagURL) {
     super(bagURL);
 
-    this._testEvents = ([
+    this._testEvents = [
       { id: "1", name: "Event One" },
       { id: "2", name: "Event Two" },
       { id: "3", name: "Event Three" },
       { id: "4", name: "Event Four" },
-    ])
+    ];
 
     this.requestsReceived = [];
 

@@ -86,4 +86,39 @@ describe("EventDropdown component", () => {
     );
   });
 
+  test("events fail to load", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.events = jest.fn(
+      () => { throw new Error("Can't load events because reasons..."); }
+    );
+
+    const log = console.error;
+    console.error = jest.fn((message) => { log(message); });
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    expect(screen.queryByText("Error Loading Events")).toBeInTheDocument();
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Unable to load EventDropdown: Can't load events because reasons..."
+    );
+  });
+
+  test("no events loaded", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims._testEvents = [];
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    expect(screen.queryByText("No Events Found")).toBeInTheDocument();
+  });
+
 });
