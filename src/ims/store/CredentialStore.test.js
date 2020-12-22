@@ -25,78 +25,78 @@ describe("CredentialStore", () => {
     expect(store.key).toEqual(TEST_STORE_KEY);
   });
 
-  test("storeCredentials", () => {
+  test("store", () => {
     const username = "Hubcap";
     const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const store = new CredentialStore(TEST_STORE_KEY);
 
-    store.storeCredentials(user);
+    store.store(user);
 
     const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
     expect(jsonText).toEqual(JSON.stringify({ user: user.toJSON() }));
   });
 
-  test("loadCredentials, empty", () => {
+  test("load, empty", () => {
     const store = new CredentialStore(TEST_STORE_KEY);
 
-    expect(store.loadCredentials()).toBeNull();
+    expect(store.load()).toBeNull();
   });
 
-  test("loadCredentials, valid", () => {
+  test("load, valid", () => {
     const username = "Hubcap";
     const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const store = new CredentialStore(TEST_STORE_KEY);
 
-    store.storeCredentials(user);
+    store.store(user);
 
-    const userFromStore = store.loadCredentials();
+    const userFromStore = store.load();
     expect(
       JSON.stringify(userFromStore.toJSON())
     ).toEqual(JSON.stringify(user.toJSON()));
   });
 
-  test("loadCredentials, invalid JSON", () => {
+  test("load, invalid JSON", () => {
     window.localStorage.setItem(TEST_STORE_KEY, "*");
 
     const store = new CredentialStore(TEST_STORE_KEY);
 
     expect(
-      () => { store.loadCredentials() }
+      () => { store.load() }
     ).toThrow("Unable to parse JSON for stored credentials: ");
   });
 
-  test("loadCredentials, missing user", () => {
+  test("load, missing user", () => {
     window.localStorage.setItem(TEST_STORE_KEY, "{}");
 
     const store = new CredentialStore(TEST_STORE_KEY);
 
     expect(
-      () => { store.loadCredentials() }
+      () => { store.load() }
     ).toThrow("No user data in cached credentials.");
   });
 
-  test("loadCredentials, invalid user", () => {
+  test("load, invalid user", () => {
     window.localStorage.setItem(TEST_STORE_KEY, '{"user": {}}');
 
     const store = new CredentialStore(TEST_STORE_KEY);
 
     expect(
-      () => { store.loadCredentials() }
+      () => { store.load() }
     ).toThrow("Invalid user data in cached credentials: ");
   });
 
-  test("removeCredentials", () => {
+  test("remove", () => {
     const username = "Hubcap";
     const credentials = { expiration: moment() };
     const user = new User(username, credentials);
     const store = new CredentialStore(TEST_STORE_KEY);
 
-    store.storeCredentials(user);
-    store.removeCredentials();
+    store.store(user);
+    store.remove();
 
-    expect(store.loadCredentials()).toBe(null);
+    expect(store.load()).toBe(null);
   });
 
 });

@@ -8,12 +8,12 @@ export default class CredentialStore {
     this._storage = window.localStorage;
   }
 
-  storeCredentials = (user) => {
+  store = (user) => {
     this._storage.setItem(this.key, JSON.stringify({ user: user.toJSON() }));
     console.debug(`Stored credentials for user ${user} in local storage.`);
   }
 
-  loadCredentials = () => {
+  load = () => {
     const jsonText = this._storage.getItem(this.key);
 
     let json;
@@ -33,19 +33,21 @@ export default class CredentialStore {
       throw new Error("No user data in cached credentials.");
     }
 
+    let user;
     try {
-      const user = User.fromJSON(json.user);
-      console.log(`Loaded cached credentials for user ${user}.`);
-      return user;
+      user = User.fromJSON(json.user);
     }
     catch (e) {
       throw new Error(`Invalid user data in cached credentials: ${e}`);
     }
+
+    console.log(`Loaded cached credentials for user ${user}.`);
+    return user;
   }
 
-  removeCredentials = () => {
+  remove = () => {
     this._storage.removeItem(this.key);
-    console.debug("Removed stored credentials.");
+    console.debug("Removed cached credentials.");
   }
 
 }
