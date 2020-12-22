@@ -2,6 +2,7 @@ import jwtDecode from "jsonwebtoken/decode";
 import moment from "moment";
 
 import User from "./User";
+import Event from "./model/Event";
 import CredentialStore from "./store/CredentialStore";
 
 
@@ -18,17 +19,17 @@ export default class IncidentManagementSystem {
       enumerable: true,
       get: () => {
         if (this._user === undefined) {
-          this._user = this._credentialStore.loadCredentials();
+          this._user = this._credentialStore.load();
         }
         return this._user;
       },
       set: (user) => {
         this._user = user;
         if (user === null) {
-          this._credentialStore.removeCredentials();
+          this._credentialStore.remove();
         }
         else {
-          this._credentialStore.storeCredentials(user);
+          this._credentialStore.store(user);
         }
         if (this.delegate !== null) {
           this.delegate();
@@ -272,8 +273,9 @@ export default class IncidentManagementSystem {
     if (! response.ok) {
       throw new Error("Failed to retrieve events.");
     }
-    const events = await response.json();
-    return events;
+    const eventsJSON = await response.json();
+
+    return eventsJSON.map((json) => Event.fromJSON(json));
   }
 
 }

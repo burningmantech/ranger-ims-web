@@ -595,7 +595,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     await ims.login(username, {password: password});
-    const storedUser = ims._credentialStore.loadCredentials();
+    const storedUser = ims._credentialStore.load();
 
     expect(storedUser.username).toEqual(username);
   });
@@ -607,7 +607,7 @@ describe("IMS: authentication", () => {
 
     await ims.login(username, {password: password});
     await ims.logout();
-    const storedUser = ims._credentialStore.loadCredentials();
+    const storedUser = ims._credentialStore.load();
 
     expect(storedUser).toBeNull();
   });
@@ -626,7 +626,7 @@ describe("IMS: events", () => {
 
     const events = await ims.events();
 
-    expect(events).toEqual(ims._testEvents);
+    expect(events.map((event) => event.toJSON())).toEqual(ims.testData.events);
   });
 
   test("events(), failed", async () => {
