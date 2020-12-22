@@ -1,9 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 
-import {
-  renderWithIMS, testIncidentManagementSystem, theBag
-} from "../ims/TestIMS";
+import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import BagTable from "./BagTable";
 
@@ -29,9 +27,11 @@ describe("BagTable component", () => {
   });
 
   test("loaded bag", async () => {
-    renderWithIMS(<BagTable />, testIncidentManagementSystem());
+    const ims = testIncidentManagementSystem();
 
-    for (const name in theBag.urls) {
+    renderWithIMS(<BagTable />, ims);
+
+    for (const name in ims.testData.bag.urls) {
       expect(await screen.findByText(name)).toBeInTheDocument();
     }
     expect(screen.queryByText("Loading...")).not.toBeInTheDocument();

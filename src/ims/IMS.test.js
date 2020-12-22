@@ -2,7 +2,7 @@ import moment from "moment";
 
 import IncidentManagementSystem from "./IMS";
 import {
-  TestIncidentManagementSystem, testIncidentManagementSystem, theBag
+  TestIncidentManagementSystem, testIncidentManagementSystem
 } from "./TestIMS";
 
 
@@ -275,6 +275,7 @@ describe("IMS: bag", () => {
 
   test("load bag: retrieved urls", async () => {
     const ims = testIncidentManagementSystem();
+    const theBag = ims.testData.bag;
     const bag = await ims.bag();
 
     expect(bag).toBeDefined();

@@ -109,7 +109,7 @@ describe("EventDropdown component", () => {
   test("no events loaded", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims._testEvents = [];
+    ims.testData.events = [];
 
     await act(async () => {
       renderWithIMS(<EventDropdown />, ims);
