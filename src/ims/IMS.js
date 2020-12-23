@@ -3,7 +3,7 @@ import moment from "moment";
 
 import User from "./User";
 import Event from "./model/Event";
-import CredentialStore from "./store/CredentialStore";
+import Store from "./store/Store";
 
 
 export default class IncidentManagementSystem {
@@ -17,20 +17,30 @@ export default class IncidentManagementSystem {
 
     Object.defineProperty(this, "user", {
       enumerable: true,
+
       get: () => {
         if (this._user === undefined) {
-          this._user = this._credentialStore.load();
+          const credentialStore = new Store(
+            this._credentialStoreKey, "credentials", User
+          );
+          this._user = credentialStore.load();
         }
         return this._user;
       },
+
       set: (user) => {
-        this._user = user;
+        const credentialStore = new Store(
+          this._credentialStoreKey, "credentials", User
+        );
         if (user === null) {
-          this._credentialStore.remove();
+          credentialStore.remove();
         }
         else {
-          this._credentialStore.store(user);
+          credentialStore.store(user);
         }
+
+        this._user = user;
+
         if (this.delegate !== null) {
           this.delegate();
         }
@@ -39,7 +49,6 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
-    this._credentialStore = new CredentialStore(this._credentialStoreKey);
     this._bag = null;
   }
 
@@ -268,14 +277,23 @@ export default class IncidentManagementSystem {
   ////
 
   events = async () => {
-    const bag = await this.bag();
-    const response = await this._fetchJSON(bag.urls.events);
-    if (! response.ok) {
-      throw new Error("Failed to retrieve events.");
-    }
-    const eventsJSON = await response.json();
+    const eventStoreKey = "events";
+    const eventStore = new Store(eventStoreKey, "events", Event);
+    let events = eventStore.load();
 
-    return eventsJSON.map((json) => Event.fromJSON(json));
+    if (events === null) {
+      const bag = await this.bag();
+      const response = await this._fetchJSON(bag.urls.events);
+      if (! response.ok) {
+        throw new Error("Failed to retrieve events.");
+      }
+      const eventsJSON = await response.json();
+
+      events = eventsJSON.map((json) => Event.fromJSON(json));
+      eventStore.store(events, null);
+    }
+
+    return events;
   }
 
 }
