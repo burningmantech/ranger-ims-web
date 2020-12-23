@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import IncidentManagementSystem from "./IMS";
 import {
@@ -469,13 +469,13 @@ describe("IMS: authentication", () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
-    const now = moment();
+    const now = DateTime.local();
 
     const result = await ims.login(username, {password: password});
 
     expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
-    expect(ims.user.credentials.expiration).toBeAfterMoment(now);
+    expect(ims.user.credentials.expiration).toBeAfterDateTime(now);
   });
 
   test("login: response with different username", async () => {
@@ -556,7 +556,7 @@ describe("IMS: authentication", () => {
 
     await ims.login(username, {password: password});
 
-    ims.user.credentials.expiration = moment().subtract(1, "second");
+    ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
     expect(ims.isLoggedIn()).toBe(false);
   });

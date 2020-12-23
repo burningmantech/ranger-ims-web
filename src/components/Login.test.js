@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, fireEvent } from "@testing-library/react";
@@ -25,7 +25,7 @@ describe("Login component", () => {
   test("expired user -> login button", () => {
     const username = "Hubcap";
     const ims = testIncidentManagementSystem(username);
-    ims.user.credentials.expiration = moment().subtract(1, "second");
+    ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
     renderWithIMS(<Login />, ims);
 

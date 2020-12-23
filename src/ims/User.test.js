@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import User from "./User";
 
@@ -36,7 +36,7 @@ describe("User", () => {
       text: "text",
       array: [1, 2, 3],
       dict: {a: 1},
-      expiration: moment(),
+      expiration: DateTime.local(),
     };
     const user = new User(username, credentials);
     const userJSON = { username: username, credentials: credentials };
@@ -52,7 +52,7 @@ describe("User", () => {
       text: "text",
       array: [1, 2, 3],
       dict: {a: 1},
-      expiration: moment(),
+      expiration: DateTime.local(),
     };
     const user = new User(username, credentials);
     const userJSON = user.toJSON();
@@ -69,7 +69,7 @@ describe("User", () => {
       text: "text",
       array: [1, 2, 3],
       dict: {a: 1},
-      expiration: moment(),
+      expiration: DateTime.local(),
     };
     const user = new User(username, credentials);
     const userJSONText = JSON.stringify(user.toJSON());

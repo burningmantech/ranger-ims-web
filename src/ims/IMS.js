@@ -1,5 +1,5 @@
 import jwtDecode from "jsonwebtoken/decode";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import Store from "./Store";
 import User from "./User";
@@ -223,7 +223,7 @@ export default class IncidentManagementSystem {
     // Available but unused claims:
     // const personID = jwt.sub;
     // const issuer = jwt.iss;
-    // const issued = moment.unix(jwt.iat);
+    // const issued = DateTime.fromSeconds(jwt.iat);
 
     // Use username preferred by the IMS server
     const preferredUsername = jwt.preferred_username;
@@ -239,14 +239,14 @@ export default class IncidentManagementSystem {
     if (jwt.exp == null) {
       throw new Error("No expiration in retrieved credentials");
     }
-    const expiration = moment.unix(jwt.exp);
+    const expiration = DateTime.fromSeconds(jwt.exp);
 
     const imsCredentials = { token: token, expiration: expiration };
 
     this.user = new User(username, imsCredentials);
 
     console.info(
-      `Logged in as ${this.user} until ${expiration.toISOString()}.`
+      `Logged in as ${this.user} until ${expiration.toISO()}.`
     );
 
     return true;
@@ -269,7 +269,7 @@ export default class IncidentManagementSystem {
       return false;
     }
 
-    return moment().isBefore(user.credentials.expiration);
+    return DateTime.local() < user.credentials.expiration;
   }
 
   ////
