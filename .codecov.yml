@@ -4,6 +4,6 @@ coverage:
       default:
         informational: true
     patch:
-      target: 100%
       default:
         informational: false
+        target: 100%
