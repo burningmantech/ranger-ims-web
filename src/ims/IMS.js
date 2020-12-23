@@ -1,9 +1,9 @@
 import jwtDecode from "jsonwebtoken/decode";
 import moment from "moment";
 
+import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
-import Store from "./store/Store";
 
 
 export default class IncidentManagementSystem {
