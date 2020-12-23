@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
@@ -20,7 +20,9 @@ describe("Home component", () => {
 
   test("heading", async () => {
     const username = "Hubcap";
-    const user = new User(username, { expiration: moment().add(1, "hour")});
+    const user = new User(
+      username, { expiration: DateTime.local().plus({ hours: 1 }) }
+    );
 
     renderWithIMS(<Home user={user} />, testIncidentManagementSystem());
 

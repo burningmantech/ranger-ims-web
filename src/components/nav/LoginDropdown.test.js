@@ -1,4 +1,4 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
 import { act } from "react-dom/test-utils";
@@ -36,7 +36,7 @@ describe("LoginDropdown component", () => {
     const username = "Hubcap";
     const ims = testIncidentManagementSystem(username);
 
-    ims.user.credentials.expiration = moment().subtract(1, "second");
+    ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
     renderWithIMS(<LoginDropdown />, ims);
 
@@ -46,7 +46,7 @@ describe("LoginDropdown component", () => {
   test("expired user -> console message", () => {
     const username = "Hubcap";
     const ims = testIncidentManagementSystem(username);
-    const expiration = moment().subtract(1, "second");
+    const expiration = DateTime.local().minus({ seconds: 1 });
 
     ims.user.credentials.expiration = expiration;
 
@@ -56,7 +56,7 @@ describe("LoginDropdown component", () => {
 
     expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
-      `expired ${expiration} (a few seconds ago)`
+      `expired ${expiration} (${expiration.toRelative()})`
     );
   });
 

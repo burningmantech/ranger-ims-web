@@ -7,8 +7,8 @@ import '@testing-library/jest-dom';
 
 expect.extend({
 
-  toBeAfterMoment(received, other) {
-    if (received.isAfter(other)) {
+  toBeAfterDateTime(received, other) {
+    if (received > other) {
       return {
         message: () => `expected ${received} not to be after ${other}`,
         pass: true,
@@ -22,8 +22,8 @@ expect.extend({
     }
   },
 
-  toBeSameAsMoment(received, other) {
-    if (received.isSame(other)) {
+  toEqualDateTime(received, other) {
+    if (received.equals(other)) {
       return {
         message: () => `expected ${received} not to be the same as ${other}`,
         pass: true,

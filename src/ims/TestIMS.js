@@ -1,5 +1,5 @@
 import jwtSign from "jsonwebtoken/sign";
-import moment from "moment";
+import { DateTime, Duration } from "luxon";
 
 import User from "./User";
 import IncidentManagementSystem from "./IMS";
@@ -10,7 +10,7 @@ import { render } from "@testing-library/react";
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
-  static timeout = moment.duration(5, "minutes");
+  static timeout = Duration.fromObject({ minutes: 5 });
 
   constructor(bagURL) {
     super(bagURL);
@@ -117,7 +117,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
     const password = requestJSON.password;
-    const expiration = moment().add(TestIncidentManagementSystem.timeout);
+    const expiration = DateTime.local().plus(
+      TestIncidentManagementSystem.timeout
+    );
 
     if (username != password) {
       return this._authFailedResponse();
@@ -239,7 +241,7 @@ export function testIncidentManagementSystem(username) {
 
   if (username !== undefined) {
     ims.user = new User(
-      username, { expiration: moment().add(1, "hour") }
+      username, { expiration: DateTime.local().plus({ hours: 1 }) }
     );
   }
 

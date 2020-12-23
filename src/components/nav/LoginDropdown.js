@@ -1,5 +1,3 @@
-import moment from "moment";
-
 import { Component } from "react";
 
 import Nav from "react-bootstrap/Nav";
@@ -40,10 +38,9 @@ export default class LoginDropdown extends Component {
       if (ims !== undefined && ims.user !== null) {
         const oldUser = ims.user;
         const expiration = oldUser.credentials.expiration;
-        const elapsed = moment.duration(moment() - expiration).humanize();
         console.debug(
           `Previously authenticated as ${oldUser}, ` +
-          `expired ${expiration} (${elapsed} ago)`
+          `expired ${expiration} (${expiration.toRelative()})`
         );
       }
       return (

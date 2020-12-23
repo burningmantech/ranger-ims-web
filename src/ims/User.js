@@ -1,11 +1,13 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 
 
 export default class User {
 
   static fromJSON = (json) => {
     if (json.credentials != null) {
-      json.credentials.expiration = moment(json.credentials.expiration);
+      json.credentials.expiration = DateTime.fromISO(
+        json.credentials.expiration
+      );
     }
     return new User(json.username, json.credentials);
   }
