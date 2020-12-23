@@ -39,7 +39,7 @@ describe("User", () => {
       expiration: moment(),
     };
     const user = new User(username, credentials);
-    const userJSON = {username: username, credentials: credentials};
+    const userJSON = { username: username, credentials: credentials };
     const result = user.toJSON();
 
     expect(result).toEqual(userJSON);

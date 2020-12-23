@@ -3,9 +3,6 @@ import moment from "moment";
 
 export default class User {
 
-  /*
-   * Deserialize a User from JSON.
-   */
   static fromJSON = (json) => {
     if (json.credentials != null) {
       json.credentials.expiration = moment(json.credentials.expiration);
@@ -32,11 +29,8 @@ export default class User {
     return this.username;
   }
 
-  /*
-   * Serialize a User as JSON.
-   */
   toJSON = () => {
-    return {username: this.username, credentials: this.credentials};
+    return { username: this.username, credentials: this.credentials };
   }
 
 }

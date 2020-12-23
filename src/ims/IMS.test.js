@@ -2,7 +2,7 @@ import moment from "moment";
 
 import IncidentManagementSystem from "./IMS";
 import {
-  TestIncidentManagementSystem, testIncidentManagementSystem, theBag
+  TestIncidentManagementSystem, testIncidentManagementSystem
 } from "./TestIMS";
 
 
@@ -275,6 +275,7 @@ describe("IMS: bag", () => {
 
   test("load bag: retrieved urls", async () => {
     const ims = testIncidentManagementSystem();
+    const theBag = ims.testData.bag;
     const bag = await ims.bag();
 
     expect(bag).toBeDefined();
@@ -591,12 +592,13 @@ describe("IMS: authentication", () => {
   test("login -> stored", async () => {
     const username = "Hubcap";
     const password = username;
-    const ims = testIncidentManagementSystem();
+    const ims1 = testIncidentManagementSystem();
 
-    await ims.login(username, {password: password});
-    const storedUser = ims._credentialStore.loadCredentials();
+    await ims1.login(username, {password: password});
 
-    expect(storedUser.username).toEqual(username);
+    const ims2 = testIncidentManagementSystem();
+
+    expect(ims2.user.toJSON()).toEqual(ims2.user.toJSON());
   });
 
   test("logout -> stored", async () => {
@@ -606,9 +608,10 @@ describe("IMS: authentication", () => {
 
     await ims.login(username, {password: password});
     await ims.logout();
-    const storedUser = ims._credentialStore.loadCredentials();
 
-    expect(storedUser).toBeNull();
+    const ims2 = testIncidentManagementSystem();
+
+    expect(ims2.user).toBeNull();
   });
 
 });
@@ -625,7 +628,7 @@ describe("IMS: events", () => {
 
     const events = await ims.events();
 
-    expect(events).toEqual(ims._testEvents);
+    expect(events.map((event) => event.toJSON())).toEqual(ims.testData.events);
   });
 
   test("events(), failed", async () => {
@@ -634,7 +637,9 @@ describe("IMS: events", () => {
     const bag = await ims.bag();
     bag.urls.events = "/forbidden";
 
-    await expect(ims.events()).toRejectWithMessage("Failed to retrieve events.")
+    await expect(ims.events()).toRejectWithMessage(
+      "Failed to retrieve events."
+    );
   });
 
 });

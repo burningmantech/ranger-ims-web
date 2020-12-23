@@ -7,7 +7,7 @@ export const URLs = {
   root: rootURL,
   home: homeURL,
   events: eventsURL,
-  event: (event) => { return `${eventsURL}${event.id}/`; },
+  event: (event) => `${eventsURL}${event.id}/`,
   admin: adminURL,
 }
 Object.freeze(URLs);

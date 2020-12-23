@@ -8,16 +8,6 @@ import { IMSContext } from "./context";
 import { render } from "@testing-library/react";
 
 
-export const theBag = {
-  urls: {
-    bag: "/ims/api/bag",
-    auth: "/ims/api/auth",
-    event: "/ims/api/events/<eventID>/",
-    events: "/ims/api/events/",
-  },
-}
-
-
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
   static timeout = moment.duration(5, "minutes");
@@ -25,12 +15,22 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   constructor(bagURL) {
     super(bagURL);
 
-    this._testEvents = [
-      { id: "1", name: "Event One" },
-      { id: "2", name: "Event Two" },
-      { id: "3", name: "Event Three" },
-      { id: "4", name: "Event Four" },
-    ];
+    this.testData = {
+      bag: {
+        urls: {
+          bag: "/ims/api/bag",
+          auth: "/ims/api/auth",
+          event: "/ims/api/events/<eventID>/",
+          events: "/ims/api/events/",
+        },
+      },
+      events: [
+        { id: "1", name: "Event One" },
+        { id: "2", name: "Event Two" },
+        { id: "3", name: "Event Three" },
+        { id: "4", name: "Event Four" },
+      ],
+    }
 
     this.requestsReceived = [];
 
@@ -167,15 +167,17 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       path = request.url;
     }
 
+    const bag = this.testData.bag;
+
     switch (path) {
-      case theBag.urls.bag:
+      case bag.urls.bag:
         /* istanbul ignore else */
         if (request.method === "GET") {
-          return this._jsonResponse(theBag);
+          return this._jsonResponse(bag);
         }
         /* istanbul ignore next */
         break;
-      case theBag.urls.auth:
+      case bag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -184,10 +186,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         break;
-      case theBag.urls.events:
+      case bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
-          return this._jsonResponse(this._testEvents);
+          return this._jsonResponse(this.testData.events);
         }
         /* istanbul ignore next */
         break;

@@ -63,3 +63,9 @@ expect.extend({
   },
 
 });
+
+
+afterEach(() => {
+  console.log("Clearing local storage...");
+  window.localStorage.clear();
+});
