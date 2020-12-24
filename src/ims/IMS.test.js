@@ -107,7 +107,7 @@ describe("IMS: HTTP requests", () => {
     const ims = testIncidentManagementSystem();
 
     await ims._fetchJSON(
-      ims.bagURL, null, { "Content-Type": "application/json" }
+      ims.bagURL, { headers: { "Content-Type": "application/json" } }
     );
 
     expect(ims.requestsReceived).toHaveLength(1);
@@ -133,7 +133,7 @@ describe("IMS: HTTP requests", () => {
     const ims = testIncidentManagementSystem();
 
     expect(
-      ims._fetchJSON(ims.bagURL, null, { "Content-Type": "text/plain" })
+      ims._fetchJSON(ims.bagURL, { headers: { "Content-Type": "text/plain" } })
     ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
@@ -178,7 +178,7 @@ describe("IMS: HTTP requests", () => {
   test("_fetchJSON: with JSON -> POST request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON("/json_echo", {});
+    await ims._fetchJSON("/json_echo", { json: {} });
 
     expect(ims.requestsReceived).toHaveLength(1);
 

@@ -23,7 +23,7 @@ export default class IncidentManagementSystem {
           const credentialStore = new Store(
             this._credentialStoreKey, "credentials", User
           );
-          const { value, tag } = credentialStore.load();
+          const { value } = credentialStore.load();
           this._user = value;
         }
         return this._user;
@@ -92,8 +92,8 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchJSON = async (url, json=null, headers={}) => {
-    const requestHeaders = new Headers(headers);
+  _fetchJSON = async (url, options={}) => {
+    const requestHeaders = new Headers(options["headers"]);
 
     // Ensure content type is JSON
     if (requestHeaders.has("Content-Type")) {
@@ -107,12 +107,12 @@ export default class IncidentManagementSystem {
     }
 
     const requestOptions = { headers: requestHeaders };
-    if (json == null) {
+    if (options["json"] == null) {
       requestOptions.method = "GET";
     }
     else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(json);;
+      requestOptions.body = JSON.stringify(options["json"]);;
     }
 
     const request = new Request(url, requestOptions);
@@ -177,7 +177,7 @@ export default class IncidentManagementSystem {
       identification: username, password: credentials.password
     };
     const response = await this._fetchJSON(
-      bag.urls.auth, requestJSON, {}, true
+      bag.urls.auth, { json: requestJSON, headers: {} }
     );
 
     // Authentication failure yields a 401 response with a JSON error.
