@@ -76,7 +76,7 @@ describe("Store", () => {
   test("load, empty", () => {
     const store = exampleStore();
 
-    expect(store.load()).toBeNull();
+    expect(store.load().value).toBeNull();
   });
 
   test("load, valid", () => {
@@ -85,7 +85,7 @@ describe("Store", () => {
 
     store.store(stuffNThings);
 
-    const stuffNThingsFromStore = store.load();
+    const stuffNThingsFromStore = store.load().value;
 
     expect(
       JSON.stringify(stuffNThingsFromStore.toJSON())
@@ -98,7 +98,7 @@ describe("Store", () => {
     const store = exampleStore();
     const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load();
+    const stuffNThings = store.load().value;
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
@@ -113,7 +113,7 @@ describe("Store", () => {
     const store = exampleStore();
     const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load();
+    const stuffNThings = store.load().value;
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
@@ -127,7 +127,7 @@ describe("Store", () => {
     const store = exampleStore();
     const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load();
+    const stuffNThings = store.load().value;
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
@@ -142,7 +142,7 @@ describe("Store", () => {
     store.store(stuffNThings);
     store.remove();
 
-    expect(store.load()).toBe(null);
+    expect(store.load().value).toBe(null);
   });
 
 });

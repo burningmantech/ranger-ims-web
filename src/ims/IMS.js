@@ -23,7 +23,8 @@ export default class IncidentManagementSystem {
           const credentialStore = new Store(
             this._credentialStoreKey, "credentials", User
           );
-          this._user = credentialStore.load();
+          const { value, tag } = credentialStore.load();
+          this._user = value;
         }
         return this._user;
       },
@@ -36,7 +37,7 @@ export default class IncidentManagementSystem {
           credentialStore.remove();
         }
         else {
-          credentialStore.store(user);
+          credentialStore.store(user, null);
         }
 
         this._user = user;
@@ -277,9 +278,9 @@ export default class IncidentManagementSystem {
   ////
 
   events = async () => {
-    const eventStoreKey = "events";
-    const eventStore = new Store(eventStoreKey, "events", Event);
-    let events = eventStore.load();
+    const eventStore = new Store("events", "events", Event);
+    const { value, tag } = eventStore.load();
+    let events = value;
 
     if (events === null) {
       const bag = await this.bag();
@@ -287,10 +288,11 @@ export default class IncidentManagementSystem {
       if (! response.ok) {
         throw new Error("Failed to retrieve events.");
       }
+      const eTag = response.headers.get("ETag");
       const eventsJSON = await response.json();
 
       events = eventsJSON.map((json) => Event.fromJSON(json));
-      eventStore.store(events, null);
+      eventStore.store(events, eTag);
     }
 
     return events;

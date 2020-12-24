@@ -7,7 +7,7 @@ export default class Store {
     this._storage = window.localStorage;
   }
 
-  store = (object, expiration) => {
+  store = (object, tag) => {
     let dataJSON;
     if (object.constructor === Array) {
       dataJSON = object.map((element) => element.toJSON());
@@ -16,9 +16,10 @@ export default class Store {
       dataJSON = object.toJSON();
     }
 
-    const container = { data: dataJSON, expiration: expiration };
+    const container = { data: dataJSON, tag: tag };
 
     this._storage.setItem(this.key, JSON.stringify(container));
+    console.log(`Stored cached ${this.description} (tag:${tag}).`);
   }
 
   load = () => {
@@ -26,7 +27,13 @@ export default class Store {
 
     if (jsonText === null) {
       console.debug(`No ${this.description} found in local storage.`);
-      return null;
+      return { value: null, tag: null };
+    }
+
+    const error = (message) => {
+      console.error(message);
+      this.remove();
+      return { value: null, tag: null };
     }
 
     let containerJSON;
@@ -34,18 +41,14 @@ export default class Store {
       containerJSON = JSON.parse(jsonText);
     }
     catch (e) {
-      console.error(
+      return error(
         `Unable to parse JSON container for ${this.description}: ${e}`
       );
-      this.remove();
-      return null;
     }
 
     const dataJSON = containerJSON.data;
     if (dataJSON == null) {
-      console.error(`${this.description} found in cache, but has no data.`);
-      this.remove();
-      return null;
+      return error(`${this.description} found in cache, but has no data.`);
     }
 
     let object;
@@ -60,13 +63,11 @@ export default class Store {
       }
     }
     catch (e) {
-      console.error(`Invalid JSON for cached ${this.description}: ${e}`);
-      this.remove();
-      return null;
+      return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
 
     console.log(`Loaded cached ${this.description}.`);
-    return object;
+    return { value: object, tag: null };
   }
 
   remove = () => {
