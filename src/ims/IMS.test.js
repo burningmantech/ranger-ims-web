@@ -137,7 +137,7 @@ describe("IMS: HTTP requests", () => {
     ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
-  test("_fetchJSON: string full URL", async () => {
+  test("_fetchJSON: string with full URL", async () => {
     const url = "https://localhost/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
@@ -150,7 +150,7 @@ describe("IMS: HTTP requests", () => {
     expect(request.url).toEqual(url);
   });
 
-  test("_fetchJSON: string path URL", async () => {
+  test("_fetchJSON: string with path URL", async () => {
     const url = "/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
@@ -201,6 +201,32 @@ describe("IMS: HTTP requests", () => {
     const response = await ims._fetchJSON("/not_found");
 
     expect(response.status).toEqual(404);
+  });
+
+  test("_fetchJSON: ETag with GET -> If-None-Match header", async () => {
+    const eTag = "test-ETag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL, { eTag: eTag });
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.headers.get("If-None-Match")).toEqual(eTag);
+  });
+
+  test("_fetchJSON: ETag with POST -> If-Match header", async () => {
+    const eTag = "test-ETag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON("/json_echo", { json: {}, eTag: eTag });
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0];
+
+    expect(request.headers.get("If-Match")).toEqual(eTag);
   });
 
   test("_fetchJSON: not authenticated -> OK", async () => {

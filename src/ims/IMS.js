@@ -109,10 +109,18 @@ export default class IncidentManagementSystem {
     const requestOptions = { headers: requestHeaders };
     if (options["json"] == null) {
       requestOptions.method = "GET";
+
+      if (options["eTag"] != null) {
+        requestHeaders.set("If-None-Match", options["eTag"]);
+      }
     }
     else {
       requestOptions.method = "POST";
       requestOptions.body = JSON.stringify(options["json"]);;
+
+      if (options["eTag"] != null) {
+        requestHeaders.set("If-Match", options["eTag"]);
+      }
     }
 
     const request = new Request(url, requestOptions);
