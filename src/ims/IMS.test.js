@@ -83,7 +83,6 @@ describe("IMS: init", () => {
     expect(ims.delegate).toBeNull();
     expect(ims.user).toBeNull();
     expect(ims._credentialStore).not.toBeNull();
-    expect(ims._bag).toBeNull();
   });
 
 });
@@ -312,18 +311,24 @@ describe("IMS: bag", () => {
     }
   });
 
-  test("load bag twice -> same bag", async () => {
+  test("load bag twice -> one request to server", async () => {
     const ims = testIncidentManagementSystem();
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
 
-    expect(bag2).toBe(bag1);
+    expect(bag2).toEqual(bag1);
+    expect(ims.requestsReceived).toHaveLength(1);
   });
 
   test("load bag: no URLs in response", async () => {
     const ims = testIncidentManagementSystem();
     ims.bagURL = "/janky_bag";
-    await expect(ims.bag()).toRejectWithMessage("Bag does not have URLs: {}");
+
+    const spy = jest.spyOn(console, "error");
+    const bag = await ims.bag();
+
+    expect(spy).toHaveBeenCalledWith("Bag does not have URLs: {}");
+    expect(JSON.stringify(bag)).toEqual("{}");
   });
 
   test("load bag: non-OK response", async () => {
@@ -434,8 +439,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/forbidden";
+    ims.testData.bag.urls.auth = "/forbidden";
 
     await expect(
       ims.login(username, {password: password})
@@ -451,8 +455,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/auth_fail_text";
+    ims.testData.bag.urls.auth = "/auth_fail_text";
 
     await expect(
       ims.login(username, {password: password})
@@ -468,8 +471,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/auth_fail_json_no_status";
+    ims.testData.bag.urls.auth = "/auth_fail_json_no_status";
 
     await expect(
       ims.login(username, {password: password})
@@ -658,10 +660,9 @@ describe("IMS: events", () => {
   });
 
   test("events(), failed", async () => {
-    const ims = await testIncidentManagementSystem().asHubcap();
-
-    const bag = await ims.bag();
-    bag.urls.events = "/forbidden";
+    const ims = await testIncidentManagementSystem();
+    ims.testData.bag.urls.events = "/forbidden";
+    ims.asHubcap();
 
     await expect(ims.events()).toRejectWithMessage(
       "Failed to retrieve events."

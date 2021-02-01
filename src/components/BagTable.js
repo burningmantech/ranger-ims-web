@@ -46,7 +46,7 @@ export default class BagTable extends Component {
         return fullRow(<Loading />);
       }
 
-      if (bag.urls == null) {
+      if (! bag.urls) {
         return fullRow("ERROR: no URLs in bag");
       }
 
