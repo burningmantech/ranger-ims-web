@@ -6,26 +6,6 @@ import User from "./User";
 import Event from "./model/Event";
 
 
-class StorableJSON {
-
-  static fromJSON = (json) => {
-    return new StorableJSON(json);
-  }
-
-  constructor(json) {
-    if (json == null) {
-      throw new Error("json is required");
-    }
-    this.json = json;
-  }
-
-  toJSON = () => {
-    return this.json;
-  }
-
-}
-
-
 export default class IncidentManagementSystem {
 
   static _credentialStoreKey = "credentials";
@@ -160,11 +140,13 @@ export default class IncidentManagementSystem {
   ////
 
   bag = async () => {
-    const bagStore = new Store("bag", "URL bag", StorableJSON);
-    const { value, tag } = bagStore.load();
+    const bagStore = new Store("bag", "URL bag");
+    const { value: cachedBag, tag: cachedTag } = bagStore.load();
 
-    if (value !== null) {
-      return value.json;
+    // FIXME: When to check server again?
+
+    if (cachedBag !== null) {
+      return cachedBag;
     }
 
     console.debug(`Retrieving bag from ${this.bagURL}`);
@@ -180,7 +162,7 @@ export default class IncidentManagementSystem {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
-    bagStore.store(new StorableJSON(bag), eTag);
+    bagStore.store(bag, eTag);
 
     return bag;
   }
@@ -310,10 +292,12 @@ export default class IncidentManagementSystem {
 
   events = async () => {
     const eventStore = new Store("events", "events", Event);
-    const { value, tag } = eventStore.load();
+    const { value: cachedEvents, tag: cachedTag } = eventStore.load();
 
-    if (value !== null) {
-      return value;
+    // FIXME: When to check server again?
+
+    if (cachedEvents !== null) {
+      return cachedEvents;
     }
 
     const bag = await this.bag();

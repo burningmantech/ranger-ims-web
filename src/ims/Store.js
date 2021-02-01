@@ -9,7 +9,10 @@ export default class Store {
 
   store = (object, tag) => {
     let dataJSON;
-    if (object.constructor === Array) {
+    if (this.modelClass == null) {
+      dataJSON = object;
+    }
+    else if (object.constructor === Array) {
       dataJSON = object.map((element) => element.toJSON());
     }
     else {
@@ -53,7 +56,10 @@ export default class Store {
 
     let object;
     try {
-      if (dataJSON.constructor === Array) {
+      if (this.modelClass == null) {
+        object = dataJSON;
+      }
+      else if (dataJSON.constructor === Array) {
         object = dataJSON.map(
           (jsonObject) => this.modelClass.fromJSON(jsonObject)
         );
