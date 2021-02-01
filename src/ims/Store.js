@@ -19,7 +19,7 @@ export default class Store {
     const container = { data: dataJSON, tag: tag };
 
     this._storage.setItem(this.key, JSON.stringify(container));
-    console.log(`Stored cached ${this.description} (tag:${tag}).`);
+    console.debug(`Stored cached ${this.description} (tag:${tag}).`);
   }
 
   load = () => {
@@ -66,7 +66,7 @@ export default class Store {
       return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
 
-    console.log(`Loaded cached ${this.description}.`);
+    console.debug(`Loaded cached ${this.description}.`);
     return { value: object, tag: null };
   }
 
