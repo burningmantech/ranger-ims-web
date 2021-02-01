@@ -172,6 +172,37 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const bag = this.testData.bag;
 
     switch (path) {
+      case "/not_found":
+        return this._notFoundResponse();
+
+      case "/auth_fail_text":
+        return this._authTextResponse();
+
+      case "/auth_fail_json_no_status":
+        return this._authJSONResponse();
+
+      case "/auth_fail_json":
+        return this._authFailedResponse();
+
+      case "/forbidden":
+        return this._forbiddenResponse();
+
+      case "/json_echo":
+        /* istanbul ignore else */
+        if (request.method === "POST") {
+          const requestJSON = await request.json();
+          request._json = requestJSON;
+          return this._jsonResponse(requestJSON);
+        }
+        /* istanbul ignore next */
+        break;
+
+      case "/text_hello":
+        return this._textResponse();
+
+      case "/janky_bag":
+        return this._jsonResponse("{}");
+
       case bag.urls.bag:
         /* istanbul ignore else */
         if (request.method === "GET") {
@@ -179,15 +210,17 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         break;
+
       case bag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
-          return await this._authResponse(requestJSON);
+          return this._authResponse(requestJSON);
         }
         /* istanbul ignore next */
         break;
+
       case bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
@@ -195,29 +228,6 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         break;
-      case "/not_found":
-        return await this._notFoundResponse();
-      case "/auth_fail_text":
-        return await this._authTextResponse();
-      case "/auth_fail_json_no_status":
-        return await this._authJSONResponse();
-      case "/auth_fail_json":
-        return await this._authFailedResponse();
-      case "/forbidden":
-        return await this._forbiddenResponse();
-      case "/json_echo":
-        /* istanbul ignore else */
-        if (request.method === "POST") {
-          const requestJSON = await request.json();
-          request._json = requestJSON;
-          return await this._jsonResponse(requestJSON);
-        }
-        /* istanbul ignore next */
-        break;
-      case "/text_hello":
-        return await this._textResponse();
-      case "/janky_bag":
-        return this._jsonResponse("{}");
     }
 
     /* istanbul ignore next */
