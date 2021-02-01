@@ -6,6 +6,26 @@ import User from "./User";
 import Event from "./model/Event";
 
 
+class StorableJSON {
+
+  static fromJSON = (json) => {
+    return new StorableJSON(json);
+  }
+
+  constructor(json) {
+    if (json == null) {
+      throw new Error("json is required");
+    }
+    this.json = json;
+  }
+
+  toJSON = () => {
+    return this.json;
+  }
+
+}
+
+
 export default class IncidentManagementSystem {
 
   static _credentialStoreKey = "credentials";
@@ -50,7 +70,6 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
-    this._bag = null;
   }
 
   _fetch = async (request) => {
@@ -141,25 +160,29 @@ export default class IncidentManagementSystem {
   ////
 
   bag = async () => {
-    if (this._bag !== null) {
-      return this._bag;
+    const bagStore = new Store("bag", "URL bag", StorableJSON);
+    const { value, tag } = bagStore.load();
+
+    if (value !== null) {
+      return value.json;
     }
-    else {
-      console.debug("Retrieving bag from IMS server...");
 
-      const response = await this._fetchJSON(this.bagURL);
-      if (! response.ok) {
-        throw new Error("Failed to retrieve bag.");
-      }
-      const bag = await response.json();
+    console.debug(`Retrieving bag from ${this.bagURL}`);
 
-      if (bag.urls == null) {
-        throw new Error(`Bag does not have URLs: ${bag}`);
-      }
-
-      this._bag = bag;
+    const response = await this._fetchJSON(this.bagURL);
+    if (! response.ok) {
+      throw new Error("Failed to retrieve bag.");
     }
-    return this._bag;
+    const eTag = response.headers.get("ETag");
+    const bag = await response.json();
+
+    if (! bag.urls) {
+      console.error(`Bag does not have URLs: ${bag}`);
+    }
+
+    bagStore.store(new StorableJSON(bag), eTag);
+
+    return bag;
   }
 
   ////
@@ -288,20 +311,23 @@ export default class IncidentManagementSystem {
   events = async () => {
     const eventStore = new Store("events", "events", Event);
     const { value, tag } = eventStore.load();
-    let events = value;
 
-    if (events === null) {
-      const bag = await this.bag();
-      const response = await this._fetchJSON(bag.urls.events);
-      if (! response.ok) {
-        throw new Error("Failed to retrieve events.");
-      }
-      const eTag = response.headers.get("ETag");
-      const eventsJSON = await response.json();
-
-      events = eventsJSON.map((json) => Event.fromJSON(json));
-      eventStore.store(events, eTag);
+    if (value !== null) {
+      return value;
     }
+
+    const bag = await this.bag();
+    const url = bag.urls.events;
+    console.debug(`Retrieving events from ${url}`);
+    const response = await this._fetchJSON(url);
+    if (! response.ok) {
+      throw new Error("Failed to retrieve events.");
+    }
+    const eTag = response.headers.get("ETag");
+    const eventsJSON = await response.json();
+    const events = eventsJSON.map((json) => Event.fromJSON(json));
+
+    eventStore.store(events, eTag);
 
     return events;
   }
