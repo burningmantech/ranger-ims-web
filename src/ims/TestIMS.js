@@ -203,7 +203,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case "/janky_bag":
         return this._jsonResponse("{}");
 
-      case bag.urls.bag:
+      case "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(bag);
