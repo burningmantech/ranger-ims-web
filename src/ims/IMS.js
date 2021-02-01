@@ -177,7 +177,7 @@ export default class IncidentManagementSystem {
     const bag = await response.json();
 
     if (! bag.urls) {
-      console.error(`Bag does not have URLs: ${bag}`);
+      console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
     bagStore.store(new StorableJSON(bag), eTag);
