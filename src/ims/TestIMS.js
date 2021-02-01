@@ -201,7 +201,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         return this._textResponse();
 
       case "/janky_bag":
-        return this._jsonResponse("{}");
+        return this._jsonResponse({});
 
       case "/ims/api/bag":
         /* istanbul ignore else */
