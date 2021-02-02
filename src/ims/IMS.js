@@ -110,7 +110,7 @@ export default class IncidentManagementSystem {
       requestOptions.method = "GET";
 
       if (options["eTag"] != null) {
-        requestHeaders.set("If-None-Match", options["eTag"]);
+        requestHeaders.set("If-None-Match", '"' + options["eTag"] + '"');
       }
     }
     else {

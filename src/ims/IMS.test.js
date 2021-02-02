@@ -212,7 +212,7 @@ describe("IMS: HTTP requests", () => {
 
     const request = ims.requestsReceived[0][0];
 
-    expect(request.headers.get("If-None-Match")).toEqual(eTag);
+    expect(request.headers.get("If-None-Match")).toEqual('"' + eTag + '"');
   });
 
   test("_fetchJSON: ETag with POST -> If-Match header", async () => {
