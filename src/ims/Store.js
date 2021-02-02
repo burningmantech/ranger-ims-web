@@ -1,3 +1,6 @@
+import { DateTime } from "luxon";
+
+
 export default class Store {
 
   constructor(key, description, modelClass) {
@@ -7,7 +10,7 @@ export default class Store {
     this._storage = window.localStorage;
   }
 
-  store = (object, tag) => {
+  store = (object, tag, lifespan) => {
     let dataJSON;
     if (this.modelClass == null) {
       dataJSON = object;
@@ -19,7 +22,11 @@ export default class Store {
       dataJSON = object.toJSON();
     }
 
-    const container = { data: dataJSON, tag: tag };
+    const expiration = (
+      (lifespan == null) ? undefined: DateTime.local().plus(lifespan)
+    );
+
+    const container = { value: dataJSON, tag: tag, expiration: expiration };
 
     this._storage.setItem(this.key, JSON.stringify(container));
     console.debug(`Stored cached ${this.description} (tag:${tag}).`);
@@ -49,9 +56,9 @@ export default class Store {
       );
     }
 
-    const dataJSON = containerJSON.data;
+    const dataJSON = containerJSON.value;
     if (dataJSON == null) {
-      return error(`${this.description} found in cache, but has no data.`);
+      return error(`${this.description} found in cache, but has no value.`);
     }
 
     let object;

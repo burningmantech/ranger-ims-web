@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import Store from "./Store";
 
 
@@ -38,7 +40,12 @@ export default class StuffNThings {
 }
 
 
-const exampleStore = () => {
+const jsonStore = () => {
+  return new Store(TEST_STORE_KEY, "stuff-n-things");
+}
+
+
+const stuffNThingsStore = () => {
   return new Store(TEST_STORE_KEY, "Stuff 'N Things", StuffNThings);
 }
 
@@ -47,7 +54,7 @@ describe("Store", () => {
 
   beforeEach(() => {
     if (window.localStorage.getItem(TEST_STORE_KEY) != null) {
-      throw new Error("Found data container in local storage.");
+      throw new Error("Found container in local storage.");
     }
   });
 
@@ -56,31 +63,75 @@ describe("Store", () => {
   });
 
   test("initial state", () => {
-    const store = exampleStore();
+    const store = stuffNThingsStore();
 
     expect(store.key).toEqual(TEST_STORE_KEY);
     expect(store.description).toEqual(TEST_STORE_DESCRIPTION);
     expect(store.modelClass).toEqual(StuffNThings);
   });
 
-  test("store", () => {
-    const store = exampleStore();
+  test("store JSON value", () => {
+    const store = jsonStore();
+    const value = { stuff: [1, 2, 3], things: "these" };
+
+    store.store(value);
+
+    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+    expect(jsonText).toEqual(JSON.stringify({ value: value }));
+  });
+
+  test("store model value", () => {
+    const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
     store.store(stuffNThings);
 
     const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-    expect(jsonText).toEqual(JSON.stringify({ data: stuffNThings.toJSON() }));
+    expect(jsonText).toEqual(JSON.stringify({ value: stuffNThings.toJSON() }));
+  });
+
+  test("store tag", () => {
+    const store = jsonStore();
+    const value = { stuff: [1, 2, 3], things: "these" };
+    const tag = "FE7B2A95197A";
+
+    store.store(value, tag);
+
+    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+    expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
+  });
+
+  test("store lifetime", () => {
+    const store = jsonStore();
+    const value = null;
+    const lifetime = { seconds: 60 };
+    const nowPlusLifetime = DateTime.local().plus(lifetime);
+
+    store.store(null, undefined, lifetime);
+
+    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+    const json = JSON.parse(jsonText);
+    const expiration = DateTime.fromISO(json.expiration);
+
+    // We computed expiration before and after the call, so the actual value
+    // will be somewhere in between.
+    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+    expect(DateTime.local().plus(lifetime)).toBeAfterDateTime(expiration);
+
+    // Test the entire container content for completeness
+    expect(jsonText).toEqual(
+      JSON.stringify({ value: null, expiration: json.expiration })
+    );
   });
 
   test("load, empty", () => {
-    const store = exampleStore();
+    const store = stuffNThingsStore();
 
     expect(store.load().value).toBeNull();
   });
 
   test("load, valid", () => {
-    const store = exampleStore();
+    const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
     store.store(stuffNThings);
@@ -95,7 +146,7 @@ describe("Store", () => {
   test("load, invalid JSON", () => {
     window.localStorage.setItem(TEST_STORE_KEY, "*");
 
-    const store = exampleStore();
+    const store = stuffNThingsStore();
     const spy = jest.spyOn(console, "error");
 
     const stuffNThings = store.load().value;
@@ -107,24 +158,24 @@ describe("Store", () => {
     );
   });
 
-  test("load, missing data", () => {
+  test("load, missing value", () => {
     window.localStorage.setItem(TEST_STORE_KEY, "{}");
 
-    const store = exampleStore();
+    const store = stuffNThingsStore();
     const spy = jest.spyOn(console, "error");
 
     const stuffNThings = store.load().value;
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
-      "Stuff 'N Things found in cache, but has no data."
+      "Stuff 'N Things found in cache, but has no value."
     );
   });
 
-  test("load, invalid data", () => {
-    window.localStorage.setItem(TEST_STORE_KEY, '{"data": {}}');
+  test("load, invalid value", () => {
+    window.localStorage.setItem(TEST_STORE_KEY, '{"value": {}}');
 
-    const store = exampleStore();
+    const store = stuffNThingsStore();
     const spy = jest.spyOn(console, "error");
 
     const stuffNThings = store.load().value;
@@ -136,7 +187,7 @@ describe("Store", () => {
   });
 
   test("remove", () => {
-    const store = exampleStore();
+    const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
     store.store(stuffNThings);
