@@ -251,7 +251,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   _mockFetch = async (request) => {
     let response;
     try {
-      response = this.__mockFetch(request);
+      response = await this.__mockFetch(request);
     } catch (e) {
       this.requestsReceived.push([request, e]);
       throw e;
