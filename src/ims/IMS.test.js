@@ -311,13 +311,25 @@ describe("IMS: bag", () => {
     }
   });
 
-  test("load bag twice -> one request to server", async () => {
+  test("load bag twice (unexpired) -> one request to server", async () => {
     const ims = testIncidentManagementSystem();
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
 
     expect(bag2).toEqual(bag1);
     expect(ims.requestsReceived).toHaveLength(1);
+  });
+
+  test("load bag twice (expired) -> two requests to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag_lifetime = { seconds: 0 };
+
+    const bag1 = await ims.bag();
+    const bag2 = await ims.bag();
+
+    expect(bag2).toEqual(bag1);
+    expect(ims.requestsReceived).toHaveLength(2);
   });
 
   test("load bag: no URLs in response", async () => {

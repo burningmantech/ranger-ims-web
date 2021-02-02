@@ -139,15 +139,19 @@ export default class IncidentManagementSystem {
   //  Configuration
   ////
 
+  bag_lifetime = { hours: 1 };
+
   bag = async () => {
     const bagStore = new Store("bag", "URL bag");
-    /* eslint-disable-next-line no-unused-vars */
-    const { value: cachedBag, tag: cachedTag } = bagStore.load();
+    const { value: cachedBag, tag: cachedETag, expiration } = bagStore.load();
 
-    // FIXME: When to check server again?
+    console.debug(`lifetime: ${JSON.stringify(this.bag_lifetime)}`);
+    console.debug(`expiration: ${expiration}`);
 
     if (cachedBag !== null) {
-      return cachedBag;
+      if (expiration > DateTime.local()) {
+        return cachedBag;
+      }
     }
 
     console.debug(`Retrieving bag from ${this.bagURL}`);
@@ -156,14 +160,23 @@ export default class IncidentManagementSystem {
     if (! response.ok) {
       throw new Error("Failed to retrieve bag.");
     }
+
+    let _bag;
+
     const eTag = response.headers.get("ETag");
-    const bag = await response.json();
+    if (cachedETag !== null && cachedETag === eTag) {
+      _bag = cachedBag;
+    }
+    else {
+      _bag = await response.json();
+    }
+    const bag = _bag;
 
     if (! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
-    bagStore.store(bag, eTag);
+    bagStore.store(bag, eTag, this.bag_lifetime);
 
     return bag;
   }
@@ -294,7 +307,7 @@ export default class IncidentManagementSystem {
   events = async () => {
     const eventStore = new Store("events", "events", Event);
     /* eslint-disable-next-line no-unused-vars */
-    const { value: cachedEvents, tag: cachedTag } = eventStore.load();
+    const { value: cachedEvents, tag: cachedETag } = eventStore.load();
 
     // FIXME: When to check server again?
 
