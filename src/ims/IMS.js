@@ -141,6 +141,7 @@ export default class IncidentManagementSystem {
 
   bag = async () => {
     const bagStore = new Store("bag", "URL bag");
+    /* eslint-disable-next-line no-unused-vars */
     const { value: cachedBag, tag: cachedTag } = bagStore.load();
 
     // FIXME: When to check server again?
@@ -292,6 +293,7 @@ export default class IncidentManagementSystem {
 
   events = async () => {
     const eventStore = new Store("events", "events", Event);
+    /* eslint-disable-next-line no-unused-vars */
     const { value: cachedEvents, tag: cachedTag } = eventStore.load();
 
     // FIXME: When to check server again?
