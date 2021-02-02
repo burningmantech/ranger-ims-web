@@ -12,7 +12,10 @@ export default class Store {
 
   store = (object, tag, lifespan) => {
     let value;
-    if (this.modelClass == null) {
+    if (object == null) {
+      value = null;
+    }
+    else if (this.modelClass == null) {
       value = object;
     }
     else if (object.constructor === Array) {
@@ -56,32 +59,40 @@ export default class Store {
       );
     }
 
-    const { value, tag } = container;
+    const { value: valueJSON, tag, expiration: expirationJSON } = container;
 
-    if (value == null) {
+    if (valueJSON === undefined) {
       return error(`${this.description} found in cache, but has no value.`);
     }
 
-    let object;
+    let value;
     try {
-      if (this.modelClass == null) {
-        object = value;
+      if (valueJSON == null) {
+        value = null;
       }
-      else if (value.constructor === Array) {
-        object = value.map(
+      else if (this.modelClass == null) {
+        value = valueJSON;
+      }
+      else if (valueJSON.constructor === Array) {
+        value = valueJSON.map(
           (jsonObject) => this.modelClass.fromJSON(jsonObject)
         );
       }
       else {
-        object = this.modelClass.fromJSON(value);
+        value = this.modelClass.fromJSON(valueJSON);
       }
     }
     catch (e) {
       return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
 
+    console.debug(`expirationJSON: ${expirationJSON}`);
+    const expiration = (
+      (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
+    );
+
     console.debug(`Loaded cached ${this.description}.`);
-    return { value: object, tag: tag };
+    return { value: value, tag: tag, expiration: expiration };
   }
 
   remove = () => {

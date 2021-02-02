@@ -159,6 +159,31 @@ describe("Store", () => {
     );
   });
 
+  test("load expiration", () => {
+    const store = stuffNThingsStore();
+    const lifetime = { seconds: 60 };
+    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
+
+    store.store(null, undefined, lifetime);
+
+    const container = store.load();
+    const expiration = DateTime.fromISO(container.expiration);
+
+    console.debug(`EXP: ${container.expiration}`);
+
+    // We computed expiration before and after the call, so the actual value
+    // will be somewhere in between.
+    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+    expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
+      expiration
+    );
+
+    // Test the entire container content for completeness
+    expect(JSON.stringify(container)).toEqual(
+      JSON.stringify({ value: null, expiration: container.expiration })
+    );
+  });
+
   test("load, invalid JSON", () => {
     window.localStorage.setItem(TEST_STORE_KEY, "*");
 
