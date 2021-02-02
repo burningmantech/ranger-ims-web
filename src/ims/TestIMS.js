@@ -8,6 +8,18 @@ import { IMSContext } from "./context";
 import { render } from "@testing-library/react";
 
 
+/* https://stackoverflow.com/a/7616484 */
+const hashText = (text) => {
+  var hash = 0, i, chr;
+  for (i = 0; i < text.length; i++) {
+    chr = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
+
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
   static timeout = Duration.fromObject({ minutes: 5 });
@@ -93,12 +105,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   _jsonResponse = (json) => {
+    const body = JSON.stringify(json);
     return new Response(
-      JSON.stringify(json),
+      body,
       {
         status: 200,
         statusText: "Okay, here's some JSON",
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "ETag": hashText(body),
+        }
       },
     )
   }
