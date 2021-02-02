@@ -97,7 +97,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -111,7 +111,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -123,7 +123,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -144,7 +144,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.url).toEqual(url);
   });
@@ -157,7 +157,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.url).toEqual(url);
   });
@@ -169,7 +169,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.method).toEqual("GET");
   });
@@ -181,7 +181,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.method).toEqual("POST");
   });
@@ -210,7 +210,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.headers.get("If-None-Match")).toEqual(eTag);
   });
@@ -223,7 +223,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.headers.get("If-Match")).toEqual(eTag);
   });
@@ -236,7 +236,7 @@ describe("IMS: HTTP requests", () => {
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).not.toBeJWTAuthenticatedRequest();
   });
@@ -255,7 +255,7 @@ describe("IMS: HTTP requests", () => {
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJWTAuthenticatedRequest();
   });
@@ -293,7 +293,7 @@ describe("IMS: bag", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -388,7 +388,7 @@ describe("IMS: authentication", () => {
 
     expect(ims.requestsReceived).toHaveLength(2);
 
-    const request = ims.requestsReceived[1];
+    const request = ims.requestsReceived[1][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -402,7 +402,7 @@ describe("IMS: authentication", () => {
 
     expect(ims.requestsReceived).toHaveLength(2);
 
-    const request = ims.requestsReceived[1];
+    const request = ims.requestsReceived[1][0];
     const json = request._json;
 
     expect(json.identification).toBeDefined();

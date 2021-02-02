@@ -173,9 +173,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return this._jsonResponse(responseJSON);
   }
 
-  _mockFetch = async (request) => {
-    this.requestsReceived.push(request);
-
+  __mockFetch = async (request) => {
     let path;
     try {
       const url = new URL(request.url);
@@ -248,6 +246,18 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     /* istanbul ignore next */
     throw new Error(`Unexpected request: ${request.method} ${path}`);
+  }
+
+  _mockFetch = async (request) => {
+    let response;
+    try {
+      response = this.__mockFetch(request);
+    } catch (e) {
+      this.requestsReceived.push([request, e]);
+      throw e;
+    }
+    this.requestsReceived.push([request, response]);
+    return response;
   }
 
   // For testing
