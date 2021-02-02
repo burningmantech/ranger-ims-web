@@ -105,7 +105,7 @@ describe("Store", () => {
     const store = jsonStore();
     const value = null;
     const lifetime = { seconds: 60 };
-    const nowPlusLifetime = DateTime.local().plus(lifetime);
+    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
 
     store.store(null, undefined, lifetime);
 
@@ -116,7 +116,9 @@ describe("Store", () => {
     // We computed expiration before and after the call, so the actual value
     // will be somewhere in between.
     expect(expiration).toBeAfterDateTime(nowPlusLifetime);
-    expect(DateTime.local().plus(lifetime)).toBeAfterDateTime(expiration);
+    expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
+      expiration
+    );
 
     // Test the entire container content for completeness
     expect(jsonText).toEqual(
