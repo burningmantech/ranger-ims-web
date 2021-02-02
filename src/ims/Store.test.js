@@ -132,7 +132,7 @@ describe("Store", () => {
     expect(store.load().value).toBeNull();
   });
 
-  test("load, valid", () => {
+  test("load value", () => {
     const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
@@ -143,6 +143,20 @@ describe("Store", () => {
     expect(
       JSON.stringify(stuffNThingsFromStore.toJSON())
     ).toEqual(JSON.stringify(stuffNThings.toJSON()));
+  });
+
+  test("load tag", () => {
+    const store = stuffNThingsStore();
+    const value = new StuffNThings(TEST_STUFF, TEST_THINGS);
+    const tag = "FE7B2A95197A";
+
+    store.store(value, tag);
+
+    const container = store.load();
+
+    expect(JSON.stringify(container)).toEqual(
+      JSON.stringify({ value: value, tag: tag })
+    );
   });
 
   test("load, invalid JSON", () => {

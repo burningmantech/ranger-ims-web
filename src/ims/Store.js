@@ -11,22 +11,22 @@ export default class Store {
   }
 
   store = (object, tag, lifespan) => {
-    let dataJSON;
+    let value;
     if (this.modelClass == null) {
-      dataJSON = object;
+      value = object;
     }
     else if (object.constructor === Array) {
-      dataJSON = object.map((element) => element.toJSON());
+      value = object.map((element) => element.toJSON());
     }
     else {
-      dataJSON = object.toJSON();
+      value = object.toJSON();
     }
 
     const expiration = (
       (lifespan == null) ? undefined: DateTime.local().plus(lifespan)
     );
 
-    const container = { value: dataJSON, tag: tag, expiration: expiration };
+    const container = { value: value, tag: tag, expiration: expiration };
 
     this._storage.setItem(this.key, JSON.stringify(container));
     console.debug(`Stored cached ${this.description} (tag:${tag}).`);
@@ -37,18 +37,18 @@ export default class Store {
 
     if (jsonText === null) {
       console.debug(`No ${this.description} found in local storage.`);
-      return { value: null, tag: null };
+      return { value: null };
     }
 
     const error = (message) => {
       console.error(message);
       this.remove();
-      return { value: null, tag: null };
+      return { value: null };
     }
 
-    let containerJSON;
+    let container;
     try {
-      containerJSON = JSON.parse(jsonText);
+      container = JSON.parse(jsonText);
     }
     catch (e) {
       return error(
@@ -56,23 +56,24 @@ export default class Store {
       );
     }
 
-    const dataJSON = containerJSON.value;
-    if (dataJSON == null) {
+    const { value, tag } = container;
+
+    if (value == null) {
       return error(`${this.description} found in cache, but has no value.`);
     }
 
     let object;
     try {
       if (this.modelClass == null) {
-        object = dataJSON;
+        object = value;
       }
-      else if (dataJSON.constructor === Array) {
-        object = dataJSON.map(
+      else if (value.constructor === Array) {
+        object = value.map(
           (jsonObject) => this.modelClass.fromJSON(jsonObject)
         );
       }
       else {
-        object = this.modelClass.fromJSON(dataJSON);
+        object = this.modelClass.fromJSON(value);
       }
     }
     catch (e) {
@@ -80,7 +81,7 @@ export default class Store {
     }
 
     console.debug(`Loaded cached ${this.description}.`);
-    return { value: object, tag: null };
+    return { value: object, tag: tag };
   }
 
   remove = () => {
