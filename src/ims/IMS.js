@@ -110,7 +110,7 @@ export default class IncidentManagementSystem {
       requestOptions.method = "GET";
 
       if (options["eTag"] != null) {
-        requestHeaders.set("If-None-Match", '"' + options["eTag"] + '"');
+        requestHeaders.set("If-None-Match", options["eTag"]);
       }
     }
     else {
@@ -145,31 +145,33 @@ export default class IncidentManagementSystem {
     const bagStore = new Store("bag", "URL bag");
     const { value: cachedBag, tag: cachedETag, expiration } = bagStore.load();
 
-    console.debug(`lifetime: ${JSON.stringify(this.bag_lifetime)}`);
-    console.debug(`expiration: ${expiration}`);
-
+    // If we have a cached bag and it hasn't expired, use that.
     if (cachedBag !== null) {
       if (expiration > DateTime.local()) {
         return cachedBag;
       }
     }
 
-    console.debug(`Retrieving bag from ${this.bagURL}`);
-
-    const response = await this._fetchJSON(this.bagURL);
-    if (! response.ok) {
-      throw new Error("Failed to retrieve bag.");
-    }
+    // If we have a cached-but-expired bag and it hasn't expired, use that.
+    const fetchOptions = { eTag: cachedETag };
+    const response = await this._fetchJSON(this.bagURL, fetchOptions);
 
     let _bag;
-
-    const eTag = response.headers.get("ETag");
-    if (cachedETag !== null && cachedETag === eTag) {
+    let _eTag;
+    if (response.status === 304) {  // NOT_MODIFIED
       _bag = cachedBag;
+      _eTag = cachedETag;
+      console.debug(`Retrieved bag from cache (ETag: ${cachedETag})`);
+    }
+    else if (! response.ok) {
+      throw new Error("Failed to retrieve bag.");
     }
     else {
+      _eTag = response.headers.get("ETag");
       _bag = await response.json();
+      console.debug(`Retrieved bag from ${this.bagURL}`);
     }
+    const eTag = _eTag;
     const bag = _bag;
 
     if (! bag.urls) {

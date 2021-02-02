@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 
+import Store from "./Store";
 import IncidentManagementSystem from "./IMS";
 import {
   TestIncidentManagementSystem, testIncidentManagementSystem
@@ -212,7 +213,7 @@ describe("IMS: HTTP requests", () => {
 
     const request = ims.requestsReceived[0][0];
 
-    expect(request.headers.get("If-None-Match")).toEqual('"' + eTag + '"');
+    expect(request.headers.get("If-None-Match")).toEqual(eTag);
   });
 
   test("_fetchJSON: ETag with POST -> If-Match header", async () => {
@@ -311,7 +312,7 @@ describe("IMS: bag", () => {
     }
   });
 
-  test("load bag twice (unexpired) -> one request to server", async () => {
+  test("load bag twice: unexpired -> one request to server", async () => {
     const ims = testIncidentManagementSystem();
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
@@ -320,18 +321,18 @@ describe("IMS: bag", () => {
     expect(ims.requestsReceived).toHaveLength(1);
   });
 
-  test("load bag twice (expired) -> two requests to server", async () => {
+  test("load bag twice: expired -> two requests to server", async () => {
     const ims = testIncidentManagementSystem();
 
     ims.bag_lifetime = { seconds: 0 };
 
-    const bag1 = await ims.bag();
-    const bag2 = await ims.bag();
+    await ims.bag();
+    await ims.bag();
 
     expect(ims.requestsReceived).toHaveLength(2);
   });
 
-  test("load bag twice (expired, unchanged)", async () => {
+  test("load bag twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
     ims.bag_lifetime = { seconds: 0 };
@@ -342,18 +343,74 @@ describe("IMS: bag", () => {
     expect(bag2).toEqual(bag1);
   });
 
-  test("load bag twice (expired, changed)", async () => {
+  test("load bag twice: expired, changed", async () => {
     const ims = testIncidentManagementSystem();
 
     ims.bag_lifetime = { seconds: 0 };
 
     const bag1 = await ims.bag();
 
+    // Change the server value
     ims.testData.bag.extra = "/extra";
 
     const bag2 = await ims.bag();
 
     expect(bag2).not.toEqual(bag1);
+    expect(bag2).toEqual(ims.testData.bag);
+  });
+
+  test("load cached bag: unexpired", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    bagStore.store(testBag, "1", { seconds: 60 })
+
+    const retrievedBag = await ims.bag();
+
+    // We expect the bag we put in to the cache, and not the one on the server,
+    // since it should not have fetched new data.
+    expect(retrievedBag).toEqual(testBag);
+  });
+
+  test("load cached bag: expired, same ETag", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    // Fetch the bag from the server
+    const bag1 = await ims.bag();
+
+    // Get the stored ETag
+    const { tag: eTag1 } = bagStore.load();
+
+    // Re-write the cached value with the same ETag and stale expiration
+    bagStore.store(testBag, eTag1, { seconds: 0 })
+
+    const bag2 = await ims.bag();
+
+    // We expect use the (re-written) cached bag, given the unchanged ETag on
+    // the server.
+    expect(bag2).toEqual(testBag);
+  });
+
+  test("load cached bag: expired, different ETag", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    // Fetch the bag from the server
+    await ims.bag();
+
+    // Re-write the cached value with a new ETag and stale expiration
+    bagStore.store(testBag, "1", { seconds: 0 })
+
+    const bag2 = await ims.bag();
+
+    // We expect use the bag from the server, given the non-matching ETag
     expect(bag2).toEqual(ims.testData.bag);
   });
 

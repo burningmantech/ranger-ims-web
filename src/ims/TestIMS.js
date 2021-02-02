@@ -113,7 +113,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         statusText: "Okay, here's some JSON",
         headers: {
           "Content-Type": "application/json",
-          "ETag": hashText(body),
+          "ETag": '"' + hashText(body) + '"',
         }
       },
     )
@@ -256,7 +256,29 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       this.requestsReceived.push([request, e]);
       throw e;
     }
+
+    if (request.method === "GET") {
+      const ifNoneMatch = request.headers.get("If-None-Match");
+      const responseETag = response.headers.get("ETag");
+      if (ifNoneMatch !== null && responseETag !== null) {
+        for (const matchETag of ifNoneMatch.split(/, */)) {  // Can be > 1 ETag
+          if (matchETag == responseETag) {
+            console.debug("Matching ETag found; responding with NOT_MODIFIED");
+            response = new Response(
+              `Matched ETag: ${responseETag}`,
+              {
+                status: 304,
+                statusText: "Not modified.",
+                headers: { "Content-Type": "text/plain" },
+              }
+            );
+          }
+        }
+      }
+    }
+
     this.requestsReceived.push([request, response]);
+
     return response;
   }
 
