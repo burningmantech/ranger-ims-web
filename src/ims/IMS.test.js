@@ -328,8 +328,33 @@ describe("IMS: bag", () => {
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
 
-    expect(bag2).toEqual(bag1);
     expect(ims.requestsReceived).toHaveLength(2);
+  });
+
+  test("load bag twice (expired, unchanged)", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag_lifetime = { seconds: 0 };
+
+    const bag1 = await ims.bag();
+    const bag2 = await ims.bag();
+
+    expect(bag2).toEqual(bag1);
+  });
+
+  test("load bag twice (expired, changed)", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag_lifetime = { seconds: 0 };
+
+    const bag1 = await ims.bag();
+
+    ims.testData.bag.extra = "/extra";
+
+    const bag2 = await ims.bag();
+
+    expect(bag2).not.toEqual(bag1);
+    expect(bag2).toEqual(ims.testData.bag);
   });
 
   test("load bag: no URLs in response", async () => {
