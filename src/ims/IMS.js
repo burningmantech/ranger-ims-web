@@ -23,7 +23,8 @@ export default class IncidentManagementSystem {
           const credentialStore = new Store(
             this._credentialStoreKey, "credentials", User
           );
-          this._user = credentialStore.load();
+          const { value } = credentialStore.load();
+          this._user = value;
         }
         return this._user;
       },
@@ -36,7 +37,7 @@ export default class IncidentManagementSystem {
           credentialStore.remove();
         }
         else {
-          credentialStore.store(user);
+          credentialStore.store(user, null);
         }
 
         this._user = user;
@@ -49,7 +50,6 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
-    this._bag = null;
   }
 
   _fetch = async (request) => {
@@ -91,8 +91,8 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchJSON = async (url, json=null, headers={}) => {
-    const requestHeaders = new Headers(headers);
+  _fetchJSON = async (url, options={}) => {
+    const requestHeaders = new Headers(options["headers"]);
 
     // Ensure content type is JSON
     if (requestHeaders.has("Content-Type")) {
@@ -106,12 +106,20 @@ export default class IncidentManagementSystem {
     }
 
     const requestOptions = { headers: requestHeaders };
-    if (json == null) {
+    if (options["json"] == null) {
       requestOptions.method = "GET";
+
+      if (options["eTag"] != null) {
+        requestHeaders.set("If-None-Match", options["eTag"]);
+      }
     }
     else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(json);;
+      requestOptions.body = JSON.stringify(options["json"]);;
+
+      if (options["eTag"] != null) {
+        requestHeaders.set("If-Match", options["eTag"]);
+      }
     }
 
     const request = new Request(url, requestOptions);
@@ -127,30 +135,68 @@ export default class IncidentManagementSystem {
     return response;
   }
 
+  _fetchAndCacheJSON = async(urlID, store, lifetime) => {
+    const { value: cachedValue, tag: cachedETag, expiration } = store.load();
+
+    // If we have a cached value and it hasn't expired, use that.
+
+    if (cachedValue !== null && expiration > DateTime.local()) {
+      return cachedValue;
+    }
+
+    // If we have a cached-but-expired value, check the server for a new value
+
+    const url = (
+      (urlID === "bag") ? this.bagURL : (await this.bag()).urls[urlID]
+    );
+    const fetchOptions = { eTag: cachedETag };
+    const response = await this._fetchJSON(url, fetchOptions);
+
+    let _value;
+    let _eTag;
+    if (response.status === 304) {  // NOT_MODIFIED
+      // The server says it's still the same, so keep the cached value.
+      // Don't return yet... we'll store it below to update the expiration.
+      _value = cachedValue;
+      _eTag = cachedETag;
+      console.debug(
+        `Retrieved ${store.description} from cache (ETag: ${cachedETag})`
+      );
+    }
+    else if (! response.ok) {
+      // The server says "poop", so say "poop" to the caller.
+      throw new Error(`Failed to retrieve ${store.description}.`);
+    }
+    else {
+      // The server has a new value for us.
+      _eTag = response.headers.get("ETag");
+      const json = await response.json();
+      _value = store.deserializeValue(json);
+      console.debug(`Retrieved ${store.description} from ${url}`);
+    }
+    const value = _value;
+    const eTag = _eTag;
+
+    store.store(value, eTag, lifetime);
+
+    return value;
+  }
+
   ////
   //  Configuration
   ////
 
+  bag_lifetime = { hours: 1 };
+
   bag = async () => {
-    if (this._bag !== null) {
-      return this._bag;
+    const store = new Store("bag", "URL bag");
+    const bag = this._fetchAndCacheJSON("bag", store, this.bag_lifetime);
+
+    if (! bag.urls) {
+      console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
-    else {
-      console.debug("Retrieving bag from IMS server...");
 
-      const response = await this._fetchJSON(this.bagURL);
-      if (! response.ok) {
-        throw new Error("Failed to retrieve bag.");
-      }
-      const bag = await response.json();
-
-      if (bag.urls == null) {
-        throw new Error(`Bag does not have URLs: ${bag}`);
-      }
-
-      this._bag = bag;
-    }
-    return this._bag;
+    return bag;
   }
 
   ////
@@ -176,7 +222,7 @@ export default class IncidentManagementSystem {
       identification: username, password: credentials.password
     };
     const response = await this._fetchJSON(
-      bag.urls.auth, requestJSON, {}, true
+      bag.urls.auth, { json: requestJSON, headers: {} }
     );
 
     // Authentication failure yields a 401 response with a JSON error.
@@ -276,24 +322,11 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
+  events_lifetime = { minutes: 5 };
+
   events = async () => {
-    const eventStoreKey = "events";
-    const eventStore = new Store(eventStoreKey, "events", Event);
-    let events = eventStore.load();
-
-    if (events === null) {
-      const bag = await this.bag();
-      const response = await this._fetchJSON(bag.urls.events);
-      if (! response.ok) {
-        throw new Error("Failed to retrieve events.");
-      }
-      const eventsJSON = await response.json();
-
-      events = eventsJSON.map((json) => Event.fromJSON(json));
-      eventStore.store(events, null);
-    }
-
-    return events;
+    const store = new Store("events", "event list", Event);
+    return this._fetchAndCacheJSON("events", store, this.events_lifetime);
   }
 
 }

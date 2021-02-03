@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 
+import Store from "./Store";
 import IncidentManagementSystem from "./IMS";
 import {
   TestIncidentManagementSystem, testIncidentManagementSystem
@@ -83,7 +84,6 @@ describe("IMS: init", () => {
     expect(ims.delegate).toBeNull();
     expect(ims.user).toBeNull();
     expect(ims._credentialStore).not.toBeNull();
-    expect(ims._bag).toBeNull();
   });
 
 });
@@ -98,7 +98,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -107,12 +107,12 @@ describe("IMS: HTTP requests", () => {
     const ims = testIncidentManagementSystem();
 
     await ims._fetchJSON(
-      ims.bagURL, null, { "Content-Type": "application/json" }
+      ims.bagURL, { headers: { "Content-Type": "application/json" } }
     );
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -124,7 +124,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -133,11 +133,11 @@ describe("IMS: HTTP requests", () => {
     const ims = testIncidentManagementSystem();
 
     expect(
-      ims._fetchJSON(ims.bagURL, null, { "Content-Type": "text/plain" })
+      ims._fetchJSON(ims.bagURL, { headers: { "Content-Type": "text/plain" } })
     ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
-  test("_fetchJSON: string full URL", async () => {
+  test("_fetchJSON: string with full URL", async () => {
     const url = "https://localhost/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
@@ -145,12 +145,12 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.url).toEqual(url);
   });
 
-  test("_fetchJSON: string path URL", async () => {
+  test("_fetchJSON: string with path URL", async () => {
     const url = "/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
@@ -158,7 +158,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.url).toEqual(url);
   });
@@ -170,7 +170,7 @@ describe("IMS: HTTP requests", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.method).toEqual("GET");
   });
@@ -178,11 +178,11 @@ describe("IMS: HTTP requests", () => {
   test("_fetchJSON: with JSON -> POST request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON("/json_echo", {});
+    await ims._fetchJSON("/json_echo", { json: {} });
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request.method).toEqual("POST");
   });
@@ -203,6 +203,32 @@ describe("IMS: HTTP requests", () => {
     expect(response.status).toEqual(404);
   });
 
+  test("_fetchJSON: ETag with GET -> If-None-Match header", async () => {
+    const eTag = "test-ETag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON(ims.bagURL, { eTag: eTag });
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0][0];
+
+    expect(request.headers.get("If-None-Match")).toEqual(eTag);
+  });
+
+  test("_fetchJSON: ETag with POST -> If-Match header", async () => {
+    const eTag = "test-ETag";
+    const ims = testIncidentManagementSystem();
+
+    await ims._fetchJSON("/json_echo", { json: {}, eTag: eTag });
+
+    expect(ims.requestsReceived).toHaveLength(1);
+
+    const request = ims.requestsReceived[0][0];
+
+    expect(request.headers.get("If-Match")).toEqual(eTag);
+  });
+
   test("_fetchJSON: not authenticated -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
@@ -211,7 +237,7 @@ describe("IMS: HTTP requests", () => {
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).not.toBeJWTAuthenticatedRequest();
   });
@@ -230,7 +256,7 @@ describe("IMS: HTTP requests", () => {
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJWTAuthenticatedRequest();
   });
@@ -268,7 +294,7 @@ describe("IMS: bag", () => {
 
     expect(ims.requestsReceived).toHaveLength(1);
 
-    const request = ims.requestsReceived[0];
+    const request = ims.requestsReceived[0][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -286,24 +312,124 @@ describe("IMS: bag", () => {
     }
   });
 
-  test("load bag twice -> same bag", async () => {
+  test("load bag twice: unexpired -> one request to server", async () => {
     const ims = testIncidentManagementSystem();
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
 
-    expect(bag2).toBe(bag1);
+    expect(bag2).toEqual(bag1);
+    expect(ims.requestsReceived).toHaveLength(1);
+  });
+
+  test("load bag twice: expired -> two requests to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    // Expire the cache immediately
+    ims.bag_lifetime = { seconds: 0 };
+
+    await ims.bag();
+    await ims.bag();
+
+    expect(ims.requestsReceived).toHaveLength(2);
+  });
+
+  test("load bag twice: expired, unchanged", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag_lifetime = { seconds: 0 };
+
+    const bag1 = await ims.bag();
+    const bag2 = await ims.bag();
+
+    expect(bag2).toEqual(bag1);
+  });
+
+  test("load bag twice: expired, changed", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag_lifetime = { seconds: 0 };
+
+    const bag1 = await ims.bag();
+
+    // Change the server value
+    ims.testData.bag.extra = "/extra";
+
+    const bag2 = await ims.bag();
+
+    expect(bag2).not.toEqual(bag1);
+    expect(bag2).toEqual(ims.testData.bag);
+  });
+
+  test("load cached bag: unexpired", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    bagStore.store(testBag, "1", { seconds: 60 })
+
+    const retrievedBag = await ims.bag();
+
+    // We expect the bag we put in to the cache, and not the one on the server,
+    // since it should not have fetched new data.
+    expect(retrievedBag).toEqual(testBag);
+  });
+
+  test("load cached bag: expired, same ETag", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    // Fetch the bag from the server
+    const bag1 = await ims.bag();
+
+    // Get the stored ETag
+    const { tag: eTag1 } = bagStore.load();
+
+    // Re-write the cached value with the same ETag and stale expiration
+    bagStore.store(testBag, eTag1, { seconds: 0 })
+
+    const bag2 = await ims.bag();
+
+    // We expect use the (re-written) cached bag, given the unchanged ETag on
+    // the server.
+    expect(bag2).toEqual(testBag);
+  });
+
+  test("load cached bag: expired, different ETag", async () => {
+    const testBag = { urls: { x: "/x" } }
+
+    const ims = testIncidentManagementSystem();
+    const bagStore = new Store("bag", "URL bag");
+
+    // Fetch the bag from the server
+    await ims.bag();
+
+    // Re-write the cached value with a new ETag and stale expiration
+    bagStore.store(testBag, "1", { seconds: 0 })
+
+    const bag2 = await ims.bag();
+
+    // We expect use the bag from the server, given the non-matching ETag
+    expect(bag2).toEqual(ims.testData.bag);
   });
 
   test("load bag: no URLs in response", async () => {
     const ims = testIncidentManagementSystem();
     ims.bagURL = "/janky_bag";
-    await expect(ims.bag()).toRejectWithMessage("Bag does not have URLs: {}");
+
+    const spy = jest.spyOn(console, "error");
+    const bag = await ims.bag();
+
+    expect(spy).toHaveBeenCalledWith("Bag does not have URLs: {}");
+    expect(JSON.stringify(bag)).toEqual("{}");
   });
 
   test("load bag: non-OK response", async () => {
     const ims = testIncidentManagementSystem();
     ims.bagURL = "/forbidden";
-    await expect(ims.bag()).toRejectWithMessage("Failed to retrieve bag.");
+    await expect(ims.bag()).toRejectWithMessage("Failed to retrieve URL bag.");
   });
 
 });
@@ -357,7 +483,7 @@ describe("IMS: authentication", () => {
 
     expect(ims.requestsReceived).toHaveLength(2);
 
-    const request = ims.requestsReceived[1];
+    const request = ims.requestsReceived[1][0];
 
     expect(request).toBeJSONRequest();
   });
@@ -371,7 +497,7 @@ describe("IMS: authentication", () => {
 
     expect(ims.requestsReceived).toHaveLength(2);
 
-    const request = ims.requestsReceived[1];
+    const request = ims.requestsReceived[1][0];
     const json = request._json;
 
     expect(json.identification).toBeDefined();
@@ -408,8 +534,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/forbidden";
+    ims.testData.bag.urls.auth = "/forbidden";
 
     await expect(
       ims.login(username, {password: password})
@@ -425,8 +550,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/auth_fail_text";
+    ims.testData.bag.urls.auth = "/auth_fail_text";
 
     await expect(
       ims.login(username, {password: password})
@@ -442,8 +566,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     // Need a non-401 error status
-    const bag = await ims.bag();
-    bag.urls.auth = "/auth_fail_json_no_status";
+    ims.testData.bag.urls.auth = "/auth_fail_json_no_status";
 
     await expect(
       ims.login(username, {password: password})
@@ -623,7 +746,7 @@ describe("IMS: events", () => {
     testIncidentManagementSystem().logout();
   });
 
-  test("events(), ok", async () => {
+  test("local events, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
     const events = await ims.events();
@@ -631,15 +754,59 @@ describe("IMS: events", () => {
     expect(events.map((event) => event.toJSON())).toEqual(ims.testData.events);
   });
 
-  test("events(), failed", async () => {
-    const ims = await testIncidentManagementSystem().asHubcap();
-
-    const bag = await ims.bag();
-    bag.urls.events = "/forbidden";
+  test("load events, failed", async () => {
+    const ims = await testIncidentManagementSystem();
+    ims.testData.bag.urls.events = "/forbidden";
+    ims.asHubcap();
 
     await expect(ims.events()).toRejectWithMessage(
-      "Failed to retrieve events."
+      "Failed to retrieve event list."
     );
+  });
+
+  test("load events twice: unexpired -> one request to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    // Fetch bag now and discount the requests made to get it
+    await ims.bag();
+    let eventRequestCount = 0 - ims.requestsReceived.length;
+
+    const events1 = await ims.events();
+    const events2 = await ims.events();
+
+    eventRequestCount += ims.requestsReceived.length;
+
+    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(eventRequestCount).toEqual(1);
+  });
+
+  test("load events twice: expired -> two requests to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    // Fetch bag now and discount the requests made to get it
+    await ims.bag();
+    let eventRequestCount = 0 - ims.requestsReceived.length;
+
+    // Expire the cache immediately
+    ims.events_lifetime = { seconds: 0 };
+
+    await ims.events();
+    await ims.events();
+
+    eventRequestCount += ims.requestsReceived.length;
+
+    expect(eventRequestCount).toEqual(2);
+  });
+
+  test("load events twice: expired, unchanged", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.events_lifetime = { seconds: 0 };
+
+    const events1 = await ims.events();
+    const events2 = await ims.events();
+
+    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
   });
 
 });

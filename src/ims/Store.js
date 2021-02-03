@@ -1,3 +1,6 @@
+import { DateTime } from "luxon";
+
+
 export default class Store {
 
   constructor(key, description, modelClass) {
@@ -7,18 +10,69 @@ export default class Store {
     this._storage = window.localStorage;
   }
 
-  store = (object, expiration) => {
-    let dataJSON;
-    if (object.constructor === Array) {
-      dataJSON = object.map((element) => element.toJSON());
+  serializeValue = (object) => {
+    if (object == null) {
+      // null
+      return null;
+    }
+    else if (this.modelClass == null) {
+      // JSON
+      return object;
+    }
+    else if (object.constructor === Array) {
+      // Array of model objects
+      return object.map((element) => element.toJSON());
     }
     else {
-      dataJSON = object.toJSON();
+      // Model object
+      return object.toJSON();
+    }
+  }
+
+  deserializeValue = (json) => {
+    if (json == null) {
+      // null
+      return null;
+    }
+    else if (this.modelClass == null) {
+      // JSON
+      return json;
+    }
+    else if (json.constructor === Array) {
+      // Array of model objects
+      return json.map(
+        (jsonObject) => this.modelClass.fromJSON(jsonObject)
+      );
+    }
+    else {
+      // Model object
+      return this.modelClass.fromJSON(json);
+    }
+  }
+
+  store = (object, tag, lifespan) => {
+    let value;
+    if (object == null) {
+      value = null;
+    }
+    else if (this.modelClass == null) {
+      value = object;
+    }
+    else if (object.constructor === Array) {
+      value = object.map((element) => element.toJSON());
+    }
+    else {
+      value = object.toJSON();
     }
 
-    const container = { data: dataJSON, expiration: expiration };
+    const expiration = (
+      (lifespan == null) ? undefined: DateTime.local().plus(lifespan)
+    );
+
+    const container = { value: value, tag: tag, expiration: expiration };
 
     this._storage.setItem(this.key, JSON.stringify(container));
+    console.debug(`Stored cached ${this.description} (tag:${tag}).`);
   }
 
   load = () => {
@@ -26,47 +80,46 @@ export default class Store {
 
     if (jsonText === null) {
       console.debug(`No ${this.description} found in local storage.`);
-      return null;
+      return { value: null };
     }
 
-    let containerJSON;
+    const error = (message) => {
+      console.error(message);
+      this.remove();
+      return { value: null };
+    }
+
+    let container;
     try {
-      containerJSON = JSON.parse(jsonText);
+      container = JSON.parse(jsonText);
     }
     catch (e) {
-      console.error(
+      return error(
         `Unable to parse JSON container for ${this.description}: ${e}`
       );
-      this.remove();
-      return null;
     }
 
-    const dataJSON = containerJSON.data;
-    if (dataJSON == null) {
-      console.error(`${this.description} found in cache, but has no data.`);
-      this.remove();
-      return null;
+    const { value: valueJSON, tag, expiration: expirationJSON } = container;
+
+    if (valueJSON === undefined) {
+      return error(`${this.description} found in cache, but has no value.`);
     }
 
-    let object;
+    let _value;
     try {
-      if (dataJSON.constructor === Array) {
-        object = dataJSON.map(
-          (jsonObject) => this.modelClass.fromJSON(jsonObject)
-        );
-      }
-      else {
-        object = this.modelClass.fromJSON(dataJSON);
-      }
+      _value = this.deserializeValue(valueJSON);
     }
     catch (e) {
-      console.error(`Invalid JSON for cached ${this.description}: ${e}`);
-      this.remove();
-      return null;
+      return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
+    const value = _value;
 
-    console.log(`Loaded cached ${this.description}.`);
-    return object;
+    const expiration = (
+      (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
+    );
+
+    console.debug(`Loaded cached ${this.description}.`);
+    return { value: value, tag: tag, expiration: expiration };
   }
 
   remove = () => {

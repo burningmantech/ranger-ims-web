@@ -8,6 +8,18 @@ import { IMSContext } from "./context";
 import { render } from "@testing-library/react";
 
 
+/* https://stackoverflow.com/a/7616484 */
+const hashText = (text) => {
+  var hash = 0, i, chr;
+  for (i = 0; i < text.length; i++) {
+    chr = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
+
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
   static timeout = Duration.fromObject({ minutes: 5 });
@@ -93,12 +105,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   _jsonResponse = (json) => {
+    const body = JSON.stringify(json);
     return new Response(
-      JSON.stringify(json),
+      body,
       {
         status: 200,
         statusText: "Okay, here's some JSON",
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "ETag": '"' + hashText(body) + '"',
+        }
       },
     )
   }
@@ -157,9 +173,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return this._jsonResponse(responseJSON);
   }
 
-  _mockFetch = async (request) => {
-    this.requestsReceived.push(request);
-
+  __mockFetch = async (request) => {
     let path;
     try {
       const url = new URL(request.url);
@@ -172,22 +186,55 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const bag = this.testData.bag;
 
     switch (path) {
-      case bag.urls.bag:
+      case "/not_found":
+        return this._notFoundResponse();
+
+      case "/auth_fail_text":
+        return this._authTextResponse();
+
+      case "/auth_fail_json_no_status":
+        return this._authJSONResponse();
+
+      case "/auth_fail_json":
+        return this._authFailedResponse();
+
+      case "/forbidden":
+        return this._forbiddenResponse();
+
+      case "/json_echo":
+        /* istanbul ignore else */
+        if (request.method === "POST") {
+          const requestJSON = await request.json();
+          request._json = requestJSON;
+          return this._jsonResponse(requestJSON);
+        }
+        /* istanbul ignore next */
+        break;
+
+      case "/text_hello":
+        return this._textResponse();
+
+      case "/janky_bag":
+        return this._jsonResponse({});
+
+      case "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(bag);
         }
         /* istanbul ignore next */
         break;
+
       case bag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
-          return await this._authResponse(requestJSON);
+          return this._authResponse(requestJSON);
         }
         /* istanbul ignore next */
         break;
+
       case bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
@@ -195,33 +242,44 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         break;
-      case "/not_found":
-        return await this._notFoundResponse();
-      case "/auth_fail_text":
-        return await this._authTextResponse();
-      case "/auth_fail_json_no_status":
-        return await this._authJSONResponse();
-      case "/auth_fail_json":
-        return await this._authFailedResponse();
-      case "/forbidden":
-        return await this._forbiddenResponse();
-      case "/json_echo":
-        /* istanbul ignore else */
-        if (request.method === "POST") {
-          const requestJSON = await request.json();
-          request._json = requestJSON;
-          return await this._jsonResponse(requestJSON);
-        }
-        /* istanbul ignore next */
-        break;
-      case "/text_hello":
-        return await this._textResponse();
-      case "/janky_bag":
-        return this._jsonResponse("{}");
     }
 
     /* istanbul ignore next */
     throw new Error(`Unexpected request: ${request.method} ${path}`);
+  }
+
+  _mockFetch = async (request) => {
+    let response;
+    try {
+      response = await this.__mockFetch(request);
+    } catch (e) {
+      this.requestsReceived.push([request, e]);
+      throw e;
+    }
+
+    if (request.method === "GET") {
+      const ifNoneMatch = request.headers.get("If-None-Match");
+      const responseETag = response.headers.get("ETag");
+      if (ifNoneMatch !== null && responseETag !== null) {
+        for (const matchETag of ifNoneMatch.split(/, */)) {  // Can be > 1 ETag
+          if (matchETag == responseETag) {
+            console.debug("Matching ETag found; responding with NOT_MODIFIED");
+            response = new Response(
+              `Matched ETag: ${responseETag}`,
+              {
+                status: 304,
+                statusText: "Not modified.",
+                headers: { "Content-Type": "text/plain" },
+              }
+            );
+          }
+        }
+      }
+    }
+
+    this.requestsReceived.push([request, response]);
+
+    return response;
   }
 
   // For testing

@@ -39,7 +39,7 @@ describe("BagTable component", () => {
 
   test("no urls in bag", async () => {
     const ims = testIncidentManagementSystem();
-    ims._bag = {};
+    ims.testData.bag = {};
 
     renderWithIMS(<BagTable />, ims);
 
@@ -50,7 +50,7 @@ describe("BagTable component", () => {
 
   test("null urls in bag", async () => {
     const ims = testIncidentManagementSystem();
-    ims._bag = { urls: null };
+    ims.testData.bag = { urls: null };
 
     renderWithIMS(<BagTable />, ims);
 
