@@ -10,6 +10,46 @@ export default class Store {
     this._storage = window.localStorage;
   }
 
+  serializeValue = (json) => {
+    if (object == null) {
+      // null
+      return null;
+    }
+    else if (this.modelClass == null) {
+      // JSON
+      return object;
+    }
+    else if (object.constructor === Array) {
+      // Array of model objects
+      return object.map((element) => element.toJSON());
+    }
+    else {
+      // Model object
+      return object.toJSON();
+    }
+  }
+
+  deserializeValue = (json) => {
+    if (json == null) {
+      // null
+      return null;
+    }
+    else if (this.modelClass == null) {
+      // JSON
+      return json;
+    }
+    else if (json.constructor === Array) {
+      // Array of model objects
+      return json.map(
+        (jsonObject) => this.modelClass.fromJSON(jsonObject)
+      );
+    }
+    else {
+      // Model object
+      return this.modelClass.fromJSON(json);
+    }
+  }
+
   store = (object, tag, lifespan) => {
     let value;
     if (object == null) {
@@ -65,26 +105,14 @@ export default class Store {
       return error(`${this.description} found in cache, but has no value.`);
     }
 
-    let value;
+    let _value;
     try {
-      if (valueJSON == null) {
-        value = null;
-      }
-      else if (this.modelClass == null) {
-        value = valueJSON;
-      }
-      else if (valueJSON.constructor === Array) {
-        value = valueJSON.map(
-          (jsonObject) => this.modelClass.fromJSON(jsonObject)
-        );
-      }
-      else {
-        value = this.modelClass.fromJSON(valueJSON);
-      }
+      _value = this.deserializeValue(valueJSON);
     }
     catch (e) {
       return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
+    const value = _value;
 
     const expiration = (
       (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
