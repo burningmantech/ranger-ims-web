@@ -146,7 +146,9 @@ export default class IncidentManagementSystem {
 
     // If we have a cached-but-expired value, check the server for a new value
 
-    const url = (urlID == "bag") ? this.bagURL : (await this.bag()).urls[urlID];
+    const url = (
+      (urlID === "bag") ? this.bagURL : (await this.bag()).urls[urlID]
+    );
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSON(url, fetchOptions);
 
