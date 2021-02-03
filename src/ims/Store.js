@@ -86,7 +86,6 @@ export default class Store {
       return error(`Invalid JSON for cached ${this.description}: ${e}`);
     }
 
-    console.debug(`expirationJSON: ${expirationJSON}`);
     const expiration = (
       (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
     );
