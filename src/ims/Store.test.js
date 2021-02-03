@@ -132,7 +132,29 @@ describe("Store", () => {
     expect(store.load().value).toBeNull();
   });
 
-  test("load value", () => {
+  test("load JSON value", () => {
+    const store = jsonStore();
+    const value = { stuff: [1, 2, 3], things: "these" };
+
+    store.store(value);
+
+    const valueFromStore = store.load().value;
+
+    expect(valueFromStore).toEqual(value);
+  });
+
+  test("load JSON array", () => {
+    const store = jsonStore();
+    const values = [ { stuff: [1, 2, 3], things: "these" }, "there" ];
+
+    store.store(values);
+
+    const valuesFromStore = store.load().value;
+
+    expect(valuesFromStore).toEqual(values);
+  });
+
+  test("load model value", () => {
     const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
@@ -143,6 +165,24 @@ describe("Store", () => {
     expect(
       JSON.stringify(stuffNThingsFromStore.toJSON())
     ).toEqual(JSON.stringify(stuffNThings.toJSON()));
+  });
+
+  test("load model array", () => {
+    const store = stuffNThingsStore();
+    const stuffNThingses = [
+      new StuffNThings(TEST_STUFF, TEST_THINGS),
+      new StuffNThings({}, {}),
+    ]
+
+    store.store(stuffNThingses);
+
+    const stuffNThingsesFromStore = store.load().value;
+
+    expect(
+      stuffNThingsesFromStore.map((snt) => (JSON.stringify(snt.toJSON())))
+    ).toEqual(
+      stuffNThingses.map((snt) => (JSON.stringify(snt.toJSON())))
+    );
   });
 
   test("load tag", () => {
