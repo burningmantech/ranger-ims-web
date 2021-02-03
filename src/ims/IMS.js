@@ -135,6 +135,52 @@ export default class IncidentManagementSystem {
     return response;
   }
 
+  _fetchAndCacheJSON = async(urlID, store, lifetime) => {
+    const { value: cachedValue, tag: cachedETag, expiration } = store.load();
+
+    // If we have a cached value and it hasn't expired, use that.
+
+    if (cachedValue !== null && expiration > DateTime.local()) {
+      return cachedValue;
+    }
+
+    // If we have a cached-but-expired value, check the server for a new value
+
+    const bag = await this.bag();
+    const url = bag.urls[urlID];
+    const fetchOptions = { eTag: cachedETag };
+    const response = await this._fetchJSON(url, fetchOptions);
+
+    let _value;
+    let _eTag;
+    if (response.status === 304) {  // NOT_MODIFIED
+      // The server says it's still the same, so keep the cached value.
+      // Don't return yet... we'll store it below to update the expiration.
+      _value = cachedValue;
+      _eTag = cachedETag;
+      console.debug(
+        `Retrieved ${store.description} from cache (ETag: ${cachedETag})`
+      );
+    }
+    else if (! response.ok) {
+      // The server says "poop", so say "poop" to the caller.
+      throw new Error(`Failed to retrieve ${store.description}.`);
+    }
+    else {
+      // The server has a new value for us.
+      _eTag = response.headers.get("ETag");
+      const json = await response.json();
+      _value = store.deserializeValue(json);
+      console.debug(`Retrieved ${store.description} from ${url}`);
+    }
+    const value = _value;
+    const eTag = _eTag;
+
+    store.store(value, eTag, lifetime);
+
+    return value;
+  }
+
   ////
   //  Configuration
   ////
@@ -311,43 +357,7 @@ export default class IncidentManagementSystem {
 
   events = async () => {
     const store = new Store("events", "event list", Event);
-    const { value: cachedEvents, tag: cachedETag, expiration } = store.load();
-
-    // If we have a cached event list and it hasn't expired, use that.
-
-    if (cachedEvents !== null && expiration > DateTime.local()) {
-      return cachedEvents;
-    }
-
-    // If we have a cached-but-expired event list, check the server.
-
-    const bag = await this.bag();
-    const url = bag.urls.events;
-    const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSON(url, fetchOptions);
-
-    let _events;
-    let _eTag;
-    if (response.status === 304) {  // NOT_MODIFIED
-      _events = cachedEvents;
-      _eTag = cachedETag;
-      console.debug(`Retrieved events from cache (ETag: ${cachedETag})`);
-    }
-    else if (! response.ok) {
-      throw new Error("Failed to retrieve events.");
-    }
-    else {
-      _eTag = response.headers.get("ETag");
-      const json = await response.json();
-      _events = json.map((e) => Event.fromJSON(e));
-      console.debug(`Retrieved events from ${url}`);
-    }
-    const events = _events;
-    const eTag = _eTag;
-
-    store.store(events, eTag, this.events_lifetime);
-
-    return events;
+    return this._fetchAndCacheJSON("events", store, this.events_lifetime);
   }
 
 }
