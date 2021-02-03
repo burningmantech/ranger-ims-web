@@ -10,7 +10,7 @@ export default class Store {
     this._storage = window.localStorage;
   }
 
-  serializeValue = (json) => {
+  serializeValue = (object) => {
     if (object == null) {
       // null
       return null;
