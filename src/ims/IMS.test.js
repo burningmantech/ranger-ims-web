@@ -324,6 +324,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired -> two requests to server", async () => {
     const ims = testIncidentManagementSystem();
 
+    // Expire the cache immediately
     ims.bag_lifetime = { seconds: 0 };
 
     await ims.bag();
@@ -761,6 +762,51 @@ describe("IMS: events", () => {
     await expect(ims.events()).toRejectWithMessage(
       "Failed to retrieve events."
     );
+  });
+
+  test("load events twice: unexpired -> one request to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    // Fetch bag now and discount the requests made to get it
+    await ims.bag();
+    let eventRequestCount = 0 - ims.requestsReceived.length;
+
+    const events1 = await ims.events();
+    const events2 = await ims.events();
+
+    eventRequestCount += ims.requestsReceived.length;
+
+    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(eventRequestCount).toEqual(1);
+  });
+
+  test("load events twice: expired -> two requests to server", async () => {
+    const ims = testIncidentManagementSystem();
+
+    // Fetch bag now and discount the requests made to get it
+    await ims.bag();
+    let eventRequestCount = 0 - ims.requestsReceived.length;
+
+    // Expire the cache immediately
+    ims.events_lifetime = { seconds: 0 };
+
+    await ims.events();
+    await ims.events();
+
+    eventRequestCount += ims.requestsReceived.length;
+
+    expect(eventRequestCount).toEqual(2);
+  });
+
+  test("load events twice: expired, unchanged", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.events_lifetime = { seconds: 0 };
+
+    const events1 = await ims.events();
+    const events2 = await ims.events();
+
+    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
   });
 
 });

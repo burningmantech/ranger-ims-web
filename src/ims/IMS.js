@@ -142,19 +142,20 @@ export default class IncidentManagementSystem {
   bag_lifetime = { hours: 1 };
 
   bag = async () => {
-    const bagStore = new Store("bag", "URL bag");
-    const { value: cachedBag, tag: cachedETag, expiration } = bagStore.load();
+    const store = new Store("bag", "URL bag");
+    const { value: cachedBag, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached bag and it hasn't expired, use that.
-    if (cachedBag !== null) {
-      if (expiration > DateTime.local()) {
-        return cachedBag;
-      }
+
+    if (cachedBag !== null && expiration > DateTime.local()) {
+      return cachedBag;
     }
 
-    // If we have a cached-but-expired bag and it hasn't expired, use that.
+    // If we have a cached-but-expired bag, check the server.
+
+    const url = this.bagURL;
     const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSON(this.bagURL, fetchOptions);
+    const response = await this._fetchJSON(url, fetchOptions);
 
     let _bag;
     let _eTag;
@@ -169,16 +170,16 @@ export default class IncidentManagementSystem {
     else {
       _eTag = response.headers.get("ETag");
       _bag = await response.json();
-      console.debug(`Retrieved bag from ${this.bagURL}`);
+      console.debug(`Retrieved bag from ${url}`);
     }
-    const eTag = _eTag;
     const bag = _bag;
+    const eTag = _eTag;
 
     if (! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
-    bagStore.store(bag, eTag, this.bag_lifetime);
+    store.store(bag, eTag, this.bag_lifetime);
 
     return bag;
   }
@@ -306,29 +307,45 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
+  events_lifetime = { minutes: 5 };
+
   events = async () => {
-    const eventStore = new Store("events", "events", Event);
-    /* eslint-disable-next-line no-unused-vars */
-    const { value: cachedEvents, tag: cachedETag } = eventStore.load();
+    const store = new Store("events", "event list", Event);
+    const { value: cachedEvents, tag: cachedETag, expiration } = store.load();
 
-    // FIXME: When to check server again?
+    // If we have a cached event list and it hasn't expired, use that.
 
-    if (cachedEvents !== null) {
+    if (cachedEvents !== null && expiration > DateTime.local()) {
       return cachedEvents;
     }
 
+    // If we have a cached-but-expired event list, check the server.
+
     const bag = await this.bag();
     const url = bag.urls.events;
-    console.debug(`Retrieving events from ${url}`);
-    const response = await this._fetchJSON(url);
-    if (! response.ok) {
+    const fetchOptions = { eTag: cachedETag };
+    const response = await this._fetchJSON(url, fetchOptions);
+
+    let _events;
+    let _eTag;
+    if (response.status === 304) {  // NOT_MODIFIED
+      _events = cachedEvents;
+      _eTag = cachedETag;
+      console.debug(`Retrieved events from cache (ETag: ${cachedETag})`);
+    }
+    else if (! response.ok) {
       throw new Error("Failed to retrieve events.");
     }
-    const eTag = response.headers.get("ETag");
-    const eventsJSON = await response.json();
-    const events = eventsJSON.map((json) => Event.fromJSON(json));
+    else {
+      _eTag = response.headers.get("ETag");
+      const json = await response.json();
+      _events = json.map((e) => Event.fromJSON(e));
+      console.debug(`Retrieved events from ${url}`);
+    }
+    const events = _events;
+    const eTag = _eTag;
 
-    eventStore.store(events, eTag);
+    store.store(events, eTag, this.events_lifetime);
 
     return events;
   }
