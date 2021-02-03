@@ -746,7 +746,7 @@ describe("IMS: events", () => {
     testIncidentManagementSystem().logout();
   });
 
-  test("events(), ok", async () => {
+  test("local events, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
     const events = await ims.events();
@@ -754,13 +754,13 @@ describe("IMS: events", () => {
     expect(events.map((event) => event.toJSON())).toEqual(ims.testData.events);
   });
 
-  test("events(), failed", async () => {
+  test("load events, failed", async () => {
     const ims = await testIncidentManagementSystem();
     ims.testData.bag.urls.events = "/forbidden";
     ims.asHubcap();
 
     await expect(ims.events()).toRejectWithMessage(
-      "Failed to retrieve events."
+      "Failed to retrieve event list."
     );
   });
 
