@@ -146,8 +146,7 @@ export default class IncidentManagementSystem {
 
     // If we have a cached-but-expired value, check the server for a new value
 
-    const bag = await this.bag();
-    const url = bag.urls[urlID];
+    const url = (urlID == "bag") ? this.bagURL : (await this.bag()).urls[urlID];
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSON(url, fetchOptions);
 
@@ -189,43 +188,11 @@ export default class IncidentManagementSystem {
 
   bag = async () => {
     const store = new Store("bag", "URL bag");
-    const { value: cachedBag, tag: cachedETag, expiration } = store.load();
-
-    // If we have a cached bag and it hasn't expired, use that.
-
-    if (cachedBag !== null && expiration > DateTime.local()) {
-      return cachedBag;
-    }
-
-    // If we have a cached-but-expired bag, check the server.
-
-    const url = this.bagURL;
-    const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSON(url, fetchOptions);
-
-    let _bag;
-    let _eTag;
-    if (response.status === 304) {  // NOT_MODIFIED
-      _bag = cachedBag;
-      _eTag = cachedETag;
-      console.debug(`Retrieved bag from cache (ETag: ${cachedETag})`);
-    }
-    else if (! response.ok) {
-      throw new Error("Failed to retrieve bag.");
-    }
-    else {
-      _eTag = response.headers.get("ETag");
-      _bag = await response.json();
-      console.debug(`Retrieved bag from ${url}`);
-    }
-    const bag = _bag;
-    const eTag = _eTag;
+    const bag = this._fetchAndCacheJSON("bag", store, this.bag_lifetime);
 
     if (! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
-
-    store.store(bag, eTag, this.bag_lifetime);
 
     return bag;
   }

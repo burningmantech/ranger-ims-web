@@ -429,7 +429,7 @@ describe("IMS: bag", () => {
   test("load bag: non-OK response", async () => {
     const ims = testIncidentManagementSystem();
     ims.bagURL = "/forbidden";
-    await expect(ims.bag()).toRejectWithMessage("Failed to retrieve bag.");
+    await expect(ims.bag()).toRejectWithMessage("Failed to retrieve URL bag.");
   });
 
 });
