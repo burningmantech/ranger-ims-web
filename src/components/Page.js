@@ -9,9 +9,18 @@ export default class Home extends Component {
 
   render = () => {
     return (
-      <Container id="page" fluid="false">
+      <Container id="page" fluid>
         <NavigationBar id="page_navigation" />
+
         {this.props.children}
+
+        <footer>
+        <hr />
+        <p>
+          IMS Software © 2013-2019 Burning Man and its contributors.
+          Data in IMS is confidential and proprietary.
+        </p>
+        </footer>
       </Container>
     );
   }
