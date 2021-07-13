@@ -17,7 +17,7 @@ export default class Home extends Component {
         <footer>
         <hr />
         <p>
-          IMS Software © 2013-2019 Burning Man and its contributors.
+          IMS Software © 2013-2021 Burning Man and its contributors.
           Data in IMS is confidential and proprietary.
         </p>
         </footer>
