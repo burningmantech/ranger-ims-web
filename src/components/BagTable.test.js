@@ -26,6 +26,24 @@ describe("BagTable component", () => {
     expect(screen.queryByText("Loading...")).toBeInTheDocument();
   });
 
+  test("bag fails to load", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.bag = jest.fn(
+      () => { throw new Error("Can't load bag because reasons..."); }
+    );
+
+    const spy = jest.spyOn(console, "error");
+
+    renderWithIMS(<BagTable />, ims);
+
+    expect(screen.queryByText("Error loading URL bag")).toBeInTheDocument();
+
+    expect(spy).toHaveBeenCalledWith(
+      "Unable to load BagTable: Can't load bag because reasons..."
+    );
+  });
+
   test("loaded bag", async () => {
     const ims = testIncidentManagementSystem();
 

@@ -8,7 +8,7 @@ import Event from "./Event";
 
 describe("Event component", () => {
 
-  test("loading...", async () => {
+  test("loading event", async () => {
     const ims = testIncidentManagementSystem();
 
     renderWithIMS(<Event id="1" />, ims);
@@ -20,14 +20,12 @@ describe("Event component", () => {
     const ims = testIncidentManagementSystem();
 
     ims.eventWithID = jest.fn(
-      () => { throw new Error("Can't load event because reasons..."); }
+      (id) => { throw new Error("Can't load event because reasons..."); }
     );
 
     const spy = jest.spyOn(console, "error");
 
-    renderWithIMS(<Event id="1a" />, ims);
-
-    screen.debug();
+    renderWithIMS(<Event id="1" />, ims);
 
     expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
@@ -42,8 +40,6 @@ describe("Event component", () => {
     for (const event of await ims.events()) {
       await act(async () => {
         renderWithIMS(<Event id={event.id} />, ims);
-
-        screen.debug();
       });
 
       expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();

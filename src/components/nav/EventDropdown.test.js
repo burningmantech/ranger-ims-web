@@ -18,7 +18,7 @@ describe("EventDropdown component", () => {
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
 
-  test("loading...", async () => {
+  test("loading events", async () => {
     const ims = testIncidentManagementSystem();
 
     renderWithIMS(<EventDropdown />, ims);
