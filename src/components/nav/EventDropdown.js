@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Component } from "react";
 
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -30,14 +31,13 @@ export default class EventDropdown extends Component {
 
   fetch = async () => {
     const context = this.context;
-    if (context === undefined) {
-      throw new Error(`No context provided to ${this.constructor.name}.`);
-    }
+    invariant(
+      context !== undefined,
+      `No context provided to ${this.constructor.name}.`,
+    );
 
     const ims = context.ims;
-    if (ims == null) {
-      throw new Error(`No IMS provided to ${this.constructor.name}.`);
-    }
+    invariant(ims != null, `No IMS provided to ${this.constructor.name}.`);
 
     let events;
     try {

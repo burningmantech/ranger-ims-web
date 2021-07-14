@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Component, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router, Redirect, Route, Switch, useParams
@@ -25,9 +26,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    if (props.ims == null) {
-      throw new Error("ims is required");
-    }
+    invariant(props.ims != null, "ims is required");
 
     this.state = {
       user: props.ims.user,

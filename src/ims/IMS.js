@@ -204,13 +204,13 @@ export default class IncidentManagementSystem {
 
   login = async (username, credentials) => {
     if (username == null) {
-      throw new Error("username is required")
+      throw new Error("username is required");
     }
     if (credentials == null) {
-      throw new Error("credentials is required")
+      throw new Error("credentials is required");
     }
     if (credentials.password == null) {
-      throw new Error("password is required")
+      throw new Error("password is required");
     }
 
     const bag = await this.bag();
