@@ -325,7 +325,7 @@ describe("IMS: bag", () => {
     const ims = testIncidentManagementSystem();
 
     // Expire the cache immediately
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     await ims.bag();
     await ims.bag();
@@ -336,7 +336,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
@@ -347,7 +347,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, changed", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     const bag1 = await ims.bag();
 
@@ -788,7 +788,7 @@ describe("IMS: events", () => {
     let eventRequestCount = 0 - ims.requestsReceived.length;
 
     // Expire the cache immediately
-    ims.events_lifetime = { seconds: 0 };
+    ims.eventsCacheLifetime = { seconds: 0 };
 
     await ims.events();
     await ims.events();
@@ -801,7 +801,7 @@ describe("IMS: events", () => {
   test("load events twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.events_lifetime = { seconds: 0 };
+    ims.eventsCacheLifetime = { seconds: 0 };
 
     const events1 = await ims.events();
     const events2 = await ims.events();
