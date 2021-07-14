@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Component } from "react";
 
 import Page from "../components/Page";
@@ -6,9 +7,7 @@ import Page from "../components/Page";
 export default class Event extends Component {
 
   constructor(props) {
-    if (props.id == null) {
-      throw new Error("id is required");
-    }
+    invariant(props.id != null, "id is required");
 
     super(props);
   }
