@@ -67,15 +67,6 @@ describe("IMS: init", () => {
     expect(ims.bagURL).toEqual(url);
   });
 
-  test("bagURL is required", () => {
-    const message = "bagURL is required";
-
-    expect(() => {new IncidentManagementSystem()}).toThrow(message);
-    expect(() => {new IncidentManagementSystem(undefined)}).toThrow(message);
-    expect(() => {new IncidentManagementSystem(null)}).toThrow(message);
-    expect(() => {new IncidentManagementSystem("")}).toThrow(message);
-  });
-
   test("initial state", () => {
     const url = "/ims/api/bag";
     const ims = new IncidentManagementSystem(url);
@@ -439,39 +430,6 @@ describe("IMS: authentication", () => {
 
   afterEach(() => {
     testIncidentManagementSystem().logout();
-  });
-
-  test("login: username is required", async () => {
-    const message = "username is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login()).toRejectWithMessage(message);
-    await expect(ims.login(undefined)).toRejectWithMessage(message);
-    await expect(ims.login(null)).toRejectWithMessage(message);
-  });
-
-  test("login: credentials is required", async () => {
-    const username = "Hubcap";
-    const message = "credentials is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login(username)).toRejectWithMessage(message);
-    await expect(ims.login(username, undefined)).toRejectWithMessage(message);
-    await expect(ims.login(username, null)).toRejectWithMessage(message);
-  });
-
-  test("login: password is required", async () => {
-    const username = "Hubcap";
-    const message = "password is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login(username, {})).toRejectWithMessage(message);
-    await expect(
-      ims.login(username, {password: undefined})
-    ).toRejectWithMessage(message);
-    await expect(
-      ims.login(username, {password: null})
-    ).toRejectWithMessage(message);
   });
 
   test("login: request content type", async () => {

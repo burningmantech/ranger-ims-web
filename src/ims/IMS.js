@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import jwtDecode from "jsonwebtoken/decode";
 import { DateTime } from "luxon";
 
@@ -9,9 +10,7 @@ import Event from "./model/Event";
 export default class IncidentManagementSystem {
 
   constructor(bagURL) {
-    if (! bagURL) {
-      throw new Error("bagURL is required");
-    }
+    invariant(bagURL, "bagURL is required");
 
     this._credentialStore = new Store("credentials", "user credentials", User);
     this._bagStore = new Store("bag", "URL bag");
@@ -203,15 +202,9 @@ export default class IncidentManagementSystem {
   ////
 
   login = async (username, credentials) => {
-    if (username == null) {
-      throw new Error("username is required");
-    }
-    if (credentials == null) {
-      throw new Error("credentials is required");
-    }
-    if (credentials.password == null) {
-      throw new Error("password is required");
-    }
+    invariant(username != null, "username is required");
+    invariant(credentials != null, "credentials is required");
+    invariant(credentials.password != null, "password is required");
 
     const bag = await this.bag();
 
