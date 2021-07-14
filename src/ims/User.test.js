@@ -5,30 +5,6 @@ import User from "./User";
 
 describe("User", () => {
 
-  test("username is required", () => {
-    const message = "username is required";
-
-    expect(() => {new User()}).toThrow(message);
-    expect(() => {new User(undefined, {})}).toThrow(message);
-    expect(() => {new User(null, {})}).toThrow(message);
-  });
-
-  test("credentials is required", () => {
-    const username = "Hubcap";
-    const message = "credentials is required";
-
-    expect(() => {new User(username)}).toThrow(message);
-    expect(() => {new User(username, undefined)}).toThrow(message);
-    expect(() => {new User(username, null)}).toThrow(message);
-  });
-
-  test("credentials.expiration is required", () => {
-    const username = "Hubcap";
-    const message = "credentials.expiration is required";
-
-    expect(() => {new User(username, {})}).toThrow(message);
-  });
-
   test("toJSON", () => {
     const username = "Hubcap";
     const credentials = {
