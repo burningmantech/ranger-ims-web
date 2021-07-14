@@ -322,4 +322,11 @@ export default class IncidentManagementSystem {
     );
   }
 
+  eventWithID = async (id) => {
+    for (const event of await this.events()) {
+      if (event.id == id) { return event; }
+    }
+    throw new Error(`No event found with ID: ${id}`);
+  }
+
 }
