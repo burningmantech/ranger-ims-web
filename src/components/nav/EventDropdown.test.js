@@ -28,6 +28,40 @@ describe("EventDropdown component", () => {
     }
   });
 
+  test("events fail to load", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.events = jest.fn(
+      () => { throw new Error("Can't load events because reasons..."); }
+    );
+
+    const spy = jest.spyOn(console, "error");
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    expect(screen.queryByText("Error loading events")).toBeInTheDocument();
+
+    expect(spy).toHaveBeenCalledWith(
+      "Unable to load EventDropdown: Can't load events because reasons..."
+    );
+  });
+
+  test("no events loaded", async () => {
+    const ims = testIncidentManagementSystem();
+
+    ims.testData.events = [];
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    expect(screen.queryByText("No events found")).toBeInTheDocument();
+  });
+
   test("event names", async () => {
     const ims = testIncidentManagementSystem();
 
@@ -83,40 +117,6 @@ describe("EventDropdown component", () => {
     expect(spy).toHaveBeenCalledWith(
       "Received events after TestEventDropdown unmounted."
     );
-  });
-
-  test("events fail to load", async () => {
-    const ims = testIncidentManagementSystem();
-
-    ims.events = jest.fn(
-      () => { throw new Error("Can't load events because reasons..."); }
-    );
-
-    const spy = jest.spyOn(console, "error");
-
-    await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
-    });
-
-    expect(screen.queryByText("Error Loading Events")).toBeInTheDocument();
-
-    expect(spy).toHaveBeenCalledWith(
-      "Unable to load EventDropdown: Can't load events because reasons..."
-    );
-  });
-
-  test("no events loaded", async () => {
-    const ims = testIncidentManagementSystem();
-
-    ims.testData.events = [];
-
-    await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
-    });
-
-    expect(screen.queryByText("No Events Found")).toBeInTheDocument();
   });
 
 });
