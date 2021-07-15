@@ -24,7 +24,7 @@ export default class EventPage extends Component {
   }
 
   componentWillUnmount = () => {
-    this._setEvents = (event) => {
+    this._setEvent = (event) => {
       console.debug(
         `Received event after ${this.constructor.name} unmounted.`
       );

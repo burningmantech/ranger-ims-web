@@ -49,6 +49,36 @@ describe("EventDropdown component", () => {
     );
   });
 
+  test("events load after unmount", async () => {
+    const ims = testIncidentManagementSystem();
+
+    let done;
+    const promise = new Promise((resolve, reject) => { done = resolve; });
+
+    class TestEventDropdown extends EventDropdown {
+      fetch = () => {
+        console.info("Starting fetch...");
+        return promise.then(() => {
+          console.info("...done fetching");
+          this._setEvents([]);
+        });
+      }
+    }
+
+    const container = renderWithIMS((<TestEventDropdown />), ims);
+
+    container.unmount();
+
+    const spy = jest.spyOn(console, "debug");
+
+    done();
+    await promise;
+
+    expect(spy).toHaveBeenCalledWith(
+      "Received events after TestEventDropdown unmounted."
+    );
+  });
+
   test("no events loaded", async () => {
     const ims = testIncidentManagementSystem();
 
@@ -87,36 +117,6 @@ describe("EventDropdown component", () => {
       const url = new URL(screen.getByText(event.name).href);
       expect(url.pathname).toEqual(URLs.event(event));
     }
-  });
-
-  test("events load after unmount", async () => {
-    const ims = testIncidentManagementSystem();
-
-    let done;
-    const promise = new Promise((resolve, reject) => { done = resolve; });
-
-    class TestEventDropdown extends EventDropdown {
-      fetch = () => {
-        console.info("Starting fetch...");
-        return promise.then(() => {
-          console.info("...done fetching");
-          this._setEvents([]);
-        });
-      }
-    }
-
-    const container = renderWithIMS((<TestEventDropdown />), ims);
-
-    container.unmount();
-
-    const spy = jest.spyOn(console, "debug");
-
-    done();
-    await promise;
-
-    expect(spy).toHaveBeenCalledWith(
-      "Received events after TestEventDropdown unmounted."
-    );
   });
 
 });

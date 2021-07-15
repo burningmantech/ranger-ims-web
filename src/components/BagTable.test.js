@@ -44,6 +44,36 @@ describe("BagTable component", () => {
     );
   });
 
+  test("bag loads after unmount", async () => {
+    const ims = testIncidentManagementSystem();
+
+    let done;
+    const promise = new Promise((resolve, reject) => { done = resolve; });
+
+    class TestBagTable extends BagTable {
+      fetch = () => {
+        console.info("Starting fetch...");
+        return promise.then(() => {
+          console.info("...done fetching");
+          this._setBag({});
+        });
+      }
+    }
+
+    const container = renderWithIMS((<TestBagTable />), ims);
+
+    container.unmount();
+
+    const spy = jest.spyOn(console, "debug");
+
+    done();
+    await promise;
+
+    expect(spy).toHaveBeenCalledWith(
+      "Received bag after TestBagTable unmounted."
+    );
+  });
+
   test("loaded bag", async () => {
     const ims = testIncidentManagementSystem();
 

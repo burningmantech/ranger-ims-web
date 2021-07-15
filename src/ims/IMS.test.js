@@ -775,4 +775,13 @@ describe("IMS: events", () => {
     }
   });
 
+  test("eventWithID: not found", async () => {
+    const ims = testIncidentManagementSystem();
+    const id = "XYZZY";
+
+    expect(ims.eventWithID(id)).toRejectWithMessage(
+      `No event found with ID: ${id}`
+    );
+  });
+
 });
