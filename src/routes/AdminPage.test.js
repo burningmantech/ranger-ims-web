@@ -1,17 +1,17 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 
-import Admin from "./Admin";
+import AdminPage from "./AdminPage";
 
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
 
-describe("Admin component", () => {
+describe("AdminPage component", () => {
 
   test("heading", async () => {
-    renderWithIMS(<Admin />, testIncidentManagementSystem());
+    renderWithIMS(<AdminPage />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("Admin Console")).toBeInTheDocument();
+    expect(screen.queryByText("AdminPage Console")).toBeInTheDocument();
   });
 
 });

@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 import Page from "../components/Page";
 
 
-export default class Event extends Component {
+export default class EventPage extends Component {
 
   static contextType = IMSContext;
 

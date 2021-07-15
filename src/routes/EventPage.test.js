@@ -3,15 +3,15 @@ import { act, render, screen } from "@testing-library/react";
 
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
-import Event from "./Event";
+import EventPage from "./EventPage";
 
 
-describe("Event component", () => {
+describe("EventPage component", () => {
 
   test("loading event", async () => {
     const ims = testIncidentManagementSystem();
 
-    renderWithIMS(<Event id="1" />, ims);
+    renderWithIMS(<EventPage id="1" />, ims);
 
     expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
   });
@@ -25,12 +25,12 @@ describe("Event component", () => {
 
     const spy = jest.spyOn(console, "error");
 
-    renderWithIMS(<Event id="1" />, ims);
+    renderWithIMS(<EventPage id="1" />, ims);
 
     expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
     expect(spy).toHaveBeenCalledWith(
-      "Unable to load Event: Can't load event because reasons..."
+      "Unable to load EventPage: Can't load event because reasons..."
     );
   });
 
@@ -39,7 +39,7 @@ describe("Event component", () => {
 
     for (const event of await ims.events()) {
       await act(async () => {
-        renderWithIMS(<Event id={event.id} />, ims);
+        renderWithIMS(<EventPage id={event.id} />, ims);
       });
 
       expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();

@@ -3,7 +3,7 @@ import { Component } from "react";
 import Page from "../components/Page";
 
 
-export default class NotFound extends Component {
+export default class NotFoundPage extends Component {
 
   render = () => {
     return (
