@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { Component, Suspense, lazy } from "react";
 import {
-  BrowserRouter as Router, Redirect, Route, Switch, useParams
+  BrowserRouter as Router, Redirect, Route, Switch
 } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -16,7 +16,7 @@ import "./App.css";
 
 const Login = lazy(() => import("./components/Login"));
 const HomePage = lazy(() => import("./routes/HomePage"));
-const EventPage = lazy(() => import("./routes/EventPage"));
+const RoutedEventPage = lazy(() => import("./routes/EventPage"));
 const AdminPage = lazy(() => import("./routes/AdminPage"));
 const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
 
@@ -26,7 +26,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    invariant(props.ims != null, "ims is required");
+    invariant(props.ims != null, "ims property is required");
 
     this.state = {
       user: props.ims.user,
@@ -63,7 +63,7 @@ export default class App extends Component {
               {/* Event Page */}
               <Route exact path={`${URLs.events}:eventID/`}>
                 <Login>
-                  <EventPageWithParams />
+                  <RoutedEventPage />
                 </Login>
               </Route>
 
@@ -87,11 +87,4 @@ export default class App extends Component {
     );
   }
 
-}
-
-
-/* FIXME: figure out how to use params from the EventPage class */
-function EventPageWithParams() {
-  let { eventID } = useParams();
-  return (<EventPage id={eventID} />);
 }

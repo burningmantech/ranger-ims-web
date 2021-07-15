@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 import { IMSContext } from "../ims/context";
 
@@ -7,13 +8,11 @@ import Loading from "../components/Loading";
 import Page from "../components/Page";
 
 
-export default class EventPage extends Component {
+export class EventPage extends Component {
 
   static contextType = IMSContext;
 
   constructor(props) {
-    invariant(props.id != null, "id is required");
-
     super(props);
     this.state = {};
   }
@@ -31,6 +30,11 @@ export default class EventPage extends Component {
     };
   }
 
+  eventID = () => {
+    invariant(this.props.id != null, "id property is required");
+    return this.props.id;
+  }
+
   fetch = async () => {
     const context = this.context;
     invariant(
@@ -43,7 +47,7 @@ export default class EventPage extends Component {
 
     let event;
     try {
-      event = await ims.eventWithID(this.props.id);
+      event = await ims.eventWithID(this.eventID());
     }
     catch (e) {
       console.error(`Unable to load ${this.constructor.name}: ${e.message}`);
@@ -70,3 +74,23 @@ export default class EventPage extends Component {
   }
 
 }
+
+
+class RoutedEventPage extends EventPage {
+
+  eventID = () => {
+    invariant(this.props.match != null, "match property is required");
+    invariant(
+      this.props.match.params != null, "match.params property is required"
+    );
+    invariant(
+      this.props.match.params.eventID != null,
+      "match.params.eventID property is required",
+    );
+    return this.props.match.params.eventID;
+  }
+
+}
+
+
+export default withRouter(RoutedEventPage);
