@@ -7,6 +7,21 @@ import '@testing-library/jest-dom';
 
 expect.extend({
 
+  toEqualByValue(received, other) {
+    if (JSON.stringify(received) === JSON.stringify(other)) {
+      return {
+        message: () => `expected ${received} not to equal by value ${other}`,
+        pass: true,
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${received} to equal by value ${other}`,
+        pass: false,
+      }
+    }
+  },
+
   toBeAfterDateTime(received, other) {
     if (received > other) {
       return {

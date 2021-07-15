@@ -414,7 +414,7 @@ describe("IMS: bag", () => {
     const bag = await ims.bag();
 
     expect(spy).toHaveBeenCalledWith("Bag does not have URLs: {}");
-    expect(JSON.stringify(bag)).toEqual("{}");
+    expect(bag).toEqualByValue({});
   });
 
   test("load bag: non-OK response", async () => {
@@ -734,7 +734,7 @@ describe("IMS: events", () => {
 
     eventRequestCount += ims.requestsReceived.length;
 
-    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(events2).toEqualByValue(events1);
     expect(eventRequestCount).toEqual(1);
   });
 
@@ -764,7 +764,15 @@ describe("IMS: events", () => {
     const events1 = await ims.events();
     const events2 = await ims.events();
 
-    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(events2).toEqualByValue(events1);
+  });
+
+  test("eventWithID: found", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      expect(await ims.eventWithID(event.id)).toEqualByValue(event);
+    }
   });
 
 });
