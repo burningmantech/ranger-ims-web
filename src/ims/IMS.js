@@ -190,7 +190,7 @@ export default class IncidentManagementSystem {
       "bag", this._bagStore, this.bagCacheLifetime
     );
 
-    if (! bag.urls) {
+    if (bag && ! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
