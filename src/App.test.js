@@ -12,10 +12,6 @@ describe("App component", () => {
     testIncidentManagementSystem().logout();
   });
 
-  test("no ims", () => {
-    expect(() => {new App({})}).toThrow("ims is required");
-  });
-
   test("loading...", () => {
     render(<App ims={testIncidentManagementSystem()} />);
 

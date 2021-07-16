@@ -3,13 +3,13 @@ import { render, screen } from "@testing-library/react";
 
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
-import NotFound from "./NotFound";
+import NotFoundPage from "./NotFoundPage";
 
 
-describe("NotFound component", () => {
+describe("NotFoundPage component", () => {
 
   test("not found", async () => {
-    renderWithIMS(<NotFound />, testIncidentManagementSystem());
+    renderWithIMS(<NotFoundPage />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Resource not found:")).toBeInTheDocument();
     expect(screen.queryByText(window.location.href)).toBeInTheDocument();

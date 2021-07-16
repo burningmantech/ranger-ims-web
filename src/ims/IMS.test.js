@@ -67,15 +67,6 @@ describe("IMS: init", () => {
     expect(ims.bagURL).toEqual(url);
   });
 
-  test("bagURL is required", () => {
-    const message = "bagURL is required";
-
-    expect(() => {new IncidentManagementSystem()}).toThrow(message);
-    expect(() => {new IncidentManagementSystem(undefined)}).toThrow(message);
-    expect(() => {new IncidentManagementSystem(null)}).toThrow(message);
-    expect(() => {new IncidentManagementSystem("")}).toThrow(message);
-  });
-
   test("initial state", () => {
     const url = "/ims/api/bag";
     const ims = new IncidentManagementSystem(url);
@@ -325,7 +316,7 @@ describe("IMS: bag", () => {
     const ims = testIncidentManagementSystem();
 
     // Expire the cache immediately
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     await ims.bag();
     await ims.bag();
@@ -336,7 +327,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
@@ -347,7 +338,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, changed", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bag_lifetime = { seconds: 0 };
+    ims.bagCacheLifetime = { seconds: 0 };
 
     const bag1 = await ims.bag();
 
@@ -423,7 +414,7 @@ describe("IMS: bag", () => {
     const bag = await ims.bag();
 
     expect(spy).toHaveBeenCalledWith("Bag does not have URLs: {}");
-    expect(JSON.stringify(bag)).toEqual("{}");
+    expect(bag).toEqualByValue({});
   });
 
   test("load bag: non-OK response", async () => {
@@ -439,39 +430,6 @@ describe("IMS: authentication", () => {
 
   afterEach(() => {
     testIncidentManagementSystem().logout();
-  });
-
-  test("login: username is required", async () => {
-    const message = "username is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login()).toRejectWithMessage(message);
-    await expect(ims.login(undefined)).toRejectWithMessage(message);
-    await expect(ims.login(null)).toRejectWithMessage(message);
-  });
-
-  test("login: credentials is required", async () => {
-    const username = "Hubcap";
-    const message = "credentials is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login(username)).toRejectWithMessage(message);
-    await expect(ims.login(username, undefined)).toRejectWithMessage(message);
-    await expect(ims.login(username, null)).toRejectWithMessage(message);
-  });
-
-  test("login: password is required", async () => {
-    const username = "Hubcap";
-    const message = "password is required";
-    const ims = testIncidentManagementSystem();
-
-    await expect(ims.login(username, {})).toRejectWithMessage(message);
-    await expect(
-      ims.login(username, {password: undefined})
-    ).toRejectWithMessage(message);
-    await expect(
-      ims.login(username, {password: null})
-    ).toRejectWithMessage(message);
   });
 
   test("login: request content type", async () => {
@@ -776,7 +734,7 @@ describe("IMS: events", () => {
 
     eventRequestCount += ims.requestsReceived.length;
 
-    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(events2).toEqualByValue(events1);
     expect(eventRequestCount).toEqual(1);
   });
 
@@ -788,7 +746,7 @@ describe("IMS: events", () => {
     let eventRequestCount = 0 - ims.requestsReceived.length;
 
     // Expire the cache immediately
-    ims.events_lifetime = { seconds: 0 };
+    ims.eventsCacheLifetime = { seconds: 0 };
 
     await ims.events();
     await ims.events();
@@ -801,12 +759,29 @@ describe("IMS: events", () => {
   test("load events twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.events_lifetime = { seconds: 0 };
+    ims.eventsCacheLifetime = { seconds: 0 };
 
     const events1 = await ims.events();
     const events2 = await ims.events();
 
-    expect(JSON.stringify(events2)).toEqual(JSON.stringify(events1));
+    expect(events2).toEqualByValue(events1);
+  });
+
+  test("eventWithID: found", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      expect(await ims.eventWithID(event.id)).toEqualByValue(event);
+    }
+  });
+
+  test("eventWithID: not found", async () => {
+    const ims = testIncidentManagementSystem();
+    const id = "XYZZY";
+
+    expect(ims.eventWithID(id)).toRejectWithMessage(
+      `No event found with ID: ${id}`
+    );
   });
 
 });

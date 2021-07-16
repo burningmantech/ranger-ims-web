@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import jwtDecode from "jsonwebtoken/decode";
 import { DateTime } from "luxon";
 
@@ -8,36 +9,30 @@ import Event from "./model/Event";
 
 export default class IncidentManagementSystem {
 
-  static _credentialStoreKey = "credentials";
-
   constructor(bagURL) {
-    if (! bagURL) {
-      throw new Error("bagURL is required");
-    }
+    invariant(bagURL, "bagURL is required");
+
+    this._credentialStore = new Store("credentials", "user credentials", User);
+    this._bagStore = new Store("bag", "URL bag");
+    this._eventsStore = new Store("events", "event list", Event);
 
     Object.defineProperty(this, "user", {
       enumerable: true,
 
       get: () => {
         if (this._user === undefined) {
-          const credentialStore = new Store(
-            this._credentialStoreKey, "credentials", User
-          );
-          const { value } = credentialStore.load();
+          const { value } = this._credentialStore.load();
           this._user = value;
         }
         return this._user;
       },
 
       set: (user) => {
-        const credentialStore = new Store(
-          this._credentialStoreKey, "credentials", User
-        );
         if (user === null) {
-          credentialStore.remove();
+          this._credentialStore.remove();
         }
         else {
-          credentialStore.store(user, null);
+          this._credentialStore.store(user, null);
         }
 
         this._user = user;
@@ -140,7 +135,9 @@ export default class IncidentManagementSystem {
 
     // If we have a cached value and it hasn't expired, use that.
 
-    if (cachedValue !== null && expiration > DateTime.local()) {
+    const now = DateTime.local();
+    if (cachedValue !== null && expiration > now) {
+      console.debug(`Retrieved ${store.description} from unexpired cache`);
       return cachedValue;
     }
 
@@ -186,13 +183,14 @@ export default class IncidentManagementSystem {
   //  Configuration
   ////
 
-  bag_lifetime = { hours: 1 };
+  bagCacheLifetime = { hours: 1 };
 
   bag = async () => {
-    const store = new Store("bag", "URL bag");
-    const bag = this._fetchAndCacheJSON("bag", store, this.bag_lifetime);
+    const bag = this._fetchAndCacheJSON(
+      "bag", this._bagStore, this.bagCacheLifetime
+    );
 
-    if (! bag.urls) {
+    if (bag && ! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
@@ -204,15 +202,9 @@ export default class IncidentManagementSystem {
   ////
 
   login = async (username, credentials) => {
-    if (username == null) {
-      throw new Error("username is required")
-    }
-    if (credentials == null) {
-      throw new Error("credentials is required")
-    }
-    if (credentials.password == null) {
-      throw new Error("password is required")
-    }
+    invariant(username != null, "username is required");
+    invariant(credentials != null, "credentials is required");
+    invariant(credentials.password != null, "password is required");
 
     const bag = await this.bag();
 
@@ -322,11 +314,19 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
-  events_lifetime = { minutes: 5 };
+  eventsCacheLifetime = { minutes: 5 };
 
   events = async () => {
-    const store = new Store("events", "event list", Event);
-    return this._fetchAndCacheJSON("events", store, this.events_lifetime);
+    return this._fetchAndCacheJSON(
+      "events", this._eventsStore, this.eventsCacheLifetime
+    );
+  }
+
+  eventWithID = async (id) => {
+    for (const event of await this.events()) {
+      if (event.id === id) { return event; }
+    }
+    throw new Error(`No event found with ID: ${id}`);
   }
 
 }

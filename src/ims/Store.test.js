@@ -163,8 +163,8 @@ describe("Store", () => {
     const stuffNThingsFromStore = store.load().value;
 
     expect(
-      JSON.stringify(stuffNThingsFromStore.toJSON())
-    ).toEqual(JSON.stringify(stuffNThings.toJSON()));
+      stuffNThingsFromStore.toJSON()
+    ).toEqualByValue(stuffNThings.toJSON());
   });
 
   test("load model array", () => {
@@ -178,11 +178,7 @@ describe("Store", () => {
 
     const stuffNThingsesFromStore = store.load().value;
 
-    expect(
-      stuffNThingsesFromStore.map((snt) => (JSON.stringify(snt.toJSON())))
-    ).toEqual(
-      stuffNThingses.map((snt) => (JSON.stringify(snt.toJSON())))
-    );
+    expect(stuffNThingsesFromStore).toEqualByValue(stuffNThingses);
   });
 
   test("load tag", () => {
@@ -194,9 +190,7 @@ describe("Store", () => {
 
     const container = store.load();
 
-    expect(JSON.stringify(container)).toEqual(
-      JSON.stringify({ value: value, tag: tag })
-    );
+    expect(container).toEqualByValue({ value: value, tag: tag });
   });
 
   test("load expiration", () => {
@@ -219,8 +213,8 @@ describe("Store", () => {
     );
 
     // Test the entire container content for completeness
-    expect(JSON.stringify(container)).toEqual(
-      JSON.stringify({ value: null, expiration: container.expiration })
+    expect(container).toEqualByValue(
+      { value: null, expiration: container.expiration }
     );
   });
 

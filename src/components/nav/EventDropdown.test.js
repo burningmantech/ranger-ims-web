@@ -18,7 +18,7 @@ describe("EventDropdown component", () => {
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
 
-  test("loading...", async () => {
+  test("loading events", async () => {
     const ims = testIncidentManagementSystem();
 
     renderWithIMS(<EventDropdown />, ims);
@@ -28,31 +28,25 @@ describe("EventDropdown component", () => {
     }
   });
 
-  test("event names", async () => {
+  test("events fail to load", async () => {
     const ims = testIncidentManagementSystem();
+
+    ims.events = jest.fn(
+      () => { throw new Error("Can't load events because reasons..."); }
+    );
+
+    const spy = jest.spyOn(console, "error");
 
     await act(async () => {
       renderWithIMS(<EventDropdown />, ims);
       await userEvent.click(screen.getByText("Event"));
     });
 
-    for (const event of await ims.events()) {
-      expect(screen.queryByText(event.name)).toBeInTheDocument();
-    }
-  });
+    expect(screen.queryByText("Error loading events")).toBeInTheDocument();
 
-  test("event links", async () => {
-    const ims = testIncidentManagementSystem();
-
-    await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
-    });
-
-    for (const event of await ims.events()) {
-      const url = new URL(screen.getByText(event.name).href);
-      expect(url.pathname).toEqual(URLs.event(event));
-    }
+    expect(spy).toHaveBeenCalledWith(
+      "Unable to load EventDropdown: Can't load events because reasons..."
+    );
   });
 
   test("events load after unmount", async () => {
@@ -85,27 +79,6 @@ describe("EventDropdown component", () => {
     );
   });
 
-  test("events fail to load", async () => {
-    const ims = testIncidentManagementSystem();
-
-    ims.events = jest.fn(
-      () => { throw new Error("Can't load events because reasons..."); }
-    );
-
-    const spy = jest.spyOn(console, "error");
-
-    await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
-    });
-
-    expect(screen.queryByText("Error Loading Events")).toBeInTheDocument();
-
-    expect(spy).toHaveBeenCalledWith(
-      "Unable to load EventDropdown: Can't load events because reasons..."
-    );
-  });
-
   test("no events loaded", async () => {
     const ims = testIncidentManagementSystem();
 
@@ -116,7 +89,34 @@ describe("EventDropdown component", () => {
       await userEvent.click(screen.getByText("Event"));
     });
 
-    expect(screen.queryByText("No Events Found")).toBeInTheDocument();
+    expect(screen.queryByText("No events found")).toBeInTheDocument();
+  });
+
+  test("event names", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    for (const event of await ims.events()) {
+      expect(screen.queryByText(event.name)).toBeInTheDocument();
+    }
+  });
+
+  test("event links", async () => {
+    const ims = testIncidentManagementSystem();
+
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+      await userEvent.click(screen.getByText("Event"));
+    });
+
+    for (const event of await ims.events()) {
+      const url = new URL(screen.getByText(event.name).href);
+      expect(url.pathname).toEqual(URLs.event(event));
+    }
   });
 
 });

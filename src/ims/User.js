@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { DateTime } from "luxon";
 
 
@@ -13,15 +14,11 @@ export default class User {
   }
 
   constructor(username, credentials) {
-    if (username == null) {
-      throw new Error("username is required");
-    }
-    if (credentials == null) {
-      throw new Error("credentials is required");
-    }
-    if (credentials.expiration == null) {
-      throw new Error("credentials.expiration is required");
-    }
+    invariant(username != null, "username is required");
+    invariant(credentials != null, "credentials is required");
+    invariant(
+      credentials.expiration != null, "credentials.expiration is required"
+    );
 
     this.username = username;
     this.credentials = credentials;

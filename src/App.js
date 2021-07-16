@@ -1,6 +1,7 @@
+import invariant from "invariant";
 import { Component, Suspense, lazy } from "react";
 import {
-  BrowserRouter as Router, Redirect, Route, Switch, useParams
+  BrowserRouter as Router, Redirect, Route, Switch
 } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,10 +15,10 @@ import "./App.css";
 
 
 const Login = lazy(() => import("./components/Login"));
-const Home = lazy(() => import("./routes/Home"));
-const Event = lazy(() => import("./routes/Event"));
-const Admin = lazy(() => import("./routes/Admin"));
-const NotFound = lazy(() => import("./routes/NotFound"));
+const HomePage = lazy(() => import("./routes/HomePage"));
+const RoutedEventPage = lazy(() => import("./routes/EventPage"));
+const AdminPage = lazy(() => import("./routes/AdminPage"));
+const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
 
 
 export default class App extends Component {
@@ -25,9 +26,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    if (props.ims == null) {
-      throw new Error("ims is required");
-    }
+    invariant(props.ims != null, "ims property is required");
 
     this.state = {
       user: props.ims.user,
@@ -47,31 +46,31 @@ export default class App extends Component {
         <Suspense fallback={<Loading />}>
           <Switch>
 
-            {/* Send root URL to Home screen URL */}
+            {/* Send root URL to Home page URL */}
             <Route exact path={URLs.root}>
               <Redirect to={URLs.home} />
             </Route>
 
             <IMSContext.Provider value={imsContextValue}>
 
-              {/* Home Screen */}
+              {/* Home Page */}
               <Route exact path={URLs.home}>
                 <Login>
-                  <Home />
+                  <HomePage />
                 </Login>
               </Route>
 
-              {/* Event Screen */}
+              {/* Event Page */}
               <Route exact path={`${URLs.events}:eventID/`}>
                 <Login>
-                  <EventWithParams />
+                  <RoutedEventPage />
                 </Login>
               </Route>
 
-              {/* Admin Console */}
+              {/* Admin Page */}
               <Route exact path={URLs.admin}>
                 <Login>
-                  <Admin />
+                  <AdminPage />
                 </Login>
               </Route>
 
@@ -79,7 +78,7 @@ export default class App extends Component {
 
             {/* Not found */}
             <Route path="*">
-              <NotFound />
+              <NotFoundPage />
             </Route>
 
           </Switch>
@@ -88,11 +87,4 @@ export default class App extends Component {
     );
   }
 
-}
-
-
-/* FIXME: figure out how to use params from the Event class */
-function EventWithParams() {
-  let { eventID } = useParams();
-  return (<Event id={eventID} />);
 }

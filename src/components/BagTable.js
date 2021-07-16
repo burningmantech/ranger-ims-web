@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Component } from "react";
 
 import Table from "react-bootstrap/Table";
@@ -17,21 +18,38 @@ export default class BagTable extends Component {
   }
 
   componentDidMount = () => {
+    this._setBag = (bag) => { this.setState({ bag: bag }) };
     this.fetch();  // no await needed
+  }
+
+  componentWillUnmount = () => {
+    this._setBag = (bag) => {
+      console.debug(
+        `Received bag after ${this.constructor.name} unmounted.`
+      );
+    };
   }
 
   fetch = async () => {
     const context = this.context;
-    if (context === undefined) {
-      throw new Error(`No context provided to ${this.constructor.name}.`);
-    }
+    invariant(
+      context !== undefined,
+      `No context provided to ${this.constructor.name}.`,
+    );
 
     const ims = context.ims;
-    if (ims == null) {
-      throw new Error(`No IMS provided to ${this.constructor.name}.`);
+    invariant(ims != null, `No IMS provided to ${this.constructor.name}.`);
+
+    let bag;
+    try {
+      bag = await ims.bag();
+    }
+    catch (e) {
+      console.error(`Unable to load ${this.constructor.name}: ${e.message}`);
+      bag = null;
     }
 
-    this.setState({ bag: await ims.bag() });
+    this._setBag(bag);
   }
 
   render = () => {
@@ -44,7 +62,9 @@ export default class BagTable extends Component {
 
       if (bag === undefined) {
         return fullRow(<Loading />);
-      }
+      } else if (bag === null) {
+      return fullRow("Error loading URL bag");
+    }
 
       if (! bag.urls) {
         return fullRow("ERROR: no URLs in bag");

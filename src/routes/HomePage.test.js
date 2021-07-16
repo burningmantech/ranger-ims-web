@@ -6,17 +6,10 @@ import { render, screen } from "@testing-library/react";
 import User from "../ims/User";
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
-import Home from "./Home";
+import HomePage from "./HomePage";
 
 
-describe("Home component", () => {
-
-  // FIXME: this doesn't work...
-  // test("null user", async () => {
-  //   expect(
-  //     () => render(<Home user={null} />)
-  //   ).toThrow();
-  // });
+describe("HomePage component", () => {
 
   test("heading", async () => {
     const username = "Hubcap";
@@ -24,7 +17,7 @@ describe("Home component", () => {
       username, { expiration: DateTime.local().plus({ hours: 1 }) }
     );
 
-    renderWithIMS(<Home user={user} />, testIncidentManagementSystem());
+    renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
 
     expect(
       screen.queryByText("Ranger Incident Management System")
