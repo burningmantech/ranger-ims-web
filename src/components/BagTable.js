@@ -18,7 +18,16 @@ export default class BagTable extends Component {
   }
 
   componentDidMount = () => {
+    this._setBag = (bag) => { this.setState({ bag: bag }) };
     this.fetch();  // no await needed
+  }
+
+  componentWillUnmount = () => {
+    this._setBag = (bag) => {
+      console.debug(
+        `Received bag after ${this.constructor.name} unmounted.`
+      );
+    };
   }
 
   fetch = async () => {
@@ -31,7 +40,16 @@ export default class BagTable extends Component {
     const ims = context.ims;
     invariant(ims != null, `No IMS provided to ${this.constructor.name}.`);
 
-    this.setState({ bag: await ims.bag() });
+    let bag;
+    try {
+      bag = await ims.bag();
+    }
+    catch (e) {
+      console.error(`Unable to load ${this.constructor.name}: ${e.message}`);
+      bag = null;
+    }
+
+    this._setBag(bag);
   }
 
   render = () => {
@@ -44,7 +62,9 @@ export default class BagTable extends Component {
 
       if (bag === undefined) {
         return fullRow(<Loading />);
-      }
+      } else if (bag === null) {
+      return fullRow("Error loading URL bag");
+    }
 
       if (! bag.urls) {
         return fullRow("ERROR: no URLs in bag");

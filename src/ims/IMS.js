@@ -190,7 +190,7 @@ export default class IncidentManagementSystem {
       "bag", this._bagStore, this.bagCacheLifetime
     );
 
-    if (! bag.urls) {
+    if (bag && ! bag.urls) {
       console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
     }
 
@@ -320,6 +320,13 @@ export default class IncidentManagementSystem {
     return this._fetchAndCacheJSON(
       "events", this._eventsStore, this.eventsCacheLifetime
     );
+  }
+
+  eventWithID = async (id) => {
+    for (const event of await this.events()) {
+      if (event.id === id) { return event; }
+    }
+    throw new Error(`No event found with ID: ${id}`);
   }
 
 }

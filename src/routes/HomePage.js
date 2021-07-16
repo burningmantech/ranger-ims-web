@@ -3,7 +3,7 @@ import { Component } from "react";
 import Page from "../components/Page";
 
 
-export default class Home extends Component {
+export default class HomePage extends Component {
 
   render = () => {
     return (

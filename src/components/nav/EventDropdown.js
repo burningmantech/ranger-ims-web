@@ -18,7 +18,7 @@ export default class EventDropdown extends Component {
 
   componentDidMount = () => {
     this._setEvents = (events) => { this.setState({ events: events }) };
-    this._fetchPromise = this.fetch();  // no await needed
+    this.fetch();  // no await needed
   }
 
   componentWillUnmount = () => {
@@ -57,7 +57,7 @@ export default class EventDropdown extends Component {
       if (events === undefined) {
         return (
           <NavDropdown.Item className="text-warning">
-            Loading Events…
+            Loading events…
           </NavDropdown.Item>
         );
       }
@@ -65,7 +65,7 @@ export default class EventDropdown extends Component {
       if (events === null) {
         return (
           <NavDropdown.Item className="text-danger">
-            Error Loading Events
+            Error loading events
           </NavDropdown.Item>
         );
       }
@@ -73,7 +73,7 @@ export default class EventDropdown extends Component {
       if (events.length === 0) {
         return (
           <NavDropdown.Item className="text-info">
-            No Events Found
+            No events found
           </NavDropdown.Item>
         );
       }
