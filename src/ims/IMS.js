@@ -86,7 +86,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchJSON = async (url, options={}) => {
+  _fetchJSONFromServer = async (url, options={}) => {
     const requestHeaders = new Headers(options["headers"]);
 
     // Ensure content type is JSON
@@ -147,7 +147,7 @@ export default class IncidentManagementSystem {
       (urlID === "bag") ? this.bagURL : (await this.bag()).urls[urlID]
     );
     const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSON(url, fetchOptions);
+    const response = await this._fetchJSONFromServer(url, fetchOptions);
 
     let _value;
     let _eTag;
@@ -213,7 +213,7 @@ export default class IncidentManagementSystem {
     const requestJSON = {
       identification: username, password: credentials.password
     };
-    const response = await this._fetchJSON(
+    const response = await this._fetchJSONFromServer(
       bag.urls.auth, { json: requestJSON, headers: {} }
     );
 

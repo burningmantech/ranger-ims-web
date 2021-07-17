@@ -82,10 +82,10 @@ describe("IMS: init", () => {
 
 describe("IMS: HTTP requests", () => {
 
-  test("_fetchJSON: default content type", async () => {
+  test("_fetchJSONFromServer: default content type", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL);
+    await ims._fetchJSONFromServer(ims.bagURL);
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -94,10 +94,10 @@ describe("IMS: HTTP requests", () => {
     expect(request).toBeJSONRequest();
   });
 
-  test("_fetchJSON: JSON content type given", async () => {
+  test("_fetchJSONFromServer: JSON content type given", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(
+    await ims._fetchJSONFromServer(
       ims.bagURL, { headers: { "Content-Type": "application/json" } }
     );
 
@@ -108,10 +108,10 @@ describe("IMS: HTTP requests", () => {
     expect(request).toBeJSONRequest();
   });
 
-  test("_fetchJSON: JSON content type not given", async () => {
+  test("_fetchJSONFromServer: JSON content type not given", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL);
+    await ims._fetchJSONFromServer(ims.bagURL);
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -120,19 +120,21 @@ describe("IMS: HTTP requests", () => {
     expect(request).toBeJSONRequest();
   });
 
-  test("_fetchJSON: non-JSON content type", async () => {
+  test("_fetchJSONFromServer: non-JSON content type", async () => {
     const ims = testIncidentManagementSystem();
 
     expect(
-      ims._fetchJSON(ims.bagURL, { headers: { "Content-Type": "text/plain" } })
+      ims._fetchJSONFromServer(
+        ims.bagURL, { headers: { "Content-Type": "text/plain" } }
+      )
     ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
-  test("_fetchJSON: string with full URL", async () => {
+  test("_fetchJSONFromServer: string with full URL", async () => {
     const url = "https://localhost/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(url);
+    await ims._fetchJSONFromServer(url);
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -141,11 +143,11 @@ describe("IMS: HTTP requests", () => {
     expect(request.url).toEqual(url);
   });
 
-  test("_fetchJSON: string with path URL", async () => {
+  test("_fetchJSONFromServer: string with path URL", async () => {
     const url = "/ims/api/bag";
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(url);
+    await ims._fetchJSONFromServer(url);
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -154,10 +156,10 @@ describe("IMS: HTTP requests", () => {
     expect(request.url).toEqual(url);
   });
 
-  test("_fetchJSON: with no JSON -> GET request", async () => {
+  test("_fetchJSONFromServer: with no JSON -> GET request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL);
+    await ims._fetchJSONFromServer(ims.bagURL);
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -166,10 +168,10 @@ describe("IMS: HTTP requests", () => {
     expect(request.method).toEqual("GET");
   });
 
-  test("_fetchJSON: with JSON -> POST request", async () => {
+  test("_fetchJSONFromServer: with JSON -> POST request", async () => {
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON("/json_echo", { json: {} });
+    await ims._fetchJSONFromServer("/json_echo", { json: {} });
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -178,40 +180,43 @@ describe("IMS: HTTP requests", () => {
     expect(request.method).toEqual("POST");
   });
 
-  test("_fetchJSON: non-JSON response -> OK", async () => {
+  test("_fetchJSONFromServer: non-JSON response -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
     await expect(
-      ims._fetchJSON("/text_hello")
+      ims._fetchJSONFromServer("/text_hello")
     ).toRejectWithMessage("Response type is not JSON: text/plain")
   });
 
-  test("_fetchJSON: non-JSON response -> non-OK", async () => {
+  test("_fetchJSONFromServer: non-JSON response -> non-OK", async () => {
     const ims = testIncidentManagementSystem();
 
-    const response = await ims._fetchJSON("/not_found");
+    const response = await ims._fetchJSONFromServer("/not_found");
 
     expect(response.status).toEqual(404);
   });
 
-  test("_fetchJSON: ETag with GET -> If-None-Match header", async () => {
+  test(
+    "_fetchJSONFromServer: ETag with GET -> If-None-Match header",
+    async () => {
+      const eTag = "test-ETag";
+      const ims = testIncidentManagementSystem();
+
+      await ims._fetchJSONFromServer(ims.bagURL, { eTag: eTag });
+
+      expect(ims.requestsReceived).toHaveLength(1);
+
+      const request = ims.requestsReceived[0][0];
+
+      expect(request.headers.get("If-None-Match")).toEqual(eTag);
+    }
+  );
+
+  test("_fetchJSONFromServer: ETag with POST -> If-Match header", async () => {
     const eTag = "test-ETag";
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSON(ims.bagURL, { eTag: eTag });
-
-    expect(ims.requestsReceived).toHaveLength(1);
-
-    const request = ims.requestsReceived[0][0];
-
-    expect(request.headers.get("If-None-Match")).toEqual(eTag);
-  });
-
-  test("_fetchJSON: ETag with POST -> If-Match header", async () => {
-    const eTag = "test-ETag";
-    const ims = testIncidentManagementSystem();
-
-    await ims._fetchJSON("/json_echo", { json: {}, eTag: eTag });
+    await ims._fetchJSONFromServer("/json_echo", { json: {}, eTag: eTag });
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -220,10 +225,10 @@ describe("IMS: HTTP requests", () => {
     expect(request.headers.get("If-Match")).toEqual(eTag);
   });
 
-  test("_fetchJSON: not authenticated -> OK", async () => {
+  test("_fetchJSONFromServer: not authenticated -> OK", async () => {
     const ims = testIncidentManagementSystem();
 
-    const response = await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSONFromServer(ims.bagURL);
 
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
@@ -233,7 +238,7 @@ describe("IMS: HTTP requests", () => {
     expect(request).not.toBeJWTAuthenticatedRequest();
   });
 
-  test("_fetchJSON: authenticated -> OK", async () => {
+  test("_fetchJSONFromServer: authenticated -> OK", async () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
@@ -242,7 +247,7 @@ describe("IMS: HTTP requests", () => {
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
-    const response = await ims._fetchJSON(ims.bagURL);
+    const response = await ims._fetchJSONFromServer(ims.bagURL);
 
     expect(response.status).toEqual(200);
     expect(ims.requestsReceived).toHaveLength(1);
@@ -252,15 +257,18 @@ describe("IMS: HTTP requests", () => {
     expect(request).toBeJWTAuthenticatedRequest();
   });
 
-  test("_fetchJSON: not authenticated -> 401 JSON with status", async () => {
-    const ims = testIncidentManagementSystem();
+  test(
+    "_fetchJSONFromServer: not authenticated -> 401 JSON with status",
+    async () => {
+      const ims = testIncidentManagementSystem();
 
-    const response = await ims._fetchJSON("/auth_fail_json");
+      const response = await ims._fetchJSONFromServer("/auth_fail_json");
 
-    expect(response.status).toEqual(401);
-  });
+      expect(response.status).toEqual(401);
+    }
+  );
 
-  test("_fetchJSON: authenticated -> 401 text", async () => {
+  test("_fetchJSONFromServer: authenticated -> 401 text", async () => {
     const username = "Hubcap";
     const password = username;
     const ims = testIncidentManagementSystem();
@@ -269,7 +277,7 @@ describe("IMS: HTTP requests", () => {
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
-    const response = await ims._fetchJSON("/auth_fail_json");
+    const response = await ims._fetchJSONFromServer("/auth_fail_json");
 
     expect(response.status).toEqual(401);
   });
