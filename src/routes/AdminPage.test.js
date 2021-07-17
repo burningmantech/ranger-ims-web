@@ -8,10 +8,12 @@ import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
 describe("AdminPage component", () => {
 
-  test("heading", async () => {
-    renderWithIMS(<AdminPage />, testIncidentManagementSystem());
+  test(
+    "heading", async () => {
+      renderWithIMS(<AdminPage />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("AdminPage Console")).toBeInTheDocument();
-  });
+      expect(screen.queryByText("AdminPage Console")).toBeInTheDocument();
+    }
+  );
 
 });

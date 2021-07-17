@@ -11,17 +11,19 @@ import HomePage from "./HomePage";
 
 describe("HomePage component", () => {
 
-  test("heading", async () => {
-    const username = "Hubcap";
-    const user = new User(
-      username, { expiration: DateTime.local().plus({ hours: 1 }) }
-    );
+  test(
+    "heading", async () => {
+      const username = "Hubcap";
+      const user = new User(
+        username, { expiration: DateTime.local().plus({ hours: 1 }) }
+      );
 
-    renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
+      renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
 
-    expect(
-      screen.queryByText("Ranger Incident Management System")
-    ).toBeInTheDocument();
-  });
+      expect(
+        screen.queryByText("Ranger Incident Management System")
+      ).toBeInTheDocument();
+    }
+  );
 
 });

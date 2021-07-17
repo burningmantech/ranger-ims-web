@@ -8,11 +8,13 @@ import NotFoundPage from "./NotFoundPage";
 
 describe("NotFoundPage component", () => {
 
-  test("not found", async () => {
-    renderWithIMS(<NotFoundPage />, testIncidentManagementSystem());
+  test(
+    "not found", async () => {
+      renderWithIMS(<NotFoundPage />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("Resource not found:")).toBeInTheDocument();
-    expect(screen.queryByText(window.location.href)).toBeInTheDocument();
-  });
+      expect(screen.queryByText("Resource not found:")).toBeInTheDocument();
+      expect(screen.queryByText(window.location.href)).toBeInTheDocument();
+    }
+  );
 
 });

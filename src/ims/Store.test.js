@@ -62,213 +62,245 @@ describe("Store", () => {
     window.localStorage.removeItem(TEST_STORE_KEY);
   });
 
-  test("initial state", () => {
-    const store = stuffNThingsStore();
+  test(
+    "initial state", () => {
+      const store = stuffNThingsStore();
 
-    expect(store.key).toEqual(TEST_STORE_KEY);
-    expect(store.description).toEqual(TEST_STORE_DESCRIPTION);
-    expect(store.modelClass).toEqual(StuffNThings);
-  });
+      expect(store.key).toEqual(TEST_STORE_KEY);
+      expect(store.description).toEqual(TEST_STORE_DESCRIPTION);
+      expect(store.modelClass).toEqual(StuffNThings);
+    }
+  );
 
-  test("store JSON value", () => {
-    const store = jsonStore();
-    const value = { stuff: [1, 2, 3], things: "these" };
+  test(
+    "store JSON value", () => {
+      const store = jsonStore();
+      const value = { stuff: [1, 2, 3], things: "these" };
 
-    store.store(value);
+      store.store(value);
 
-    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-    expect(jsonText).toEqual(JSON.stringify({ value: value }));
-  });
+      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      expect(jsonText).toEqual(JSON.stringify({ value: value }));
+    }
+  );
 
-  test("store model value", () => {
-    const store = stuffNThingsStore();
-    const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+  test(
+    "store model value", () => {
+      const store = stuffNThingsStore();
+      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
-    store.store(stuffNThings);
+      store.store(stuffNThings);
 
-    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-    expect(jsonText).toEqual(JSON.stringify({ value: stuffNThings.toJSON() }));
-  });
+      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      expect(jsonText).toEqual(JSON.stringify({ value: stuffNThings.toJSON() }));
+    }
+  );
 
-  test("store tag", () => {
-    const store = jsonStore();
-    const value = { stuff: [1, 2, 3], things: "these" };
-    const tag = "FE7B2A95197A";
+  test(
+    "store tag", () => {
+      const store = jsonStore();
+      const value = { stuff: [1, 2, 3], things: "these" };
+      const tag = "FE7B2A95197A";
 
-    store.store(value, tag);
+      store.store(value, tag);
 
-    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-    expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
-  });
+      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
+    }
+  );
 
-  test("store lifetime", () => {
-    const store = jsonStore();
-    const value = null;
-    const lifetime = { seconds: 60 };
-    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
+  test(
+    "store lifetime", () => {
+      const store = jsonStore();
+      const value = null;
+      const lifetime = { seconds: 60 };
+      const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
 
-    store.store(null, undefined, lifetime);
+      store.store(null, undefined, lifetime);
 
-    const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-    const json = JSON.parse(jsonText);
-    const expiration = DateTime.fromISO(json.expiration);
+      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      const json = JSON.parse(jsonText);
+      const expiration = DateTime.fromISO(json.expiration);
 
-    // We computed expiration before and after the call, so the actual value
-    // will be somewhere in between.
-    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
-    expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
-      expiration
-    );
+      // We computed expiration before and after the call, so the actual value
+      // will be somewhere in between.
+      expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+      expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
+        expiration
+      );
 
-    // Test the entire container content for completeness
-    expect(jsonText).toEqual(
-      JSON.stringify({ value: null, expiration: json.expiration })
-    );
-  });
+      // Test the entire container content for completeness
+      expect(jsonText).toEqual(
+        JSON.stringify({ value: null, expiration: json.expiration })
+      );
+    }
+  );
 
-  test("load, empty", () => {
-    const store = stuffNThingsStore();
+  test(
+    "load, empty", () => {
+      const store = stuffNThingsStore();
 
-    expect(store.load().value).toBeNull();
-  });
+      expect(store.load().value).toBeNull();
+    }
+  );
 
-  test("load JSON value", () => {
-    const store = jsonStore();
-    const value = { stuff: [1, 2, 3], things: "these" };
+  test(
+    "load JSON value", () => {
+      const store = jsonStore();
+      const value = { stuff: [1, 2, 3], things: "these" };
 
-    store.store(value);
+      store.store(value);
 
-    const valueFromStore = store.load().value;
+      const valueFromStore = store.load().value;
 
-    expect(valueFromStore).toEqual(value);
-  });
+      expect(valueFromStore).toEqual(value);
+    }
+  );
 
-  test("load JSON array", () => {
-    const store = jsonStore();
-    const values = [ { stuff: [1, 2, 3], things: "these" }, "there" ];
+  test(
+    "load JSON array", () => {
+      const store = jsonStore();
+      const values = [ { stuff: [1, 2, 3], things: "these" }, "there" ];
 
-    store.store(values);
+      store.store(values);
 
-    const valuesFromStore = store.load().value;
+      const valuesFromStore = store.load().value;
 
-    expect(valuesFromStore).toEqual(values);
-  });
+      expect(valuesFromStore).toEqual(values);
+    }
+  );
 
-  test("load model value", () => {
-    const store = stuffNThingsStore();
-    const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+  test(
+    "load model value", () => {
+      const store = stuffNThingsStore();
+      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
-    store.store(stuffNThings);
+      store.store(stuffNThings);
 
-    const stuffNThingsFromStore = store.load().value;
+      const stuffNThingsFromStore = store.load().value;
 
-    expect(
-      stuffNThingsFromStore.toJSON()
-    ).toEqualByValue(stuffNThings.toJSON());
-  });
+      expect(
+        stuffNThingsFromStore.toJSON()
+      ).toEqualByValue(stuffNThings.toJSON());
+    }
+  );
 
-  test("load model array", () => {
-    const store = stuffNThingsStore();
-    const stuffNThingses = [
-      new StuffNThings(TEST_STUFF, TEST_THINGS),
-      new StuffNThings({}, {}),
-    ]
+  test(
+    "load model array", () => {
+      const store = stuffNThingsStore();
+      const stuffNThingses = [
+        new StuffNThings(TEST_STUFF, TEST_THINGS),
+        new StuffNThings({}, {}),
+      ]
 
-    store.store(stuffNThingses);
+      store.store(stuffNThingses);
 
-    const stuffNThingsesFromStore = store.load().value;
+      const stuffNThingsesFromStore = store.load().value;
 
-    expect(stuffNThingsesFromStore).toEqualByValue(stuffNThingses);
-  });
+      expect(stuffNThingsesFromStore).toEqualByValue(stuffNThingses);
+    }
+  );
 
-  test("load tag", () => {
-    const store = stuffNThingsStore();
-    const value = new StuffNThings(TEST_STUFF, TEST_THINGS);
-    const tag = "FE7B2A95197A";
+  test(
+    "load tag", () => {
+      const store = stuffNThingsStore();
+      const value = new StuffNThings(TEST_STUFF, TEST_THINGS);
+      const tag = "FE7B2A95197A";
 
-    store.store(value, tag);
+      store.store(value, tag);
 
-    const container = store.load();
+      const container = store.load();
 
-    expect(container).toEqualByValue({ value: value, tag: tag });
-  });
+      expect(container).toEqualByValue({ value: value, tag: tag });
+    }
+  );
 
-  test("load expiration", () => {
-    const store = stuffNThingsStore();
-    const lifetime = { seconds: 60 };
-    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
+  test(
+    "load expiration", () => {
+      const store = stuffNThingsStore();
+      const lifetime = { seconds: 60 };
+      const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
 
-    store.store(null, undefined, lifetime);
+      store.store(null, undefined, lifetime);
 
-    const container = store.load();
-    const expiration = DateTime.fromISO(container.expiration);
+      const container = store.load();
+      const expiration = DateTime.fromISO(container.expiration);
 
-    console.debug(`EXP: ${container.expiration}`);
+      console.debug(`EXP: ${container.expiration}`);
 
-    // We computed expiration before and after the call, so the actual value
-    // will be somewhere in between.
-    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
-    expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
-      expiration
-    );
+      // We computed expiration before and after the call, so the actual value
+      // will be somewhere in between.
+      expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+      expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
+        expiration
+      );
 
-    // Test the entire container content for completeness
-    expect(container).toEqualByValue(
-      { value: null, expiration: container.expiration }
-    );
-  });
+      // Test the entire container content for completeness
+      expect(container).toEqualByValue(
+        { value: null, expiration: container.expiration }
+      );
+    }
+  );
 
-  test("load, invalid JSON", () => {
-    window.localStorage.setItem(TEST_STORE_KEY, "*");
+  test(
+    "load, invalid JSON", () => {
+      window.localStorage.setItem(TEST_STORE_KEY, "*");
 
-    const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+      const store = stuffNThingsStore();
+      const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load().value;
+      const stuffNThings = store.load().value;
 
-    expect(stuffNThings).toBeNull();
-    expect(spy).toHaveBeenCalledWith(
-      "Unable to parse JSON container for Stuff 'N Things: " +
-      "SyntaxError: Unexpected token * in JSON at position 0"
-    );
-  });
+      expect(stuffNThings).toBeNull();
+      expect(spy).toHaveBeenCalledWith(
+        "Unable to parse JSON container for Stuff 'N Things: " +
+        "SyntaxError: Unexpected token * in JSON at position 0"
+      );
+    }
+  );
 
-  test("load, missing value", () => {
-    window.localStorage.setItem(TEST_STORE_KEY, "{}");
+  test(
+    "load, missing value", () => {
+      window.localStorage.setItem(TEST_STORE_KEY, "{}");
 
-    const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+      const store = stuffNThingsStore();
+      const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load().value;
+      const stuffNThings = store.load().value;
 
-    expect(stuffNThings).toBeNull();
-    expect(spy).toHaveBeenCalledWith(
-      "Stuff 'N Things found in cache, but has no value."
-    );
-  });
+      expect(stuffNThings).toBeNull();
+      expect(spy).toHaveBeenCalledWith(
+        "Stuff 'N Things found in cache, but has no value."
+      );
+    }
+  );
 
-  test("load, invalid value", () => {
-    window.localStorage.setItem(TEST_STORE_KEY, '{"value": {}}');
+  test(
+    "load, invalid value", () => {
+      window.localStorage.setItem(TEST_STORE_KEY, '{"value": {}}');
 
-    const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+      const store = stuffNThingsStore();
+      const spy = jest.spyOn(console, "error");
 
-    const stuffNThings = store.load().value;
+      const stuffNThings = store.load().value;
 
-    expect(stuffNThings).toBeNull();
-    expect(spy).toHaveBeenCalledWith(
-      "Invalid JSON for cached Stuff 'N Things: Error: stuff is required"
-    );
-  });
+      expect(stuffNThings).toBeNull();
+      expect(spy).toHaveBeenCalledWith(
+        "Invalid JSON for cached Stuff 'N Things: Error: stuff is required"
+      );
+    }
+  );
 
-  test("remove", () => {
-    const store = stuffNThingsStore();
-    const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+  test(
+    "remove", () => {
+      const store = stuffNThingsStore();
+      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
 
-    store.store(stuffNThings);
-    store.remove();
+      store.store(stuffNThings);
+      store.remove();
 
-    expect(store.load().value).toBe(null);
-  });
+      expect(store.load().value).toBe(null);
+    }
+  );
 
 });
