@@ -1,28 +1,24 @@
-import { Component } from "react";
-
 import Container from "react-bootstrap/Container";
 
 import NavigationBar from "../components/nav/NavigationBar";
 
 
-export default class Home extends Component {
+const Home = (props) => {
+  return (
+    <Container id="page" fluid>
+      <NavigationBar id="page_navigation" />
 
-  render = () => {
-    return (
-      <Container id="page" fluid>
-        <NavigationBar id="page_navigation" />
+      {props.children}
 
-        {this.props.children}
-
-        <footer>
-        <hr />
-        <p>
-          IMS Software © 2013-2021 Burning Man and its contributors.
-          Data in IMS is confidential and proprietary.
-        </p>
-        </footer>
-      </Container>
-    );
-  }
-
+      <footer>
+      <hr />
+      <p>
+        IMS Software © 2013-2021 Burning Man and its contributors.
+        Data in IMS is confidential and proprietary.
+      </p>
+      </footer>
+    </Container>
+  );
 }
+
+export default Home;
