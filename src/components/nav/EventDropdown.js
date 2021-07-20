@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { Component } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import NavDropdown from "react-bootstrap/NavDropdown";
 
@@ -7,93 +7,78 @@ import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
 
 
-export default class EventDropdown extends Component {
+const EventDropdown = (props) => {
+  const imsContext = useContext(IMSContext);
+  const ims = imsContext.ims;
 
-  static contextType = IMSContext;
+  invariant(ims != null, "No IMS");
 
-  constructor() {
-    super();
-    this.state = {};
-  }
+  const [events, setEvents] = useState(undefined);
 
-  componentDidMount = () => {
-    this._setEvents = (events) => { this.setState({ events: events }) };
-    this.fetch();  // no await needed
-  }
+  useEffect(
+    () => {
+      let ignore = false;
 
-  componentWillUnmount = () => {
-    this._setEvents = (events) => {
-      console.debug(
-        `Received events after ${this.constructor.name} unmounted.`
-      );
-    };
-  }
-
-  fetch = async () => {
-    const context = this.context;
-    invariant(
-      context !== undefined,
-      `No context provided to ${this.constructor.name}.`,
-    );
-
-    const ims = context.ims;
-    invariant(ims != null, `No IMS provided to ${this.constructor.name}.`);
-
-    let events;
-    try {
-      events = await ims.events();
-    }
-    catch (e) {
-      console.error(`Unable to load ${this.constructor.name}: ${e.message}`);
-      events = null;
-    }
-    this._setEvents(events);
-  }
-
-  render = () => {
-    const items = () => {
-      const events = this.state.events;
-
-      if (events === undefined) {
-        return (
-          <NavDropdown.Item className="text-warning">
-            Loading events…
-          </NavDropdown.Item>
-        );
-      }
-
-      if (events === null) {
-        return (
-          <NavDropdown.Item className="text-danger">
-            Error loading events
-          </NavDropdown.Item>
-        );
-      }
-
-      if (events.length === 0) {
-        return (
-          <NavDropdown.Item className="text-info">
-            No events found
-          </NavDropdown.Item>
-        );
-      }
-
-      return events.map(
-        (event) => {
-          return (
-            <NavDropdown.Item key={event.id} href={URLs.event(event)}>
-              {event.name}
-            </NavDropdown.Item>
-          );
+      const fetchEvents = async () => {
+        let events;
+        try {
+          events = await ims.events();
         }
+        catch (e) {
+          console.error(`Unable to fetch events: ${e.message}`);
+          events = null;
+        }
+
+        if (! ignore) { setEvents(events); }
+      }
+
+      fetchEvents();
+
+      return () => { ignore = true; }
+    }, [ims]
+  );
+
+  const items = () => {
+    if (events === undefined) {
+      return (
+        <NavDropdown.Item className="text-warning">
+          Loading events…
+        </NavDropdown.Item>
       );
     }
 
-    return (
-      <NavDropdown title="Event" id="nav_events_dropdown">
-        {items()}
-      </NavDropdown>
+    if (events === null) {
+      return (
+        <NavDropdown.Item className="text-danger">
+          Error loading events
+        </NavDropdown.Item>
+      );
+    }
+
+    if (events.length === 0) {
+      return (
+        <NavDropdown.Item className="text-info">
+          No events found
+        </NavDropdown.Item>
+      );
+    }
+
+    return events.map(
+      (event) => {
+        return (
+          <NavDropdown.Item key={event.id} href={URLs.event(event)}>
+            {event.name}
+          </NavDropdown.Item>
+        );
+      }
     );
   }
 
+  return (
+    <NavDropdown title="Event" id="nav_events_dropdown">
+      {items()}
+    </NavDropdown>
+  );
 }
+
+export default EventDropdown;

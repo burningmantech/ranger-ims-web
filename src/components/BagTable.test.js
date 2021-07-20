@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
@@ -9,28 +9,33 @@ import BagTable from "./BagTable";
 describe("BagTable component", () => {
 
   test("id", async () => {
-    renderWithIMS(<BagTable />, testIncidentManagementSystem());
+    await act(async () => {
+      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+    });
 
     expect(document.getElementById("bag_table")).toBeInTheDocument();
   });
 
   test("caption", async () => {
-    renderWithIMS(<BagTable />, testIncidentManagementSystem());
+    await act(async () => {
+      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+    });
 
     expect(screen.queryByText("IMS Bag")).toBeInTheDocument();
   });
 
   test("loading bag", async () => {
-    renderWithIMS(<BagTable />, testIncidentManagementSystem());
-
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    await act(async () => {
+      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+      expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    });
   });
 
   test("bag fails to load", async () => {
     const ims = testIncidentManagementSystem();
 
     ims.bag = jest.fn(
-      () => { throw new Error("Can't load bag because reasons..."); }
+      () => { throw new Error("because reasons..."); }
     );
 
     const spy = jest.spyOn(console, "error");
@@ -40,37 +45,7 @@ describe("BagTable component", () => {
     expect(screen.queryByText("Error loading URL bag")).toBeInTheDocument();
 
     expect(spy).toHaveBeenCalledWith(
-      "Unable to load BagTable: Can't load bag because reasons..."
-    );
-  });
-
-  test("bag loads after unmount", async () => {
-    const ims = testIncidentManagementSystem();
-
-    let done;
-    const promise = new Promise((resolve, reject) => { done = resolve; });
-
-    class TestBagTable extends BagTable {
-      fetch = () => {
-        console.info("Starting fetch...");
-        return promise.then(() => {
-          console.info("...done fetching");
-          this._setBag({});
-        });
-      }
-    }
-
-    const container = renderWithIMS((<TestBagTable />), ims);
-
-    container.unmount();
-
-    const spy = jest.spyOn(console, "debug");
-
-    done();
-    await promise;
-
-    expect(spy).toHaveBeenCalledWith(
-      "Received bag after TestBagTable unmounted."
+      "Unable to fetch bag: because reasons..."
     );
   });
 

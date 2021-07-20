@@ -186,15 +186,9 @@ export default class IncidentManagementSystem {
   bagCacheLifetime = { hours: 1 };
 
   bag = async () => {
-    const bag = this._fetchAndCacheJSON(
+    return this._fetchAndCacheJSON(
       "bag", this._bagStore, this.bagCacheLifetime
     );
-
-    if (bag && ! bag.urls) {
-      console.error(`Bag does not have URLs: ${JSON.stringify(bag)}`);
-    }
-
-    return bag;
   }
 
   ////

@@ -2,7 +2,6 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import { Component } from "react";
 
 import { URLs } from "../../URLs";
 import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
@@ -12,8 +11,10 @@ import EventDropdown from "./EventDropdown";
 
 describe("EventDropdown component", () => {
 
-  test("id", () => {
-    renderWithIMS(<EventDropdown />, testIncidentManagementSystem());
+  test("id", async () => {
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, testIncidentManagementSystem());
+    });
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
@@ -21,7 +22,9 @@ describe("EventDropdown component", () => {
   test("loading events", async () => {
     const ims = testIncidentManagementSystem();
 
-    renderWithIMS(<EventDropdown />, ims);
+    await act(async () => {
+      renderWithIMS(<EventDropdown />, ims);
+    });
 
     for (const event of await ims.events()) {
       expect(screen.queryByText(event.name)).not.toBeInTheDocument();
@@ -32,7 +35,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     ims.events = jest.fn(
-      () => { throw new Error("Can't load events because reasons..."); }
+      () => { throw new Error("because reasons..."); }
     );
 
     const spy = jest.spyOn(console, "error");
@@ -45,37 +48,7 @@ describe("EventDropdown component", () => {
     expect(screen.queryByText("Error loading events")).toBeInTheDocument();
 
     expect(spy).toHaveBeenCalledWith(
-      "Unable to load EventDropdown: Can't load events because reasons..."
-    );
-  });
-
-  test("events load after unmount", async () => {
-    const ims = testIncidentManagementSystem();
-
-    let done;
-    const promise = new Promise((resolve, reject) => { done = resolve; });
-
-    class TestEventDropdown extends EventDropdown {
-      fetch = () => {
-        console.info("Starting fetch...");
-        return promise.then(() => {
-          console.info("...done fetching");
-          this._setEvents([]);
-        });
-      }
-    }
-
-    const container = renderWithIMS((<TestEventDropdown />), ims);
-
-    container.unmount();
-
-    const spy = jest.spyOn(console, "debug");
-
-    done();
-    await promise;
-
-    expect(spy).toHaveBeenCalledWith(
-      "Received events after TestEventDropdown unmounted."
+      "Unable to fetch events: because reasons..."
     );
   });
 

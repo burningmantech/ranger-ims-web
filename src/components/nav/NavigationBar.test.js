@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import { Component } from "react";
 
 import { URLs } from "../../URLs";
 import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
@@ -11,25 +10,35 @@ import NavigationBar from "./NavigationBar";
 
 describe("Navbar component", () => {
 
-  test("id", () => {
+  test("id", async () => {
     const navID = "who-what";
 
-    renderWithIMS(<NavigationBar id={navID} />, testIncidentManagementSystem());
+    await act(async () => {
+      renderWithIMS(
+        <NavigationBar id={navID} />, testIncidentManagementSystem()
+      );
+    });
 
     expect(document.getElementById(navID)).toBeInTheDocument();
   });
 
 
-  test("includes logo", () => {
+  test("includes logo", async () => {
     const navID = "nav_home_image";
 
-    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+    await act(async () => {
+      renderWithIMS(
+        <NavigationBar id={navID} />, testIncidentManagementSystem()
+      );
+    });
 
     expect(document.getElementById(navID)).toBeInTheDocument();
   });
 
-  test("includes link to home", () => {
-    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+  test("includes link to home", async () => {
+    await act(async () => {
+      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+    });
 
     const link = document.getElementById("nav_home_link");
 
@@ -37,14 +46,18 @@ describe("Navbar component", () => {
     expect(link.href).toEqual(`http://localhost${URLs.home}`);
   });
 
-  test("includes events dropdown", () => {
-    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+  test("includes events dropdown", async () => {
+    await act(async () => {
+      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+    });
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
   });
 
-  test("includes user dropdown", () => {
-    renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+  test("includes user dropdown", async () => {
+    await act(async () => {
+      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+    });
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });
