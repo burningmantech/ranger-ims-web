@@ -64,7 +64,7 @@ const Login = (props) => {
     }
 
     let Error;
-    if (errorMessage === undefined) {
+    if (errorMessage === null) {
       Error = "";
     }
     else {
