@@ -1,4 +1,5 @@
-import { Component } from "react";
+import invariant from "invariant";
+import { useContext, useState } from "react";
 
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
@@ -13,127 +14,121 @@ import ModalTitle from "react-bootstrap/ModalTitle";
 import { IMSContext } from "../ims/context";
 
 
-export default class Login extends Component {
+const Login = (props) => {
 
-  static contextType = IMSContext;
+  const imsContext = useContext(IMSContext);
+  const ims = imsContext.ims;
 
-  constructor(props) {
-    super(props);
+  invariant(ims != null, "No IMS");
 
-    this.state = {
-      username: "",
-      password: "",
-      failed: false,
-      succeeded: false,
-    };
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [succeeded, setSucceeded] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const onUsernameChange = (event) => {
+    setUsername(event.target.value);
   }
 
-  onUsernameChange = (event) => {
-    this.setState({username: event.target.value});
+  const onPasswordChange = (event) => {
+    setPassword(event.target.value);
   }
 
-  onPasswordChange = (event) => {
-    this.setState({password: event.target.value});
+  if (ims.isLoggedIn()) {
+    return <>{props.children}</>;
   }
-
-  render = () => {
-    const component = this;
-    const ims = this.context.ims;
-
-    if (ims.isLoggedIn()) {
-      return <>{this.props.children}</>;
-    }
-    else {
-      const username = this.state.username;
-      const password = this.state.password;
-      const errorMessage = this.state.errorMessage;
-
-      async function onLogin(event) {
-        event.preventDefault();
-        let result;
-        try {
-          result = await ims.login(username, {password: password});
-        }
-        catch (e) {
-          const errorMessage = e.message;
-          console.error(`Login failed: ${errorMessage}`);
-          component.setState({errorMessage: errorMessage});
-          return;
-        }
-        if (result) {
-          component.setState({succeeded: true});  // To cause a re-render.
-        }
-        else {
-          component.setState({failed: true});
-        }
+  else {
+    async function onLogin(event) {
+      event.preventDefault();
+      let result;
+      try {
+        result = await ims.login(username, {password: password});
+      }
+      catch (e) {
+        const errorMessage = e.message;
+        console.error(`Login failed: ${errorMessage}`);
+        setErrorMessage(errorMessage);
+        return;
       }
 
-      let Error;
-      if (errorMessage === undefined) {
-        Error = "";
+      // Cause a re-render by changing some state.
+      // FIXME: Perhaps try:
+      // https://reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
+      invariant(succeeded == null, `Already succeeded?`);
+      if (result) {
+        setSucceeded(true);
       }
       else {
-        Error = (
-          <Alert variant="danger">
-            <Alert.Heading>Login Failed</Alert.Heading>
-            <code>{errorMessage}</code>
-          </Alert>
-        );
+        setSucceeded(false);
       }
+    }
 
-      return (
-        <Container>
-          <Form onSubmit={onLogin}>
-            <ModalDialog>
-
-              <ModalHeader>
-                <ModalTitle>Authorization Required</ModalTitle>
-              </ModalHeader>
-
-              <ModalBody>
-
-                {Error}
-
-                <Form.Group controlId="username_field">
-                  <Form.Label>Ranger Handle or Email</Form.Label>
-                  <Form.Control
-                    autoComplete="username email"
-                    inputMode="latin-name"
-                    minLength="1"
-                    onChange={this.onUsernameChange}
-                    placeholder="Bucket"
-                    required={true}
-                    type="text"
-                    value={username}
-                  />
-                  <Form.Text muted>
-                    Must match your Ranger Secret Clubhouse profile.
-                  </Form.Text>
-                </Form.Group>
-
-                <Form.Group controlId="password_field">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    autoComplete="current-password"
-                    inputMode="latin-prose"
-                    onChange={this.onPasswordChange}
-                    placeholder="…password…"
-                    type="password"
-                    value={password}
-                  />
-                </Form.Group>
-
-              </ModalBody>
-
-              <ModalFooter>
-                <Button variant="primary" type="submit">Log In</Button>
-              </ModalFooter>
-
-            </ModalDialog>
-          </Form>
-        </Container>
+    let Error;
+    if (errorMessage === null) {
+      Error = "";
+    }
+    else {
+      Error = (
+        <Alert variant="danger">
+          <Alert.Heading>Login Failed</Alert.Heading>
+          <code>{errorMessage}</code>
+        </Alert>
       );
     }
-  }
 
+    return (
+      <Container>
+        <Form onSubmit={onLogin}>
+          <ModalDialog>
+
+            <ModalHeader>
+              <ModalTitle>Authorization Required</ModalTitle>
+            </ModalHeader>
+
+            <ModalBody>
+
+              {Error}
+
+              <Form.Group controlId="username_field">
+                <Form.Label>Ranger Handle or Email</Form.Label>
+                <Form.Control
+                  autoComplete="username email"
+                  inputMode="latin-name"
+                  minLength="1"
+                  onChange={onUsernameChange}
+                  placeholder="Bucket"
+                  required={true}
+                  type="text"
+                  value={username}
+                />
+                <Form.Text muted>
+                  Must match your Ranger Secret Clubhouse profile.
+                </Form.Text>
+              </Form.Group>
+
+              <Form.Group controlId="password_field">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  autoComplete="current-password"
+                  inputMode="latin-prose"
+                  onChange={onPasswordChange}
+                  placeholder="…password…"
+                  type="password"
+                  value={password}
+                />
+              </Form.Group>
+
+            </ModalBody>
+
+            <ModalFooter>
+              <Button variant="primary" type="submit">Log In</Button>
+            </ModalFooter>
+
+          </ModalDialog>
+        </Form>
+      </Container>
+    );
+  }
 }
+
+export default Login;

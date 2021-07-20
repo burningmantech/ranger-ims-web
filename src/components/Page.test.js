@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import { Component } from "react";
 
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
 
@@ -10,24 +9,39 @@ import Page from "./Page";
 
 describe("Page component", () => {
 
-  test("id", () => {
-    renderWithIMS(<Page />, testIncidentManagementSystem());
+  test(
+    "id",
+    async () => {
+      await act(async () => {
+        renderWithIMS(<Page />, testIncidentManagementSystem());
+      });
 
-    expect(document.getElementById("page")).toBeInTheDocument();
-  });
+      expect(document.getElementById("page")).toBeInTheDocument();
+    }
+  );
 
-  test("includes navigation", () => {
-    renderWithIMS(<Page />, testIncidentManagementSystem());
+  test(
+    "includes navigation",
+    async () => {
+      await act(async () => {
+        renderWithIMS(<Page />, testIncidentManagementSystem());
+      });
 
-    expect(document.getElementById("page_navigation")).toBeInTheDocument();
-  });
+      expect(document.getElementById("page_navigation")).toBeInTheDocument();
+    }
+  );
 
-  test("includes children", () => {
-    const content = "Hello!";
+  test(
+    "includes children",
+    async () => {
+      const content = "Hello!";
 
-    renderWithIMS(<Page>{content}</Page>, testIncidentManagementSystem());
+      await act(async () => {
+        renderWithIMS(<Page>{content}</Page>, testIncidentManagementSystem());
+      });
 
-    expect(screen.queryByText(content)).toBeInTheDocument();
-  });
+      expect(screen.queryByText(content)).toBeInTheDocument();
+    }
+  );
 
 });

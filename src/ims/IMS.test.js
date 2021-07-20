@@ -467,19 +467,6 @@ describe("IMS: bag", () => {
   );
 
   test(
-    "load bag: no URLs in response", async () => {
-      const ims = testIncidentManagementSystem();
-      ims.bagURL = "/janky_bag";
-
-      const spy = jest.spyOn(console, "error");
-      const bag = await ims.bag();
-
-      expect(spy).toHaveBeenCalledWith("Bag does not have URLs: {}");
-      expect(bag).toEqualByValue({});
-    }
-  );
-
-  test(
     "load bag: non-OK response", async () => {
       const ims = testIncidentManagementSystem();
       ims.bagURL = "/forbidden";

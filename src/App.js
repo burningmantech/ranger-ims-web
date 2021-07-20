@@ -1,5 +1,7 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^_" }]*/
+
 import invariant from "invariant";
-import { Component, Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
 import {
   BrowserRouter as Router, Redirect, Route, Switch
 } from "react-router-dom";
@@ -21,70 +23,59 @@ const AdminPage = lazy(() => import("./routes/AdminPage"));
 const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
 
 
-export default class App extends Component {
+const App = (props) => {
+  invariant(props.ims != null, "ims property is required");
 
-  constructor(props) {
-    super(props);
+  const [_user, setUser] = useState(null);
 
-    invariant(props.ims != null, "ims property is required");
+  // Get notified when login/logout happens
+  props.ims.delegate = () => { setUser(props.ims.user); }
 
-    this.state = {
-      user: props.ims.user,
-    }
+  return (
+    <Router>
+      <Suspense fallback={<Loading />}>
+        <Switch>
 
-    // Get notified when login/logout happens
-    props.ims.delegate = () => {
-      this.setState({ user: props.ims.user })
-    }
-  }
+          {/* Send root URL to Home page URL */}
+          <Route exact path={URLs.root}>
+            <Redirect to={URLs.home} />
+          </Route>
 
-  render = () => {
-    const imsContextValue = {ims: this.props.ims};
+          <IMSContext.Provider value={{ims: props.ims}}>
 
-    return (
-      <Router>
-        <Suspense fallback={<Loading />}>
-          <Switch>
-
-            {/* Send root URL to Home page URL */}
-            <Route exact path={URLs.root}>
-              <Redirect to={URLs.home} />
+            {/* Home Page */}
+            <Route exact path={URLs.home}>
+              <Login>
+                <HomePage />
+              </Login>
             </Route>
 
-            <IMSContext.Provider value={imsContextValue}>
-
-              {/* Home Page */}
-              <Route exact path={URLs.home}>
-                <Login>
-                  <HomePage />
-                </Login>
-              </Route>
-
-              {/* Event Page */}
-              <Route exact path={`${URLs.events}:eventID/`}>
-                <Login>
-                  <RoutedEventPage />
-                </Login>
-              </Route>
-
-              {/* Admin Page */}
-              <Route exact path={URLs.admin}>
-                <Login>
-                  <AdminPage />
-                </Login>
-              </Route>
-
-            </IMSContext.Provider>
-
-            {/* Not found */}
-            <Route path="*">
-              <NotFoundPage />
+            {/* Event Page */}
+            <Route exact path={`${URLs.events}:eventID/`}>
+              <Login>
+                <RoutedEventPage />
+              </Login>
             </Route>
 
-          </Switch>
-        </Suspense>
-      </Router>
-    );
-  }
+            {/* Admin Page */}
+            <Route exact path={URLs.admin}>
+              <Login>
+                <AdminPage />
+              </Login>
+            </Route>
+
+          </IMSContext.Provider>
+
+          {/* Not found */}
+          <Route path="*">
+            <NotFoundPage />
+          </Route>
+
+        </Switch>
+      </Suspense>
+    </Router>
+  );
 
 }
+
+export default App;

@@ -17,11 +17,12 @@ describe("EventPage component", () => {
       const ims = testIncidentManagementSystem();
       const eventID = "1";
 
-      renderWithIMS(
-        <EventPage id={eventID} />, ims
-      );
-
-      expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+      await act(async () => {
+        renderWithIMS(
+          <EventPage id={eventID} />, ims
+        );
+        expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+      });
     }
   );
 
@@ -43,42 +44,7 @@ describe("EventPage component", () => {
       expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
       expect(spy).toHaveBeenCalledWith(
-        "Unable to load EventPage: Can't load event because reasons..."
-      );
-    }
-  );
-
-  test(
-    "event loads after unmount", async () => {
-      const ims = testIncidentManagementSystem();
-      const eventID = "1";
-
-      let done;
-      const promise = new Promise((resolve, reject) => { done = resolve; });
-
-      class TestEventPage extends EventPage {
-        fetch = () => {
-          console.info("Starting fetch...");
-          return promise.then(() => {
-            console.info("...done fetching");
-            this._setEvent(ims.eventWithID(eventID));
-          });
-        }
-      }
-
-      const container = renderWithIMS(
-        (<TestEventPage id={eventID} />), ims
-      );
-
-      container.unmount();
-
-      const spy = jest.spyOn(console, "debug");
-
-      done();
-      await promise;
-
-      expect(spy).toHaveBeenCalledWith(
-        "Received event after TestEventPage unmounted."
+        "Unable to fetch event: Can't load event because reasons..."
       );
     }
   );

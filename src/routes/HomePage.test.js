@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 
 import User from "../ims/User";
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
@@ -18,7 +18,9 @@ describe("HomePage component", () => {
         username, { expiration: DateTime.local().plus({ hours: 1 }) }
       );
 
-      renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
+      await act(async () => {
+        renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
+      });
 
       expect(
         screen.queryByText("Ranger Incident Management System")
