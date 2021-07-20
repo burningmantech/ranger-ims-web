@@ -51,20 +51,7 @@ export default class Store {
   }
 
   store = (object, tag, lifespan) => {
-    let value;
-    if (object == null) {
-      value = null;
-    }
-    else if (this.modelClass == null) {
-      value = object;
-    }
-    else if (object.constructor === Array) {
-      value = object.map((element) => element.toJSON());
-    }
-    else {
-      value = object.toJSON();
-    }
-
+    const value = this.serializeValue(object);
     const expiration = (
       (lifespan == null) ? undefined: DateTime.local().plus(lifespan)
     );
