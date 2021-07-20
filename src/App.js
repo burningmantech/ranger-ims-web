@@ -29,8 +29,6 @@ const App = (props) => {
   // Get notified when login/logout happens
   props.ims.delegate = () => { setUser(props.ims.user); }
 
-  const imsContextValue = {ims: props.ims};
-
   return (
     <Router>
       <Suspense fallback={<Loading />}>
@@ -41,7 +39,7 @@ const App = (props) => {
             <Redirect to={URLs.home} />
           </Route>
 
-          <IMSContext.Provider value={imsContextValue}>
+          <IMSContext.Provider value={{ims: props.ims}}>
 
             {/* Home Page */}
             <Route exact path={URLs.home}>
