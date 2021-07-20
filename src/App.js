@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^_" }]*/
+
 import invariant from "invariant";
 import { Suspense, lazy, useState } from "react";
 import {
@@ -24,7 +26,7 @@ const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
 const App = (props) => {
   invariant(props.ims != null, "ims property is required");
 
-  const [user, setUser] = useState(null);
+  const [_user, setUser] = useState(null);
 
   // Get notified when login/logout happens
   props.ims.delegate = () => { setUser(props.ims.user); }
