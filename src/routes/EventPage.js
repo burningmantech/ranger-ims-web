@@ -6,6 +6,7 @@ import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 import Page from "../components/Page";
+import DispatchQueue from "../components/DispatchQueue";
 
 
 export const EventPage = (props) => {
@@ -65,6 +66,8 @@ export const EventPage = (props) => {
   return (
     <Page>
       <h1>Event: {event.name}</h1>
+
+      <DispatchQueue />
     </Page>
   );
 }
