@@ -1,5 +1,7 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^_" }]*/
+
 import invariant from "invariant";
-import { useContext, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
@@ -23,8 +25,9 @@ const Login = (props) => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [succeeded, setSucceeded] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const [_ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const onUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -40,9 +43,8 @@ const Login = (props) => {
   else {
     async function onLogin(event) {
       event.preventDefault();
-      let result;
       try {
-        result = await ims.login(username, {password: password});
+        await ims.login(username, {password: password});
       }
       catch (e) {
         const errorMessage = e.message;
@@ -51,16 +53,7 @@ const Login = (props) => {
         return;
       }
 
-      // Cause a re-render by changing some state.
-      // FIXME: Perhaps try:
-      // https://reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
-      invariant(succeeded == null, `Already succeeded?`);
-      if (result) {
-        setSucceeded(true);
-      }
-      else {
-        setSucceeded(false);
-      }
+      forceUpdate();
     }
 
     let Error;

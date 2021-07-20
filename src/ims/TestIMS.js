@@ -214,9 +214,6 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case "/text_hello":
         return this._textResponse();
 
-      case "/janky_bag":
-        return this._jsonResponse({});
-
       case "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
@@ -249,13 +246,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   _mockFetch = async (request) => {
-    let response;
-    try {
-      response = await this.__mockFetch(request);
-    } catch (e) {
-      this.requestsReceived.push([request, e]);
-      throw e;
-    }
+    let response = await this.__mockFetch(request);
 
     if (request.method === "GET") {
       const ifNoneMatch = request.headers.get("If-None-Match");
