@@ -14,6 +14,8 @@ const BagTable = (props) => {
 
   invariant(ims != null, "No IMS");
 
+  // Fetch data
+
   const [bag, setBag] = useState(undefined);
 
   useEffect(
@@ -38,6 +40,8 @@ const BagTable = (props) => {
       return () => { ignore = true; }
     }, [ims]
   );
+
+  // Render
 
   const fullRow = (content) => {
     return <tr><td colSpan="2" className="text-center">{content}</td></tr>;

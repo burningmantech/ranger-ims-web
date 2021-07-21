@@ -13,6 +13,8 @@ const EventDropdown = (props) => {
 
   invariant(ims != null, "No IMS");
 
+  // Fetch data
+
   const [events, setEvents] = useState(undefined);
 
   useEffect(
@@ -37,6 +39,8 @@ const EventDropdown = (props) => {
       return () => { ignore = true; }
     }, [ims]
   );
+
+  // Render
 
   const items = () => {
     if (events === undefined) {

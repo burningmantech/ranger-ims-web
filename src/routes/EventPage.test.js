@@ -13,44 +13,51 @@ import RoutedEventPage from "./EventPage";
 describe("EventPage component", () => {
 
   test(
-    "loading event", async () => {
+    "loading event",
+    async () => {
       const ims = testIncidentManagementSystem();
-      const eventID = "1";
 
-      await act(async () => {
-        renderWithIMS(
-          <EventPage id={eventID} />, ims
-        );
-        expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
-      });
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithIMS(
+            <EventPage id={event.id} />, ims
+          );
+          expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+        });
+        break;
+      }
     }
   );
 
   test(
-    "event fails to load", async () => {
+    "event fails to load",
+    async () => {
       const ims = testIncidentManagementSystem();
-      const eventID = "1";
 
       ims.eventWithID = jest.fn(
-        (id) => { throw new Error("Can't load event because reasons..."); }
+        (id) => { throw new Error("because reasons..."); }
       );
 
       const spy = jest.spyOn(console, "error");
 
-      renderWithIMS(
-        <EventPage id={eventID} />, ims
-      );
+      for (const event of await ims.events()) {
+        renderWithIMS(
+          <EventPage id={event.id} />, ims
+        );
 
-      expect(screen.queryByText("Error loading event")).toBeInTheDocument();
+        expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
-      expect(spy).toHaveBeenCalledWith(
-        "Unable to fetch event: Can't load event because reasons..."
-      );
+        expect(spy).toHaveBeenCalledWith(
+          "Unable to fetch event: because reasons..."
+        );
+        break;
+      }
     }
   );
 
   test(
-    "heading", async () => {
+    "heading",
+    async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
@@ -71,7 +78,8 @@ describe("EventPage component", () => {
 describe("RoutedEventPage component", () => {
 
   test(
-    "eventID in routed properties", async () => {
+    "eventID in routed properties",
+    async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
