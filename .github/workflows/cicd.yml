@@ -76,7 +76,7 @@ jobs:
         run: npm test -- --ci --watchAll=false --coverage
 
       - name: "Upload coverage to Codecov"
-        uses: "codecov/codecov-action@v2.0.3"
+        uses: "codecov/codecov-action@v2.1.0"
         with:
           env_vars: GITHUB_REF,GITHUB_COMMIT,GITHUB_USER,GITHUB_WORKFLOW
           fail_ci_if_error: true
