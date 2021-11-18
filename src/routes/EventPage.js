@@ -71,7 +71,7 @@ export const EventPage = (props) => {
     <Page>
       <h1>Event: {event.name}</h1>
 
-      <DispatchQueue />
+      <DispatchQueue event={event} />
     </Page>
   );
 }

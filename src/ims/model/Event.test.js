@@ -4,27 +4,6 @@ import Event from "./Event";
 describe("Event", () => {
 
   test(
-    "id is required", () => {
-      const message = "id is required";
-
-      expect(() => {new Event()}).toThrow(message);
-      expect(() => {new Event(undefined, "")}).toThrow(message);
-      expect(() => {new Event(null, "")}).toThrow(message);
-    }
-  );
-
-  test(
-    "name is required", () => {
-      const id = "1";
-      const message = "name is required";
-
-      expect(() => {new Event(id)}).toThrow(message);
-      expect(() => {new Event(id, undefined)}).toThrow(message);
-      expect(() => {new Event(id, null)}).toThrow(message);
-    }
-  );
-
-  test(
     "toString", () => {
       const id = "1";
       const name = "One";

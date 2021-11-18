@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
+import Incident from "./model/Incident";
 
 
 export default class IncidentManagementSystem {
@@ -15,6 +16,7 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store("credentials", "user credentials", User);
     this._bagStore = new Store("bag", "URL bag");
     this._eventsStore = new Store("events", "event list", Event);
+    this._incidentsStore = new Store("incidents", "incident list", Incident);
 
     Object.defineProperty(this, "user", {
       enumerable: true,
@@ -327,6 +329,20 @@ export default class IncidentManagementSystem {
     } else {
       throw new Error(`No event found with ID: ${id}`);
     }
+  }
+
+  // Incidents
+
+  incidentCacheLifetime = { minutes: 5 };
+
+  incidents = async () => {
+    const incidents = await this._fetchAndCacheJSON(
+      this._incidentsStore, this.incidentCacheLifetime
+    );
+    this._incidentsMap = new Map(
+      incidents.map(incident => [incident.id, incident])
+    );
+    return incidents;
   }
 
 }

@@ -9,14 +9,70 @@ import DispatchQueue from "./DispatchQueue";
 describe("DispatchQueue component", () => {
 
   test(
-    "id",
+    "loading incidents",
     async () => {
-      await act(async () => {
-        renderWithIMS(<DispatchQueue />, testIncidentManagementSystem());
-      });
+      const ims = testIncidentManagementSystem();
 
-      expect(screen.queryByText("Hello")).toBeInTheDocument();
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithIMS(
+            <DispatchQueue event={event} />, ims
+          );
+        });
+
+        expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+        break;
+      }
     }
   );
+
+  test(
+    "incidents fail to load",
+    async () => {
+      const ims = testIncidentManagementSystem();
+
+      ims.eventWithID = jest.fn(
+        (id) => { throw new Error("because reasons..."); }
+      );
+
+      const spy = jest.spyOn(console, "error");
+
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithIMS(
+            <DispatchQueue event={event} />, ims
+          );
+
+          expect(
+            screen.queryByText("Error loading incidents")
+          ).toBeInTheDocument();
+
+          expect(spy).toHaveBeenCalledWith(
+            "Unable to fetch incidents: because reasons..."
+          );
+        });
+        break;
+      }
+    }
+  );
+
+  // test(
+  //   "event name",
+  //   async () => {
+  //     const ims = testIncidentManagementSystem();
+
+  //     for (const event of await ims.events()) {
+  //       await act(async () => {
+  //         renderWithIMS(
+  //           <DispatchQueue event={event} />, ims
+  //         );
+  //       });
+
+  //       expect(
+  //         screen.queryByText(`Dispatch Queue: ${event.name}`)
+  //       ).toBeInTheDocument();
+  //     }
+  //   }
+  // );
 
 });
