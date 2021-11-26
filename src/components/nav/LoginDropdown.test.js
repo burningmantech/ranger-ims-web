@@ -77,7 +77,7 @@ describe("LoginDropdown component", () => {
     );
 
     await act(async () => {
-      await userEvent.click(screen.getByText(username))
+      await userEvent.click(screen.getByText(username));
     });
 
     expect(screen.queryByText("Log Out")).toBeInTheDocument();
@@ -93,8 +93,8 @@ describe("LoginDropdown component", () => {
     renderWithIMS(<LoginDropdown />, ims);
 
     await act(async () => {
-      await userEvent.click(screen.getByText(username))
-      await userEvent.click(screen.getByText("Log Out"))
+      await userEvent.click(screen.getByText(username));
+      await userEvent.click(screen.getByText("Log Out"));
     });
 
     expect(notified).toBe(true);
