@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import { Suspense, lazy, useState } from "react";
 import {
-  BrowserRouter as Router, Redirect, Route, Switch
+  Redirect, BrowserRouter as Router, Route, Switch
 } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -37,9 +37,10 @@ const App = (props) => {
         <Switch>
 
           {/* Send root URL to Home page URL */}
-          <Route exact path={URLs.root}>
-            <Redirect to={URLs.home} />
-          </Route>
+          <Route
+            exact path={URLs.root}
+            render={() => <Redirect to={URLs.home} />}
+          />
 
           <IMSContext.Provider value={{ims: props.ims}}>
 
