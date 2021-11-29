@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { useContext, useEffect, useState } from "react";
-import { withRouter } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { IMSContext } from "../ims/context";
 
@@ -69,4 +69,14 @@ export const EventPage = (props) => {
   );
 }
 
-export default withRouter(EventPage);
+export const RoutedEventPage = () => {
+  const params = useParams();
+
+  invariant(params.eventID != null, "eventID parameter is required: " + JSON.stringify(params));
+
+  return (
+    <EventPage id={params.eventID} />
+  );
+}
+
+export default RoutedEventPage;
