@@ -1,9 +1,9 @@
-const baseURL = `/ims/`;
-const eventsURL = `${baseURL}events/`;
-const adminURL = `${baseURL}admin/`;
+const imsURL = `/ims/`;
+const eventsURL = `${imsURL}events/`;
+const adminURL = `${imsURL}admin/`;
 
 export const URLs = {
-  home: baseURL,
+  ims: imsURL,
   events: eventsURL,
   event: (event) => `${eventsURL}${event.id}/`,
   admin: adminURL,

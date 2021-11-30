@@ -43,7 +43,7 @@ describe("Navbar component", () => {
     const link = document.getElementById("nav_home_link");
 
     expect(link).toBeInTheDocument();
-    expect(link.href).toEqual(`http://localhost${URLs.home}`);
+    expect(link.href).toEqual(`http://localhost${URLs.ims}`);
   });
 
   test("includes events dropdown", async () => {

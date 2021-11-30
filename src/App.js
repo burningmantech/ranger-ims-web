@@ -39,13 +39,13 @@ const App = (props) => {
           {/* Send root URL to Home page URL */}
           <Route
             exact path={URLs.root}
-            render={() => <Navigate to={URLs.home} />}
+            render={() => <Navigate to={URLs.ims} />}
           />
 
           <IMSContext.Provider value={{ims: props.ims}}>
 
             {/* Home Page */}
-            <Route exact path={URLs.home}>
+            <Route exact path={URLs.ims}>
               <Login>
                 <HomePage />
               </Login>
