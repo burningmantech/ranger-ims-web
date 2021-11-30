@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import { Suspense, lazy, useState } from "react";
 import {
-  Redirect, BrowserRouter as Router, Route, Switch
+  BrowserRouter as Router, Navigate, Route, Routes
 } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -34,12 +34,12 @@ const App = (props) => {
   return (
     <Router>
       <Suspense fallback={<Loading />}>
-        <Switch>
+        <Routes>
 
           {/* Send root URL to Home page URL */}
           <Route
             exact path={URLs.root}
-            render={() => <Redirect to={URLs.home} />}
+            render={() => <Navigate to={URLs.home} />}
           />
 
           <IMSContext.Provider value={{ims: props.ims}}>
@@ -72,7 +72,7 @@ const App = (props) => {
             <NotFoundPage />
           </Route>
 
-        </Switch>
+        </Routes>
       </Suspense>
     </Router>
   );
