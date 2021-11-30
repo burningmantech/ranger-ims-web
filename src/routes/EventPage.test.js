@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { createMemoryHistory } from "history";
 import { act, render, screen } from "@testing-library/react";
-import { Route, Router, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { Event } from "../ims/model/Event";
 import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
@@ -75,20 +75,17 @@ describe("RoutedEventPage component", () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
-        const history = createMemoryHistory();
-        const route = `/events/${event.id}`;
-        history.push(route);
-
         await act(async () => {
           renderWithIMS(
             (
-              <Router history={history}>
+              <MemoryRouter initialEntries={[`/events/${event.id}`]}>
                 <Routes>
-                  <Route exact path="/events/:eventID/">
-                    <RoutedEventPage />
-                  </Route>
+                  <Route
+                    exact path="/events/:eventID/"
+                    element={<RoutedEventPage />}
+                  />
                 </Routes>
-              </Router>
+              </MemoryRouter>
             ),
             ims,
           );
