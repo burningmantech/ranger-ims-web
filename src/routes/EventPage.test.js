@@ -81,7 +81,7 @@ describe("RoutedEventPage component", () => {
               <MemoryRouter initialEntries={[`/events/${event.id}`]}>
                 <Routes>
                   <Route
-                    exact path="/events/:eventID/"
+                    path="/events/:eventID/"
                     element={<RoutedEventPage />}
                   />
                 </Routes>
