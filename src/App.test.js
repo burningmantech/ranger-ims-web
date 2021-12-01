@@ -1,9 +1,25 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import userEvent from '@testing-library/user-event';
 
 import { testIncidentManagementSystem } from "./ims/TestIMS";
 import App from "./App";
+
+
+export const renderWithURL = (url) => {
+  const Router = (props) => {
+    return (
+      <MemoryRouter initialEntries={[url]}>
+        {props.children}
+      </MemoryRouter>
+    );
+  }
+
+  return render(
+    <App ims={testIncidentManagementSystem()} router={Router} />
+  );
+}
 
 
 describe("App component", () => {
@@ -21,8 +37,8 @@ describe("App component", () => {
   );
 
   test(
-    "load home", async () => {
-      render(<App ims={testIncidentManagementSystem()} />);
+    "load app", async () => {
+      renderWithURL("/ims/");
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
@@ -30,11 +46,11 @@ describe("App component", () => {
   );
 
   test(
-    "load home -> log in -> content", async () => {
+    "load app -> log in -> content", async () => {
       const username = "Hubcap";
       const password = username;
 
-      render(<App ims={testIncidentManagementSystem()} />);
+      renderWithURL("/ims/");
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -49,11 +65,11 @@ describe("App component", () => {
   );
 
   test(
-    "load home -> invalid log in -> no content", async () => {
+    "load app -> invalid log in -> no content", async () => {
       const username = "Hubcap";
       const password = "Not My Password";
 
-      render(<App ims={testIncidentManagementSystem()} />);
+      renderWithURL("/ims/");
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -72,6 +88,17 @@ describe("App component", () => {
       }
 
       expect(screen.queryByText("Log In")).toBeInTheDocument();
+    }
+  );
+
+  test(
+    "not found", async () => {
+      renderWithURL("/xyzzy");
+
+      expect(
+        await screen.findByText(/Resource not found:/)
+      ).toBeInTheDocument();
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     }
   );
 

@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import { Suspense, lazy, useState } from "react";
 import {
-  BrowserRouter as Router, Navigate, Route, Routes
+  BrowserRouter, Navigate, Route, Routes
 } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -26,6 +26,13 @@ const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
 const App = (props) => {
   invariant(props.ims != null, "ims property is required");
 
+  let Router;
+  if (props.router == null) {
+    Router = BrowserRouter;
+  } else {
+    Router = props.router;
+  }
+
   const [_user, setUser] = useState(null);
 
   // Get notified when login/logout happens
@@ -34,45 +41,38 @@ const App = (props) => {
   return (
     <Router>
       <Suspense fallback={<Loading />}>
-        <Routes>
+        <IMSContext.Provider value={{ims: props.ims}}>
+          <Routes>
 
-          {/* Send root URL to Home page URL */}
-          <Route
-            exact path={URLs.root}
-            render={() => <Navigate to={URLs.ims} />}
-          />
-
-          <IMSContext.Provider value={{ims: props.ims}}>
+            {/* Redirect root to IMS */}
+            <Route path={URLs.root} element={<Navigate to={URLs.ims} />} />
 
             {/* Home Page */}
-            <Route exact path={URLs.ims}>
+            <Route path={URLs.ims} element={
               <Login>
                 <HomePage />
               </Login>
-            </Route>
+            } />
 
             {/* Event Page */}
-            <Route exact path={`${URLs.events}:eventID/`}>
+            <Route path={`${URLs.events}:eventID/`} element={
               <Login>
                 <RoutedEventPage />
               </Login>
-            </Route>
+            } />
 
             {/* Admin Page */}
-            <Route exact path={URLs.admin}>
+            <Route path={URLs.admin} element={
               <Login>
                 <AdminPage />
               </Login>
-            </Route>
+            } />
 
-          </IMSContext.Provider>
+            {/* Not found */}
+            <Route path="*" element={<NotFoundPage />} />
 
-          {/* Not found */}
-          <Route path="*">
-            <NotFoundPage />
-          </Route>
-
-        </Routes>
+          </Routes>
+        </IMSContext.Provider>
       </Suspense>
     </Router>
   );
