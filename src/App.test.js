@@ -1,14 +1,18 @@
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from '@testing-library/user-event';
 
-import { testIncidentManagementSystem } from "./ims/TestIMS";
+import { renderWithRoute, testIncidentManagementSystem } from "./ims/TestIMS";
 import { URLs } from "./URLs";
 import App from "./App";
 
 
-export const renderWithURL = (url, username) => {
+export const renderWithURL = (url, username, ims) => {
+  if (ims == null) {
+    ims = testIncidentManagementSystem(username);
+  }
+
   const Router = (props) => {
     return (
       <MemoryRouter initialEntries={[url]}>
@@ -18,7 +22,7 @@ export const renderWithURL = (url, username) => {
   }
 
   return render(
-    <App ims={testIncidentManagementSystem(username)} router={Router} />
+    <App ims={ims} router={Router} />
   );
 }
 
@@ -115,11 +119,26 @@ describe("App component", () => {
   );
 
   test(
+    "load event page, logged in", async () => {
+      const username = "Hubcap";
+      const ims = testIncidentManagementSystem(username);
+
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithURL(URLs.event(event), username, ims);
+        });
+
+        expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();
+      }
+    }
+  );
+
+  test(
     "not found", async () => {
       renderWithURL("/xyzzy");
 
       expect(
-        await screen.findByText(/Resource not found:/)
+        await screen.findByText("Resource not found:")
       ).toBeInTheDocument();
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     }
