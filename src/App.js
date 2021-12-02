@@ -45,7 +45,7 @@ const App = (props) => {
           <Routes>
 
             {/* Redirect root to IMS */}
-            <Route path={URLs.root} element={<Navigate to={URLs.ims} />} />
+            <Route path="/" element={<Navigate to={URLs.ims} />} />
 
             {/* Home Page */}
             <Route path={URLs.ims} element={
