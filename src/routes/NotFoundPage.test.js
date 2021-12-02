@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import NotFoundPage from "./NotFoundPage";
 
@@ -10,12 +11,18 @@ describe("NotFoundPage component", () => {
 
   test(
     "not found", async () => {
-      await act(async () => {
-        renderWithIMS(<NotFoundPage />, testIncidentManagementSystem());
-      });
+      const path = "/xyzzy/";
+
+      renderWithIMSContext(
+        <MemoryRouter initialEntries={[path]}>
+          <Routes>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </MemoryRouter>
+      );
 
       expect(screen.queryByText("Resource not found:")).toBeInTheDocument();
-      expect(screen.queryByText(window.location.href)).toBeInTheDocument();
+      expect(screen.queryByText(path)).toBeInTheDocument();
     }
   );
 

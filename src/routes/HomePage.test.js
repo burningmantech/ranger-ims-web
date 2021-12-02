@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
 
 import User from "../ims/User";
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import HomePage from "./HomePage";
 
@@ -19,7 +19,7 @@ describe("HomePage component", () => {
       );
 
       await act(async () => {
-        renderWithIMS(<HomePage user={user} />, testIncidentManagementSystem());
+        renderWithIMSContext(<HomePage user={user} />, testIncidentManagementSystem());
       });
 
       expect(

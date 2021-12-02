@@ -1,10 +1,13 @@
 import "@testing-library/jest-dom/extend-expect";
 import { createMemoryHistory } from "history";
 import { act, render, screen } from "@testing-library/react";
-import { Route, Router, Switch } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { URLs } from "../URLs";
 import { Event } from "../ims/model/Event";
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext, testIncidentManagementSystem
+} from "../ims/TestIMS";
 
 import { EventPage } from "./EventPage";
 import RoutedEventPage from "./EventPage";
@@ -14,13 +17,10 @@ describe("EventPage component", () => {
 
   test(
     "loading event", async () => {
-      const ims = testIncidentManagementSystem();
       const eventID = "1";
 
       await act(async () => {
-        renderWithIMS(
-          <EventPage id={eventID} />, ims
-        );
+        renderWithIMSContext(<EventPage id={eventID} />);
         expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
       });
     }
@@ -37,9 +37,7 @@ describe("EventPage component", () => {
 
       const spy = jest.spyOn(console, "error");
 
-      renderWithIMS(
-        <EventPage id={eventID} />, ims
-      );
+      renderWithIMSContext(<EventPage id={eventID} />, ims);
 
       expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
@@ -55,9 +53,7 @@ describe("EventPage component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMS(
-            <EventPage id={event.id} />, ims
-          );
+          renderWithIMSContext(<EventPage id={event.id} />, ims);
         });
 
         expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();
@@ -75,20 +71,17 @@ describe("RoutedEventPage component", () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
-        const history = createMemoryHistory();
-        const route = `/events/${event.id}`;
-        history.push(route);
-
         await act(async () => {
-          renderWithIMS(
+          renderWithIMSContext(
             (
-              <Router history={history}>
-                <Switch>
-                  <Route exact path="/events/:eventID/">
-                    <RoutedEventPage />
-                  </Route>
-                </Switch>
-              </Router>
+              <MemoryRouter initialEntries={[URLs.event(event)]}>
+                <Routes>
+                  <Route
+                    path={`${URLs.events}:eventID/`}
+                    element={<RoutedEventPage />}
+                  />
+                </Routes>
+              </MemoryRouter>
             ),
             ims,
           );

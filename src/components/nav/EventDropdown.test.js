@@ -4,7 +4,7 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import { URLs } from "../../URLs";
-import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../../ims/TestIMS";
 
 import EventDropdown from "./EventDropdown";
 
@@ -13,7 +13,7 @@ describe("EventDropdown component", () => {
 
   test("id", async () => {
     await act(async () => {
-      renderWithIMS(<EventDropdown />, testIncidentManagementSystem());
+      renderWithIMSContext(<EventDropdown />, testIncidentManagementSystem());
     });
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
+      renderWithIMSContext(<EventDropdown />, ims);
     });
 
     for (const event of await ims.events()) {
@@ -41,7 +41,7 @@ describe("EventDropdown component", () => {
     const spy = jest.spyOn(console, "error");
 
     await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
+      renderWithIMSContext(<EventDropdown />, ims);
       await userEvent.click(screen.getByText("Event"));
     });
 
@@ -58,7 +58,7 @@ describe("EventDropdown component", () => {
     ims.testData.events = [];
 
     await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
+      renderWithIMSContext(<EventDropdown />, ims);
       await userEvent.click(screen.getByText("Event"));
     });
 
@@ -69,7 +69,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
+      renderWithIMSContext(<EventDropdown />, ims);
       await userEvent.click(screen.getByText("Event"));
     });
 
@@ -82,7 +82,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     await act(async () => {
-      renderWithIMS(<EventDropdown />, ims);
+      renderWithIMSContext(<EventDropdown />, ims);
       await userEvent.click(screen.getByText("Event"));
     });
 
