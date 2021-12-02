@@ -135,7 +135,9 @@ describe("App component", () => {
 
   test(
     "not found", async () => {
-      renderWithURL("/xyzzy");
+      const username = "Hubcap";
+
+      renderWithURL("/xyzzy", username);
 
       expect(
         await screen.findByText("Resource not found:")

@@ -69,7 +69,7 @@ const App = (props) => {
             } />
 
             {/* Not found */}
-            <Route path="*" element={<NotFoundPage />} />
+            <Route path="*" element={<Login><NotFoundPage /></Login>} />
 
           </Routes>
         </IMSContext.Provider>
