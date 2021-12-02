@@ -68,9 +68,9 @@ describe("App component", () => {
       await userEvent.type(screen.getByLabelText(/Password/), password);
       await userEvent.click(screen.getByText(/Log In/));
 
-      const title = await screen.findByText("Ranger Incident Management System");
-
-      expect(title).toBeInTheDocument();
+      expect(
+        await screen.findByText("Ranger Incident Management System")
+      ).toBeInTheDocument();
     }
   );
 
@@ -98,6 +98,18 @@ describe("App component", () => {
       }
 
       expect(screen.queryByText("Log In")).toBeInTheDocument();
+    }
+  );
+
+  test(
+    "load app, logged in", async () => {
+      const username = "Hubcap";
+
+      renderWithURL("/ims/", username);
+
+      expect(
+        await screen.findByText("Ranger Incident Management System")
+      ).toBeInTheDocument();
     }
   );
 
