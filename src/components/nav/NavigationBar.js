@@ -13,7 +13,7 @@ import logo from "../../logo.svg";
 const NavigationBar = (props) => {
   return (
     <Navbar id={props.id}>
-      <Navbar.Brand href={URLs.home} id="nav_home_link">
+      <Navbar.Brand href={URLs.ims} id="nav_home_link">
         <Image id="nav_home_image"
           width="50"
           height="33"
