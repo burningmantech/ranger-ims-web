@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import userEvent from '@testing-library/user-event';
 
 import { testIncidentManagementSystem } from "./ims/TestIMS";
+import { URLs } from "./URLs";
 import App from "./App";
 
 
@@ -47,8 +48,8 @@ describe("App component", () => {
   );
 
   test(
-    "load app", async () => {
-      renderWithURL("/ims/");
+    "load app, not logged in", async () => {
+      renderWithURL(URLs.ims);
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
@@ -60,7 +61,7 @@ describe("App component", () => {
       const username = "Hubcap";
       const password = username;
 
-      renderWithURL("/ims/");
+      renderWithURL(URLs.ims);
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -79,7 +80,7 @@ describe("App component", () => {
       const username = "Hubcap";
       const password = "Not My Password";
 
-      renderWithURL("/ims/");
+      renderWithURL(URLs.ims);
 
       expect(await screen.findByText(/Log In/)).toBeInTheDocument();
 
@@ -105,7 +106,7 @@ describe("App component", () => {
     "load app, logged in", async () => {
       const username = "Hubcap";
 
-      renderWithURL("/ims/", username);
+      renderWithURL(URLs.ims, username);
 
       expect(
         await screen.findByText("Ranger Incident Management System")
