@@ -5,7 +5,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import User from "../ims/User";
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
 import Login from "./Login";
 
 
@@ -16,7 +16,7 @@ describe("Login component", () => {
   });
 
   test("no user -> login button", () => {
-    renderWithIMS(<Login />, testIncidentManagementSystem());
+    renderWithIMSContext(<Login />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
@@ -26,7 +26,7 @@ describe("Login component", () => {
     const ims = testIncidentManagementSystem(username);
     ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
-    renderWithIMS(<Login />, ims);
+    renderWithIMSContext(<Login />, ims);
 
     expect(screen.queryByText("Log In")).toBeInTheDocument();
   });
@@ -35,7 +35,7 @@ describe("Login component", () => {
     const username = "Hubcap";
     const ims = testIncidentManagementSystem(username);
 
-    renderWithIMS(<Login />, ims);
+    renderWithIMSContext(<Login />, ims);
 
     expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
@@ -45,7 +45,7 @@ describe("Login component", () => {
     const ims = testIncidentManagementSystem(username);
     const content = "Hello, World!";
 
-    renderWithIMS(<Login>{content}</Login>, ims);
+    renderWithIMSContext(<Login>{content}</Login>, ims);
 
     expect(screen.queryByText(content)).toBeInTheDocument();
   });
@@ -56,7 +56,7 @@ describe("Login component", () => {
     const username = "Hubcap";
     const password = username;
 
-    renderWithIMS(<Login>{content}</Login>, ims);
+    renderWithIMSContext(<Login>{content}</Login>, ims);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);
@@ -71,7 +71,7 @@ describe("Login component", () => {
     const username = "Hubcap";
     const password = "Not My Password";
 
-    renderWithIMS(<Login>{content}</Login>, ims);
+    renderWithIMSContext(<Login>{content}</Login>, ims);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);
@@ -97,7 +97,7 @@ describe("Login component", () => {
 
     ims.login = jest.fn(() => { throw new Error(message); });
 
-    renderWithIMS(<Login>{content}</Login>, ims);
+    renderWithIMSContext(<Login>{content}</Login>, ims);
 
     await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);

@@ -4,7 +4,7 @@ import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { Event } from "../ims/model/Event";
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import { EventPage } from "./EventPage";
 import RoutedEventPage from "./EventPage";
@@ -18,7 +18,7 @@ describe("EventPage component", () => {
       const eventID = "1";
 
       await act(async () => {
-        renderWithIMS(
+        renderWithIMSContext(
           <EventPage id={eventID} />, ims
         );
         expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("EventPage component", () => {
 
       const spy = jest.spyOn(console, "error");
 
-      renderWithIMS(
+      renderWithIMSContext(
         <EventPage id={eventID} />, ims
       );
 
@@ -55,7 +55,7 @@ describe("EventPage component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMS(
+          renderWithIMSContext(
             <EventPage id={event.id} />, ims
           );
         });
@@ -76,7 +76,7 @@ describe("RoutedEventPage component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMS(
+          renderWithIMSContext(
             (
               <MemoryRouter initialEntries={[`/events/${event.id}`]}>
                 <Routes>

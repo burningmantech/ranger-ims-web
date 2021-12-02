@@ -7,7 +7,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import User from "../../ims/User";
-import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../../ims/TestIMS";
 import LoginDropdown from "./LoginDropdown";
 
 
@@ -26,7 +26,7 @@ describe("LoginDropdown component", () => {
   });
 
   test("no user -> not logged in message", () => {
-    renderWithIMS(<LoginDropdown />, testIncidentManagementSystem());
+    renderWithIMSContext(<LoginDropdown />, testIncidentManagementSystem());
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
@@ -37,7 +37,7 @@ describe("LoginDropdown component", () => {
 
     ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
-    renderWithIMS(<LoginDropdown />, ims);
+    renderWithIMSContext(<LoginDropdown />, ims);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
   });
@@ -51,7 +51,7 @@ describe("LoginDropdown component", () => {
 
     const spy = jest.spyOn(console, "debug");
 
-    renderWithIMS(<LoginDropdown />, ims);
+    renderWithIMSContext(<LoginDropdown />, ims);
 
     expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
@@ -62,7 +62,7 @@ describe("LoginDropdown component", () => {
   test("user -> log out item", () => {
     const username = "Hubcap";
 
-    renderWithIMS(
+    renderWithIMSContext(
       <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
@@ -72,7 +72,7 @@ describe("LoginDropdown component", () => {
   test("activate user menu -> log out item", async () => {
     const username = "Hubcap";
 
-    renderWithIMS(
+    renderWithIMSContext(
       <LoginDropdown />, testIncidentManagementSystem(username)
     );
 
@@ -90,7 +90,7 @@ describe("LoginDropdown component", () => {
     let notified = false;
     ims.delegate = () => { notified = true; }
 
-    renderWithIMS(<LoginDropdown />, ims);
+    renderWithIMSContext(<LoginDropdown />, ims);
 
     await act(async () => {
       await userEvent.click(screen.getByText(username));

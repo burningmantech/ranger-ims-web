@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
 
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
 
 import BagTable from "./BagTable";
 
@@ -10,7 +10,7 @@ describe("BagTable component", () => {
 
   test("id", async () => {
     await act(async () => {
-      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+      renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
     });
 
     expect(document.getElementById("bag_table")).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe("BagTable component", () => {
 
   test("caption", async () => {
     await act(async () => {
-      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+      renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
     });
 
     expect(screen.queryByText("IMS Bag")).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe("BagTable component", () => {
 
   test("loading bag", async () => {
     await act(async () => {
-      renderWithIMS(<BagTable />, testIncidentManagementSystem());
+      renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
       expect(screen.queryByText("Loading...")).toBeInTheDocument();
     });
   });
@@ -40,7 +40,7 @@ describe("BagTable component", () => {
 
     const spy = jest.spyOn(console, "error");
 
-    renderWithIMS(<BagTable />, ims);
+    renderWithIMSContext(<BagTable />, ims);
 
     expect(screen.queryByText("Error loading URL bag")).toBeInTheDocument();
 
@@ -52,7 +52,7 @@ describe("BagTable component", () => {
   test("loaded bag", async () => {
     const ims = testIncidentManagementSystem();
 
-    renderWithIMS(<BagTable />, ims);
+    renderWithIMSContext(<BagTable />, ims);
 
     for (const name in ims.testData.bag.urls) {
       expect(await screen.findByText(name)).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe("BagTable component", () => {
     const ims = testIncidentManagementSystem();
     ims.testData.bag = {};
 
-    renderWithIMS(<BagTable />, ims);
+    renderWithIMSContext(<BagTable />, ims);
 
     expect(
       await screen.findByText("ERROR: no URLs in bag")
@@ -75,7 +75,7 @@ describe("BagTable component", () => {
     const ims = testIncidentManagementSystem();
     ims.testData.bag = { urls: null };
 
-    renderWithIMS(<BagTable />, ims);
+    renderWithIMSContext(<BagTable />, ims);
 
     expect(
       await screen.findByText("ERROR: no URLs in bag")

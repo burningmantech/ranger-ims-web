@@ -3,7 +3,7 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import { URLs } from "../../URLs";
-import { renderWithIMS, testIncidentManagementSystem } from "../../ims/TestIMS";
+import { renderWithIMSContext, testIncidentManagementSystem } from "../../ims/TestIMS";
 
 import NavigationBar from "./NavigationBar";
 
@@ -14,7 +14,7 @@ describe("Navbar component", () => {
     const navID = "who-what";
 
     await act(async () => {
-      renderWithIMS(
+      renderWithIMSContext(
         <NavigationBar id={navID} />, testIncidentManagementSystem()
       );
     });
@@ -27,7 +27,7 @@ describe("Navbar component", () => {
     const navID = "nav_home_image";
 
     await act(async () => {
-      renderWithIMS(
+      renderWithIMSContext(
         <NavigationBar id={navID} />, testIncidentManagementSystem()
       );
     });
@@ -37,7 +37,7 @@ describe("Navbar component", () => {
 
   test("includes link to home", async () => {
     await act(async () => {
-      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+      renderWithIMSContext(<NavigationBar />, testIncidentManagementSystem());
     });
 
     const link = document.getElementById("nav_home_link");
@@ -48,7 +48,7 @@ describe("Navbar component", () => {
 
   test("includes events dropdown", async () => {
     await act(async () => {
-      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+      renderWithIMSContext(<NavigationBar />, testIncidentManagementSystem());
     });
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe("Navbar component", () => {
 
   test("includes user dropdown", async () => {
     await act(async () => {
-      renderWithIMS(<NavigationBar />, testIncidentManagementSystem());
+      renderWithIMSContext(<NavigationBar />, testIncidentManagementSystem());
     });
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();

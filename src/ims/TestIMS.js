@@ -298,7 +298,7 @@ export function testIncidentManagementSystem(username) {
 }
 
 
-export const renderWithIMS = (content, ims, ...renderOptions) => {
+export const renderWithIMSContext = (content, ims, ...renderOptions) => {
   return render(
     (
       <IMSContext.Provider value={{ims: ims}}>
