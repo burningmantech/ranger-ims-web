@@ -17,13 +17,10 @@ describe("EventPage component", () => {
 
   test(
     "loading event", async () => {
-      const ims = testIncidentManagementSystem();
       const eventID = "1";
 
       await act(async () => {
-        renderWithIMSContext(
-          <EventPage id={eventID} />, ims
-        );
+        renderWithIMSContext(<EventPage id={eventID} />);
         expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
       });
     }
@@ -40,9 +37,7 @@ describe("EventPage component", () => {
 
       const spy = jest.spyOn(console, "error");
 
-      renderWithIMSContext(
-        <EventPage id={eventID} />, ims
-      );
+      renderWithIMSContext(<EventPage id={eventID} />, ims);
 
       expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
@@ -58,9 +53,7 @@ describe("EventPage component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMSContext(
-            <EventPage id={event.id} />, ims
-          );
+          renderWithIMSContext(<EventPage id={event.id} />, ims);
         });
 
         expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();
