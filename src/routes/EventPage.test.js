@@ -3,8 +3,11 @@ import { createMemoryHistory } from "history";
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { URLs } from "../URLs";
 import { Event } from "../ims/model/Event";
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext, testIncidentManagementSystem
+} from "../ims/TestIMS";
 
 import { EventPage } from "./EventPage";
 import RoutedEventPage from "./EventPage";
@@ -78,10 +81,10 @@ describe("RoutedEventPage component", () => {
         await act(async () => {
           renderWithIMSContext(
             (
-              <MemoryRouter initialEntries={[`/events/${event.id}`]}>
+              <MemoryRouter initialEntries={[URLs.event(event)]}>
                 <Routes>
                   <Route
-                    path="/events/:eventID/"
+                    path={`${URLs.events}:eventID/`}
                     element={<RoutedEventPage />}
                   />
                 </Routes>
