@@ -7,7 +7,7 @@ import { testIncidentManagementSystem } from "./ims/TestIMS";
 import App from "./App";
 
 
-export const renderWithURL = (url) => {
+export const renderWithURL = (url, username) => {
   const Router = (props) => {
     return (
       <MemoryRouter initialEntries={[url]}>
@@ -17,7 +17,7 @@ export const renderWithURL = (url) => {
   }
 
   return render(
-    <App ims={testIncidentManagementSystem()} router={Router} />
+    <App ims={testIncidentManagementSystem(username)} router={Router} />
   );
 }
 
@@ -33,6 +33,16 @@ describe("App component", () => {
       render(<App ims={testIncidentManagementSystem()} />);
 
       expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    }
+  );
+
+  test(
+    "redirect root resource", async () => {
+      renderWithURL("/");
+
+      // Same expectations as for /ims (see next test)
+      expect(await screen.findByText(/Log In/)).toBeInTheDocument();
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     }
   );
 
