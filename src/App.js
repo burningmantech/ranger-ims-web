@@ -48,25 +48,15 @@ const App = (props) => {
             <Route path="/" element={<Navigate to={URLs.ims} />} />
 
             {/* Home Page */}
-            <Route path={URLs.ims} element={
-              <Login>
-                <HomePage />
-              </Login>
-            } />
+            <Route path={URLs.ims} element={<Login><HomePage /></Login>} />
 
             {/* Event Page */}
             <Route path={`${URLs.events}:eventID/`} element={
-              <Login>
-                <RoutedEventPage />
-              </Login>
+              <Login><RoutedEventPage /></Login>
             } />
 
             {/* Admin Page */}
-            <Route path={URLs.admin} element={
-              <Login>
-                <AdminPage />
-              </Login>
-            } />
+            <Route path={URLs.admin} element={<Login><AdminPage /></Login>} />
 
             {/* Not found */}
             <Route path="*" element={<Login><NotFoundPage /></Login>} />
