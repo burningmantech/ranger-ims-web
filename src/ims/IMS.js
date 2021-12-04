@@ -11,7 +11,7 @@ import Incident from "./model/Incident";
 export default class IncidentManagementSystem {
 
   constructor(bagURL) {
-    invariant(bagURL, "bagURL is required");
+    invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store("credentials", "user credentials", User);
     this._bagStore = new Store("bag", "URL bag");
@@ -324,6 +324,7 @@ export default class IncidentManagementSystem {
 
   eventWithID = async (id) => {
     this.events();
+    invariant(this._eventsMap != null, "this._eventsMap did not initialize");
     if (this._eventsMap.has(id)) {
       return this._eventsMap.get(id);
     } else {
