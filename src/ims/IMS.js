@@ -10,7 +10,7 @@ import Event from "./model/Event";
 export default class IncidentManagementSystem {
 
   constructor(bagURL) {
-    invariant(bagURL, "bagURL is required");
+    invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store("credentials", "user credentials", User);
     this._bagStore = new Store("bag", "URL bag");
@@ -307,6 +307,8 @@ export default class IncidentManagementSystem {
   ////
   //  Data
   ////
+
+  // Events
 
   eventsCacheLifetime = { minutes: 5 };
 
