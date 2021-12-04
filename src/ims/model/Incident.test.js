@@ -7,13 +7,12 @@ describe("Incident", () => {
   test(
     "toString", () => {
       const event = new Event("1", "One");
-      const number = 1;
+      const number = 4;
       const incident = new Incident(event, number);
 
-      const eventJSON = { id: id, name: name };
-      const result = event.toString();
+      const result = incident.toString();
 
-      expect(result).toEqual(name);
+      expect(result).toEqual(`#${number} (${event})`);
     }
   );
 

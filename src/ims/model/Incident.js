@@ -41,7 +41,7 @@ export default class Incident {
   }
 
   toString = () => {
-    return this.event.id + this.number;
+    return `#${this.number} (${this.event})`;
   }
 
   toJSON = () => {
