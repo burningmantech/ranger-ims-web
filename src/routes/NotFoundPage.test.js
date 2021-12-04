@@ -13,13 +13,15 @@ describe("NotFoundPage component", () => {
     "not found", async () => {
       const path = "/xyzzy/";
 
-      renderWithIMSContext(
-        <MemoryRouter initialEntries={[path]}>
-          <Routes>
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </MemoryRouter>
-      );
+      await act(async () => {
+        renderWithIMSContext(
+          <MemoryRouter initialEntries={[path]}>
+            <Routes>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </MemoryRouter>
+        );
+      });
 
       expect(screen.queryByText("Resource not found:")).toBeInTheDocument();
       expect(screen.queryByText(path)).toBeInTheDocument();

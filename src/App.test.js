@@ -134,6 +134,17 @@ describe("App component", () => {
   );
 
   test(
+    "load admin page, logged in", async () => {
+      const username = "Hubcap";
+      const ims = testIncidentManagementSystem(username);
+
+      renderWithURL(URLs.admin, username, ims);
+
+      expect(await screen.findByText("Admin Console")).toBeInTheDocument();
+    }
+  );
+
+  test(
     "not found", async () => {
       const username = "Hubcap";
 
