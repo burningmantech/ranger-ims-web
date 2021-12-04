@@ -1,7 +1,9 @@
 import "@testing-library/jest-dom/extend-expect";
 import { act, screen } from "@testing-library/react";
 
-import { renderWithIMS, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext, testIncidentManagementSystem
+} from "../ims/TestIMS";
 
 import DispatchQueue from "./DispatchQueue";
 
@@ -15,7 +17,7 @@ describe("DispatchQueue component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMS(
+          renderWithIMSContext(
             <DispatchQueue event={event} />, ims
           );
         });
@@ -39,7 +41,7 @@ describe("DispatchQueue component", () => {
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMS(
+          renderWithIMSContext(
             <DispatchQueue event={event} />, ims
           );
 
@@ -63,7 +65,7 @@ describe("DispatchQueue component", () => {
 
   //     for (const event of await ims.events()) {
   //       await act(async () => {
-  //         renderWithIMS(
+  //         renderWithIMSContext(
   //           <DispatchQueue event={event} />, ims
   //         );
   //       });

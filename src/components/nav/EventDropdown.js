@@ -9,6 +9,7 @@ import { IMSContext } from "../../ims/context";
 
 const EventDropdown = (props) => {
   const imsContext = useContext(IMSContext);
+  invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
 
   invariant(ims != null, "No IMS");
