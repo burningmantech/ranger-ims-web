@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 import { createMemoryHistory } from "history";
-import { act, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { URLs } from "../URLs";
@@ -25,7 +25,7 @@ describe("EventPage component", () => {
           renderWithIMSContext(<EventPage id={event.id} />);
           expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
         });
-        break;
+        cleanup();
       }
     }
   );
@@ -49,7 +49,7 @@ describe("EventPage component", () => {
         expect(spy).toHaveBeenCalledWith(
           "Unable to fetch event: because reasons..."
         );
-        break;
+        cleanup();
       }
     }
   );

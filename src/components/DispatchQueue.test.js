@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, screen } from "@testing-library/react";
+import { act, cleanup, screen } from "@testing-library/react";
 
 import {
   renderWithIMSContext, testIncidentManagementSystem
@@ -16,14 +16,12 @@ describe("DispatchQueue component", () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
-        await act(async () => {
-          renderWithIMSContext(
-            <DispatchQueue event={event} />, ims
-          );
-        });
+        renderWithIMSContext(
+          <DispatchQueue event={event} />, ims
+        );
 
         expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
-        break;
+        cleanup();
       }
     }
   );
@@ -33,9 +31,9 @@ describe("DispatchQueue component", () => {
     async () => {
       const ims = testIncidentManagementSystem();
 
-      ims.eventWithID = jest.fn(
-        (id) => { throw new Error("because reasons..."); }
-      );
+      // ims.eventWithID = jest.fn(
+      //   (id) => { throw new Error("because reasons..."); }
+      // );
 
       const spy = jest.spyOn(console, "error");
 
@@ -53,7 +51,7 @@ describe("DispatchQueue component", () => {
             "Unable to fetch incidents: because reasons..."
           );
         });
-        break;
+        cleanup();
       }
     }
   );
