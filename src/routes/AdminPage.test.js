@@ -14,7 +14,7 @@ describe("AdminPage component", () => {
         renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
       });
 
-      expect(screen.queryByText("AdminPage Console")).toBeInTheDocument();
+      expect(screen.queryByText("Admin Console")).toBeInTheDocument();
     }
   );
 
