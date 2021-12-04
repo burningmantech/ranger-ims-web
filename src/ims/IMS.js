@@ -313,16 +313,21 @@ export default class IncidentManagementSystem {
   eventsCacheLifetime = { minutes: 5 };
 
   events = async () => {
-    return this._fetchAndCacheJSON(
+    const events = await this._fetchAndCacheJSON(
       "events", this._eventsStore, this.eventsCacheLifetime
     );
+    this._eventsMap = new Map(events.map(event => [event.id, event]));
+    return events;
   }
 
   eventWithID = async (id) => {
-    for (const event of await this.events()) {
-      if (event.id === id) { return event; }
+    await this.events();
+    invariant(this._eventsMap != null, "this._eventsMap did not initialize");
+    if (this._eventsMap.has(id)) {
+      return this._eventsMap.get(id);
+    } else {
+      throw new Error(`No event found with ID: ${id}`);
     }
-    throw new Error(`No event found with ID: ${id}`);
   }
 
 }
