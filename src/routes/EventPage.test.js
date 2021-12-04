@@ -42,7 +42,7 @@ describe("EventPage component", () => {
       const spy = jest.spyOn(console, "error");
 
       for (const event of await ims.events()) {
-        renderWithIMSContext(<EventPage id={eventID} />, ims);
+        renderWithIMSContext(<EventPage id={event.id} />, ims);
 
         expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
@@ -102,8 +102,3 @@ describe("RoutedEventPage component", () => {
   );
 
 });
-
-
-const matchProperty = (eventID) => {
-  return { params: { eventID: eventID } };
-}
