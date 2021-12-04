@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 import { createMemoryHistory } from "history";
-import { act, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { URLs } from "../URLs";
@@ -18,12 +18,15 @@ describe("EventPage component", () => {
   test(
     "loading event",
     async () => {
-      const eventID = "1";
+      const ims = testIncidentManagementSystem();
 
-      await act(async () => {
-        renderWithIMSContext(<EventPage id={eventID} />);
-        expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
-      });
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithIMSContext(<EventPage id={event.id} />);
+          expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+        });
+        cleanup();
+      }
     }
   );
 
@@ -31,7 +34,6 @@ describe("EventPage component", () => {
     "event fails to load",
     async () => {
       const ims = testIncidentManagementSystem();
-      const eventID = "1";
 
       ims.eventWithID = jest.fn(
         (id) => { throw new Error("Can't load event because reasons..."); }
@@ -39,13 +41,16 @@ describe("EventPage component", () => {
 
       const spy = jest.spyOn(console, "error");
 
-      renderWithIMSContext(<EventPage id={eventID} />, ims);
+      for (const event of await ims.events()) {
+        renderWithIMSContext(<EventPage id={event.id} />, ims);
 
-      expect(screen.queryByText("Error loading event")).toBeInTheDocument();
+        expect(screen.queryByText("Error loading event")).toBeInTheDocument();
 
-      expect(spy).toHaveBeenCalledWith(
-        "Unable to fetch event: Can't load event because reasons..."
-      );
+        expect(spy).toHaveBeenCalledWith(
+          "Unable to fetch event: Can't load event because reasons..."
+        );
+        cleanup();
+      }
     }
   );
 
