@@ -1,3 +1,6 @@
+import invariant from "invariant";
+
+
 export default class Event {
 
   static fromJSON = (json) => {
@@ -5,12 +8,8 @@ export default class Event {
   }
 
   constructor(id, name) {
-    if (id == null) {
-      throw new Error("id is required");
-    }
-    if (name == null) {
-      throw new Error("name is required");
-    }
+    invariant(id != null, "id is required");
+    invariant(name != null, "name is required");
 
     this.id = id;
     this.name = name;
