@@ -16,7 +16,8 @@ import RoutedEventPage from "./EventPage";
 describe("EventPage component", () => {
 
   test(
-    "loading event", async () => {
+    "loading event",
+    async () => {
       const eventID = "1";
 
       await act(async () => {
@@ -27,7 +28,8 @@ describe("EventPage component", () => {
   );
 
   test(
-    "event fails to load", async () => {
+    "event fails to load",
+    async () => {
       const ims = testIncidentManagementSystem();
       const eventID = "1";
 
@@ -48,7 +50,8 @@ describe("EventPage component", () => {
   );
 
   test(
-    "heading", async () => {
+    "heading",
+    async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
@@ -67,7 +70,8 @@ describe("EventPage component", () => {
 describe("RoutedEventPage component", () => {
 
   test(
-    "eventID in routed properties", async () => {
+    "eventID in routed properties",
+    async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
@@ -93,8 +97,3 @@ describe("RoutedEventPage component", () => {
   );
 
 });
-
-
-const matchProperty = (eventID) => {
-  return { params: { eventID: eventID } };
-}

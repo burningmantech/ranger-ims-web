@@ -15,6 +15,8 @@ export const EventPage = (props) => {
 
   invariant(ims != null, "No IMS");
 
+  // Fetch data
+
   const [event, setEvent] = useState(undefined);
 
   useEffect(
@@ -56,6 +58,8 @@ export const EventPage = (props) => {
       return () => { ignore = true; }
     }, [ims, props.id, props.match]
   );
+
+  // Render
 
   if (event === undefined) {
     return <Loading />;
