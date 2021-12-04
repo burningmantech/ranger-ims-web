@@ -1,8 +1,10 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, render, screen, fireEvent } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext, testIncidentManagementSystem
+} from "../ims/TestIMS";
 
 import Page from "./Page";
 
@@ -37,7 +39,9 @@ describe("Page component", () => {
       const content = "Hello!";
 
       await act(async () => {
-        renderWithIMSContext(<Page>{content}</Page>, testIncidentManagementSystem());
+        renderWithIMSContext(
+          <Page>{content}</Page>, testIncidentManagementSystem()
+        );
       });
 
       expect(screen.queryByText(content)).toBeInTheDocument();
