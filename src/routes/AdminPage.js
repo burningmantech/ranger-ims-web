@@ -5,7 +5,7 @@ import Page from "../components/Page";
 const AdminPage = (props) => {
   return (
     <Page>
-      <h1>AdminPage Console</h1>
+      <h1>Admin Console</h1>
       <BagTable />
     </Page>
   );
