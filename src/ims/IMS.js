@@ -323,7 +323,7 @@ export default class IncidentManagementSystem {
   }
 
   eventWithID = async (id) => {
-    this.events();
+    await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
     if (this._eventsMap.has(id)) {
       return this._eventsMap.get(id);
