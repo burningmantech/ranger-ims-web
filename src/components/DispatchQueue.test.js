@@ -16,9 +16,7 @@ describe("DispatchQueue component", () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
-        renderWithIMSContext(
-          <DispatchQueue event={event} />, ims
-        );
+        renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
         expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
         cleanup();
@@ -31,26 +29,24 @@ describe("DispatchQueue component", () => {
     async () => {
       const ims = testIncidentManagementSystem();
 
-      // ims.eventWithID = jest.fn(
-      //   (id) => { throw new Error("because reasons..."); }
-      // );
+      ims.eventWithID = jest.fn(
+        (id) => { throw new Error("because reasons..."); }
+      );
 
       const spy = jest.spyOn(console, "error");
 
       for (const event of await ims.events()) {
         await act(async () => {
-          renderWithIMSContext(
-            <DispatchQueue event={event} />, ims
-          );
-
-          expect(
-            screen.queryByText("Error loading incidents")
-          ).toBeInTheDocument();
-
-          expect(spy).toHaveBeenCalledWith(
-            "Unable to fetch incidents: because reasons..."
-          );
+          renderWithIMSContext(<DispatchQueue event={event} />, ims);
         });
+
+        expect(
+          screen.queryByText("Error loading incidents")
+        ).toBeInTheDocument();
+
+        expect(spy).toHaveBeenCalledWith(
+          "Unable to fetch incidents: because reasons..."
+        );
         cleanup();
       }
     }
