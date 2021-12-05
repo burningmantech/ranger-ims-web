@@ -130,7 +130,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchAndCacheJSON = async(urlID, store, lifetime) => {
+  _fetchAndCacheJSON = async(store, lifetime) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -144,7 +144,7 @@ export default class IncidentManagementSystem {
     // If we have a cached-but-expired value, check the server for a new value
 
     const url = (
-      (urlID === "bag") ? this.bagURL : (await this.bag()).urls[urlID]
+      (store.key === "bag") ? this.bagURL : (await this.bag()).urls[store.key]
     );
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSONFromServer(url, fetchOptions);
@@ -186,9 +186,7 @@ export default class IncidentManagementSystem {
   bagCacheLifetime = { hours: 1 };
 
   bag = async () => {
-    return this._fetchAndCacheJSON(
-      "bag", this._bagStore, this.bagCacheLifetime
-    );
+    return this._fetchAndCacheJSON(this._bagStore, this.bagCacheLifetime);
   }
 
   ////
@@ -313,16 +311,21 @@ export default class IncidentManagementSystem {
   eventsCacheLifetime = { minutes: 5 };
 
   events = async () => {
-    return this._fetchAndCacheJSON(
-      "events", this._eventsStore, this.eventsCacheLifetime
+    const events = await this._fetchAndCacheJSON(
+      this._eventsStore, this.eventsCacheLifetime
     );
+    this._eventsMap = new Map(events.map(event => [event.id, event]));
+    return events;
   }
 
   eventWithID = async (id) => {
-    for (const event of await this.events()) {
-      if (event.id === id) { return event; }
+    await this.events();
+    invariant(this._eventsMap != null, "this._eventsMap did not initialize");
+    if (this._eventsMap.has(id)) {
+      return this._eventsMap.get(id);
+    } else {
+      throw new Error(`No event found with ID: ${id}`);
     }
-    throw new Error(`No event found with ID: ${id}`);
   }
 
 }
