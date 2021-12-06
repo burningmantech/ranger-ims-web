@@ -175,34 +175,35 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   __mockFetch = async (request) => {
-    let path;
+    let _path;
     try {
       const url = new URL(request.url);
-      path = url.pathname;
+      _path = url.pathname;
     }
     catch {
-      path = request.url;
+      _path = request.url;
     }
+    const path = _path;
 
     const bag = this.testData.bag;
 
-    switch (path) {
-      case "/not_found":
+    switch (true) {
+      case path == "/not_found":
         return this._notFoundResponse();
 
-      case "/auth_fail_text":
+      case path == "/auth_fail_text":
         return this._authTextResponse();
 
-      case "/auth_fail_json_no_status":
+      case path == "/auth_fail_json_no_status":
         return this._authJSONResponse();
 
-      case "/auth_fail_json":
+      case path == "/auth_fail_json":
         return this._authFailedResponse();
 
-      case "/forbidden":
+      case path == "/forbidden":
         return this._forbiddenResponse();
 
-      case "/json_echo":
+      case path == "/json_echo":
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -212,10 +213,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         /* istanbul ignore next */
         break;
 
-      case "/text_hello":
+      case path == "/text_hello":
         return this._textResponse();
 
-      case "/ims/api/bag":
+      case path == "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(bag);
@@ -223,7 +224,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         /* istanbul ignore next */
         break;
 
-      case bag.urls.auth:
+      case path == bag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -233,7 +234,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         /* istanbul ignore next */
         break;
 
-      case bag.urls.events:
+      case path == bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
           return this._jsonResponse(this.testData.events);
