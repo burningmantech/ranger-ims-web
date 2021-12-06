@@ -150,6 +150,7 @@ export default class IncidentManagementSystem {
     const url = (
       (store.key === "bag") ? this.bagURL : (await this.bag()).urls[store.key]
     );
+    invariant(url != null, `No "${store.key}" URL found in bag`);
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSONFromServer(url, fetchOptions);
 
