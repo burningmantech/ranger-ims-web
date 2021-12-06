@@ -6,13 +6,32 @@ describe("Incident", () => {
 
   test(
     "toString", () => {
-      const event = new Event("1", "One");
+      const eventID = "1";
       const number = 4;
-      const incident = new Incident(event, number);
+      const incident = new Incident(eventID, number);
 
       const result = incident.toString();
 
-      expect(result).toEqual(`#${number} (${event})`);
+      expect(result).toEqual(`#${number} (${eventID})`);
+    }
+  );
+
+  test(
+    "toJSON", () => {
+      const eventID = "1";
+      const number = 4;
+      const incident = new Incident(eventID, number);
+
+      const result = incident.toJSON();
+
+      expect(JSON.stringify(result)).toEqual(
+        JSON.stringify(
+          {
+            "eventID": "1",
+            "number": 4,
+          }
+        )
+      );
     }
   );
 

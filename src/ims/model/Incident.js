@@ -7,13 +7,13 @@ export default class Incident {
 
   static fromJSON = (json) => {
     return new Incident(
-      Event.fromJSON(json.event),
+      json.event,
       json.number,
     );
   }
 
-  constructor(event, number) {
-    invariant(event != null, "event is required");
+  constructor(eventID, number) {
+    invariant(eventID != null, "eventID is required");
     invariant(number != null, "number is required");
     // invariant(created != null, "created is required");
     // invariant(state != null, "state is required");
@@ -27,7 +27,7 @@ export default class Incident {
     //   incidentReportNumbers != null, "incidentReportNumbers is required"
     // );
 
-    this.event = event;
+    this.eventID = eventID;
     this.number = number;
     // this.created = created;
     // this.state = state;
@@ -41,12 +41,12 @@ export default class Incident {
   }
 
   toString = () => {
-    return `#${this.number} (${this.event})`;
+    return `#${this.number} (${this.eventID})`;
   }
 
   toJSON = () => {
     return {
-      event: this.event.toJSON(),
+      eventID: this.eventID,
       number: this.number,
     };
   }
