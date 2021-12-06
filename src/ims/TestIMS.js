@@ -30,11 +30,23 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this.testData = {
       bag: {
         urls: {
+          // ping: "/ims/api/ping",
           bag: "/ims/api/bag",
           auth: "/ims/api/auth",
-          event: "/ims/api/events/{event_id}/",
+          // access: "/ims/api/access",
+          // streets:  "/ims/api/streets",
+          // personnel: "/ims/api/personnel/",
+          // incident_types:  "/ims/api/incident_types/",
           events: "/ims/api/events/",
+          event: "/ims/api/events/{event_id}/",
           incidents: "/ims/api/events/{event_id}/incidents/",
+          incident: "/ims/api/events/{event_id}/incidents/{incident_number}",
+          // incident_reports: "/ims/api/events/{event_id}/incidents_reports/",
+          // incident_report: (
+          //   "/ims/api/events/{event_id}/incidents_reports" +
+          //   "/{incident_report_number}"
+          // ),
+          // event_source: "/ims/api/eventsource",
         },
       },
       events: [
@@ -43,6 +55,75 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "3", name: "Event Three" },
         { id: "4", name: "Event Four" },
       ],
+      incidents: {
+        "1": [
+          {
+            event: "1",
+            number: 1,
+            created: "2021-08-17T17:12:46.720000+00:00",
+            summary: null,
+            priority: 3,
+            state: "closed",
+            incident_types: ["Vehicle", "Camp"],
+            ranger_handles: ["Bucket", "Hubcap"],
+            location: {
+              type: "garett",
+              name: null,
+              description: "On B road",
+              radial_hour: 8,
+              radial_minute: 45,
+              concentric: "B",
+            },
+            incident_reports: [],
+            report_entries: [
+              {
+                system_entry: true,
+                created: "2021-08-17T17:12:46.730000+00:00",
+                author: "Operator",
+                text: "Changed description name to: On B road",
+              },
+              {
+                system_entry:false,
+                created:"2021-08-17T17:23:00.780000+00:00",
+                author:"Operator",
+                text: "White pickup stopped on road, eventually moved",
+              },
+              {
+                system_entry:true,
+                created:"2021-08-28T00:37:37.300000+00:00",
+                author:"Operator",
+                text:"Changed state to: closed",
+              },
+            ],
+          },
+        ],
+        "2": [
+          {
+            event: "1",
+            number: 2,
+            created: "2021-08-17T18:45:46.920000+00:00",
+            summary: "Ice cream at the Man",
+            priority: 1,
+            state: "open",
+            incident_types: ["Ice Cream"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "The Man",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [
+              {
+                system_entry:false,
+                created:"2021-08-17T18:45:46.930000+00:00",
+                author:"Operator",
+                text: "Someone is giving away ice cream at the Man",
+              },
+            ],
+          },
+        ],
+      },
     }
 
     this.requestsReceived = [];
@@ -240,6 +321,24 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._jsonResponse(this.testData.events);
         }
         /* istanbul ignore next */
+        break;
+
+      case path.startsWith(bag.urls.events):
+        let rest = path.substring(bag.urls.events.length);
+        const eventID = rest.split("/", 1)[0]
+
+        rest = rest.substring(eventID.length + 1);
+        const eventChild = rest.split("/", 1)[0]
+
+        switch (true) {
+          case eventChild == "incidents":
+            if (rest == "") {
+              console.error(`${eventID} all incidents`);
+            } else {
+              return this._jsonResponse(this.testData.incidents[eventID]);
+            }
+        }
+
         break;
     }
 
