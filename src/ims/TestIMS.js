@@ -32,8 +32,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         urls: {
           bag: "/ims/api/bag",
           auth: "/ims/api/auth",
-          event: "/ims/api/events/<eventID>/",
+          event: "/ims/api/events/{event_id}/",
           events: "/ims/api/events/",
+          incidents: "/ims/api/events/{event_id}/incidents/",
         },
       },
       events: [
