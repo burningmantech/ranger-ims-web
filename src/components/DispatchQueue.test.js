@@ -29,8 +29,8 @@ describe("DispatchQueue component", () => {
     async () => {
       const ims = testIncidentManagementSystem();
 
-      ims.eventWithID = jest.fn(
-        (id) => { throw new Error("because reasons..."); }
+      ims.incidents = jest.fn(
+        async (event) => { throw new Error("because reasons..."); }
       );
 
       const spy = jest.spyOn(console, "error");

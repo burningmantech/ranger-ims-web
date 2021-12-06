@@ -35,7 +35,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     ims.events = jest.fn(
-      () => { throw new Error("because reasons..."); }
+      async () => { throw new Error("because reasons..."); }
     );
 
     const spy = jest.spyOn(console, "error");
