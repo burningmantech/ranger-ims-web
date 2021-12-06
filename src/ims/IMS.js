@@ -132,7 +132,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchAndCacheJSON = async(store, lifetime) => {
+  _fetchAndCacheJSON = async(store, lifetime, urlParams) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -143,14 +143,23 @@ export default class IncidentManagementSystem {
       return cachedValue;
     }
 
-    // If we have a cached-but-expired value, check the server for a new value
+    // If we have no cached value, or a cached-but-expired value, check the
+    // server for a new value
 
     // The bag is special because we don't get it's URL from the bag because the
     // bag is special because...
-    const url = (
+    let url = (
       (store.key === "bag") ? this.bagURL : (await this.bag()).urls[store.key]
     );
     invariant(url != null, `No "${store.key}" URL found in bag`);
+
+    // Replace URL parameters with values
+    for (const paramName in urlParams) {
+      console.debug(`{${paramName}} -> ${urlParams[paramName]}`);
+      url = url.replace(`{${paramName}}`, urlParams[paramName]);
+    }
+    invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);
+
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSONFromServer(url, fetchOptions);
 
@@ -337,9 +346,10 @@ export default class IncidentManagementSystem {
 
   incidentCacheLifetime = { minutes: 5 };
 
-  incidents = async () => {
+  incidents = async (event) => {
     const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore, this.incidentCacheLifetime
+      this._incidentsStore, this.incidentCacheLifetime,
+      { "event_id": event.id }
     );
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.id, incident])

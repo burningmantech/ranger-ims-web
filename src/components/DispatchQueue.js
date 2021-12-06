@@ -25,7 +25,7 @@ const DispatchQueue = (props) => {
       const fetchIncidents = async () => {
         let incidents;
         try {
-          incidents = await ims.incidents();
+          incidents = await ims.incidents(props.event);
         }
         catch (e) {
           console.error(`Unable to fetch incidents: ${e.message}`);
