@@ -340,11 +340,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         rest = rest.substring(eventID.length + 1);
         const eventChild = rest.split("/", 1)[0]
 
-        switch (true) {
-          case eventChild == "incidents":
-            if (rest == "") {
-              console.error(`${eventID} all incidents`);
-            } else {
+        switch (eventChild) {
+          case "incidents":
+            if (rest != "") {
               console.debug(`Issuing event ${eventID} incidents response.`);
               return this._jsonResponse(this.testData.incidents[eventID]);
             }
