@@ -270,18 +270,23 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     switch (true) {
       case path == "/not_found":
+        console.debug("Issuing not found response.");
         return this._notFoundResponse();
 
       case path == "/auth_fail_text":
+        console.debug("Issuing authentication required text response.");
         return this._authTextResponse();
 
       case path == "/auth_fail_json_no_status":
+        console.debug("Issuing authentication required JSON response.");
         return this._authJSONResponse();
 
       case path == "/auth_fail_json":
+        console.debug("Issuing authentication failed JSON response.");
         return this._authFailedResponse();
 
       case path == "/forbidden":
+        console.debug("Issuing forbidden response.");
         return this._forbiddenResponse();
 
       case path == "/json_echo":
@@ -289,17 +294,20 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
+          console.debug("Issuing JSON echo response.");
           return this._jsonResponse(requestJSON);
         }
         /* istanbul ignore next */
         break;
 
       case path == "/text_hello":
+      console.debug("Issuing hello text response.");
         return this._textResponse();
 
       case path == "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
+          console.debug("Issuing bag response.");
           return this._jsonResponse(bag);
         }
         /* istanbul ignore next */
@@ -310,6 +318,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
+          console.debug("Issuing auth response.");
           return this._authResponse(requestJSON);
         }
         /* istanbul ignore next */
@@ -318,6 +327,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       case path == bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
+          console.debug("Issuing events response.");
           return this._jsonResponse(this.testData.events);
         }
         /* istanbul ignore next */
@@ -335,6 +345,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             if (rest == "") {
               console.error(`${eventID} all incidents`);
             } else {
+              console.debug(`Issuing event ${eventID} incidents response.`);
               return this._jsonResponse(this.testData.incidents[eventID]);
             }
         }
