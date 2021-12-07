@@ -27,7 +27,7 @@ describe("Incident", () => {
       expect(JSON.stringify(result)).toEqual(
         JSON.stringify(
           {
-            "eventID": "1",
+            "event": "1",
             "number": 4,
           }
         )
