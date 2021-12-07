@@ -23,18 +23,6 @@ export const EventPage = (props) => {
   useEffect(
     () => {
       const eventID = () => {
-        if (props.match != null) {
-          // Routed event page
-          invariant(
-            props.match.params != null, "match.params property is required"
-          );
-          invariant(
-            props.match.params.eventID != null,
-            "match.params.eventID property is required",
-          );
-          return props.match.params.eventID;
-        }
-
         invariant(props.id != null, "id property is required");
         return props.id;
       }

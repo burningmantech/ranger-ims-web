@@ -348,6 +348,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             }
         }
 
+        /* istanbul ignore next */
         break;
     }
 
