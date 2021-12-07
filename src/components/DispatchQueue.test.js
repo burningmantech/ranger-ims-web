@@ -52,23 +52,23 @@ describe("DispatchQueue component", () => {
     }
   );
 
-  // test(
-  //   "event name",
-  //   async () => {
-  //     const ims = testIncidentManagementSystem();
+  test(
+    "title with event name",
+    async () => {
+      const ims = testIncidentManagementSystem();
 
-  //     for (const event of await ims.events()) {
-  //       await act(async () => {
-  //         renderWithIMSContext(
-  //           <DispatchQueue event={event} />, ims
-  //         );
-  //       });
+      for (const event of await ims.events()) {
+        await act(async () => {
+          renderWithIMSContext(
+            <DispatchQueue event={event} />, ims
+          );
+        });
 
-  //       expect(
-  //         screen.queryByText(`Dispatch Queue: ${event.name}`)
-  //       ).toBeInTheDocument();
-  //     }
-  //   }
-  // );
+        expect(
+          screen.queryByText(`Dispatch Queue: ${event.name}`)
+        ).toBeInTheDocument();
+      }
+    }
+  );
 
 });
