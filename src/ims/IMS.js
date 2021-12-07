@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
+import Incident from "./model/Incident";
 
 
 export default class IncidentManagementSystem {
@@ -15,6 +16,7 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store("credentials", "user credentials", User);
     this._bagStore = new Store("bag", "URL bag");
     this._eventsStore = new Store("events", "event list", Event);
+    this._incidentsStore = new Store("incidents", "incident list", Incident);
 
     Object.defineProperty(this, "user", {
       enumerable: true,
@@ -130,7 +132,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchAndCacheJSON = async(store, lifetime) => {
+  _fetchAndCacheJSON = async(store, lifetime, urlParams) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -141,11 +143,22 @@ export default class IncidentManagementSystem {
       return cachedValue;
     }
 
-    // If we have a cached-but-expired value, check the server for a new value
+    // If we have no cached value, or a cached-but-expired value, check the
+    // server for a new value
 
-    const url = (
+    // The bag is special because we don't get it's URL from the bag because the
+    // bag is special because...
+    let url = (
       (store.key === "bag") ? this.bagURL : (await this.bag()).urls[store.key]
     );
+    invariant(url != null, `No "${store.key}" URL found in bag`);
+
+    // Replace URL parameters with values
+    for (const paramName in urlParams) {
+      url = url.replace(`{${paramName}}`, urlParams[paramName]);
+    }
+    invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);
+
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSONFromServer(url, fetchOptions);
 
@@ -326,6 +339,21 @@ export default class IncidentManagementSystem {
     } else {
       throw new Error(`No event found with ID: ${id}`);
     }
+  }
+
+  // Incidents
+
+  incidentCacheLifetime = { minutes: 5 };
+
+  incidents = async (event) => {
+    const incidents = await this._fetchAndCacheJSON(
+      this._incidentsStore, this.incidentCacheLifetime,
+      { "event_id": event.id }
+    );
+    this._incidentsMap = new Map(
+      incidents.map(incident => [incident.id, incident])
+    );
+    return incidents;
   }
 
 }

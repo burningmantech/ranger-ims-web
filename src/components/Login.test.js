@@ -95,7 +95,7 @@ describe("Login component", () => {
     const username = "Hubcap";
     const password = username;
 
-    ims.login = jest.fn(() => { throw new Error(message); });
+    ims.login = jest.fn(async () => { throw new Error(message); });
 
     renderWithIMSContext(<Login>{content}</Login>, ims);
 

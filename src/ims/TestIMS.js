@@ -30,10 +30,23 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this.testData = {
       bag: {
         urls: {
+          // ping: "/ims/api/ping",
           bag: "/ims/api/bag",
           auth: "/ims/api/auth",
-          event: "/ims/api/events/<eventID>/",
+          // access: "/ims/api/access",
+          // streets:  "/ims/api/streets",
+          // personnel: "/ims/api/personnel/",
+          // incident_types:  "/ims/api/incident_types/",
           events: "/ims/api/events/",
+          event: "/ims/api/events/{event_id}/",
+          incidents: "/ims/api/events/{event_id}/incidents/",
+          incident: "/ims/api/events/{event_id}/incidents/{incident_number}",
+          // incident_reports: "/ims/api/events/{event_id}/incidents_reports/",
+          // incident_report: (
+          //   "/ims/api/events/{event_id}/incidents_reports" +
+          //   "/{incident_report_number}"
+          // ),
+          // event_source: "/ims/api/eventsource",
         },
       },
       events: [
@@ -42,6 +55,75 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "3", name: "Event Three" },
         { id: "4", name: "Event Four" },
       ],
+      incidents: {
+        "1": [
+          {
+            event: "1",
+            number: 1,
+            created: "2021-08-17T17:12:46.720000+00:00",
+            summary: null,
+            priority: 3,
+            state: "closed",
+            incident_types: ["Vehicle", "Camp"],
+            ranger_handles: ["Bucket", "Hubcap"],
+            location: {
+              type: "garett",
+              name: null,
+              description: "On B road",
+              radial_hour: 8,
+              radial_minute: 45,
+              concentric: "B",
+            },
+            incident_reports: [],
+            report_entries: [
+              {
+                system_entry: true,
+                created: "2021-08-17T17:12:46.730000+00:00",
+                author: "Operator",
+                text: "Changed description name to: On B road",
+              },
+              {
+                system_entry:false,
+                created:"2021-08-17T17:23:00.780000+00:00",
+                author:"Operator",
+                text: "White pickup stopped on road, eventually moved",
+              },
+              {
+                system_entry:true,
+                created:"2021-08-28T00:37:37.300000+00:00",
+                author:"Operator",
+                text:"Changed state to: closed",
+              },
+            ],
+          },
+        ],
+        "2": [
+          {
+            event: "1",
+            number: 2,
+            created: "2021-08-17T18:45:46.920000+00:00",
+            summary: "Ice cream at the Man",
+            priority: 1,
+            state: "open",
+            incident_types: ["Ice Cream"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "The Man",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [
+              {
+                system_entry:false,
+                created:"2021-08-17T18:45:46.930000+00:00",
+                author:"Operator",
+                text: "Someone is giving away ice cream at the Man",
+              },
+            ],
+          },
+        ],
+      },
     }
 
     this.requestsReceived = [];
@@ -174,69 +256,98 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   __mockFetch = async (request) => {
-    let path;
+    let _path;
     try {
       const url = new URL(request.url);
-      path = url.pathname;
+      _path = url.pathname;
     }
     catch {
-      path = request.url;
+      _path = request.url;
     }
+    const path = _path;
 
     const bag = this.testData.bag;
 
-    switch (path) {
-      case "/not_found":
+    switch (true) {
+      case path == "/not_found":
+        console.debug("Issuing not found response.");
         return this._notFoundResponse();
 
-      case "/auth_fail_text":
+      case path == "/auth_fail_text":
+        console.debug("Issuing authentication required text response.");
         return this._authTextResponse();
 
-      case "/auth_fail_json_no_status":
+      case path == "/auth_fail_json_no_status":
+        console.debug("Issuing authentication required JSON response.");
         return this._authJSONResponse();
 
-      case "/auth_fail_json":
+      case path == "/auth_fail_json":
+        console.debug("Issuing authentication failed JSON response.");
         return this._authFailedResponse();
 
-      case "/forbidden":
+      case path == "/forbidden":
+        console.debug("Issuing forbidden response.");
         return this._forbiddenResponse();
 
-      case "/json_echo":
+      case path == "/json_echo":
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
+          console.debug("Issuing JSON echo response.");
           return this._jsonResponse(requestJSON);
         }
         /* istanbul ignore next */
         break;
 
-      case "/text_hello":
+      case path == "/text_hello":
+      console.debug("Issuing hello text response.");
         return this._textResponse();
 
-      case "/ims/api/bag":
+      case path == "/ims/api/bag":
         /* istanbul ignore else */
         if (request.method === "GET") {
+          console.debug("Issuing bag response.");
           return this._jsonResponse(bag);
         }
         /* istanbul ignore next */
         break;
 
-      case bag.urls.auth:
+      case path == bag.urls.auth:
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
           request._json = requestJSON;
+          console.debug("Issuing auth response.");
           return this._authResponse(requestJSON);
         }
         /* istanbul ignore next */
         break;
 
-      case bag.urls.events:
+      case path == bag.urls.events:
         /* istanbul ignore else */
         if (request.method === "GET") {
+          console.debug("Issuing events response.");
           return this._jsonResponse(this.testData.events);
         }
+        /* istanbul ignore next */
+        break;
+
+      case path.startsWith(bag.urls.events):
+        let rest = path.substring(bag.urls.events.length);
+        const eventID = rest.split("/", 1)[0]
+
+        rest = rest.substring(eventID.length + 1);
+        const eventChild = rest.split("/", 1)[0]
+
+        switch (eventChild) {
+          case "incidents":
+            if (rest != "") {
+              console.debug(`Issuing event ${eventID} incidents response.`);
+              return this._jsonResponse(this.testData.incidents[eventID]);
+            }
+        }
+
         /* istanbul ignore next */
         break;
     }

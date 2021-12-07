@@ -36,7 +36,7 @@ describe("EventPage component", () => {
       const ims = testIncidentManagementSystem();
 
       ims.eventWithID = jest.fn(
-        (id) => { throw new Error("Can't load event because reasons..."); }
+        async (id) => { throw new Error("because reasons..."); }
       );
 
       const spy = jest.spyOn(console, "error");
@@ -44,10 +44,12 @@ describe("EventPage component", () => {
       for (const event of await ims.events()) {
         renderWithIMSContext(<EventPage id={event.id} />, ims);
 
-        expect(screen.queryByText("Error loading event")).toBeInTheDocument();
+        expect(
+          await screen.findByText("Error loading event")
+        ).toBeInTheDocument();
 
         expect(spy).toHaveBeenCalledWith(
-          "Unable to fetch event: Can't load event because reasons..."
+          "Unable to fetch event: because reasons..."
         );
         cleanup();
       }

@@ -6,6 +6,7 @@ import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 import Page from "../components/Page";
+import DispatchQueue from "../components/DispatchQueue";
 
 
 export const EventPage = (props) => {
@@ -22,18 +23,6 @@ export const EventPage = (props) => {
   useEffect(
     () => {
       const eventID = () => {
-        if (props.match != null) {
-          // Routed event page
-          invariant(
-            props.match.params != null, "match.params property is required"
-          );
-          invariant(
-            props.match.params.eventID != null,
-            "match.params.eventID property is required",
-          );
-          return props.match.params.eventID;
-        }
-
         invariant(props.id != null, "id property is required");
         return props.id;
       }
@@ -70,6 +59,8 @@ export const EventPage = (props) => {
   return (
     <Page>
       <h1>Event: {event.name}</h1>
+
+      <DispatchQueue event={event} />
     </Page>
   );
 }

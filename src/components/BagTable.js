@@ -60,7 +60,7 @@ const BagTable = (props) => {
     }
 
     const link = (url) => {
-      if (url.includes("<")) {
+      if (url.includes("{")) {
         return url;
       }
       else {

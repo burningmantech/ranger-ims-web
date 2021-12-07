@@ -35,14 +35,18 @@ describe("BagTable component", () => {
     const ims = testIncidentManagementSystem();
 
     ims.bag = jest.fn(
-      () => { throw new Error("because reasons..."); }
+      async () => { throw new Error("because reasons..."); }
     );
 
     const spy = jest.spyOn(console, "error");
 
-    renderWithIMSContext(<BagTable />, ims);
+    await act(async () => {
+      renderWithIMSContext(<BagTable />, ims);
+    });
 
-    expect(screen.queryByText("Error loading URL bag")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Error loading URL bag")
+    ).toBeInTheDocument();
 
     expect(spy).toHaveBeenCalledWith(
       "Unable to fetch bag: because reasons..."
