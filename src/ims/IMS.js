@@ -155,7 +155,6 @@ export default class IncidentManagementSystem {
 
     // Replace URL parameters with values
     for (const paramName in urlParams) {
-      console.debug(`{${paramName}} -> ${urlParams[paramName]}`);
       url = url.replace(`{${paramName}}`, urlParams[paramName]);
     }
     invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);

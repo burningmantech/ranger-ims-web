@@ -46,7 +46,7 @@ export default class Incident {
 
   toJSON = () => {
     return {
-      eventID: this.eventID,
+      event: this.eventID,
       number: this.number,
     };
   }
