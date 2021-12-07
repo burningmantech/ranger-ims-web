@@ -40,16 +40,13 @@ const LoginDropdown = (props) => {
   }
   else {
     async function onLogout(eventKey, event) {
+      console.error("LOG OUT");
       await ims.logout();
     }
-    // FIXME: Setting pointerEvents shouldn't be necessary?
     return (
       <NavDropdown title={user.username} id="nav_user_dropdown">
         <NavDropdown.Item href={URLs.admin}>Admin</NavDropdown.Item>
-        <NavDropdown.Item
-          onSelect={onLogout}
-          style={{"pointerEvents": "auto"}}
-        >Log Out</NavDropdown.Item>
+        <NavDropdown.Item onClick={onLogout}>Log Out</NavDropdown.Item>
       </NavDropdown>
     );
   }
