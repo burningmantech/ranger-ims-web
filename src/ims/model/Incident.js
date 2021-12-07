@@ -1,7 +1,5 @@
 import invariant from "invariant";
 
-import Event from "./Event";
-
 
 export default class Incident {
 
