@@ -1,0 +1,242 @@
+#!/bin/sh
+#
+# Start the web application in a Docker container and test it
+#
+
+. "$(dirname "$0")/.common.sh";
+
+host_web_port="$("${wd}/bin/find_port")";
+
+web_container_name="";
+
+web_image_name="${image_name}";
+
+
+##
+# HTTP
+##
+
+http_status() {
+    head -1 | cut -d " " -f 2;
+}
+
+
+http_header() {
+    name="$1"; shift;
+
+    # FIXME: We're matching the ending carriage return with '.' here because
+    # '\r ' doesn't seem to work.
+    sed -n -e 's|^'"${name}"': \(.*\).$|\1|p';
+}
+
+
+http_body() {
+    sed -n -e '/^.$/,$p' | tail -n +2;
+}
+
+
+http_get() {
+    local port="$1"; shift;
+    local path="$1"; shift;
+
+    local e;
+
+    curl                                        \
+        --include --fail --silent --show-error  \
+        "http://localhost:${port}${path}"       \
+        && e=0 || e=$?;
+
+    return ${e};
+}
+
+
+http_get_error() {
+    local port="$1"; shift;
+    local path="$1"; shift;
+
+    local e;
+
+    curl                                   \
+        --include --silent --show-error    \
+        "http://localhost:${port}${path}"  \
+        && e=0 || e=$?;
+
+    return ${e};
+}
+
+
+##
+# Web Container
+##
+
+start_web_container() {
+    web_container_name="ranger-ims-web-test_${$}";
+
+    trap cleanup_web_container EXIT;
+
+    echo "Starting web application container: ${web_container_name}...";
+
+    docker run                                            \
+        --rm --detach                                     \
+        --name="${web_container_name}"                    \
+        --publish="${host_web_port}:80"                   \
+        "${web_image_name}"                               \
+        > /dev/null;
+}
+
+
+wait_for_web() {
+    local response="$(mktemp)";
+    local    error="$(mktemp)";
+
+    local count=0;
+    local e;
+
+    check_timeout() {
+        local timeout=60;
+
+        if [ ${count} -gt ${timeout} ]; then
+            echo "ERROR: Timed out";
+            echo "Logs:";
+            docker logs "${web_container_name}";
+            return 1;
+        fi;
+    }
+
+    while true; do
+        printf "Waiting on web application to start... ";
+
+        http_get "${host_web_port}" / > "${response}" 2> "${error}" \
+            && e=0 || e=$?;
+
+        count=$((${count} + 1));
+
+        check_timeout || return 1;
+
+        if [ ${e} -eq 7 ]; then
+            echo "Connection refused from server. ";
+            sleep 1;
+            continue;
+        fi;
+
+        if [ ${e} -eq 52 ]; then
+            echo "Empty reply from server. ";
+            sleep 1;
+            continue;
+        fi;
+
+        if [ ${e} -eq 56 ]; then
+            echo "Connection to server reset. ";
+            sleep 1;
+            continue;
+        fi;
+
+        if [ ${e} -ne 0 ]; then
+            fail "Error HTTP status from server.";
+            echo "Error from curl:"; cat "${error}";
+            echo "Response:"; cat "${response}";
+            return 1;
+        fi;
+
+        echo "Web application is responding.";
+        break;
+    done;
+
+    rm "${response}" "${error}";
+}
+
+
+cleanup_web_container() {
+    if [ -n "${web_container_name}" ]; then
+        echo "Terminating web application container: ${web_container_name}...";
+
+        docker kill "${web_container_name}" > /dev/null;
+    fi;
+}
+
+
+##
+# Tests
+##
+
+fail() {
+    echo "FAIL:" "$@";
+}
+
+
+diff_body() {
+    local expected="$1"; shift;
+    local received="$1"; shift;
+
+    if ! diff --brief "${expected}" "${received}" > /dev/null; then
+        fail "Received body does not match expected output.";
+        diff -ud "${expected}" "${received}";
+        return 1;
+    fi;
+}
+
+
+test_root_resource() {
+    echo "Testing root resource...";
+
+    local response="$(mktemp)";
+    local     body="$(mktemp)";
+    local    error="$(mktemp)";
+
+    local e;
+
+    http_get "${host_web_port}" / > "${response}" 2> "${error}" && e=0 || e=$?;
+
+    if [ ${e} -eq 22 ]; then
+        fail "Root resource not found.  Expected redirect.";
+        return 1;
+    fi;
+
+    if [ ${e} -ne 0 ]; then
+        fail "Error HTTP status from server.";
+        echo "Error from curl:"; cat "${error}";
+        echo "Response:"; cat "${response}";
+        return 1;
+    fi;
+
+    local status="$(http_status < "${response}")";
+
+    if [ ${status} -ne 200 ]; then
+        fail "Expected HTTP status 200 (OK) for root resource.";
+        echo "Response:"; cat "${response}";
+        return 1;
+    fi;
+
+    local content_type="$(http_header Content-Type < "${response}")";
+
+    if [ "${content_type}" != "text/html" ]; then
+        fail "Expected text/html content type for root resource.";
+        echo "Content-Type: ${content_type}";
+        echo "Response:"; cat "${response}";
+        return 1;
+    fi;
+
+    http_body < "${response}" > "${body}";
+
+    if ! grep                                               \
+        "<title>Ranger Incident Management System</title>"  \
+        "${body}"                                           \
+        > /dev/null                                         \
+    ; then
+        fail "Unexpected body for application root resource.";
+        echo "Content-Type: ${content_type}";
+        echo "Response:"; cat "${response}";
+        return 1;
+    fi;
+
+    rm "${response}" "${error}";
+}
+
+
+echo "Testing service...";
+
+start_web_container || exit 30;
+wait_for_web        || exit 31;
+test_root_resource  || exit 100;
+
+echo "Tests passed.";

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+# Build the Docker image
+#
+
+. "$(dirname "$0")/.common.sh";
+
+#
+# Build and tag each stage
+#
+
+docker build \
+   --target=build       --tag="${build_image_name}" \
+   --target=application --tag="${app_image_name}"   \
+      "${wd}";
