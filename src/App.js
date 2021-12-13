@@ -17,10 +17,10 @@ import "./App.css";
 
 
 const Login = lazy(() => import("./components/Login"));
-const HomePage = lazy(() => import("./routes/HomePage"));
-const RoutedEventPage = lazy(() => import("./routes/EventPage"));
-const AdminPage = lazy(() => import("./routes/AdminPage"));
-const NotFoundPage = lazy(() => import("./routes/NotFoundPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const RoutedEventPage = lazy(() => import("./pages/EventPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 
 const App = (props) => {
