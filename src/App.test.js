@@ -128,7 +128,9 @@ describe("App component", () => {
           renderWithURL(URLs.event(event), username, ims);
         });
 
-        expect(screen.queryByText(`Event: ${event.name}`)).toBeInTheDocument();
+        expect(
+          await screen.findByText(`Incidents: ${event.name}`)
+        ).toBeInTheDocument();
       }
     }
   );
