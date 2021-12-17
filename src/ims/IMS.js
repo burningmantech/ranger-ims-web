@@ -13,10 +13,10 @@ export default class IncidentManagementSystem {
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
-    this._credentialStore = new Store("credentials", "credentials", User);
-    this._bagStore = new Store("bag", "bag");
-    this._eventsStore = new Store("events", "events", Event);
-    this._incidentsStore = new Store("incidents", "incidents", Incident);
+    this._credentialStore = new Store(User, "credentials", "credentials");
+    this._bagStore = new Store(null, "bag", "bag");
+    this._eventsStore = new Store(Event, "events", "events");
+    this._incidentsStore = new Store(Incident, "incidents", "incidents");
 
     Object.defineProperty(this, "user", {
       enumerable: true,

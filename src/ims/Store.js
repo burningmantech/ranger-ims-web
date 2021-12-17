@@ -3,10 +3,10 @@ import { DateTime } from "luxon";
 
 export default class Store {
 
-  constructor(endpointID, storeID, modelClass) {
-    this.endpointID = endpointID;
-    this.storeID = storeID;
+  constructor(modelClass, storeID, endpointID) {
     this.modelClass = modelClass;
+    this.storeID = storeID;
+    this.endpointID = endpointID;
     this._storage = window.localStorage;
   }
 

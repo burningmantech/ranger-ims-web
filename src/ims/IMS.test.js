@@ -410,7 +410,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       bagStore.store(testBag, "1", { seconds: 60 })
 
@@ -427,7 +427,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       // Fetch the bag from the server
       const bag1 = await ims.bag();
@@ -451,7 +451,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       // Fetch the bag from the server
       await ims.bag();

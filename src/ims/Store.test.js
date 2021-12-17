@@ -41,12 +41,12 @@ export default class StuffNThings {
 
 
 const jsonStore = () => {
-  return new Store(STUFF_STORE_ENDPOINTID, STUFF_STORE_STOREID);
+  return new Store(null, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
 }
 
 
 const stuffNThingsStore = () => {
-  return new Store(STUFF_STORE_ENDPOINTID, STUFF_STORE_STOREID, StuffNThings);
+  return new Store(StuffNThings, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
 }
 
 
