@@ -17,7 +17,11 @@ const DispatchQueueTable = ({columns, data}) => {
   } = useTable({columns, data});
 
   return (
-    <table {...getTableProps()}>
+    <table
+      id="queue_table"
+      className="table table-striped table-hover"
+      {...getTableProps()}
+    >
       <thead>
         {
           headerGroups.map(
@@ -120,11 +124,11 @@ const DispatchQueue = (props) => {
     () => [
       {
         accessor: "number",
-        Header: "#",
+        Header: <abbr title="Number">#</abbr>,
       },
       {
         accessor: "priority",
-        Header: "Pri",
+        Header: <abbr title="Priority">Pri</abbr>,
         Cell: formatPriority,
       },
       {
