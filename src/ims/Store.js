@@ -3,10 +3,10 @@ import { DateTime } from "luxon";
 
 export default class Store {
 
-  constructor(key, description, modelClass) {
-    this.key = key;
-    this.description = description;
+  constructor(modelClass, storeID, endpointID) {
     this.modelClass = modelClass;
+    this.storeID = storeID;
+    this.endpointID = endpointID;
     this._storage = window.localStorage;
   }
 
@@ -58,15 +58,15 @@ export default class Store {
 
     const container = { value: value, tag: tag, expiration: expiration };
 
-    this._storage.setItem(this.key, JSON.stringify(container));
-    console.debug(`Stored cached ${this.description} (tag:${tag}).`);
+    this._storage.setItem(this.storeID, JSON.stringify(container));
+    console.debug(`Stored cached ${this.storeID} (tag:${tag}).`);
   }
 
   load = () => {
-    const jsonText = this._storage.getItem(this.key);
+    const jsonText = this._storage.getItem(this.storeID);
 
     if (jsonText === null) {
-      console.debug(`No ${this.description} found in local storage.`);
+      console.debug(`No ${this.storeID} found in local storage.`);
       return { value: null };
     }
 
@@ -82,14 +82,14 @@ export default class Store {
     }
     catch (e) {
       return error(
-        `Unable to parse JSON container for ${this.description}: ${e}`
+        `Unable to parse JSON container for ${this.storeID}: ${e}`
       );
     }
 
     const { value: valueJSON, tag, expiration: expirationJSON } = container;
 
     if (valueJSON === undefined) {
-      return error(`${this.description} found in cache, but has no value.`);
+      return error(`${this.storeID} found in cache, but has no value.`);
     }
 
     let _value;
@@ -97,7 +97,7 @@ export default class Store {
       _value = this.deserializeValue(valueJSON);
     }
     catch (e) {
-      return error(`Invalid JSON for cached ${this.description}: ${e}`);
+      return error(`Invalid JSON for cached ${this.storeID}: ${e}`);
     }
     const value = _value;
 
@@ -105,13 +105,13 @@ export default class Store {
       (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
     );
 
-    console.debug(`Loaded cached ${this.description}.`);
+    console.debug(`Loaded cached ${this.storeID}.`);
     return { value: value, tag: tag, expiration: expiration };
   }
 
   remove = () => {
-    this._storage.removeItem(this.key);
-    console.debug(`Removed cached ${this.description}.`);
+    this._storage.removeItem(this.storeID);
+    console.debug(`Removed cached ${this.storeID}.`);
   }
 
 }

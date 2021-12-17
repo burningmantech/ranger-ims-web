@@ -1,4 +1,4 @@
-# Ranger Incident Management System
+# Ranger Incident Management System — Web Client
 
 [![Build Status](https://github.com/burningmantech/ranger-ims-web/workflows/CI%2fCD/badge.svg)](https://github.com/burningmantech/ranger-ims-web/actions)
 [![Code Coverage](https://codecov.io/github/burningmantech/ranger-ims-web/coverage.svg?branch=master)](https://codecov.io/github/burningmantech/ranger-ims-web?branch=master)

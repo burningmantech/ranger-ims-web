@@ -410,7 +410,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "URL bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       bagStore.store(testBag, "1", { seconds: 60 })
 
@@ -427,7 +427,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "URL bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       // Fetch the bag from the server
       const bag1 = await ims.bag();
@@ -451,7 +451,7 @@ describe("IMS: bag", () => {
       const testBag = { urls: { x: "/x" } }
 
       const ims = testIncidentManagementSystem();
-      const bagStore = new Store("bag", "URL bag");
+      const bagStore = new Store(null, "bag", "bag");
 
       // Fetch the bag from the server
       await ims.bag();
@@ -470,7 +470,7 @@ describe("IMS: bag", () => {
     "load bag: non-OK response", async () => {
       const ims = testIncidentManagementSystem();
       ims.bagURL = "/forbidden";
-      await expect(ims.bag()).toRejectWithMessage("Failed to retrieve URL bag.");
+      await expect(ims.bag()).toRejectWithMessage("Failed to retrieve bag.");
     }
   );
 
@@ -814,7 +814,7 @@ describe("IMS: events", () => {
       ims.asHubcap();
 
       await expect(ims.events()).toRejectWithMessage(
-        "Failed to retrieve event list."
+        "Failed to retrieve events."
       );
     }
   );
