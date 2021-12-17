@@ -16,7 +16,7 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store(User, "credentials", "credentials");
     this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
-    this._incidentsStore = new Store(Incident, "incidents", "incidents");
+    this._incidentsStoreMap = new Map();
 
     Object.defineProperty(this, "user", {
       enumerable: true,
@@ -47,6 +47,15 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
+  }
+
+  _incidentsStore = (eventID) => {
+    if (! this._incidentsStoreMap.has(eventID)) {
+      this._incidentsStoreMap[eventID] = new Store(
+        Incident, `incidents:${eventID}`, "incidents"
+      );
+    }
+    return this._incidentsStoreMap[eventID];
   }
 
   _fetch = async (request) => {
@@ -349,12 +358,14 @@ export default class IncidentManagementSystem {
 
   incidents = async (event) => {
     const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore, this.incidentCacheLifetime,
-      { "event_id": event.id }
+      this._incidentsStore(event.id),
+      this.incidentCacheLifetime,
+      { "event_id": event.id },
     );
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.id, incident])
     );
+    console.debug("Found incidents: " + JSON.stringify(incidents));
     return incidents;
   }
 
