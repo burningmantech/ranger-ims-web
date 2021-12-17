@@ -1,10 +1,112 @@
 import invariant from "invariant";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useTable } from "react-table";
 
 import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 
+
+const DispatchQueueTable = ({columns, data}) => {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({columns, data});
+
+  return (
+    <table {...getTableProps()}>
+      <thead>
+        {
+          headerGroups.map(
+            headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {
+                  headerGroup.headers.map(
+                    column => (
+                      <th {...column.getHeaderProps()}>
+                        {column.render("Header")}
+                      </th>
+                    )
+                  )
+                }
+              </tr>
+            )
+          )
+        }
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {
+          rows.map(
+            (row, i) => {
+              prepareRow(row)
+              return (
+                <tr {...row.getRowProps()}>
+                  {
+                    row.cells.map(
+                      cell => {
+                        return (
+                          <td {...cell.getCellProps()}>
+                            {cell.render("Cell")}
+                          </td>
+                        )
+                      }
+                    )
+                  }
+                </tr>
+              )
+            }
+          )
+        }
+      </tbody>
+    </table>
+  );
+}
+
+const formatPriority = ({value}) => {
+  switch (value) {
+    case 1:
+    case 2:
+      return "↥";
+    case 3:
+      return "•";
+    case 4:
+    case 5:
+      return "↧";
+    default:
+      return value;
+  }
+}
+
+const formatDateTime = ({value}) => {
+  return value.toFormat("ccc L/c HH:mm");
+}
+
+const formatState = ({value}) => {
+  switch (value) {
+    case "new":
+      return "New";
+    case "on_hold":
+      return "On Hold";
+    case "dispatched":
+      return "Dispatched";
+    case "on_scene":
+      return "On Scene";
+    case "closed":
+      return "Closed";
+    default:
+      return value;
+  }
+}
+
+const formatArrayOfStrings = ({value}) => {
+  if (! value) {
+    return "";
+  }
+  return value.sort().join(", ");
+}
 
 const DispatchQueue = (props) => {
   invariant(props.event != null, "event property is required");
@@ -13,6 +115,49 @@ const DispatchQueue = (props) => {
   const ims = imsContext.ims;
 
   invariant(ims != null, "No IMS");
+
+  const columns = useMemo(
+    () => [
+      {
+        accessor: "number",
+        Header: "#",
+      },
+      {
+        accessor: "priority",
+        Header: "Pri",
+        Cell: formatPriority,
+      },
+      {
+        accessor: "created",
+        Header: "Created",
+        Cell: formatDateTime,
+      },
+      {
+        accessor: "state",
+        Header: "State",
+        Cell: formatState,
+      },
+      {
+        accessor: "rangerHandles",
+        Header: "Rangers",
+        Cell: formatArrayOfStrings,
+      },
+      // {
+      //   accessor: "location",
+      //   Header: "Location",
+      // },
+      {
+        accessor: "incidentTypes",
+        Header: "Types",
+        Cell: formatArrayOfStrings,
+      },
+      {
+        accessor: "summary",
+        Header: "Summary",
+      },
+    ],
+    []
+  );
 
   // Fetch data
 
@@ -45,11 +190,17 @@ const DispatchQueue = (props) => {
 
   if (incidents === undefined) {
     return <Loading />;
-  } else if (incidents === null) {
+  }
+  else if (incidents === null) {
     return "Error loading incidents";
-  } else {
+  }
+  else {
+    const data = Array.from(incidents.values());
     return (
-      <h1>Dispatch Queue: {props.event.name}</h1>
+      <div>
+        <h1>Dispatch Queue: {props.event.name}</h1>
+        <DispatchQueueTable columns={columns} data={data} />
+      </div>
     );
   }
 }

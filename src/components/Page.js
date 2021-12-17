@@ -13,7 +13,7 @@ const Home = (props) => {
       <footer>
       <hr />
       <p>
-        IMS Software © 2013-2021 Burning Man and its contributors.
+        IMS Software © Burning Man Project and its contributors.
         Data in IMS is confidential and proprietary.
       </p>
       </footer>
