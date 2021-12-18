@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTable } from "react-table";
+import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
 
@@ -17,11 +18,7 @@ const DispatchQueueTable = ({columns, data}) => {
   } = useTable({columns, data});
 
   return (
-    <table
-      id="queue_table"
-      className="table table-striped table-hover"
-      {...getTableProps()}
-    >
+    <Table striped hover id="queue_table" {...getTableProps()}>
       <thead>
         {
           headerGroups.map(
@@ -65,7 +62,7 @@ const DispatchQueueTable = ({columns, data}) => {
           )
         }
       </tbody>
-    </table>
+    </Table>
   );
 }
 
