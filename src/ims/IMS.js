@@ -13,10 +13,10 @@ export default class IncidentManagementSystem {
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
-    this._credentialStore = new Store("credentials", "user credentials", User);
-    this._bagStore = new Store("bag", "URL bag");
-    this._eventsStore = new Store("events", "event list", Event);
-    this._incidentsStore = new Store("incidents", "incident list", Incident);
+    this._credentialStore = new Store(User, "credentials", "credentials");
+    this._bagStore = new Store(null, "bag", "bag");
+    this._eventsStore = new Store(Event, "events", "events");
+    this._incidentsStoreMap = new Map();
 
     Object.defineProperty(this, "user", {
       enumerable: true,
@@ -47,6 +47,15 @@ export default class IncidentManagementSystem {
 
     this.bagURL = bagURL;
     this.delegate = null;
+  }
+
+  _incidentsStore = (eventID) => {
+    if (! this._incidentsStoreMap.has(eventID)) {
+      this._incidentsStoreMap[eventID] = new Store(
+        Incident, `incidents:${eventID}`, "incidents"
+      );
+    }
+    return this._incidentsStoreMap[eventID];
   }
 
   _fetch = async (request) => {
@@ -139,7 +148,7 @@ export default class IncidentManagementSystem {
 
     const now = DateTime.local();
     if (cachedValue !== null && expiration > now) {
-      console.debug(`Retrieved ${store.description} from unexpired cache`);
+      console.debug(`Retrieved ${store.storeID} from unexpired cache`);
       return cachedValue;
     }
 
@@ -149,9 +158,11 @@ export default class IncidentManagementSystem {
     // The bag is special because we don't get it's URL from the bag because the
     // bag is special because...
     let url = (
-      (store.key === "bag") ? this.bagURL : (await this.bag()).urls[store.key]
+      (store.endpointID === "bag")
+      ? this.bagURL
+      : (await this.bag()).urls[store.endpointID]
     );
-    invariant(url != null, `No "${store.key}" URL found in bag`);
+    invariant(url != null, `No "${store.endpointID}" URL found in bag`);
 
     // Replace URL parameters with values
     for (const paramName in urlParams) {
@@ -170,19 +181,19 @@ export default class IncidentManagementSystem {
       _value = cachedValue;
       _eTag = cachedETag;
       console.debug(
-        `Retrieved ${store.description} from cache (ETag: ${cachedETag})`
+        `Retrieved ${store.storeID} from cache (ETag: ${cachedETag})`
       );
     }
     else if (! response.ok) {
       // The server says "poop", so say "poop" to the caller.
-      throw new Error(`Failed to retrieve ${store.description}.`);
+      throw new Error(`Failed to retrieve ${store.storeID}.`);
     }
     else {
       // The server has a new value for us.
       _eTag = response.headers.get("ETag");
       const json = await response.json();
       _value = store.deserializeValue(json);
-      console.debug(`Retrieved ${store.description} from ${url}`);
+      console.debug(`Retrieved ${store.storeID} from ${url}`);
     }
     const value = _value;
     const eTag = _eTag;
@@ -347,12 +358,14 @@ export default class IncidentManagementSystem {
 
   incidents = async (event) => {
     const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore, this.incidentCacheLifetime,
-      { "event_id": event.id }
+      this._incidentsStore(event.id),
+      this.incidentCacheLifetime,
+      { "event_id": event.id },
     );
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.id, incident])
     );
+    console.debug("Found incidents: " + JSON.stringify(incidents));
     return incidents;
   }
 

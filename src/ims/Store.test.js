@@ -3,15 +3,15 @@ import { DateTime } from "luxon";
 import Store from "./Store";
 
 
-const TEST_STORE_KEY = "stuff";
-const TEST_STORE_DESCRIPTION = "Stuff 'N Things";
-const TEST_STUFF = {
+const STUFF_STORE_ENDPOINTID = "stuff";
+const STUFF_STORE_STOREID = "Stuff 'N Things";
+const STUFF_STORE_STUFF = {
   a: 1,
   b: "two",
   c: { three: 3 },
   d: [ 5, 6, 7 ],
 };
-const TEST_THINGS = {
+const STUFF_STORE_THINGS = {
   x: "this is an X",
   y: "this is an Y",
   z: "this is an Z",
@@ -41,33 +41,33 @@ export default class StuffNThings {
 
 
 const jsonStore = () => {
-  return new Store(TEST_STORE_KEY, "stuff-n-things");
+  return new Store(null, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
 }
 
 
 const stuffNThingsStore = () => {
-  return new Store(TEST_STORE_KEY, "Stuff 'N Things", StuffNThings);
+  return new Store(StuffNThings, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
 }
 
 
 describe("Store", () => {
 
   beforeEach(() => {
-    if (window.localStorage.getItem(TEST_STORE_KEY) != null) {
+    if (window.localStorage.getItem(STUFF_STORE_STOREID) != null) {
       throw new Error("Found container in local storage.");
     }
   });
 
   afterEach(() => {
-    window.localStorage.removeItem(TEST_STORE_KEY);
+    window.localStorage.removeItem(STUFF_STORE_STOREID);
   });
 
   test(
     "initial state", () => {
       const store = stuffNThingsStore();
 
-      expect(store.key).toEqual(TEST_STORE_KEY);
-      expect(store.description).toEqual(TEST_STORE_DESCRIPTION);
+      expect(store.endpointID).toEqual(STUFF_STORE_ENDPOINTID);
+      expect(store.storeID).toEqual(STUFF_STORE_STOREID);
       expect(store.modelClass).toEqual(StuffNThings);
     }
   );
@@ -79,7 +79,7 @@ describe("Store", () => {
 
       store.store(value);
 
-      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
       expect(jsonText).toEqual(JSON.stringify({ value: value }));
     }
   );
@@ -87,12 +87,16 @@ describe("Store", () => {
   test(
     "store model value", () => {
       const store = stuffNThingsStore();
-      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+      const stuffNThings = new StuffNThings(
+        STUFF_STORE_STUFF, STUFF_STORE_THINGS
+      );
 
       store.store(stuffNThings);
 
-      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
-      expect(jsonText).toEqual(JSON.stringify({ value: stuffNThings.toJSON() }));
+      const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
+      expect(jsonText).toEqual(
+        JSON.stringify({ value: stuffNThings.toJSON() })
+      );
     }
   );
 
@@ -104,7 +108,7 @@ describe("Store", () => {
 
       store.store(value, tag);
 
-      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
       expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
     }
   );
@@ -118,7 +122,7 @@ describe("Store", () => {
 
       store.store(null, undefined, lifetime);
 
-      const jsonText = window.localStorage.getItem(TEST_STORE_KEY);
+      const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
       const json = JSON.parse(jsonText);
       const expiration = DateTime.fromISO(json.expiration);
 
@@ -173,7 +177,9 @@ describe("Store", () => {
   test(
     "load model value", () => {
       const store = stuffNThingsStore();
-      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+      const stuffNThings = new StuffNThings(
+        STUFF_STORE_STUFF, STUFF_STORE_THINGS
+      );
 
       store.store(stuffNThings);
 
@@ -189,7 +195,7 @@ describe("Store", () => {
     "load model array", () => {
       const store = stuffNThingsStore();
       const stuffNThingses = [
-        new StuffNThings(TEST_STUFF, TEST_THINGS),
+        new StuffNThings(STUFF_STORE_STUFF, STUFF_STORE_THINGS),
         new StuffNThings({}, {}),
       ]
 
@@ -204,7 +210,7 @@ describe("Store", () => {
   test(
     "load tag", () => {
       const store = stuffNThingsStore();
-      const value = new StuffNThings(TEST_STUFF, TEST_THINGS);
+      const value = new StuffNThings(STUFF_STORE_STUFF, STUFF_STORE_THINGS);
       const tag = "FE7B2A95197A";
 
       store.store(value, tag);
@@ -244,7 +250,7 @@ describe("Store", () => {
 
   test(
     "load, invalid JSON", () => {
-      window.localStorage.setItem(TEST_STORE_KEY, "*");
+      window.localStorage.setItem(STUFF_STORE_STOREID, "*");
 
       const store = stuffNThingsStore();
       const spy = jest.spyOn(console, "error");
@@ -261,7 +267,7 @@ describe("Store", () => {
 
   test(
     "load, missing value", () => {
-      window.localStorage.setItem(TEST_STORE_KEY, "{}");
+      window.localStorage.setItem(STUFF_STORE_STOREID, "{}");
 
       const store = stuffNThingsStore();
       const spy = jest.spyOn(console, "error");
@@ -277,7 +283,7 @@ describe("Store", () => {
 
   test(
     "load, invalid value", () => {
-      window.localStorage.setItem(TEST_STORE_KEY, '{"value": {}}');
+      window.localStorage.setItem(STUFF_STORE_STOREID, '{"value": {}}');
 
       const store = stuffNThingsStore();
       const spy = jest.spyOn(console, "error");
@@ -292,9 +298,11 @@ describe("Store", () => {
   );
 
   test(
-    "remove", () => {
+    "remove store", () => {
       const store = stuffNThingsStore();
-      const stuffNThings = new StuffNThings(TEST_STUFF, TEST_THINGS);
+      const stuffNThings = new StuffNThings(
+        STUFF_STORE_STUFF, STUFF_STORE_THINGS
+      );
 
       store.store(stuffNThings);
       store.remove();
