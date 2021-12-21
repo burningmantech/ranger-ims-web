@@ -92,6 +92,7 @@ jobs:
         uses: actions/download-artifact@v2.1.0
         with:
           name: images
+          path: images
 
       - name: Load Docker image
         run: gzip --uncompress --stdout images/web.tgz | docker image load;
