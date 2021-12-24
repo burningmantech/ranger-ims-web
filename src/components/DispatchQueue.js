@@ -18,194 +18,199 @@ const DispatchQueueTable = ({columns, data}) => {
   } = useTable({columns, data});
 
   return (
+    <>
+
 /*
-    <p>
-      <a href="../incident_reports/">
-        <span class="glyphicon glyphicon-arrow-right" /> Incident Reports
-      </a>
-    </p>
+      <p>
+        <a href="../incident_reports/">
+          <span class="glyphicon glyphicon-arrow-right" /> Incident Reports
+        </a>
+      </p>
  */
 
-    <div id="button_container" class="btn-group col-sm-5" role="group">
+      <div id="button_container" class="btn-group col-sm-5" role="group">
 
 /*
-      // New incident button
+        // New incident button
 
-      <div class="btn-group new_incident" role="group">
-        <a href="./new" target="_blank">
+        <div class="btn-group new_incident" role="group">
+          <a href="./new" target="_blank">
+            <button
+              id="new_incident"
+              type="button"
+              class="btn btn-sm btn-default btn-primary"
+            >
+              New
+            </button>
+          </a>
+        </div>
+*/
+
+/*
+        // Show All/Open/Active control
+
+        <div class="btn-group" role="group">
           <button
-            id="new_incident"
+            id="show_state"
             type="button"
-            class="btn btn-sm btn-default btn-primary"
+            class="btn btn-sm btn-default"
+            data-toggle="dropdown"
           >
-            New
+            Show
+            <span class="selection">All</span>
+            <span class="caret" />
           </button>
-        </a>
-      </div>
+          <ul class="dropdown-menu">
+            <li id="show_state_all" onclick="showState('all');">
+              <span class="checkmark" /><a href="#" class="name">All   </a>
+            </li>
+            <li id="show_state_open" onclick="showState('open');">
+              <span class="checkmark" /><a href="#" class="name">Open  </a>
+            </li>
+            <li id="show_state_active" onclick="showState('active');">
+              <span class="checkmark" /><a href="#" class="name">Active</a>
+            </li>
+          </ul>
+        </div>
 */
 
 /*
-      // Show All/Open/Active control
+        // Show # of days control
 
-      <div class="btn-group" role="group">
-        <button
-          id="show_state"
-          type="button"
-          class="btn btn-sm btn-default"
-          data-toggle="dropdown"
-        >
-          Show
-          <span class="selection">All</span>
-          <span class="caret" />
-        </button>
-        <ul class="dropdown-menu">
-          <li id="show_state_all" onclick="showState('all');">
-            <span class="checkmark" /><a href="#" class="name">All   </a>
-          </li>
-          <li id="show_state_open" onclick="showState('open');">
-            <span class="checkmark" /><a href="#" class="name">Open  </a>
-          </li>
-          <li id="show_state_active" onclick="showState('active');">
-            <span class="checkmark" /><a href="#" class="name">Active</a>
-          </li>
-        </ul>
-      </div>
+        <div class="btn-group" role="group">
+          <button
+            id="show_days"
+            type="button"
+            class="btn btn-sm btn-default"
+            data-toggle="dropdown"
+          >
+            Show
+            <span class="selection">All Days</span>
+            <span class="caret" />
+          </button>
+          <ul class="dropdown-menu">
+            <li id="show_days_all" onclick="showDays(null);">
+              <span class="checkmark" /><a href="#" class="name">All Days</a>
+            </li>
+            <li id="show_days_0" onclick="showDays(0);">
+              <span class="checkmark" /><a href="#" class="name">Today</a>
+            </li>
+            <li id="show_days_1" onclick="showDays(1);">
+              <span class="checkmark" /><a href="#" class="name">Last 2 Days</a>
+            </li>
+            <li id="show_days_2" onclick="showDays(2);">
+              <span class="checkmark" /><a href="#" class="name">Last 3 Days</a>
+            </li>
+            <li id="show_days_3" onclick="showDays(3);">
+              <span class="checkmark" /><a href="#" class="name">Last 4 Days</a>
+            </li>
+          </ul>
+        </div>
 */
 
 /*
-      // Show # of days control
+        // Show # of rows control
 
-      <div class="btn-group" role="group">
-        <button
-          id="show_days"
-          type="button"
-          class="btn btn-sm btn-default"
-          data-toggle="dropdown"
-        >
-          Show
-          <span class="selection">All Days</span>
-          <span class="caret" />
-        </button>
-        <ul class="dropdown-menu">
-          <li id="show_days_all" onclick="showDays(null);">
-            <span class="checkmark" /><a href="#" class="name">All Days</a>
-          </li>
-          <li id="show_days_0" onclick="showDays(0);">
-            <span class="checkmark" /><a href="#" class="name">Today</a>
-          </li>
-          <li id="show_days_1" onclick="showDays(1);">
-            <span class="checkmark" /><a href="#" class="name">Last 2 Days</a>
-          </li>
-          <li id="show_days_2" onclick="showDays(2);">
-            <span class="checkmark" /><a href="#" class="name">Last 3 Days</a>
-          </li>
-          <li id="show_days_3" onclick="showDays(3);">
-            <span class="checkmark" /><a href="#" class="name">Last 4 Days</a>
-          </li>
-        </ul>
+        <div class="btn-group" role="group">
+          <button
+            id="show_rows"
+            type="button"
+            class="btn btn-sm btn-default"
+            data-toggle="dropdown"
+          >
+            Show
+            <span class="selection">All Rows</span>
+            <span class="caret" />
+          </button>
+          <ul class="dropdown-menu">
+            <li id="show_rows_all" onclick="showRows(null);">
+              <span class="checkmark" /><a href="#" class="name">All Rows</a>
+            </li>
+            <li id="show_rows_25"  onclick="showRows(  25);">
+              <span class="checkmark" /><a href="#" class="name">25 Rows</a>
+            </li>
+            <li id="show_rows_50"  onclick="showRows(  50);">
+              <span class="checkmark" /><a href="#" class="name">50 Rows</a>
+            </li>
+            <li id="show_rows_100" onclick="showRows( 100);">
+              <span class="checkmark" /><a href="#" class="name">100 Rows</a>
+            </li>
+          </ul>
+         </div>
+*/
+
+      </div>
+
+/*
+      // Search field
+
+      <div id="search_container" class="form-group form-group-sm col-sm-7">
+        <div class="flex-input-container">
+          <label class="control-label" for="search_input">
+            <span class="glyphicon glyphicon-search" />
+          </label>
+          <input
+            id="search_input"
+            type="search"
+            class="form-control"
+            placeholder="Search"
+            inputmode="latin"
+            autocomplete="off"
+            aria-controls="queue_table"
+          />
+        </div>
       </div>
 */
 
-/*
-      // Show # of rows control
+      // Table of incidents
 
-      <div class="btn-group" role="group">
-        <button
-          id="show_rows"
-          type="button"
-          class="btn btn-sm btn-default"
-          data-toggle="dropdown"
-        >
-          Show
-          <span class="selection">All Rows</span>
-          <span class="caret" />
-        </button>
-        <ul class="dropdown-menu">
-          <li id="show_rows_all" onclick="showRows(null);">
-            <span class="checkmark" /><a href="#" class="name">All Rows</a>
-          </li>
-          <li id="show_rows_25"  onclick="showRows(  25);">
-            <span class="checkmark" /><a href="#" class="name">25 Rows</a>
-          </li>
-          <li id="show_rows_50"  onclick="showRows(  50);">
-            <span class="checkmark" /><a href="#" class="name">50 Rows</a>
-          </li>
-          <li id="show_rows_100" onclick="showRows( 100);">
-            <span class="checkmark" /><a href="#" class="name">100 Rows</a>
-          </li>
-        </ul>
-       </div>
-*/
-
-    </div>
-
-/*
-    // Search field
-
-    <div id="search_container" class="form-group form-group-sm col-sm-7">
-      <div class="flex-input-container">
-        <label class="control-label" for="search_input">
-          <span class="glyphicon glyphicon-search" />
-        </label>
-        <input
-          id="search_input"
-          type="search"
-          class="form-control"
-          placeholder="Search"
-          inputmode="latin"
-          autocomplete="off"
-          aria-controls="queue_table"
-        />
-      </div>
-    </div>
-*/
-
-    // Table of incidents
-    <Table striped hover id="queue_table" {...getTableProps()}>
-      <thead>
-        {
-          headerGroups.map(
-            headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {
-                  headerGroup.headers.map(
-                    column => (
-                      <th {...column.getHeaderProps()}>
-                        {column.render("Header")}
-                      </th>
-                    )
-                  )
-                }
-              </tr>
-            )
-          )
-        }
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {
-          rows.map(
-            (row, i) => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()}>
+      <Table striped hover id="queue_table" {...getTableProps()}>
+        <thead>
+          {
+            headerGroups.map(
+              headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
                   {
-                    row.cells.map(
-                      cell => {
-                        return (
-                          <td {...cell.getCellProps()}>
-                            {cell.render("Cell")}
-                          </td>
-                        )
-                      }
+                    headerGroup.headers.map(
+                      column => (
+                        <th {...column.getHeaderProps()}>
+                          {column.render("Header")}
+                        </th>
+                      )
                     )
                   }
                 </tr>
               )
-            }
-          )
-        }
-      </tbody>
-    </Table>
+            )
+          }
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {
+            rows.map(
+              (row, i) => {
+                prepareRow(row)
+                return (
+                  <tr {...row.getRowProps()}>
+                    {
+                      row.cells.map(
+                        cell => {
+                          return (
+                            <td {...cell.getCellProps()}>
+                              {cell.render("Cell")}
+                            </td>
+                          )
+                        }
+                      )
+                    }
+                  </tr>
+                )
+              }
+            )
+          }
+        </tbody>
+      </Table>
+
+    </>
   );
 }
 
