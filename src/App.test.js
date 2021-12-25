@@ -129,7 +129,7 @@ describe("App component", () => {
         });
 
         expect(
-          await screen.findByText(`Incidents: ${event.name}`)
+          await screen.findByText(`Dispatch Queue: ${event.name}`)
         ).toBeInTheDocument();
       }
     }
