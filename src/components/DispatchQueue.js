@@ -20,17 +20,17 @@ const DispatchQueueTable = ({columns, data}) => {
   return (
     <>
 
-/*
+{/*
       <p>
         <a href="../incident_reports/">
           <span class="glyphicon glyphicon-arrow-right" /> Incident Reports
         </a>
       </p>
- */
+ */}
 
       <div id="button_container" class="btn-group col-sm-5" role="group">
 
-/*
+{/*
         // New incident button
 
         <div class="btn-group new_incident" role="group">
@@ -44,9 +44,9 @@ const DispatchQueueTable = ({columns, data}) => {
             </button>
           </a>
         </div>
-*/
+*/}
 
-/*
+{/*
         // Show All/Open/Active control
 
         <div class="btn-group" role="group">
@@ -72,9 +72,9 @@ const DispatchQueueTable = ({columns, data}) => {
             </li>
           </ul>
         </div>
-*/
+*/}
 
-/*
+{/*
         // Show # of days control
 
         <div class="btn-group" role="group">
@@ -106,9 +106,9 @@ const DispatchQueueTable = ({columns, data}) => {
             </li>
           </ul>
         </div>
-*/
+*/}
 
-/*
+{/*
         // Show # of rows control
 
         <div class="btn-group" role="group">
@@ -137,11 +137,11 @@ const DispatchQueueTable = ({columns, data}) => {
             </li>
           </ul>
          </div>
-*/
+*/}
 
       </div>
 
-/*
+{/*
       // Search field
 
       <div id="search_container" class="form-group form-group-sm col-sm-7">
@@ -160,9 +160,9 @@ const DispatchQueueTable = ({columns, data}) => {
           />
         </div>
       </div>
-*/
+*/}
 
-      // Table of incidents
+      {/* Table of incidents */}
 
       <Table striped hover id="queue_table" {...getTableProps()}>
         <thead>
