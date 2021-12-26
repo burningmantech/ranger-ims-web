@@ -8,6 +8,53 @@ import { IMSContext } from "../ims/context";
 import Loading from "../components/Loading";
 
 
+export const formatPriority = ({value}) => {
+  switch (value) {
+    case 1:
+    case 2:
+      return "↥";
+    case 3:
+      return "•";
+    case 4:
+    case 5:
+      return "↧";
+    default:
+      return value;
+  }
+}
+
+
+export const formatDateTime = ({value}) => {
+  return value.toFormat("ccc L/c HH:mm");
+}
+
+
+export const formatState = ({value}) => {
+  switch (value) {
+    case "new":
+      return "New";
+    case "on_hold":
+      return "On Hold";
+    case "dispatched":
+      return "Dispatched";
+    case "on_scene":
+      return "On Scene";
+    case "closed":
+      return "Closed";
+    default:
+      return value;
+  }
+}
+
+
+export const formatArrayOfStrings = ({value}) => {
+  if (! value) {
+    return "";
+  }
+  return value.sort().join(", ");
+}
+
+
 const DispatchQueueTable = ({columns, data}) => {
   const {
     getTableProps,
@@ -110,6 +157,7 @@ const DispatchQueueTable = ({columns, data}) => {
 
 {/*
         // Show # of rows control
+        // https://react-table.tanstack.com/docs/examples/pagination
 
         <div class="btn-group" role="group">
           <button
@@ -214,48 +262,6 @@ const DispatchQueueTable = ({columns, data}) => {
   );
 }
 
-const formatPriority = ({value}) => {
-  switch (value) {
-    case 1:
-    case 2:
-      return "↥";
-    case 3:
-      return "•";
-    case 4:
-    case 5:
-      return "↧";
-    default:
-      return value;
-  }
-}
-
-const formatDateTime = ({value}) => {
-  return value.toFormat("ccc L/c HH:mm");
-}
-
-const formatState = ({value}) => {
-  switch (value) {
-    case "new":
-      return "New";
-    case "on_hold":
-      return "On Hold";
-    case "dispatched":
-      return "Dispatched";
-    case "on_scene":
-      return "On Scene";
-    case "closed":
-      return "Closed";
-    default:
-      return value;
-  }
-}
-
-const formatArrayOfStrings = ({value}) => {
-  if (! value) {
-    return "";
-  }
-  return value.sort().join(", ");
-}
 
 const DispatchQueue = (props) => {
   invariant(props.event != null, "event property is required");
