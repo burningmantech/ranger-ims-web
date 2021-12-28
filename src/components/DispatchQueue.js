@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useTable } from "react-table";
+import { usePagination, useTable } from "react-table";
 import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
@@ -60,9 +60,21 @@ const DispatchQueueTable = ({columns, data}) => {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
-  } = useTable({columns, data});
+    // rows,
+
+    // usePagination
+    page,  // Rows on current page
+    // canPreviousPage,
+    // canNextPage,
+    // pageOptions,
+    // pageCount,
+    // gotoPage,
+    // nextPage,
+    // previousPage,
+    // setPageSize,
+    // state: { pageIndex, pageSize },
+  } = useTable({columns, data}, usePagination);
 
   return (
     <>
@@ -234,7 +246,7 @@ const DispatchQueueTable = ({columns, data}) => {
         </thead>
         <tbody {...getTableBodyProps()}>
           {
-            rows.map(
+            page.map(
               (row, i) => {
                 prepareRow(row)
                 return (
