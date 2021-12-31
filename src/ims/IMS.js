@@ -365,7 +365,6 @@ export default class IncidentManagementSystem {
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.id, incident])
     );
-    console.debug("Found incidents: " + JSON.stringify(incidents));
     return incidents;
   }
 
