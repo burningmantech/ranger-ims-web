@@ -82,22 +82,22 @@ const DispatchQueueTable = ({columns, data}) => {
 {/*
       <p>
         <a href="../incident_reports/">
-          <span class="glyphicon glyphicon-arrow-right" /> Incident Reports
+          <span className="glyphicon glyphicon-arrow-right" /> Incident Reports
         </a>
       </p>
  */}
 
-      <div id="button_container" class="btn-group col-sm-5" role="group">
+      <div id="button_container" className="btn-group col-sm-5" role="group">
 
 {/*
         // New incident button
 
-        <div class="btn-group new_incident" role="group">
+        <div className="btn-group new_incident" role="group">
           <a href="./new" target="_blank">
             <button
               id="new_incident"
               type="button"
-              class="btn btn-sm btn-default btn-primary"
+              className="btn btn-sm btn-default btn-primary"
             >
               New
             </button>
@@ -108,26 +108,26 @@ const DispatchQueueTable = ({columns, data}) => {
 {/*
         // Show All/Open/Active control
 
-        <div class="btn-group" role="group">
+        <div className="btn-group" role="group">
           <button
             id="show_state"
             type="button"
-            class="btn btn-sm btn-default"
+            className="btn btn-sm btn-default"
             data-toggle="dropdown"
           >
             Show
-            <span class="selection">All</span>
-            <span class="caret" />
+            <span className="selection">All</span>
+            <span className="caret" />
           </button>
-          <ul class="dropdown-menu">
+          <ul className="dropdown-menu">
             <li id="show_state_all" onclick="showState('all');">
-              <span class="checkmark" /><a href="#" class="name">All   </a>
+              <span className="checkmark" /><a href="#" className="name">All   </a>
             </li>
             <li id="show_state_open" onclick="showState('open');">
-              <span class="checkmark" /><a href="#" class="name">Open  </a>
+              <span className="checkmark" /><a href="#" className="name">Open  </a>
             </li>
             <li id="show_state_active" onclick="showState('active');">
-              <span class="checkmark" /><a href="#" class="name">Active</a>
+              <span className="checkmark" /><a href="#" className="name">Active</a>
             </li>
           </ul>
         </div>
@@ -136,32 +136,32 @@ const DispatchQueueTable = ({columns, data}) => {
 {/*
         // Show # of days control
 
-        <div class="btn-group" role="group">
+        <div className="btn-group" role="group">
           <button
             id="show_days"
             type="button"
-            class="btn btn-sm btn-default"
+            className="btn btn-sm btn-default"
             data-toggle="dropdown"
           >
             Show
-            <span class="selection">All Days</span>
-            <span class="caret" />
+            <span className="selection">All Days</span>
+            <span className="caret" />
           </button>
-          <ul class="dropdown-menu">
+          <ul className="dropdown-menu">
             <li id="show_days_all" onclick="showDays(null);">
-              <span class="checkmark" /><a href="#" class="name">All Days</a>
+              <span className="checkmark" /><a href="#" className="name">All Days</a>
             </li>
             <li id="show_days_0" onclick="showDays(0);">
-              <span class="checkmark" /><a href="#" class="name">Today</a>
+              <span className="checkmark" /><a href="#" className="name">Today</a>
             </li>
             <li id="show_days_1" onclick="showDays(1);">
-              <span class="checkmark" /><a href="#" class="name">Last 2 Days</a>
+              <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
             </li>
             <li id="show_days_2" onclick="showDays(2);">
-              <span class="checkmark" /><a href="#" class="name">Last 3 Days</a>
+              <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
             </li>
             <li id="show_days_3" onclick="showDays(3);">
-              <span class="checkmark" /><a href="#" class="name">Last 4 Days</a>
+              <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
             </li>
           </ul>
         </div>
@@ -171,29 +171,29 @@ const DispatchQueueTable = ({columns, data}) => {
         // Show # of rows control
         // https://react-table.tanstack.com/docs/examples/pagination
 
-        <div class="btn-group" role="group">
+        <div className="btn-group" role="group">
           <button
             id="show_rows"
             type="button"
-            class="btn btn-sm btn-default"
+            className="btn btn-sm btn-default"
             data-toggle="dropdown"
           >
             Show
-            <span class="selection">All Rows</span>
-            <span class="caret" />
+            <span className="selection">All Rows</span>
+            <span className="caret" />
           </button>
-          <ul class="dropdown-menu">
+          <ul className="dropdown-menu">
             <li id="show_rows_all" onclick="showRows(null);">
-              <span class="checkmark" /><a href="#" class="name">All Rows</a>
+              <span className="checkmark" /><a href="#" className="name">All Rows</a>
             </li>
             <li id="show_rows_25"  onclick="showRows(  25);">
-              <span class="checkmark" /><a href="#" class="name">25 Rows</a>
+              <span className="checkmark" /><a href="#" className="name">25 Rows</a>
             </li>
             <li id="show_rows_50"  onclick="showRows(  50);">
-              <span class="checkmark" /><a href="#" class="name">50 Rows</a>
+              <span className="checkmark" /><a href="#" className="name">50 Rows</a>
             </li>
             <li id="show_rows_100" onclick="showRows( 100);">
-              <span class="checkmark" /><a href="#" class="name">100 Rows</a>
+              <span className="checkmark" /><a href="#" className="name">100 Rows</a>
             </li>
           </ul>
          </div>
