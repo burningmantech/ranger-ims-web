@@ -56,6 +56,20 @@ export const formatArrayOfStrings = ({value}) => {
 
 
 const DispatchQueueTable = ({columns, data}) => {
+  // This uses React Table:
+  // https://react-table.tanstack.com/docs/overview
+
+  // Search input handler
+
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+    console.info("Set Search: " + event.target.value);
+  }
+
+  // Create React Table
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -73,6 +87,8 @@ const DispatchQueueTable = ({columns, data}) => {
     nextPage,
     previousPage,
     setPageSize,
+
+    // State
     state: { pageIndex, pageSize },
   } = useTable({columns, data}, usePagination);
 
@@ -201,26 +217,26 @@ const DispatchQueueTable = ({columns, data}) => {
 
       </div>
 
-{/*
-      // Search field
+      {/* Search field */}
 
-      <div id="search_container" class="form-group form-group-sm col-sm-7">
-        <div class="flex-input-container">
-          <label class="control-label" for="search_input">
-            <span class="glyphicon glyphicon-search" />
+      <div id="search_container" className="form-group form-group-sm col-sm-7">
+        <div className="flex-input-container">
+          <label className="control-label" htmlFor="search_input">
+            <span className="glyphicon glyphicon-search" />
           </label>
           <input
             id="search_input"
             type="search"
-            class="form-control"
+            className="form-control"
             placeholder="Search"
-            inputmode="latin"
-            autocomplete="off"
+            value={search}
+            inputMode="latin"
+            autoComplete="off"
+            onChange={handleSearch}
             aria-controls="queue_table"
           />
         </div>
       </div>
-*/}
 
       {/* Table of incidents */}
 
