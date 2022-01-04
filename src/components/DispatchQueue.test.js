@@ -7,7 +7,9 @@ import {
   renderWithIMSContext, testIncidentManagementSystem
 } from "../ims/TestIMS";
 
-import { formatArrayOfStrings, formatDateTime, formatPriority, formatState } from "./DispatchQueue";
+import {
+  formatArrayOfStrings, formatDateTime, formatPriority, formatState
+} from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
 
