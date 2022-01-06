@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { act, render, screen, fireEvent } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import User from "../ims/User";
@@ -97,11 +97,13 @@ describe("Login component", () => {
 
     ims.login = jest.fn(async () => { throw new Error(message); });
 
-    renderWithIMSContext(<Login>{content}</Login>, ims);
+    await act(async () => {
+      renderWithIMSContext(<Login>{content}</Login>, ims);
 
-    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
-    await userEvent.type(screen.getByLabelText(/Password/), password);
-    await userEvent.click(screen.getByText(/Log In/));
+      await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+      await userEvent.type(screen.getByLabelText(/Password/), password);
+      await userEvent.click(screen.getByText(/Log In/));
+    });
 
     expect(await screen.findByText(message)).toBeInTheDocument();
   });
