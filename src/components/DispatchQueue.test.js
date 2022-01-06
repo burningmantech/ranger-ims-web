@@ -119,7 +119,7 @@ describe("DispatchQueue component", () => {
       for (const event of await ims.events()) {
         renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-        expect(screen.queryByText(`Loading...`)).toBeInTheDocument();
+        expect(screen.queryByText("Loading...")).toBeInTheDocument();
         cleanup();
       }
     }

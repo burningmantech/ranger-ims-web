@@ -1,7 +1,9 @@
 import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
 
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext, testIncidentManagementSystem
+} from "../ims/TestIMS";
 
 import BagTable from "./BagTable";
 

@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
+import { renderWithIMSContext } from "../ims/TestIMS";
 
 import NotFoundPage from "./NotFoundPage";
 
