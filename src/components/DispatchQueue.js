@@ -77,7 +77,8 @@ const DispatchQueueTable = ({columns, data}) => {
     prepareRow,
     // rows,
 
-    // usePagination
+    // usePagination:
+    // https://react-table.tanstack.com/docs/api/usePagination
     page,  // Rows on current page
     canPreviousPage,
     canNextPage,
@@ -90,7 +91,10 @@ const DispatchQueueTable = ({columns, data}) => {
 
     // State
     state: { pageIndex, pageSize },
-  } = useTable({columns, data}, usePagination);
+  } = useTable(
+    {columns, data, initialState: {pageSize: 25, pageIndex: 0}},
+    usePagination
+  );
 
   return (
     <>
@@ -323,7 +327,7 @@ const DispatchQueueTable = ({columns, data}) => {
             setPageSize(Number(e.target.value))
           }}
         >
-          {[10, 20, 30, 40, 50].map(pageSize => (
+          {[25, 50, 100].map(pageSize => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
