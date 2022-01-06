@@ -137,12 +137,10 @@ describe("DispatchQueue component", () => {
       const spy = jest.spyOn(console, "error");
 
       for (const event of await ims.events()) {
-        await act(async () => {
-          renderWithIMSContext(<DispatchQueue event={event} />, ims);
-        });
+        renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
         expect(
-          screen.queryByText("Error loading incidents")
+          await screen.findByText("Error loading incidents")
         ).toBeInTheDocument();
 
         expect(spy).toHaveBeenCalledWith(
@@ -159,14 +157,12 @@ describe("DispatchQueue component", () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
-        await act(async () => {
-          renderWithIMSContext(
-            <DispatchQueue event={event} />, ims
-          );
-        });
+        renderWithIMSContext(
+          <DispatchQueue event={event} />, ims
+        );
 
         expect(
-          screen.queryByText(`Dispatch Queue: ${event.name}`)
+          await screen.findByText(`Dispatch Queue: ${event.name}`)
         ).toBeInTheDocument();
       }
     }

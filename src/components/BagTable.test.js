@@ -19,11 +19,9 @@ describe("BagTable component", () => {
   });
 
   test("caption", async () => {
-    await act(async () => {
-      renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-    });
+    renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("IMS Bag")).toBeInTheDocument();
+    expect(await screen.findByText("IMS Bag")).toBeInTheDocument();
   });
 
   test("loading bag", async () => {
@@ -42,9 +40,7 @@ describe("BagTable component", () => {
 
     const spy = jest.spyOn(console, "error");
 
-    await act(async () => {
-      renderWithIMSContext(<BagTable />, ims);
-    });
+    renderWithIMSContext(<BagTable />, ims);
 
     expect(
       await screen.findByText("Error loading URL bag")

@@ -18,12 +18,10 @@ describe("HomePage component", () => {
         username, { expiration: DateTime.local().plus({ hours: 1 }) }
       );
 
-      await act(async () => {
-        renderWithIMSContext(<HomePage user={user} />, testIncidentManagementSystem());
-      });
+      renderWithIMSContext(<HomePage user={user} />, testIncidentManagementSystem());
 
       expect(
-        screen.queryByText("Ranger Incident Management System")
+        await screen.findByText("Ranger Incident Management System")
       ).toBeInTheDocument();
     }
   );
