@@ -47,12 +47,21 @@ export const formatState = ({value}) => {
 }
 
 
+export const formatLocation = ({value}) => {
+  // console.error("Location " + JSON.stringify(value));
+  return "?";
+}
+
+
 export const formatArrayOfStrings = ({value}) => {
   if (! value) {
     return "";
   }
   return value.sort().join(", ");
 }
+
+
+export const defaultPageCount = 25;
 
 
 const DispatchQueueTable = ({columns, data}) => {
@@ -374,10 +383,11 @@ const DispatchQueue = (props) => {
         Header: "Rangers",
         Cell: formatArrayOfStrings,
       },
-      // {
-      //   accessor: "location",
-      //   Header: "Location",
-      // },
+      {
+        accessor: "location",
+        Header: "Location",
+        Cell: formatLocation,
+      },
       {
         accessor: "incidentTypes",
         Header: "Types",
