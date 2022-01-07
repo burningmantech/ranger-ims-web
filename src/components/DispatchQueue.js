@@ -1,9 +1,12 @@
 import invariant from "invariant";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
+import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
@@ -111,241 +114,265 @@ const DispatchQueueTable = ({columns, data}) => {
   return (
     <>
 
-{/*
-      <p>
-        <a href="../incident_reports/">
-          <span className="glyphicon glyphicon-arrow-right" /> Incident Reports
-        </a>
-      </p>
- */}
+      <Row id="queue_top_toolbar">
 
-{/*
-        // New incident button
+  {/*
+        <p>
+          <a href="../incident_reports/">
+            <span className="glyphicon glyphicon-arrow-right" /> Incident Reports
+          </a>
+        </p>
+   */}
 
-        <div className="btn-group new_incident" role="group">
-          <a href="./new" target="_blank">
-            <button
-              id="new_incident"
-              type="button"
-              className="btn btn-sm btn-default btn-primary"
+        <Col sm={5}>
+
+          <ButtonGroup id="queue_nav_controls" size="sm">
+
+            <Button
+              id="queue_new_incident"
+              variant="primary"
+              size="sm"
             >
               New
-            </button>
-          </a>
-        </div>
-*/}
+            </Button>
 
-      <ButtonGroup id="queue_display_controls" size="sm-5">
+          </ButtonGroup>
 
-{/*
-        // All/Open/Active control
+          <ButtonGroup id="queue_display_controls" size="sm">
 
-        <div className="btn-group" role="group">
-          <button
-            id="show_state"
-            type="button"
-            className="btn btn-sm btn-default"
-            data-toggle="dropdown"
-          >
-            Show
-            <span className="selection">All</span>
-            <span className="caret" />
-          </button>
-          <ul className="dropdown-menu">
-            <li id="show_state_all" onclick="showState('all');">
-              <span className="checkmark" /><a href="#" className="name">All   </a>
-            </li>
-            <li id="show_state_open" onclick="showState('open');">
-              <span className="checkmark" /><a href="#" className="name">Open  </a>
-            </li>
-            <li id="show_state_active" onclick="showState('active');">
-              <span className="checkmark" /><a href="#" className="name">Active</a>
-            </li>
-          </ul>
-        </div>
-*/}
+    {/*
+            // All/Open/Active control
 
-{/*
-        // # of days control
+            <div className="btn-group" role="group">
+              <button
+                id="show_state"
+                type="button"
+                className="btn btn-sm btn-default"
+                data-toggle="dropdown"
+              >
+                Show
+                <span className="selection">All</span>
+                <span className="caret" />
+              </button>
+              <ul className="dropdown-menu">
+                <li id="show_state_all" onclick="showState('all');">
+                  <span className="checkmark" /><a href="#" className="name">All   </a>
+                </li>
+                <li id="show_state_open" onclick="showState('open');">
+                  <span className="checkmark" /><a href="#" className="name">Open  </a>
+                </li>
+                <li id="show_state_active" onclick="showState('active');">
+                  <span className="checkmark" /><a href="#" className="name">Active</a>
+                </li>
+              </ul>
+            </div>
+    */}
 
-        <div className="btn-group" role="group">
-          <button
-            id="show_days"
-            type="button"
-            className="btn btn-sm btn-default"
-            data-toggle="dropdown"
-          >
-            Show
-            <span className="selection">All Days</span>
-            <span className="caret" />
-          </button>
-          <ul className="dropdown-menu">
-            <li id="show_days_all" onclick="showDays(null);">
-              <span className="checkmark" /><a href="#" className="name">All Days</a>
-            </li>
-            <li id="show_days_0" onclick="showDays(0);">
-              <span className="checkmark" /><a href="#" className="name">Today</a>
-            </li>
-            <li id="show_days_1" onclick="showDays(1);">
-              <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
-            </li>
-            <li id="show_days_2" onclick="showDays(2);">
-              <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
-            </li>
-            <li id="show_days_3" onclick="showDays(3);">
-              <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
-            </li>
-          </ul>
-        </div>
-*/}
+    {/*
+            // # of days control
 
-        {/*
-          * # of rows control
-          * https://react-table.tanstack.com/docs/examples/pagination
-          */}
+            <div className="btn-group" role="group">
+              <button
+                id="show_days"
+                type="button"
+                className="btn btn-sm btn-default"
+                data-toggle="dropdown"
+              >
+                Show
+                <span className="selection">All Days</span>
+                <span className="caret" />
+              </button>
+              <ul className="dropdown-menu">
+                <li id="show_days_all" onclick="showDays(null);">
+                  <span className="checkmark" /><a href="#" className="name">All Days</a>
+                </li>
+                <li id="show_days_0" onclick="showDays(0);">
+                  <span className="checkmark" /><a href="#" className="name">Today</a>
+                </li>
+                <li id="show_days_1" onclick="showDays(1);">
+                  <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
+                </li>
+                <li id="show_days_2" onclick="showDays(2);">
+                  <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
+                </li>
+                <li id="show_days_3" onclick="showDays(3);">
+                  <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
+                </li>
+              </ul>
+            </div>
+    */}
 
-        <DropdownButton
-          id="queue_show_rows_dropdown"
-          title={`Show ${(pageSize === data.length) ? "All" : pageSize} Rows`}
-          size="sm"
-          variant="default"
-        >
-          {
-            [0,1,2,4].map(
-              multiple => (
-                <Dropdown.Item
-                  id={`queue_show_rows_${multiple}`}
-                  key={multiple}
-                  onClick={
-                    () => setPageSize(
-                      (multiple === 0) ? data.length : multiple * defaultPageSize
-                    )
-                  }
-                >
-                  {
-                    (multiple === 0) ? "All" : multiple * defaultPageSize
-                  } Rows
-                </Dropdown.Item>
-              )
-            )
-          }
-        </DropdownButton>
+            {/*
+              * # of rows control
+              * https://react-table.tanstack.com/docs/examples/pagination
+              */}
 
-      </ButtonGroup>
-
-      {/* Search field */}
-
-      <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
-        <div className="flex-input-container">
-          <label className="control-label" htmlFor="search_input">
-            <span className="glyphicon glyphicon-search" />
-          </label>
-          <input
-            id="search_input"
-            type="search"
-            className="form-control"
-            placeholder="Search"
-            value={search}
-            inputMode="latin"
-            autoComplete="off"
-            onChange={handleSearch}
-            aria-controls="queue_table"
-          />
-        </div>
-      </div>
-
-      {/* Table of incidents */}
-
-      <Table striped hover id="queue_table" {...getTableProps()}>
-        <thead>
-          {
-            headerGroups.map(
-              headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {
-                    headerGroup.headers.map(
-                      column => (
-                        <th {...column.getHeaderProps()}>
-                          {column.render("Header")}
-                        </th>
-                      )
-                    )
-                  }
-                </tr>
-              )
-            )
-          }
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {
-            page.map(
-              (row, i) => {
-                prepareRow(row)
-                return (
-                  <tr {...row.getRowProps()}>
-                    {
-                      row.cells.map(
-                        cell => {
-                          return (
-                            <td {...cell.getCellProps()}>
-                              {cell.render("Cell")}
-                            </td>
-                          )
-                        }
-                      )
-                    }
-                  </tr>
+            <DropdownButton
+              id="queue_show_rows_dropdown"
+              title={`Show ${(pageSize === data.length) ? "All" : pageSize} Rows`}
+              size="sm"
+              variant="default"
+            >
+              {
+                [0,1,2,4].map(
+                  multiple => (
+                    <Dropdown.Item
+                      id={`queue_show_rows_${multiple}`}
+                      key={multiple}
+                      onClick={
+                        () => setPageSize(
+                          (multiple === 0) ? data.length : multiple * defaultPageSize
+                        )
+                      }
+                    >
+                      {
+                        (multiple === 0) ? "All" : multiple * defaultPageSize
+                      } Rows
+                    </Dropdown.Item>
+                  )
                 )
               }
-            )
-          }
-        </tbody>
-      </Table>
+            </DropdownButton>
 
-      <div>
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <span>
-          | Go to page:{' '}
-          <input
-            type="number"
-            defaultValue={pageIndex + 1}
-            onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              gotoPage(page)
-            }}
-            style={{ width: '100px' }}
-          />
-        </span>{' '}
-        <select
-          value={pageSize}
-          onChange={e => {
-            setPageSize(Number(e.target.value))
-          }}
-        >
-          {[25, 50, 100].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
+          </ButtonGroup>
+
+        </Col>
+
+        <Col sm={7}>
+
+          {/* Search field */}
+
+          <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
+            <div className="flex-input-container">
+              <label className="control-label" htmlFor="search_input">
+                <span className="glyphicon glyphicon-search" />
+              </label>
+              <input
+                id="search_input"
+                type="search"
+                className="form-control"
+                placeholder="Search"
+                value={search}
+                inputMode="latin"
+                autoComplete="off"
+                onChange={handleSearch}
+                aria-controls="queue_table"
+              />
+            </div>
+          </div>
+
+        </Col>
+
+      </Row>
+
+      <Row>
+
+        <Col>
+
+          {/* Table of incidents */}
+
+          <Table striped hover id="queue_table" {...getTableProps()}>
+            <thead>
+              {
+                headerGroups.map(
+                  headerGroup => (
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                      {
+                        headerGroup.headers.map(
+                          column => (
+                            <th {...column.getHeaderProps()}>
+                              {column.render("Header")}
+                            </th>
+                          )
+                        )
+                      }
+                    </tr>
+                  )
+                )
+              }
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {
+                page.map(
+                  (row, i) => {
+                    prepareRow(row)
+                    return (
+                      <tr {...row.getRowProps()}>
+                        {
+                          row.cells.map(
+                            cell => {
+                              return (
+                                <td {...cell.getCellProps()}>
+                                  {cell.render("Cell")}
+                                </td>
+                              )
+                            }
+                          )
+                        }
+                      </tr>
+                    )
+                  }
+                )
+              }
+            </tbody>
+          </Table>
+
+        </Col>
+
+      </Row>
+
+      <Row>
+
+        <Col>
+
+          <div>
+            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+              {'<<'}
+            </button>{' '}
+            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+              {'<'}
+            </button>{' '}
+            <button onClick={() => nextPage()} disabled={!canNextPage}>
+              {'>'}
+            </button>{' '}
+            <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+              {'>>'}
+            </button>{' '}
+            <span>
+              Page{' '}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>{' '}
+            </span>
+            <span>
+              | Go to page:{' '}
+              <input
+                type="number"
+                defaultValue={pageIndex + 1}
+                onChange={e => {
+                  const page = e.target.value ? Number(e.target.value) - 1 : 0
+                  gotoPage(page)
+                }}
+                style={{ width: '100px' }}
+              />
+            </span>{' '}
+            <select
+              value={pageSize}
+              onChange={e => {
+                setPageSize(Number(e.target.value))
+              }}
+            >
+              {[25, 50, 100].map(pageSize => (
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
+                </option>
+              ))}
+            </select>
+          </div>
+
+        </Col>
+
+      </Row>
 
     </>
   );
@@ -442,7 +469,7 @@ const DispatchQueue = (props) => {
   else {
     const data = Array.from(incidents.values());
     return (
-      <div>
+      <div id="queue_wrapper">
         <h1>Dispatch Queue: {props.event.name}</h1>
         <DispatchQueueTable columns={columns} data={data} />
       </div>
