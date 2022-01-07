@@ -1,11 +1,16 @@
 import invariant from "invariant";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
+
+
+export const defaultPageSize = 25;
 
 
 export const formatPriority = ({value}) => {
@@ -61,9 +66,6 @@ export const formatArrayOfStrings = ({value}) => {
 }
 
 
-export const defaultPageCount = 25;
-
-
 const DispatchQueueTable = ({columns, data}) => {
   // This uses React Table:
   // https://react-table.tanstack.com/docs/overview
@@ -101,7 +103,7 @@ const DispatchQueueTable = ({columns, data}) => {
     // State
     state: { pageIndex, pageSize },
   } = useTable(
-    {columns, data, initialState: {pageSize: 25, pageIndex: 0}},
+    {columns, data, initialState: {pageSize: defaultPageSize}},
     usePagination
   );
 
@@ -135,7 +137,7 @@ const DispatchQueueTable = ({columns, data}) => {
 */}
 
 {/*
-        // Show All/Open/Active control
+        // All/Open/Active control
 
         <div className="btn-group" role="group">
           <button
@@ -163,7 +165,7 @@ const DispatchQueueTable = ({columns, data}) => {
 */}
 
 {/*
-        // Show # of days control
+        // # of days control
 
         <div className="btn-group" role="group">
           <button
@@ -196,37 +198,31 @@ const DispatchQueueTable = ({columns, data}) => {
         </div>
 */}
 
-{/*
-        // Show # of rows control
-        // https://react-table.tanstack.com/docs/examples/pagination
+        {/*
+          * # of rows control
+          * https://react-table.tanstack.com/docs/examples/pagination
+          */}
 
-        <div className="btn-group" role="group">
-          <button
-            id="show_rows"
-            type="button"
-            className="btn btn-sm btn-default"
-            data-toggle="dropdown"
-          >
-            Show
-            <span className="selection">All Rows</span>
-            <span className="caret" />
-          </button>
-          <ul className="dropdown-menu">
-            <li id="show_rows_all" onclick="showRows(null);">
-              <span className="checkmark" /><a href="#" className="name">All Rows</a>
-            </li>
-            <li id="show_rows_25"  onclick="showRows(  25);">
-              <span className="checkmark" /><a href="#" className="name">25 Rows</a>
-            </li>
-            <li id="show_rows_50"  onclick="showRows(  50);">
-              <span className="checkmark" /><a href="#" className="name">50 Rows</a>
-            </li>
-            <li id="show_rows_100" onclick="showRows( 100);">
-              <span className="checkmark" /><a href="#" className="name">100 Rows</a>
-            </li>
-          </ul>
-         </div>
-*/}
+        <DropdownButton
+          title={`Show ${(pageSize === data.length) ? "All" : pageSize} Rows`}
+          size="sm"
+        >
+          {
+            [0,1,2,4].map(
+              multiple => (
+                <Dropdown.Item onClick={
+                  () => setPageSize(
+                    (multiple === 0) ? data.length : multiple * defaultPageSize
+                  )
+                }>
+                  {
+                    (multiple === 0) ? "All" : multiple * defaultPageSize
+                  } Rows
+                </Dropdown.Item>
+              )
+            )
+          }
+        </DropdownButton>
 
       </div>
 
