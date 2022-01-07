@@ -129,23 +129,159 @@ const useDispatchQueueTable = (incidents) => {
 }
 
 
-const DispatchQueueTable = ({table, incidents}) => {
-  // Search input handler
+const ShowStateControl = ({table, incidents}) => {
+  /*
+    // All/Open/Active control
 
-  const [search, setSearch] = useState("");
+    <div className="btn-group" role="group">
+      <button
+        id="show_state"
+        type="button"
+        className="btn btn-sm btn-default"
+        data-toggle="dropdown"
+      >
+        Show
+        <span className="selection">All</span>
+        <span className="caret" />
+      </button>
+      <ul className="dropdown-menu">
+        <li id="show_state_all" onclick="showState('all');">
+          <span className="checkmark" /><a href="#" className="name">All   </a>
+        </li>
+        <li id="show_state_open" onclick="showState('open');">
+          <span className="checkmark" /><a href="#" className="name">Open  </a>
+        </li>
+        <li id="show_state_active" onclick="showState('active');">
+          <span className="checkmark" /><a href="#" className="name">Active</a>
+        </li>
+      </ul>
+    </div>
+  */
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-    console.info("Set Search: " + event.target.value);
-  }
-
-  // Render table
+  const currentState = "?";
 
   return (
-    <>
+    <DropdownButton
+      id="queue_show_state_dropdown"
+      title={`Show ${currentState}`}
+      size="sm"
+      variant="default"
+    >
+    </DropdownButton>
+  );
+}
 
-      <Row id="queue_top_toolbar">
 
+const ShowDaysControl = ({table, incidents}) => {
+  /*
+    <div className="btn-group" role="group">
+      <button
+        id="show_days"
+        type="button"
+        className="btn btn-sm btn-default"
+        data-toggle="dropdown"
+      >
+        Show
+        <span className="selection">All Days</span>
+        <span className="caret" />
+      </button>
+      <ul className="dropdown-menu">
+        <li id="show_days_all" onclick="showDays(null);">
+          <span className="checkmark" /><a href="#" className="name">All Days</a>
+        </li>
+        <li id="show_days_0" onclick="showDays(0);">
+          <span className="checkmark" /><a href="#" className="name">Today</a>
+        </li>
+        <li id="show_days_1" onclick="showDays(1);">
+          <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
+        </li>
+        <li id="show_days_2" onclick="showDays(2);">
+          <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
+        </li>
+        <li id="show_days_3" onclick="showDays(3);">
+          <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
+        </li>
+      </ul>
+    </div>
+  */
+
+  const currentDays = "?";
+
+  return (
+    <DropdownButton
+      id="queue_show_days_dropdown"
+      title={`Show ${currentDays} Days`}
+      size="sm"
+      variant="default"
+    >
+    </DropdownButton>
+  );
+}
+
+
+const ShowRowsControl = ({table, incidents}) => {
+  const currentRows = (
+    (table.state.pageSize === incidents.length) ? "All" : table.state.pageSize
+  );
+
+  return (
+    <DropdownButton
+      id="queue_show_rows_dropdown"
+      title={`Show ${currentRows} Rows`}
+      size="sm"
+      variant="default"
+    >
+      {
+        [0,1,2,4].map(
+          multiple => (
+            <Dropdown.Item
+              id={`queue_show_rows_${multiple}`}
+              key={multiple}
+              onClick={
+                () => table.setPageSize(
+                  (multiple === 0) ? incidents.length : multiple * defaultPageSize
+                )
+              }
+            >
+              {
+                (multiple === 0) ? "All" : multiple * defaultPageSize
+              } Rows
+            </Dropdown.Item>
+          )
+        )
+      }
+    </DropdownButton>
+  );
+}
+
+
+const SearchField = ({input, handleInput}) => {
+  return (
+    <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
+      <div className="flex-input-container">
+        <label className="control-label" htmlFor="search_input">
+          <span className="glyphicon glyphicon-search" />
+        </label>
+        <input
+          id="search_input"
+          type="search"
+          className="form-control"
+          placeholder="Search"
+          value={input}
+          inputMode="latin"
+          autoComplete="off"
+          onChange={handleInput}
+          aria-controls="queue_table"
+        />
+      </div>
+    </div>
+  );
+}
+
+
+const TopToolBar = ({table, incidents, searchInput, handleSearch}) => {
+  return (
+    <Row id="queue_top_toolbar">
   {/*
         <p>
           <a href="../incident_reports/">
@@ -154,256 +290,171 @@ const DispatchQueueTable = ({table, incidents}) => {
         </p>
    */}
 
-        <Col sm={5}>
+      <Col sm={5}>
 
-          <ButtonGroup id="queue_nav_controls" size="sm">
+        <ButtonGroup id="queue_nav_controls" size="sm">
+          <Button id="queue_new_incident" variant="primary" size="sm">
+            New
+          </Button>
+        </ButtonGroup>
 
-            <Button
-              id="queue_new_incident"
-              variant="primary"
-              size="sm"
-            >
-              New
-            </Button>
+        <ButtonGroup id="queue_display_controls" size="sm">
+          <ShowStateControl table={table} incidents={incidents} />
+          <ShowDaysControl table={table} incidents={incidents} />
+          <ShowRowsControl table={table} incidents={incidents} />
+        </ButtonGroup>
 
-          </ButtonGroup>
+      </Col>
 
-          <ButtonGroup id="queue_display_controls" size="sm">
+      <Col sm={7}>
+        <SearchField input={searchInput} handleInput={handleSearch} />
+      </Col>
+    </Row>
+  );
+}
 
-    {/*
-            // All/Open/Active control
 
-            <div className="btn-group" role="group">
-              <button
-                id="show_state"
-                type="button"
-                className="btn btn-sm btn-default"
-                data-toggle="dropdown"
-              >
-                Show
-                <span className="selection">All</span>
-                <span className="caret" />
-              </button>
-              <ul className="dropdown-menu">
-                <li id="show_state_all" onclick="showState('all');">
-                  <span className="checkmark" /><a href="#" className="name">All   </a>
-                </li>
-                <li id="show_state_open" onclick="showState('open');">
-                  <span className="checkmark" /><a href="#" className="name">Open  </a>
-                </li>
-                <li id="show_state_active" onclick="showState('active');">
-                  <span className="checkmark" /><a href="#" className="name">Active</a>
-                </li>
-              </ul>
-            </div>
-    */}
+const BottomToolBar = ({table, incidents}) => {
+  return (
+    <Row>
 
-    {/*
-            // # of days control
+      <Col>
 
-            <div className="btn-group" role="group">
-              <button
-                id="show_days"
-                type="button"
-                className="btn btn-sm btn-default"
-                data-toggle="dropdown"
-              >
-                Show
-                <span className="selection">All Days</span>
-                <span className="caret" />
-              </button>
-              <ul className="dropdown-menu">
-                <li id="show_days_all" onclick="showDays(null);">
-                  <span className="checkmark" /><a href="#" className="name">All Days</a>
-                </li>
-                <li id="show_days_0" onclick="showDays(0);">
-                  <span className="checkmark" /><a href="#" className="name">Today</a>
-                </li>
-                <li id="show_days_1" onclick="showDays(1);">
-                  <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
-                </li>
-                <li id="show_days_2" onclick="showDays(2);">
-                  <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
-                </li>
-                <li id="show_days_3" onclick="showDays(3);">
-                  <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
-                </li>
-              </ul>
-            </div>
-    */}
+        <div>
+          <button onClick={() => table.gotoPage(0)} disabled={!table.canPreviousPage}>
+            {'<<'}
+          </button>{' '}
+          <button onClick={() => table.previousPage()} disabled={!table.canPreviousPage}>
+            {'<'}
+          </button>{' '}
+          <button onClick={() => table.nextPage()} disabled={!table.canNextPage}>
+            {'>'}
+          </button>{' '}
+          <button onClick={() => table.gotoPage(table.pageCount - 1)} disabled={!table.canNextPage}>
+            {'>>'}
+          </button>{' '}
+          <span>
+            Page{' '}
+            <strong>
+              {table.state.pageIndex + 1} of {table.pageOptions.length}
+            </strong>{' '}
+          </span>
+          <span>
+            | Go to page:{' '}
+            <input
+              type="number"
+              defaultValue={table.state.pageIndex + 1}
+              onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0
+                table.gotoPage(page)
+              }}
+              style={{ width: '100px' }}
+            />
+          </span>{' '}
+          <select
+            value={table.state.pageSize}
+            onChange={e => {
+              table.setPageSize(Number(e.target.value))
+            }}
+          >
+            {[25, 50, 100].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
 
-            {/*
-              * # of rows control
-              * https://react-table.tanstack.com/docs/examples/pagination
-              */}
+      </Col>
 
-            <DropdownButton
-              id="queue_show_rows_dropdown"
-              title={`Show ${(table.state.pageSize === incidents.length) ? "All" : table.state.pageSize} Rows`}
-              size="sm"
-              variant="default"
-            >
-              {
-                [0,1,2,4].map(
-                  multiple => (
-                    <Dropdown.Item
-                      id={`queue_show_rows_${multiple}`}
-                      key={multiple}
-                      onClick={
-                        () => table.setPageSize(
-                          (multiple === 0) ? incidents.length : multiple * defaultPageSize
+    </Row>
+  );
+}
+
+
+const DispatchQueueTable = ({table}) => {
+  return (
+    <Row>
+
+      <Col>
+
+        {/* Table of incidents */}
+
+        <Table striped hover id="queue_table" {...table.getTableProps()}>
+          <thead>
+            {
+              table.headerGroups.map(
+                headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {
+                      headerGroup.headers.map(
+                        column => (
+                          <th {...column.getHeaderProps()}>
+                            {column.render("Header")}
+                          </th>
                         )
-                      }
-                    >
-                      {
-                        (multiple === 0) ? "All" : multiple * defaultPageSize
-                      } Rows
-                    </Dropdown.Item>
-                  )
+                      )
+                    }
+                  </tr>
                 )
-              }
-            </DropdownButton>
-
-          </ButtonGroup>
-
-        </Col>
-
-        <Col sm={7}>
-
-          {/* Search field */}
-
-          <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
-            <div className="flex-input-container">
-              <label className="control-label" htmlFor="search_input">
-                <span className="glyphicon glyphicon-search" />
-              </label>
-              <input
-                id="search_input"
-                type="search"
-                className="form-control"
-                placeholder="Search"
-                value={search}
-                inputMode="latin"
-                autoComplete="off"
-                onChange={handleSearch}
-                aria-controls="queue_table"
-              />
-            </div>
-          </div>
-
-        </Col>
-
-      </Row>
-
-      <Row>
-
-        <Col>
-
-          {/* Table of incidents */}
-
-          <Table striped hover id="queue_table" {...table.getTableProps()}>
-            <thead>
-              {
-                table.headerGroups.map(
-                  headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
+              )
+            }
+          </thead>
+          <tbody {...table.getTableBodyProps()}>
+            {
+              table.page.map(
+                (row, i) => {
+                  table.prepareRow(row)
+                  return (
+                    <tr {...row.getRowProps()}>
                       {
-                        headerGroup.headers.map(
-                          column => (
-                            <th {...column.getHeaderProps()}>
-                              {column.render("Header")}
-                            </th>
-                          )
+                        row.cells.map(
+                          cell => {
+                            return (
+                              <td {...cell.getCellProps()}>
+                                {cell.render("Cell")}
+                              </td>
+                            )
+                          }
                         )
                       }
                     </tr>
                   )
-                )
-              }
-            </thead>
-            <tbody {...table.getTableBodyProps()}>
-              {
-                table.page.map(
-                  (row, i) => {
-                    table.prepareRow(row)
-                    return (
-                      <tr {...row.getRowProps()}>
-                        {
-                          row.cells.map(
-                            cell => {
-                              return (
-                                <td {...cell.getCellProps()}>
-                                  {cell.render("Cell")}
-                                </td>
-                              )
-                            }
-                          )
-                        }
-                      </tr>
-                    )
-                  }
-                )
-              }
-            </tbody>
-          </Table>
+                }
+              )
+            }
+          </tbody>
+        </Table>
 
-        </Col>
+      </Col>
 
-      </Row>
+    </Row>
+  );
+}
 
-      <Row>
 
-        <Col>
+const DispatchQueueMain = ({table, incidents}) => {
+  // Search input handler
 
-          <div>
-            <button onClick={() => table.gotoPage(0)} disabled={!table.canPreviousPage}>
-              {'<<'}
-            </button>{' '}
-            <button onClick={() => table.previousPage()} disabled={!table.canPreviousPage}>
-              {'<'}
-            </button>{' '}
-            <button onClick={() => table.nextPage()} disabled={!table.canNextPage}>
-              {'>'}
-            </button>{' '}
-            <button onClick={() => table.gotoPage(table.pageCount - 1)} disabled={!table.canNextPage}>
-              {'>>'}
-            </button>{' '}
-            <span>
-              Page{' '}
-              <strong>
-                {table.state.pageIndex + 1} of {table.pageOptions.length}
-              </strong>{' '}
-            </span>
-            <span>
-              | Go to page:{' '}
-              <input
-                type="number"
-                defaultValue={table.state.pageIndex + 1}
-                onChange={e => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0
-                  table.gotoPage(page)
-                }}
-                style={{ width: '100px' }}
-              />
-            </span>{' '}
-            <select
-              value={table.state.pageSize}
-              onChange={e => {
-                table.setPageSize(Number(e.target.value))
-              }}
-            >
-              {[25, 50, 100].map(pageSize => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
+  const [searchInput, setSearchInput] = useState("");
 
-        </Col>
+  const handleSearch = (event) => {
+    setSearchInput(event.target.value);
+    console.info("Set Search: " + event.target.value);
+  }
 
-      </Row>
+  // Render
 
+  return (
+    <>
+      <TopToolBar
+        table={table}
+        incidents={incidents}
+        searchInput={searchInput}
+        handleSearch={handleSearch}
+      />
+      <DispatchQueueTable table={table} />
+      <BottomToolBar table={table} incidents={incidents} />
     </>
   );
 }
@@ -458,7 +509,7 @@ const DispatchQueue = (props) => {
     return (
       <div id="queue_wrapper">
         <h1>Dispatch Queue: {props.event.name}</h1>
-        <DispatchQueueTable table={table} incidents={incidents} />
+        <DispatchQueueMain table={table} incidents={incidents} />
       </div>
     );
   }
