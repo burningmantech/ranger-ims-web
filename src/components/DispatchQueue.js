@@ -210,11 +210,14 @@ const DispatchQueueTable = ({columns, data}) => {
           {
             [0,1,2,4].map(
               multiple => (
-                <Dropdown.Item onClick={
-                  () => setPageSize(
-                    (multiple === 0) ? data.length : multiple * defaultPageSize
-                  )
-                }>
+                <Dropdown.Item
+                  key={multiple}
+                  onClick={
+                    () => setPageSize(
+                      (multiple === 0) ? data.length : multiple * defaultPageSize
+                    )
+                  }
+                >
                   {
                     (multiple === 0) ? "All" : multiple * defaultPageSize
                   } Rows
