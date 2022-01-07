@@ -85,31 +85,12 @@ const DispatchQueueTable = ({columns, data}) => {
 
   // Create React Table
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    // rows,
-
-    // usePagination:
-    // https://react-table.tanstack.com/docs/api/usePagination
-    page,  // Rows on current page
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-
-    // State
-    state: { pageIndex, pageSize },
-  } = useTable(
+  const table = useTable(
     {columns, data, initialState: {pageSize: defaultPageSize}},
-    usePagination
+    usePagination,  // https://react-table.tanstack.com/docs/api/usePagination
   );
+
+  // Render table
 
   return (
     <>
@@ -209,7 +190,7 @@ const DispatchQueueTable = ({columns, data}) => {
 
             <DropdownButton
               id="queue_show_rows_dropdown"
-              title={`Show ${(pageSize === data.length) ? "All" : pageSize} Rows`}
+              title={`Show ${(table.state.pageSize === data.length) ? "All" : table.state.pageSize} Rows`}
               size="sm"
               variant="default"
             >
@@ -220,7 +201,7 @@ const DispatchQueueTable = ({columns, data}) => {
                       id={`queue_show_rows_${multiple}`}
                       key={multiple}
                       onClick={
-                        () => setPageSize(
+                        () => table.setPageSize(
                           (multiple === 0) ? data.length : multiple * defaultPageSize
                         )
                       }
@@ -271,10 +252,10 @@ const DispatchQueueTable = ({columns, data}) => {
 
           {/* Table of incidents */}
 
-          <Table striped hover id="queue_table" {...getTableProps()}>
+          <Table striped hover id="queue_table" {...table.getTableProps()}>
             <thead>
               {
-                headerGroups.map(
+                table.headerGroups.map(
                   headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                       {
@@ -291,11 +272,11 @@ const DispatchQueueTable = ({columns, data}) => {
                 )
               }
             </thead>
-            <tbody {...getTableBodyProps()}>
+            <tbody {...table.getTableBodyProps()}>
               {
-                page.map(
+                table.page.map(
                   (row, i) => {
-                    prepareRow(row)
+                    table.prepareRow(row)
                     return (
                       <tr {...row.getRowProps()}>
                         {
@@ -326,40 +307,40 @@ const DispatchQueueTable = ({columns, data}) => {
         <Col>
 
           <div>
-            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            <button onClick={() => table.gotoPage(0)} disabled={!table.canPreviousPage}>
               {'<<'}
             </button>{' '}
-            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+            <button onClick={() => table.previousPage()} disabled={!table.canPreviousPage}>
               {'<'}
             </button>{' '}
-            <button onClick={() => nextPage()} disabled={!canNextPage}>
+            <button onClick={() => table.nextPage()} disabled={!table.canNextPage}>
               {'>'}
             </button>{' '}
-            <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+            <button onClick={() => table.gotoPage(table.pageCount - 1)} disabled={!table.canNextPage}>
               {'>>'}
             </button>{' '}
             <span>
               Page{' '}
               <strong>
-                {pageIndex + 1} of {pageOptions.length}
+                {table.state.pageIndex + 1} of {table.pageOptions.length}
               </strong>{' '}
             </span>
             <span>
               | Go to page:{' '}
               <input
                 type="number"
-                defaultValue={pageIndex + 1}
+                defaultValue={table.state.pageIndex + 1}
                 onChange={e => {
                   const page = e.target.value ? Number(e.target.value) - 1 : 0
-                  gotoPage(page)
+                  table.gotoPage(page)
                 }}
                 style={{ width: '100px' }}
               />
             </span>{' '}
             <select
-              value={pageSize}
+              value={table.state.pageSize}
               onChange={e => {
-                setPageSize(Number(e.target.value))
+                table.setPageSize(Number(e.target.value))
               }}
             >
               {[25, 50, 100].map(pageSize => (
