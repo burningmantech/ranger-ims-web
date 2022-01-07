@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Table from "react-bootstrap/Table";
@@ -118,8 +119,6 @@ const DispatchQueueTable = ({columns, data}) => {
       </p>
  */}
 
-      <div id="button_container" className="btn-group col-sm-5" role="group">
-
 {/*
         // New incident button
 
@@ -135,6 +134,8 @@ const DispatchQueueTable = ({columns, data}) => {
           </a>
         </div>
 */}
+
+      <ButtonGroup id="queue_display_controls" size="sm-5">
 
 {/*
         // All/Open/Active control
@@ -204,13 +205,16 @@ const DispatchQueueTable = ({columns, data}) => {
           */}
 
         <DropdownButton
+          id="queue_show_rows_dropdown"
           title={`Show ${(pageSize === data.length) ? "All" : pageSize} Rows`}
           size="sm"
+          variant="default"
         >
           {
             [0,1,2,4].map(
               multiple => (
                 <Dropdown.Item
+                  id={`queue_show_rows_${multiple}`}
                   key={multiple}
                   onClick={
                     () => setPageSize(
@@ -227,11 +231,11 @@ const DispatchQueueTable = ({columns, data}) => {
           }
         </DropdownButton>
 
-      </div>
+      </ButtonGroup>
 
       {/* Search field */}
 
-      <div id="search_container" className="form-group form-group-sm col-sm-7">
+      <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
         <div className="flex-input-container">
           <label className="control-label" htmlFor="search_input">
             <span className="glyphicon glyphicon-search" />
