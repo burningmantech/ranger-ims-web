@@ -70,10 +70,66 @@ export const formatArrayOfStrings = ({value}) => {
 }
 
 
-const DispatchQueueTable = ({columns, data}) => {
-  // This uses React Table:
-  // https://react-table.tanstack.com/docs/overview
+const useDispatchQueueTable = (incidents) => {
+  // See: https://react-table.tanstack.com/docs/overview
 
+  const data = useMemo(
+    () => (incidents == null) ? [] : Array.from(incidents.values()),
+    [incidents]
+  )
+
+  const columns = useMemo(
+    () => [
+      {
+        accessor: "number",
+        Header: <abbr title="Number">#</abbr>,
+      },
+      {
+        accessor: "priority",
+        Header: <abbr title="Priority">Pri</abbr>,
+        Cell: formatPriority,
+      },
+      {
+        accessor: "created",
+        Header: "Created",
+        Cell: formatDateTime,
+      },
+      {
+        accessor: "state",
+        Header: "State",
+        Cell: formatState,
+      },
+      {
+        accessor: "rangerHandles",
+        Header: "Rangers",
+        Cell: formatArrayOfStrings,
+      },
+      {
+        accessor: "location",
+        Header: "Location",
+        Cell: formatLocation,
+      },
+      {
+        accessor: "incidentTypes",
+        Header: "Types",
+        Cell: formatArrayOfStrings,
+      },
+      {
+        accessor: "summary",
+        Header: "Summary",
+      },
+    ],
+    []
+  );
+
+  return useTable(
+    {columns, data, initialState: {pageSize: defaultPageSize}},
+    usePagination,
+  );
+}
+
+
+const DispatchQueueTable = ({table, incidents}) => {
   // Search input handler
 
   const [search, setSearch] = useState("");
@@ -82,13 +138,6 @@ const DispatchQueueTable = ({columns, data}) => {
     setSearch(event.target.value);
     console.info("Set Search: " + event.target.value);
   }
-
-  // Create React Table
-
-  const table = useTable(
-    {columns, data, initialState: {pageSize: defaultPageSize}},
-    usePagination,  // https://react-table.tanstack.com/docs/api/usePagination
-  );
 
   // Render table
 
@@ -190,7 +239,7 @@ const DispatchQueueTable = ({columns, data}) => {
 
             <DropdownButton
               id="queue_show_rows_dropdown"
-              title={`Show ${(table.state.pageSize === data.length) ? "All" : table.state.pageSize} Rows`}
+              title={`Show ${(table.state.pageSize === incidents.length) ? "All" : table.state.pageSize} Rows`}
               size="sm"
               variant="default"
             >
@@ -202,7 +251,7 @@ const DispatchQueueTable = ({columns, data}) => {
                       key={multiple}
                       onClick={
                         () => table.setPageSize(
-                          (multiple === 0) ? data.length : multiple * defaultPageSize
+                          (multiple === 0) ? incidents.length : multiple * defaultPageSize
                         )
                       }
                     >
@@ -368,50 +417,6 @@ const DispatchQueue = (props) => {
 
   invariant(ims != null, "No IMS");
 
-  const columns = useMemo(
-    () => [
-      {
-        accessor: "number",
-        Header: <abbr title="Number">#</abbr>,
-      },
-      {
-        accessor: "priority",
-        Header: <abbr title="Priority">Pri</abbr>,
-        Cell: formatPriority,
-      },
-      {
-        accessor: "created",
-        Header: "Created",
-        Cell: formatDateTime,
-      },
-      {
-        accessor: "state",
-        Header: "State",
-        Cell: formatState,
-      },
-      {
-        accessor: "rangerHandles",
-        Header: "Rangers",
-        Cell: formatArrayOfStrings,
-      },
-      {
-        accessor: "location",
-        Header: "Location",
-        Cell: formatLocation,
-      },
-      {
-        accessor: "incidentTypes",
-        Header: "Types",
-        Cell: formatArrayOfStrings,
-      },
-      {
-        accessor: "summary",
-        Header: "Summary",
-      },
-    ],
-    []
-  );
-
   // Fetch data
 
   const [incidents, setIncidents] = useState(undefined);
@@ -439,6 +444,8 @@ const DispatchQueue = (props) => {
     }, [ims, props.event]
   );
 
+  const table = useDispatchQueueTable(incidents);
+
   // Render
 
   if (incidents === undefined) {
@@ -448,11 +455,10 @@ const DispatchQueue = (props) => {
     return "Error loading incidents";
   }
   else {
-    const data = Array.from(incidents.values());
     return (
       <div id="queue_wrapper">
         <h1>Dispatch Queue: {props.event.name}</h1>
-        <DispatchQueueTable columns={columns} data={data} />
+        <DispatchQueueTable table={table} incidents={incidents} />
       </div>
     );
   }
