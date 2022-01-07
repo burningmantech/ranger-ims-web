@@ -11,11 +11,11 @@ const Home = (props) => {
       {props.children}
 
       <footer>
-      <hr />
-      <p>
-        IMS Software © Burning Man Project and its contributors.
-        Data in IMS is confidential and proprietary.
-      </p>
+        <hr />
+        <p>
+          IMS Software © Burning Man Project and its contributors.
+          Data in IMS is confidential and proprietary.
+        </p>
       </footer>
     </Container>
   );
