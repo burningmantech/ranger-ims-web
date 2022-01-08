@@ -172,48 +172,41 @@ const ShowStateControl = ({table, incidents, showState, setShowState}) => {
 }
 
 
-const ShowDaysControl = ({table, incidents}) => {
-  /*
-    <div className="btn-group" role="group">
-      <button
-        id="show_days"
-        type="button"
-        className="btn btn-sm btn-default"
-        data-toggle="dropdown"
-      >
-        Show
-        <span className="selection">All Days</span>
-        <span className="caret" />
-      </button>
-      <ul className="dropdown-menu">
-        <li id="show_days_all" onclick="showDays(null);">
-          <span className="checkmark" /><a href="#" className="name">All Days</a>
-        </li>
-        <li id="show_days_0" onclick="showDays(0);">
-          <span className="checkmark" /><a href="#" className="name">Today</a>
-        </li>
-        <li id="show_days_1" onclick="showDays(1);">
-          <span className="checkmark" /><a href="#" className="name">Last 2 Days</a>
-        </li>
-        <li id="show_days_2" onclick="showDays(2);">
-          <span className="checkmark" /><a href="#" className="name">Last 3 Days</a>
-        </li>
-        <li id="show_days_3" onclick="showDays(3);">
-          <span className="checkmark" /><a href="#" className="name">Last 4 Days</a>
-        </li>
-      </ul>
-    </div>
-  */
+export const formatShowDays = (showDays) => {
+  switch (showDays) {
+    case 0:
+      return "All Days";
+    case 1:
+      return "Last Day";
+    default:
+      return `Last ${showDays} Days`;
+  }
+}
 
-  const currentDays = "?";
+
+const ShowDaysControl = ({table, incidents, showDays, setShowDays}) => {
+  const currentDays = formatShowDays(showDays);
 
   return (
     <DropdownButton
       id="queue_show_days_dropdown"
-      title={`Show ${currentDays} Days`}
+      title={`Show ${currentDays}`}
       size="sm"
       variant="default"
     >
+      {
+        [0, 1, 2, 3, 4].map(
+          showDays => (
+            <Dropdown.Item
+              id={`queue_show_days_${showDays}`}
+              key={showDays}
+              onClick={() => setShowDays(showDays)}
+            >
+              {formatShowDays(showDays)}
+            </Dropdown.Item>
+          )
+        )
+      }
     </DropdownButton>
   );
 }
@@ -292,7 +285,10 @@ const SearchBar = ({searchInput, setSearchInput}) => {
 
 
 const TopToolBar = ({
-  table, incidents, searchInput, setSearchInput, showState, setShowState
+  table, incidents,
+  searchInput, setSearchInput,
+  showState, setShowState,
+  showDays, setShowDays,
 }) => {
   return (
     <Row id="queue_top_toolbar">
@@ -317,7 +313,10 @@ const TopToolBar = ({
             table={table} incidents={incidents}
             showState={showState} setShowState={setShowState}
           />
-          <ShowDaysControl table={table} incidents={incidents} />
+          <ShowDaysControl
+            table={table} incidents={incidents}
+            showDays={showDays} setShowDays={setShowDays}
+          />
           <ShowRowsControl table={table} incidents={incidents} />
         </ButtonGroup>
 
