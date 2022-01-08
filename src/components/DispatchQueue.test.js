@@ -20,24 +20,24 @@ import DispatchQueue from "./DispatchQueue";
 
 describe("Formatting functions", () => {
 
-  test(
-    "formatPriority, valid",
-    () => {
-      expect(formatPriority({value: 1})).toEqual("↥");
-      expect(formatPriority({value: 2})).toEqual("↥");
-      expect(formatPriority({value: 3})).toEqual("•");
-      expect(formatPriority({value: 4})).toEqual("↧");
-      expect(formatPriority({value: 5})).toEqual("↧");
-    }
-  );
+  // test(
+  //   "formatPriority, valid",
+  //   () => {
+  //     expect(formatPriority({value: 1})).toEqual("↥");
+  //     expect(formatPriority({value: 2})).toEqual("↥");
+  //     expect(formatPriority({value: 3})).toEqual("•");
+  //     expect(formatPriority({value: 4})).toEqual("↧");
+  //     expect(formatPriority({value: 5})).toEqual("↧");
+  //   }
+  // );
 
-  test(
-    "formatPriority, invalid",
-    () => {
-      expect(formatPriority({value: -1})).toEqual(-1);
-      expect(formatPriority({value: "XYZZY"})).toEqual("XYZZY");
-    }
-  );
+  // test(
+  //   "formatPriority, invalid",
+  //   () => {
+  //     expect(formatPriority({value: -1})).toEqual(-1);
+  //     expect(formatPriority({value: "XYZZY"})).toEqual("XYZZY");
+  //   }
+  // );
 
   test(
     "formatPriority, undefined",
