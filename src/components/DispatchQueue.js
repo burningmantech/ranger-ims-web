@@ -6,6 +6,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
@@ -255,26 +256,41 @@ const ShowRowsControl = ({table, incidents}) => {
 }
 
 
-const SearchField = ({input, handleInput}) => {
+const SearchIcon = () => {
+  // From https://icons.getbootstrap.com
   return (
-    <div id="queue_search_container" className="form-group form-group-sm col-sm-7">
-      <div className="flex-input-container">
-        <label className="control-label" htmlFor="search_input">
-          <span className="glyphicon glyphicon-search" />
-        </label>
-        <input
-          id="search_input"
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+    </svg>
+  );
+}
+
+
+const SearchBar = ({input, handleInput}) => {
+  // Note: using Form causes submit-on-enter, which we don't want.
+  // There's probably a correct way to disable that.
+  return (
+    <Form>
+      <Form.Group id="search_bar" controlId="search_input">
+        {/* This button is here to suppress submission attempts by the form. */}
+        <Button
+          type="submit"
+          disabled
+          style={{display: "none"}}
+          aria-hidden="true"
+        />
+        <Form.Label size="sm"><SearchIcon /></Form.Label>
+        <Form.Control
           type="search"
-          className="form-control"
           placeholder="Search"
           value={input}
           inputMode="latin"
           autoComplete="off"
+          size="sm"
           onChange={handleInput}
-          aria-controls="queue_table"
         />
-      </div>
-    </div>
+      </Form.Group>
+    </Form>
   );
 }
 
@@ -307,7 +323,7 @@ const TopToolBar = ({table, incidents, searchInput, handleSearch}) => {
       </Col>
 
       <Col sm={7}>
-        <SearchField input={searchInput} handleInput={handleSearch} />
+        <SearchBar input={searchInput} handleInput={handleSearch} />
       </Col>
     </Row>
   );
