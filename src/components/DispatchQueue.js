@@ -270,15 +270,8 @@ const SearchBar = ({input, handleInput}) => {
   // Note: using Form causes submit-on-enter, which we don't want.
   // There's probably a correct way to disable that.
   return (
-    <Form>
+    // <Form>
       <Form.Group id="search_bar" controlId="search_input">
-        {/* This button is here to suppress submission attempts by the form. */}
-        <Button
-          type="submit"
-          disabled
-          style={{display: "none"}}
-          aria-hidden="true"
-        />
         <Form.Label size="sm"><SearchIcon /></Form.Label>
         <Form.Control
           type="search"
@@ -290,7 +283,7 @@ const SearchBar = ({input, handleInput}) => {
           onChange={handleInput}
         />
       </Form.Group>
-    </Form>
+    // </Form>
   );
 }
 
