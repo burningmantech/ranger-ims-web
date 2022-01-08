@@ -130,36 +130,22 @@ const useDispatchQueueTable = (incidents) => {
 }
 
 
-const ShowStateControl = ({table, incidents}) => {
-  /*
-    // All/Open/Active control
+export const formatShowState = (showState) => {
+  switch (showState) {
+    case "all":
+      return "All";
+    case "open":
+      return "Open";
+    case "active":
+      return "Active";
+    default:
+      throw new Error(`Invalid show state: ${JSON.stringify(showState)}`);
+  }
+}
 
-    <div className="btn-group" role="group">
-      <button
-        id="show_state"
-        type="button"
-        className="btn btn-sm btn-default"
-        data-toggle="dropdown"
-      >
-        Show
-        <span className="selection">All</span>
-        <span className="caret" />
-      </button>
-      <ul className="dropdown-menu">
-        <li id="show_state_all" onclick="showState('all');">
-          <span className="checkmark" /><a href="#" className="name">All   </a>
-        </li>
-        <li id="show_state_open" onclick="showState('open');">
-          <span className="checkmark" /><a href="#" className="name">Open  </a>
-        </li>
-        <li id="show_state_active" onclick="showState('active');">
-          <span className="checkmark" /><a href="#" className="name">Active</a>
-        </li>
-      </ul>
-    </div>
-  */
 
-  const currentState = "?";
+const ShowStateControl = ({table, incidents, showState, setShowState}) => {
+  const currentState = formatShowState(showState);
 
   return (
     <DropdownButton
@@ -168,6 +154,19 @@ const ShowStateControl = ({table, incidents}) => {
       size="sm"
       variant="default"
     >
+      {
+        ["all", "open", "active"].map(
+          showState => (
+            <Dropdown.Item
+              id={`queue_show_state_${showState}`}
+              key={showState}
+              onClick={() => setShowState(showState)}
+            >
+              {formatShowState(showState)}
+            </Dropdown.Item>
+          )
+        )
+      }
     </DropdownButton>
   );
 }
@@ -266,7 +265,11 @@ const SearchIcon = () => {
 }
 
 
-const SearchBar = ({input, handleInput}) => {
+const SearchBar = ({searchInput, setSearchInput}) => {
+  const handleSearchInput = (event) => {
+    setSearchInput(event.target.value);
+  }
+
   // Note: using Form causes submit-on-enter, which we don't want.
   // There's probably a correct way to disable that.
   return (
@@ -276,11 +279,11 @@ const SearchBar = ({input, handleInput}) => {
         <Form.Control
           type="search"
           placeholder="Search"
-          value={input}
+          value={searchInput}
           inputMode="latin"
           autoComplete="off"
           size="sm"
-          onChange={handleInput}
+          onChange={handleSearchInput}
         />
       </Form.Group>
     // </Form>
@@ -288,7 +291,9 @@ const SearchBar = ({input, handleInput}) => {
 }
 
 
-const TopToolBar = ({table, incidents, searchInput, handleSearch}) => {
+const TopToolBar = ({
+  table, incidents, searchInput, setSearchInput, showState, setShowState
+}) => {
   return (
     <Row id="queue_top_toolbar">
   {/*
@@ -308,7 +313,10 @@ const TopToolBar = ({table, incidents, searchInput, handleSearch}) => {
         </ButtonGroup>
 
         <ButtonGroup id="queue_display_controls" size="sm">
-          <ShowStateControl table={table} incidents={incidents} />
+          <ShowStateControl
+            table={table} incidents={incidents}
+            showState={showState} setShowState={setShowState}
+          />
           <ShowDaysControl table={table} incidents={incidents} />
           <ShowRowsControl table={table} incidents={incidents} />
         </ButtonGroup>
@@ -316,7 +324,7 @@ const TopToolBar = ({table, incidents, searchInput, handleSearch}) => {
       </Col>
 
       <Col sm={7}>
-        <SearchBar input={searchInput} handleInput={handleSearch} />
+        <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} />
       </Col>
     </Row>
   );
@@ -443,14 +451,12 @@ const DispatchQueueTable = ({table}) => {
 
 
 const DispatchQueueMain = ({table, incidents}) => {
-  // Search input handler
+  // Filtering
 
+  // showState may be: all, open, active
+  const [showState, setShowState] = useState("open");
+  const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
-
-  const handleSearch = (event) => {
-    setSearchInput(event.target.value);
-    console.info("Set Search: " + event.target.value);
-  }
 
   // Render
 
@@ -459,8 +465,9 @@ const DispatchQueueMain = ({table, incidents}) => {
       <TopToolBar
         table={table}
         incidents={incidents}
-        searchInput={searchInput}
-        handleSearch={handleSearch}
+        showState={showState} setShowState={setShowState}
+        showDays={showDays} setShowDays={setShowDays}
+        searchInput={searchInput} setSearchInput={setSearchInput}
       />
       <DispatchQueueTable table={table} />
       <BottomToolBar table={table} incidents={incidents} />
