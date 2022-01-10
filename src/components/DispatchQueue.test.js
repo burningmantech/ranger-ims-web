@@ -14,35 +14,39 @@ import {
   formatShowDays,
   formatShowState,
   formatState,
+  HighPriorityIcon,
+  LowPriorityIcon,
+  NormalPriorityIcon,
+  UnknownPriorityIcon,
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
 
 describe("Formatting functions", () => {
 
-  // test(
-  //   "formatPriority, valid",
-  //   () => {
-  //     expect(formatPriority({value: 1})).toEqual("↥");
-  //     expect(formatPriority({value: 2})).toEqual("↥");
-  //     expect(formatPriority({value: 3})).toEqual("•");
-  //     expect(formatPriority({value: 4})).toEqual("↧");
-  //     expect(formatPriority({value: 5})).toEqual("↧");
-  //   }
-  // );
+  test(
+    "formatPriority, valid",
+    () => {
+      expect(formatPriority({value: 1})).toEqual(<HighPriorityIcon />);
+      expect(formatPriority({value: 2})).toEqual(<HighPriorityIcon />);
+      expect(formatPriority({value: 3})).toEqual(<NormalPriorityIcon />);
+      expect(formatPriority({value: 4})).toEqual(<LowPriorityIcon />);
+      expect(formatPriority({value: 5})).toEqual(<LowPriorityIcon />);
+    }
+  );
 
-  // test(
-  //   "formatPriority, invalid",
-  //   () => {
-  //     expect(formatPriority({value: -1})).toEqual(-1);
-  //     expect(formatPriority({value: "XYZZY"})).toEqual("XYZZY");
-  //   }
-  // );
+  test(
+    "formatPriority, invalid",
+    () => {
+      expect(formatPriority({value: -1})).toEqual(<UnknownPriorityIcon />);
+      expect(formatPriority({value: "XYZZY"})).toEqual(<UnknownPriorityIcon />);
+    }
+  );
 
   test(
     "formatPriority, undefined",
     () => {
-      expect(formatPriority({})).toBeUndefined();
+      expect(formatPriority({})).toEqual(<UnknownPriorityIcon />);
     }
   );
 
