@@ -473,12 +473,15 @@ const DispatchQueueTable = ({table}) => {
                 (row, i) => {
                   table.prepareRow(row)
                   return (
-                    <tr {...row.getRowProps()}>
+                    <tr className="queue_incident_row" {...row.getRowProps()}>
                       {
                         row.cells.map(
-                          cell => {
+                        cell => {
                             return (
-                              <td {...cell.getCellProps()}>
+                              <td
+                                className={`queue_incident_${cell.column.id}`}
+                                {...cell.getCellProps()}
+                              >
                                 {cell.render("Cell")}
                               </td>
                             )
