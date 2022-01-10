@@ -126,7 +126,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         "3": [],
         "4": [],
       },
-    }
+    };
 
     this.requestsReceived = [];
 
