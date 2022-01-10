@@ -166,7 +166,9 @@ export default class IncidentManagementSystem {
 
     // Replace URL parameters with values
     for (const paramName in urlParams) {
-      url = url.replace(`{${paramName}}`, urlParams[paramName]);
+      const value = urlParams[paramName];
+      invariant(value != null, `Undefined parameter: ${paramName}`)
+      url = url.replace(`{${paramName}}`, value);
     }
     invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);
 
@@ -343,8 +345,11 @@ export default class IncidentManagementSystem {
   }
 
   eventWithID = async (id) => {
+    invariant(id != null, "id argument is required");
+
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
+
     if (this._eventsMap.has(id)) {
       return this._eventsMap.get(id);
     } else {
@@ -357,6 +362,8 @@ export default class IncidentManagementSystem {
   incidentCacheLifetime = { minutes: 5 };
 
   incidents = async (eventID) => {
+    invariant(eventID != null, "eventID argument is required");
+
     const incidents = await this._fetchAndCacheJSON(
       this._incidentsStore(eventID),
       this.incidentCacheLifetime,
@@ -365,6 +372,7 @@ export default class IncidentManagementSystem {
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.id, incident])
     );
+
     return incidents;
   }
 
