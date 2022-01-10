@@ -500,7 +500,7 @@ const DispatchQueueTable = ({table}) => {
 }
 
 
-// Queue component
+// DispatchQueue component
 
 
 const DispatchQueueMain = ({table, incidents}) => {

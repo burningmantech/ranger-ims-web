@@ -22,7 +22,7 @@ import {
 import DispatchQueue from "./DispatchQueue";
 
 
-describe("Formatting functions", () => {
+describe("Table cell formatting functions", () => {
 
   test(
     "formatPriority, valid",
