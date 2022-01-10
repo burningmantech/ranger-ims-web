@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import jwtSign from "jsonwebtoken/sign";
 import { DateTime, Duration } from "luxon";
 
@@ -55,7 +56,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "3", name: "Event Three" },
         { id: "4", name: "Event Four" },
       ],
-      incidents: {
+      incidents: {  // Lists of incidents, indexes by event ID
         "1": [
           {
             event: "1",
@@ -127,6 +128,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         "4": [],
       },
     };
+
+    // Validate test data a little
+    const cmp = (a) => JSON.stringify(Object.keys(a).sort());
+    const eventIDs = cmp(this.testData.events.map((e) => e.id));
+    const incidentEventIDs = cmp(this.testData.events);
+    invariant(
+      eventIDs == incidentEventIDs,
+      "Events and incidents index keys are mismatched"
+    );
 
     this.requestsReceived = [];
 
