@@ -18,7 +18,10 @@ import Loading from "../components/Loading";
 export const defaultPageSize = 25;
 
 
-const UnknownPriorityIcon = () => {
+// Icons
+
+
+export const UnknownPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/question-circle-fill/
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-question-circle-fill" viewBox="0 0 16 16">
@@ -27,25 +30,7 @@ const UnknownPriorityIcon = () => {
   );
 }
 
-const HighPriorityIcon = () => {
-  // https://icons.getbootstrap.com/icons/arrow-up-circle-fill/
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
-    </svg>
-  );
-}
-
-const NormalPriorityIcon = () => {
-  // https://icons.getbootstrap.com/icons/circle-fill/
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-circle-fill" viewBox="0 0 16 16">
-      <circle cx="8" cy="8" r="8"/>
-    </svg>
-  );
-}
-
-const LowPriorityIcon = () => {
+export const LowPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/arrow-down-circle-fill/
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
@@ -54,7 +39,25 @@ const LowPriorityIcon = () => {
   );
 }
 
-const SearchIcon = () => {
+export const NormalPriorityIcon = () => {
+  // https://icons.getbootstrap.com/icons/circle-fill/
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-circle-fill" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="8"/>
+    </svg>
+  );
+}
+
+export const HighPriorityIcon = () => {
+  // https://icons.getbootstrap.com/icons/arrow-up-circle-fill/
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+      <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+    </svg>
+  );
+}
+
+export const SearchIcon = () => {
   // https://icons.getbootstrap.com/icons/search/
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
@@ -62,6 +65,9 @@ const SearchIcon = () => {
     </svg>
   );
 }
+
+
+// Table cell formatting
 
 
 export const formatPriority = ({value}) => {
@@ -115,6 +121,9 @@ export const formatArrayOfStrings = ({value}) => {
   }
   return value.sort().join(", ");
 }
+
+
+// Table hook
 
 
 const useDispatchQueueTable = (incidents) => {
@@ -174,6 +183,9 @@ const useDispatchQueueTable = (incidents) => {
     usePagination,
   );
 }
+
+
+// Table controls
 
 
 export const formatShowState = (showState) => {
@@ -424,6 +436,9 @@ const BottomToolBar = ({table, incidents}) => {
 }
 
 
+// Table component
+
+
 const DispatchQueueTable = ({table}) => {
   return (
     <Row>
@@ -483,6 +498,9 @@ const DispatchQueueTable = ({table}) => {
     </Row>
   );
 }
+
+
+// Queue component
 
 
 const DispatchQueueMain = ({table, incidents}) => {
