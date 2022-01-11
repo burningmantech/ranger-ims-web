@@ -480,7 +480,8 @@ describe("IMS: bag", () => {
 describe("IMS: authentication", () => {
 
   afterEach(() => {
-    testIncidentManagementSystem().logout();
+    // Reset cached data
+    Store.removeAll();
   });
 
   test(
@@ -794,11 +795,12 @@ describe("IMS: authentication", () => {
 describe("IMS: events", () => {
 
   afterEach(() => {
-    testIncidentManagementSystem().logout();
+    // Reset cached data
+    Store.removeAll();
   });
 
   test(
-    "local events, ok", async () => {
+    "load events, ok", async () => {
       const ims = await testIncidentManagementSystem().asHubcap();
 
       const events = await ims.events();
