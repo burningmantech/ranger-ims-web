@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
 import { act, cleanup, screen } from "@testing-library/react";
 
@@ -8,6 +9,7 @@ import {
 } from "../ims/TestIMS";
 
 import {
+  defaultPageSize,
   formatArrayOfStrings,
   formatDateTime,
   formatPriority,
@@ -150,7 +152,54 @@ describe("Table cell formatting functions", () => {
 });
 
 
-describe("DispatchQueue component", () => {
+describe("DispatchQueue component: table", () => {
+
+  test(
+    "displayed incidents are valid up to page size",
+    async () => {
+      // Test with 0, 5, 10, ... 200 incidents in the system
+      for (const incidentCount of Array(40).fill(1).map((_, i) => i * 5)) {
+        const ims = testIncidentManagementSystem();
+        const event = await ims.eventWithID("empty");
+
+        await ims.addMoreIncidents(event.id, incidentCount);
+
+        const incidents = await ims.incidents(event.id);
+        invariant(
+          incidents.length == incidentCount,
+          `Failed to add incidents (${incidents.length} != ${incidentCount})`
+        );
+
+        await act(async () => {
+          renderWithIMSContext(<DispatchQueue event={event} />, ims);
+        });
+
+        const numberCells = document.getElementsByClassName(
+          "queue_incident_number"
+        );
+
+        expect(numberCells.length).toEqual(
+          (incidents.length > defaultPageSize)
+          ? defaultPageSize : incidents.length
+        );
+
+        for (const numberCell of numberCells) {
+          const incidentNumber = parseInt(numberCell.innerHTML);
+          expect(
+            () => ims.incidentWithID(event.id, incidentNumber)
+          ).not.toThrow();
+        }
+
+        ims.flushCaches();
+        cleanup();
+      }
+    }
+  );
+
+});
+
+
+describe("DispatchQueue component: loading", () => {
 
   test(
     "loading incidents",

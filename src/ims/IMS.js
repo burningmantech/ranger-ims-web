@@ -18,6 +18,8 @@ export default class IncidentManagementSystem {
     this._eventsStore = new Store(Event, "events", "events");
     this._incidentsStoreMap = new Map();
 
+    // Control the user property so that we can use it to access and update
+    // cached credentials.
     Object.defineProperty(this, "user", {
       enumerable: true,
 
@@ -332,6 +334,11 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
+  flushCaches = () => {
+    console.info("Flushing all caches...");
+    Store.removeAll();
+  }
+
   // Events
 
   eventsCacheLifetime = { minutes: 5 };
@@ -370,10 +377,28 @@ export default class IncidentManagementSystem {
       { "event_id": eventID },
     );
     this._incidentsMap = new Map(
-      incidents.map(incident => [incident.id, incident])
+      incidents.map(incident => [incident.number, incident])
     );
 
     return incidents;
+  }
+
+  incidentWithID = async (eventID, number) => {
+    invariant(eventID != null, "eventID argument is required");
+    invariant(number != null, "number argument is required");
+
+    await this.incidents(eventID);
+    invariant(
+      this._incidentsMap != null, "this._incidentsMap did not initialize"
+    );
+
+    if (this._incidentsMap.has(number)) {
+      return this._incidentsMap.get(number);
+    } else {
+      throw new Error(
+        `No incident found with event:number: ${eventID}:${number}`
+      );
+    }
   }
 
 }

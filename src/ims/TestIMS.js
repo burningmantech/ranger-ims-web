@@ -55,6 +55,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "2", name: "Event Two" },
         { id: "3", name: "Event Three" },
         { id: "4", name: "Event Four" },
+        { id: "empty", name: "Empty Event" },
       ],
       incidents: {  // Lists of incidents, indexes by event ID
         "1": [
@@ -126,6 +127,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         ],
         "3": [],
         "4": [],
+        "empty": [],
       },
     };
 
@@ -405,6 +407,43 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     return this;
   }
+
+  addMoreIncidents = async (eventID, total) => {
+    const incidents = this.testData.incidents[eventID];
+    invariant(incidents != null, `no incidents for event: ${eventID}`);
+
+    const numberToAdd = total - incidents.length;
+
+    // Start with largest incident number
+    let nextIncidentNumber = 0;
+    for (const incident of incidents) {
+      if (incident.number > nextIncidentNumber) {
+        nextIncidentNumber = incident.number;
+      }
+    }
+
+    while (incidents.length < total) {
+      nextIncidentNumber += 1;
+
+      const nextIncident = {
+        event: eventID,
+        number: nextIncidentNumber,
+        created: "2021-08-18T10:10:46+00:00",
+        summary: null,
+        priority: 3,
+        state: "new",
+        incident_types: [],
+        ranger_handles: [],
+        location: {type: "text", description: ""},
+        incident_reports: [],
+        report_entries: [],
+      };
+      nextIncident.number = nextIncidentNumber;
+
+      incidents.push(nextIncident);
+    }
+  }
+
 }
 
 

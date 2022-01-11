@@ -3,11 +3,18 @@ import { DateTime } from "luxon";
 
 export default class Store {
 
+  static _storage = window.localStorage;
+
+  static removeAll() {
+    Store._storage.clear();
+    console.debug(`Removed all cached data.`);
+  }
+
   constructor(modelClass, storeID, endpointID) {
     this.modelClass = modelClass;
     this.storeID = storeID;
     this.endpointID = endpointID;
-    this._storage = window.localStorage;
+    this._storage = Store._storage;
   }
 
   serializeValue = (object) => {
@@ -59,7 +66,7 @@ export default class Store {
     const container = { value: value, tag: tag, expiration: expiration };
 
     this._storage.setItem(this.storeID, JSON.stringify(container));
-    console.debug(`Stored cached ${this.storeID} (tag:${tag}).`);
+    console.debug(`Stored ${this.storeID} in cache (tag:${tag}).`);
   }
 
   load = () => {
