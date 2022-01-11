@@ -185,6 +185,73 @@ const useDispatchQueueTable = (incidents) => {
 }
 
 
+// Table component
+
+
+const DispatchQueueTable = ({table}) => {
+  return (
+    <Row>
+
+      <Col>
+
+        {/* Table of incidents */}
+
+        <Table striped hover id="queue_table" {...table.getTableProps()}>
+          <thead>
+            {
+              table.headerGroups.map(
+                headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {
+                      headerGroup.headers.map(
+                        column => (
+                          <th {...column.getHeaderProps()}>
+                            {column.render("Header")}
+                          </th>
+                        )
+                      )
+                    }
+                  </tr>
+                )
+              )
+            }
+          </thead>
+          <tbody {...table.getTableBodyProps()}>
+            {
+              table.page.map(
+                (row, i) => {
+                  table.prepareRow(row)
+                  return (
+                    <tr className="queue_incident_row" {...row.getRowProps()}>
+                      {
+                        row.cells.map(
+                        cell => {
+                            return (
+                              <td
+                                className={`queue_incident_${cell.column.id}`}
+                                {...cell.getCellProps()}
+                              >
+                                {cell.render("Cell")}
+                              </td>
+                            )
+                          }
+                        )
+                      }
+                    </tr>
+                  )
+                }
+              )
+            }
+          </tbody>
+        </Table>
+
+      </Col>
+
+    </Row>
+  );
+}
+
+
 // Table controls
 
 
@@ -428,73 +495,6 @@ const BottomToolBar = ({table, incidents}) => {
             ))}
           </select>
         </div>
-
-      </Col>
-
-    </Row>
-  );
-}
-
-
-// Table component
-
-
-const DispatchQueueTable = ({table}) => {
-  return (
-    <Row>
-
-      <Col>
-
-        {/* Table of incidents */}
-
-        <Table striped hover id="queue_table" {...table.getTableProps()}>
-          <thead>
-            {
-              table.headerGroups.map(
-                headerGroup => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {
-                      headerGroup.headers.map(
-                        column => (
-                          <th {...column.getHeaderProps()}>
-                            {column.render("Header")}
-                          </th>
-                        )
-                      )
-                    }
-                  </tr>
-                )
-              )
-            }
-          </thead>
-          <tbody {...table.getTableBodyProps()}>
-            {
-              table.page.map(
-                (row, i) => {
-                  table.prepareRow(row)
-                  return (
-                    <tr className="queue_incident_row" {...row.getRowProps()}>
-                      {
-                        row.cells.map(
-                        cell => {
-                            return (
-                              <td
-                                className={`queue_incident_${cell.column.id}`}
-                                {...cell.getCellProps()}
-                              >
-                                {cell.render("Cell")}
-                              </td>
-                            )
-                          }
-                        )
-                      }
-                    </tr>
-                  )
-                }
-              )
-            }
-          </tbody>
-        </Table>
 
       </Col>
 
