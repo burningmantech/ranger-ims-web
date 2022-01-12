@@ -40,7 +40,6 @@ const LoginDropdown = (props) => {
   }
   else {
     async function onLogout(eventKey, event) {
-      console.error("LOG OUT");
       await ims.logout();
     }
     return (
