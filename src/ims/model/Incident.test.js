@@ -40,7 +40,7 @@ describe("Incident", () => {
   );
 
   test(
-    "toJSON", () => {
+    "toJSON, valid", () => {
       const result = anIncident.toJSON();
 
       expect(JSON.stringify(result)).toEqual(
@@ -58,6 +58,14 @@ describe("Incident", () => {
           }
         )
       );
+    }
+  );
+
+  test(
+    "fromJSON, invalid", () => {
+      expect(
+        () => Incident.fromJSON("{}")
+      ).toThrow(`Invalid Incident JSON: {}`);
     }
   );
 

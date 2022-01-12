@@ -28,7 +28,7 @@ describe("Event", () => {
   );
 
   test(
-    "fromJSON", () => {
+    "fromJSON, valid", () => {
       const id = "1";
       const name = "One";
       const event = new Event(id, name);
@@ -37,6 +37,12 @@ describe("Event", () => {
       const resultJSON = result.toJSON();
 
       expect(resultJSON).toEqual(eventJSON);
+    }
+  );
+
+  test(
+    "fromJSON, invalid", () => {
+      expect(() => Event.fromJSON("{}")).toThrow(`Invalid event JSON: {}`);
     }
   );
 
