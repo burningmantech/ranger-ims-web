@@ -226,25 +226,21 @@ describe("DispatchQueue component: controls", () => {
   test(
     "show rows selection",
     async () => {
-      const ims = testIncidentManagementSystem();
-      const event = await ims.eventWithID("empty");
+      for (const incidentCount of [0, 10, 100, 200, defaultPageSize]) {
+        const ims = testIncidentManagementSystem();
+        const event = await ims.eventWithID("empty");
 
-      for (const incidentCount of [0, 10, 100, 200]) {
         await ims.addMoreIncidents(event.id, incidentCount);
 
-        await act(async () => {
-          renderWithIMSContext(<DispatchQueue event={event} />, ims);
-        });
-
-        const dropdown = document.getElementById("queue_show_rows_dropdown");
-        await act(async () => {
-          userEvent.click(dropdown);
-        });
-
         for (const multiple of [0,1,2,4]) {
-          const numberofIncidentsToDisplay = (
-            (multiple === 0) ? incidentCount : multiple * defaultPageSize
-          );
+          await act(async () => {
+            renderWithIMSContext(<DispatchQueue event={event} />, ims);
+          });
+
+          const dropdown = document.getElementById("queue_show_rows_dropdown");
+          await act(async () => {
+            userEvent.click(dropdown);
+          });
 
           const selectorID = `queue_show_rows_${multiple}`;
           const selector = document.getElementById(selectorID);
@@ -253,6 +249,9 @@ describe("DispatchQueue component: controls", () => {
           });
 
           // Ensure the selection is displays in the dropdown
+          const numberofIncidentsToDisplay = (
+            (multiple === 0) ? incidentCount : multiple * defaultPageSize
+          );
           const selectorCount = (
             (multiple === 0 || numberofIncidentsToDisplay === incidentCount)
             ? "All" : `${numberofIncidentsToDisplay}`
@@ -263,14 +262,15 @@ describe("DispatchQueue component: controls", () => {
           const numberCells = document.getElementsByClassName(
             "queue_incident_number"
           );
+          console.error(incidentCount + " :: " + multiple + " :: " + numberofIncidentsToDisplay + " :: " + numberCells.length);
           expect(numberCells.length).toEqual(
             incidentCount > numberofIncidentsToDisplay
             ? numberofIncidentsToDisplay : incidentCount
           );
-        }
 
+          cleanup();  // Reset React state
+        }
         ims.flushCaches();  // Reset IMS state
-        cleanup();  // Reset React state
       }
     }
   );
