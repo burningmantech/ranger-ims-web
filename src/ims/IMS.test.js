@@ -827,15 +827,15 @@ describe("IMS: events", () => {
 
       // Fetch bag now and discount the requests made to get it
       await ims.bag();
-      let eventRequestCount = 0 - ims.requestsReceived.length;
+      let requestCount = 0 - ims.requestsReceived.length;
 
       const events1 = await ims.events();
       const events2 = await ims.events();
 
-      eventRequestCount += ims.requestsReceived.length;
+      requestCount += ims.requestsReceived.length;
 
       expect(events2).toEqualByValue(events1);
-      expect(eventRequestCount).toEqual(1);
+      expect(requestCount).toEqual(1);
     }
   );
 
@@ -845,7 +845,7 @@ describe("IMS: events", () => {
 
       // Fetch bag now and discount the requests made to get it
       await ims.bag();
-      let eventRequestCount = 0 - ims.requestsReceived.length;
+      let requestCount = 0 - ims.requestsReceived.length;
 
       // Expire the cache immediately
       ims.eventsCacheLifetime = { seconds: 0 };
@@ -853,9 +853,9 @@ describe("IMS: events", () => {
       await ims.events();
       await ims.events();
 
-      eventRequestCount += ims.requestsReceived.length;
+      requestCount += ims.requestsReceived.length;
 
-      expect(eventRequestCount).toEqual(2);
+      expect(requestCount).toEqual(2);
     }
   );
 
@@ -890,6 +890,121 @@ describe("IMS: events", () => {
       expect(ims.eventWithID(id)).toRejectWithMessage(
         `No event found with ID: ${id}`
       );
+    }
+  );
+
+});
+
+
+describe("IMS: incidents", () => {
+
+  afterEach(() => {
+    // Reset cached data
+    Store.removeAll();
+  });
+
+  test(
+    "load incidents, ok", async () => {
+      const ims = await testIncidentManagementSystem().asHubcap();
+
+      const mapIncidentsByNumber = (incidents) => {
+        return new Map(
+          incidents.map(incident => [incident.number, incident])
+        );
+      }
+
+      for (const event of await ims.events()) {
+        const retrievedIncidents = await ims.incidents(event.id);
+        const retrievedIncidentsByNumber = mapIncidentsByNumber(
+          retrievedIncidents
+        );
+        const expectedIncidentsByNumber = mapIncidentsByNumber(
+          ims.testData.incidents[event.id]
+        );
+
+        // Incident numbers should be the same
+        expect(
+          Array.from(retrievedIncidentsByNumber.keys()).sort()
+        ).toEqual(Array.from(expectedIncidentsByNumber.keys()).sort());
+
+        // FIXME: need a good way to compare incidents
+        // // Incidents should match
+        // for (const retrievedIncident of retrievedIncidents) {
+        //   expect(retrievedIncident.toJSON()).toEqual(
+        //     expectedIncidentsByNumber.get(retrievedIncident.number)
+        //   );
+        // }
+      }
+    }
+  );
+
+  test(
+    "load incidents, failed", async () => {
+      const ims = await testIncidentManagementSystem();
+      ims.testData.bag.urls.incidents = "/forbidden";
+      ims.asHubcap();
+
+      await expect(ims.incidents("1")).toRejectWithMessage(
+        "Failed to retrieve incidents:1."
+      );
+    }
+  );
+
+  test(
+    "load incidents twice: unexpired -> one request to server", async () => {
+      const ims = testIncidentManagementSystem();
+
+      // Fetch bag now and discount the requests made to get it
+      await ims.bag();
+      let requestCount = 0 - ims.requestsReceived.length;
+
+      const incidents1 = await ims.incidents("1");
+      const incidents2 = await ims.incidents("1");
+
+      requestCount += ims.requestsReceived.length;
+
+      expect(incidents2).toEqualByValue(incidents1);
+      expect(requestCount).toEqual(1);
+    }
+  );
+
+  test(
+    "load incidents twice: expired, unchanged", async () => {
+      const ims = testIncidentManagementSystem();
+
+      ims.incidentsCacheLifetime = { seconds: 0 };
+
+      const incidents1 = await ims.incidents("1");
+      const incidents2 = await ims.incidents("1");
+
+      expect(incidents2).toEqualByValue(incidents1);
+    }
+  );
+
+  test(
+    "incidentWithID: found", async () => {
+      const ims = testIncidentManagementSystem();
+
+      for (const event of await ims.events()) {
+        for (const incident of await ims.incidents(event.id)) {
+          expect(
+            await ims.incidentWithID(event.id, incident.number)
+          ).toEqualByValue(incident);
+        }
+      }
+    }
+  );
+
+  test(
+    "incidentWithID: not found", async () => {
+      const ims = testIncidentManagementSystem();
+      const number = -1;
+
+      for (const event of await ims.events()) {
+        expect(ims.incidentWithID(event.id, number)).toRejectWithMessage(
+          `No incident found with event:number: ${event.id}:${number}`
+        );
+      }
     }
   );
 

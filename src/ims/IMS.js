@@ -366,14 +366,14 @@ export default class IncidentManagementSystem {
 
   // Incidents
 
-  incidentCacheLifetime = { minutes: 5 };
+  incidentsCacheLifetime = { minutes: 5 };
 
   incidents = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
     const incidents = await this._fetchAndCacheJSON(
       this._incidentsStore(eventID),
-      this.incidentCacheLifetime,
+      this.incidentsCacheLifetime,
       { "event_id": eventID },
     );
     this._incidentsMap = new Map(
