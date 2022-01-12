@@ -262,7 +262,6 @@ describe("DispatchQueue component: controls", () => {
           const numberCells = document.getElementsByClassName(
             "queue_incident_number"
           );
-          console.error(incidentCount + " :: " + multiple + " :: " + numberofIncidentsToDisplay + " :: " + numberCells.length);
           expect(numberCells.length).toEqual(
             incidentCount > numberofIncidentsToDisplay
             ? numberofIncidentsToDisplay : incidentCount
