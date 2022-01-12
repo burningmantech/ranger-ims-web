@@ -5,21 +5,26 @@ import { DateTime } from "luxon";
 export default class Incident {
 
   static fromJSON = (json) => {
-    return new Incident(
-      {
-        "eventID": json.event,
-        "number": json.number,
-        "created": DateTime.fromISO(json.created),
-        "state": json.state,
-        "priority": json.priority,
-        "summary": json.summary,
-        // "location": json.location,
-        "rangerHandles": json.ranger_handles,
-        "incidentTypes": json.incident_types,
-        // "reportEntries": json.report_entries,
-        // "incidentReportNumbers": json.incident_reports,
-      }
-    );
+    try {
+      return new Incident(
+        {
+          "eventID": json.event,
+          "number": json.number,
+          "created": DateTime.fromISO(json.created),
+          "state": json.state,
+          "priority": json.priority,
+          "summary": json.summary,
+          // "location": json.location,
+          "rangerHandles": json.ranger_handles,
+          "incidentTypes": json.incident_types,
+          // "reportEntries": json.report_entries,
+          // "incidentReportNumbers": json.incident_reports,
+        }
+      );
+    }
+    catch (e) {
+      throw new Error(`Invalid incident JSON: ${json}`)
+    }
   }
 
   constructor({
