@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
 import { act, cleanup, screen } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 
 import { DateTime } from "luxon";
 
@@ -190,11 +191,103 @@ describe("DispatchQueue component: table", () => {
           ).not.toThrow();
         }
 
-        ims.flushCaches();
-        cleanup();
+        ims.flushCaches();  // Reset IMS state
+        cleanup();  // Reset React state
       }
     }
   );
+
+});
+
+
+describe("DispatchQueue component: controls", () => {
+
+  // test(
+  //   "new incident",
+  //   async () => {
+
+  //   }
+  // );
+
+  // test(
+  //   "show state",
+  //   async () => {
+
+  //   }
+  // );
+
+  // test(
+  //   "show days",
+  //   async () => {
+
+  //   }
+  // );
+
+  test(
+    "show rows selection",
+    async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      for (const incidentCount of [0, 10, 100, 200]) {
+        await ims.addMoreIncidents(event.id, incidentCount);
+
+        await act(async () => {
+          renderWithIMSContext(<DispatchQueue event={event} />, ims);
+        });
+
+        const dropdown = document.getElementById("queue_show_rows_dropdown");
+        await act(async () => {
+          userEvent.click(dropdown);
+        });
+
+        for (const multiple of [0,1,2,4]) {
+          const numberofIncidentsToDisplay = (
+            (multiple === 0) ? incidentCount : multiple * defaultPageSize
+          );
+
+          const selectorID = `queue_show_rows_${multiple}`;
+          const selector = document.getElementById(selectorID);
+          await act(async () => {
+            userEvent.click(selector);
+          });
+
+          // Ensure the selection is displays in the dropdown
+          const selectorCount = (
+            (multiple === 0 || numberofIncidentsToDisplay === incidentCount)
+            ? "All" : `${numberofIncidentsToDisplay}`
+          );
+          expect(dropdown.innerHTML).toEqual(`Show ${selectorCount} Rows`);
+
+          // Ensure the correct number of rows are displayed
+          const numberCells = document.getElementsByClassName(
+            "queue_incident_number"
+          );
+          expect(numberCells.length).toEqual(
+            incidentCount > numberofIncidentsToDisplay
+            ? numberofIncidentsToDisplay : incidentCount
+          );
+        }
+
+        ims.flushCaches();  // Reset IMS state
+        cleanup();  // Reset React state
+      }
+    }
+  );
+
+  // test(
+  //   "search",
+  //   async () => {
+
+  //   }
+  // );
+
+  // test(
+  //   "pagination",
+  //   async () => {
+
+  //   }
+  // );
 
 });
 
