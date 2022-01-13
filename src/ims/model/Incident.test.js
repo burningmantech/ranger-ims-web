@@ -65,7 +65,7 @@ describe("Incident", () => {
     "fromJSON, invalid", () => {
       expect(
         () => Incident.fromJSON("{}")
-      ).toThrow(`Invalid Incident JSON: {}`);
+      ).toThrow(`Invalid incident JSON: {}`);
     }
   );
 
