@@ -129,7 +129,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             number: 1,
             created: "2021-02-00T18:45:46.920000+00:00",
             summary: "Cat in tree",
-            priority: 1,
+            priority: 2,
             state: "closed",
             incident_types: ["Cat"],
             ranger_handles: [],
@@ -146,7 +146,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             number: 2,
             created: "2021-03-00T18:45:46.920000+00:00",
             summary: "Dog in tree",
-            priority: 1,
+            priority: 4,
             state: "closed",
             incident_types: ["Dog"],
             ranger_handles: [],
@@ -157,7 +157,25 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             },
             incident_reports: [],
             report_entries: [],
-          },        ],
+          },
+          {
+            event: "2",
+            number: 3,
+            created: "2021-04-00T18:45:46.920000+00:00",
+            summary: "Giraffe in tree",
+            priority: 6,
+            state: "new",
+            incident_types: ["Dog"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "The tree with the animals",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },
+        ],
         "3": [],
         "4": [],
         "empty": [],
@@ -467,6 +485,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     // Start with largest incident number
     let nextIncidentNumber = 0;
     for (const incident of incidents) {
+      /* istanbul ignore next */
       if (incident.number > nextIncidentNumber) {
         nextIncidentNumber = incident.number;
       }
