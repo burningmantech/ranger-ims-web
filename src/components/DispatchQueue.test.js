@@ -158,8 +158,8 @@ describe("DispatchQueue component: table", () => {
   test(
     "displayed incidents are valid up to page size",
     async () => {
-      // Test with 0, 5, 10, ... 200 incidents in the system
-      for (const incidentCount of Array(40).fill(1).map((_, i) => i * 5)) {
+      // Test with 0, 10, 20, ... 200 incidents in the system
+      for (const incidentCount of [0, 10, 44, 50, 201, defaultPageSize]) {
         const ims = testIncidentManagementSystem();
         const event = await ims.eventWithID("empty");
 
