@@ -64,7 +64,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             number: 1,
             created: "2021-08-17T17:12:46.720000+00:00",
             summary: null,
-            priority: 3,
+            priority: 5,
             state: "closed",
             incident_types: ["Vehicle", "Camp"],
             ranger_handles: ["Bucket", "Hubcap"],
@@ -80,7 +80,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry: true,
-                created: "2021-08-17T17:12:46.730000+00:00",
+                created: "2020-08-17T17:12:46.730000+00:00",
                 author: "Operator",
                 text: "Changed description name to: On B road",
               },
@@ -98,12 +98,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
               },
             ],
           },
-        ],
-        "2": [
           {
             event: "1",
             number: 2,
-            created: "2021-08-17T18:45:46.920000+00:00",
+            created: "2020-08-17T18:45:46.920000+00:00",
             summary: "Ice cream at the Man",
             priority: 1,
             state: "open",
@@ -125,20 +123,72 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             ],
           },
         ],
+        "2": [
+          {
+            event: "2",
+            number: 1,
+            created: "2021-02-00T18:45:46.920000+00:00",
+            summary: "Cat in tree",
+            priority: 1,
+            state: "closed",
+            incident_types: ["Cat"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "Some tree",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },
+          {
+            event: "2",
+            number: 2,
+            created: "2021-03-00T18:45:46.920000+00:00",
+            summary: "Dog in tree",
+            priority: 1,
+            state: "closed",
+            incident_types: ["Dog"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "That tree again",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },        ],
         "3": [],
         "4": [],
         "empty": [],
       },
     };
 
-    // Validate test data a little
-    const cmp = (a) => JSON.stringify(Object.keys(a).sort());
+    // Validate above test data a bit
+    const cmp = (a) => JSON.stringify(a.sort());
     const eventIDs = cmp(this.testData.events.map((e) => e.id));
-    const incidentEventIDs = cmp(this.testData.events);
+    const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
       eventIDs == incidentEventIDs,
-      "Events and incidents index keys are mismatched"
+      "Events and incidents index keys mismatched: " +
+      `${eventIDs} != ${incidentEventIDs}`
     );
+    for (const eventID of Object.keys(this.testData.incidents)) {
+      const incidents = this.testData.incidents[eventID];
+      for (const incident of incidents) {
+        invariant(
+          eventID == incident.event,
+          `Incident #${incident.number} in event ID ${eventID} has ` +
+          `mismatched event ID: ${incident.event}`
+        );
+      }
+      const incidentNumbers = incidents.map((i) => i.number);
+      invariant(
+        cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
+        `Incident numbers in event ID ${eventID} contain duplicates: ` +
+        `${incidentNumbers}`
+      )
+    }
 
     this.requestsReceived = [];
 
