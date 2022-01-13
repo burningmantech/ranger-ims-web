@@ -58,8 +58,6 @@ export const DispatchQueuePage = (props) => {
 
   return (
     <Page>
-      <h1>Incidents: {event.name}</h1>
-
       <DispatchQueue event={event} />
     </Page>
   );

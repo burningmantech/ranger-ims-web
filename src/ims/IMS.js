@@ -18,6 +18,8 @@ export default class IncidentManagementSystem {
     this._eventsStore = new Store(Event, "events", "events");
     this._incidentsStoreMap = new Map();
 
+    // Control the user property so that we can use it to access and update
+    // cached credentials.
     Object.defineProperty(this, "user", {
       enumerable: true,
 
@@ -166,7 +168,9 @@ export default class IncidentManagementSystem {
 
     // Replace URL parameters with values
     for (const paramName in urlParams) {
-      url = url.replace(`{${paramName}}`, urlParams[paramName]);
+      const value = urlParams[paramName];
+      invariant(value != null, `Undefined parameter: ${paramName}`)
+      url = url.replace(`{${paramName}}`, value);
     }
     invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);
 
@@ -330,6 +334,11 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
+  flushCaches = () => {
+    console.info("Flushing all caches...");
+    Store.removeAll();
+  }
+
   // Events
 
   eventsCacheLifetime = { minutes: 5 };
@@ -343,8 +352,11 @@ export default class IncidentManagementSystem {
   }
 
   eventWithID = async (id) => {
+    invariant(id != null, "id argument is required");
+
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
+
     if (this._eventsMap.has(id)) {
       return this._eventsMap.get(id);
     } else {
@@ -354,19 +366,39 @@ export default class IncidentManagementSystem {
 
   // Incidents
 
-  incidentCacheLifetime = { minutes: 5 };
+  incidentsCacheLifetime = { minutes: 5 };
 
-  incidents = async (event) => {
+  incidents = async (eventID) => {
+    invariant(eventID != null, "eventID argument is required");
+
     const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore(event.id),
-      this.incidentCacheLifetime,
-      { "event_id": event.id },
+      this._incidentsStore(eventID),
+      this.incidentsCacheLifetime,
+      { "event_id": eventID },
     );
     this._incidentsMap = new Map(
-      incidents.map(incident => [incident.id, incident])
+      incidents.map(incident => [incident.number, incident])
     );
-    console.debug("Found incidents: " + JSON.stringify(incidents));
+
     return incidents;
+  }
+
+  incidentWithID = async (eventID, number) => {
+    invariant(eventID != null, "eventID argument is required");
+    invariant(number != null, "number argument is required");
+
+    await this.incidents(eventID);
+    invariant(
+      this._incidentsMap != null, "this._incidentsMap did not initialize"
+    );
+
+    if (this._incidentsMap.has(number)) {
+      return this._incidentsMap.get(number);
+    } else {
+      throw new Error(
+        `No incident found with event:number: ${eventID}:${number}`
+      );
+    }
   }
 
 }

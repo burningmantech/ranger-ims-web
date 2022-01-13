@@ -124,12 +124,10 @@ describe("App component", () => {
       const ims = testIncidentManagementSystem(username);
 
       for (const event of await ims.events()) {
-        await act(async () => {
-          renderWithURL(URLs.event(event), username, ims);
-        });
+        renderWithURL(URLs.event(event), username, ims);
 
         expect(
-          await screen.findByText(`Incidents: ${event.name}`)
+          await screen.findByText(`Dispatch Queue: ${event.name}`)
         ).toBeInTheDocument();
       }
     }

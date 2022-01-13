@@ -4,7 +4,12 @@ import invariant from "invariant";
 export default class Event {
 
   static fromJSON = (json) => {
-    return new Event(json.id, json.name);
+    try {
+      return new Event(json.id, json.name);
+    }
+    catch (e) {
+      throw new Error(`Invalid event JSON: ${json}`)
+    }
   }
 
   constructor(id, name) {

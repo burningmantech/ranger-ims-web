@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import jwtSign from "jsonwebtoken/sign";
 import { DateTime, Duration } from "luxon";
 
@@ -54,15 +55,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "2", name: "Event Two" },
         { id: "3", name: "Event Three" },
         { id: "4", name: "Event Four" },
+        { id: "empty", name: "Empty Event" },
       ],
-      incidents: {
+      incidents: {  // Lists of incidents, indexes by event ID
         "1": [
           {
             event: "1",
             number: 1,
             created: "2021-08-17T17:12:46.720000+00:00",
             summary: null,
-            priority: 3,
+            priority: 5,
             state: "closed",
             incident_types: ["Vehicle", "Camp"],
             ranger_handles: ["Bucket", "Hubcap"],
@@ -78,7 +80,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry: true,
-                created: "2021-08-17T17:12:46.730000+00:00",
+                created: "2020-08-17T17:12:46.730000+00:00",
                 author: "Operator",
                 text: "Changed description name to: On B road",
               },
@@ -96,12 +98,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
               },
             ],
           },
-        ],
-        "2": [
           {
             event: "1",
             number: 2,
-            created: "2021-08-17T18:45:46.920000+00:00",
+            created: "2020-08-17T18:45:46.920000+00:00",
             summary: "Ice cream at the Man",
             priority: 1,
             state: "open",
@@ -123,9 +123,89 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             ],
           },
         ],
+        "2": [
+          {
+            event: "2",
+            number: 1,
+            created: "2021-02-00T18:45:46.920000+00:00",
+            summary: "Cat in tree",
+            priority: 2,
+            state: "closed",
+            incident_types: ["Cat"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "Some tree",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },
+          {
+            event: "2",
+            number: 2,
+            created: "2021-03-00T18:45:46.920000+00:00",
+            summary: "Dog in tree",
+            priority: 4,
+            state: "closed",
+            incident_types: ["Dog"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "That tree again",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },
+          {
+            event: "2",
+            number: 3,
+            created: "2021-04-00T18:45:46.920000+00:00",
+            summary: "Giraffe in tree",
+            priority: 6,
+            state: "new",
+            incident_types: ["Dog"],
+            ranger_handles: [],
+            location: {
+              type: "text",
+              name: "The tree with the animals",
+              description: null,
+            },
+            incident_reports: [],
+            report_entries: [],
+          },
+        ],
         "3": [],
         "4": [],
+        "empty": [],
       },
+    };
+
+    // Validate above test data a bit
+    const cmp = (a) => JSON.stringify(a.sort());
+    const eventIDs = cmp(this.testData.events.map((e) => e.id));
+    const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
+    invariant(
+      eventIDs == incidentEventIDs,
+      "Events and incidents index keys mismatched: " +
+      `${eventIDs} != ${incidentEventIDs}`
+    );
+    for (const eventID of Object.keys(this.testData.incidents)) {
+      const incidents = this.testData.incidents[eventID];
+      for (const incident of incidents) {
+        invariant(
+          eventID == incident.event,
+          `Incident #${incident.number} in event ID ${eventID} has ` +
+          `mismatched event ID: ${incident.event}`
+        );
+      }
+      const incidentNumbers = incidents.map((i) => i.number);
+      invariant(
+        cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
+        `Incident numbers in event ID ${eventID} contain duplicates: ` +
+        `${incidentNumbers}`
+      )
     }
 
     this.requestsReceived = [];
@@ -395,6 +475,44 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     return this;
   }
+
+  addMoreIncidents = async (eventID, total) => {
+    const incidents = this.testData.incidents[eventID];
+    invariant(incidents != null, `no incidents for event: ${eventID}`);
+
+    const numberToAdd = total - incidents.length;
+
+    // Start with largest incident number
+    let nextIncidentNumber = 0;
+    for (const incident of incidents) {
+      /* istanbul ignore next */
+      if (incident.number > nextIncidentNumber) {
+        nextIncidentNumber = incident.number;
+      }
+    }
+
+    while (incidents.length < total) {
+      nextIncidentNumber += 1;
+
+      const nextIncident = {
+        event: eventID,
+        number: nextIncidentNumber,
+        created: "2021-08-18T10:10:46+00:00",
+        summary: null,
+        priority: 3,
+        state: "new",
+        incident_types: [],
+        ranger_handles: [],
+        location: {type: "text", description: ""},
+        incident_reports: [],
+        report_entries: [],
+      };
+      nextIncident.number = nextIncidentNumber;
+
+      incidents.push(nextIncident);
+    }
+  }
+
 }
 
 

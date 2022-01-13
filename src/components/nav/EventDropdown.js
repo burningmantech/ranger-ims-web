@@ -71,7 +71,7 @@ const EventDropdown = (props) => {
     return events.map(
       (event) => {
         return (
-          <NavDropdown.Item key={event.id} href={URLs.event(event)}>
+          <NavDropdown.Item key={event.id} className="nav_event_id" href={URLs.event(event)}>
             {event.name}
           </NavDropdown.Item>
         );

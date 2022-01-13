@@ -8,7 +8,9 @@ import '@testing-library/jest-dom';
 expect.extend({
 
   toEqualByValue(received, other) {
-    if (JSON.stringify(received) === JSON.stringify(other)) {
+    received = JSON.stringify(received);
+    other = JSON.stringify(other);
+    if (received === other) {
       return {
         message: () => `expected ${received} not to equal by value ${other}`,
         pass: true,

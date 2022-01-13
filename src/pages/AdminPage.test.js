@@ -10,11 +10,9 @@ describe("AdminPage component", () => {
 
   test(
     "heading", async () => {
-      await act(async () => {
-        renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
-      });
+      renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
 
-      expect(screen.queryByText("Admin Console")).toBeInTheDocument();
+      expect(await screen.findByText("Admin Console")).toBeInTheDocument();
     }
   );
 
