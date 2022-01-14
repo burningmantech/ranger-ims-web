@@ -134,10 +134,7 @@ export const formatArrayOfStrings = ({value}) => {
 const useDispatchQueueTable = (incidents) => {
   // See: https://react-table.tanstack.com/docs/overview
 
-  const data = useMemo(
-    () => (incidents == null) ? [] : Array.from(incidents.values()),
-    [incidents]
-  )
+  const data = useMemo(() => (incidents == null) ? [] : incidents, [incidents]);
 
   const columns = useMemo(
     () => [
