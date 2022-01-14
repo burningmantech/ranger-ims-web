@@ -65,6 +65,14 @@ describe("Table cell formatting functions", () => {
   );
 
   test(
+    "formatDateTime, undefined/null",
+    () => {
+      expect(formatDateTime({value: undefined})).toEqual("");
+      expect(formatDateTime({value: null})).toEqual("");
+    }
+  );
+
+  test(
     "formatState, valid",
     () => {
       expect(formatState({value: "new"})).toEqual("New");
