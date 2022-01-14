@@ -65,6 +65,14 @@ describe("Table cell formatting functions", () => {
   );
 
   test(
+    "formatDateTime, undefined/null",
+    () => {
+      expect(formatDateTime({value: undefined})).toEqual("");
+      expect(formatDateTime({value: null})).toEqual("");
+    }
+  );
+
+  test(
     "formatState, valid",
     () => {
       expect(formatState({value: "new"})).toEqual("New");
@@ -115,38 +123,6 @@ describe("Table cell formatting functions", () => {
     "formatArrayOfStrings, undefined",
     () => {
       expect(formatArrayOfStrings({})).toEqual("");
-    }
-  );
-
-  test(
-    "formatShowState, valid",
-    () => {
-      expect(formatShowState("all")).toEqual("All");
-      expect(formatShowState("open")).toEqual("Open");
-      expect(formatShowState("active")).toEqual("Active");
-    }
-  );
-
-  test(
-    "formatShowState, invalid",
-    () => {
-      expect(
-        () => formatShowState(-1)
-      ).toThrow("Invalid show state: -1");
-      expect(
-        () => formatShowState("XYZZY")
-      ).toThrow('Invalid show state: "XYZZY"');
-    }
-  );
-
-  test(
-    "formatShowDays, valid",
-    () => {
-      expect(formatShowDays(0)).toEqual("All Days");
-      expect(formatShowDays(1)).toEqual("Last Day");
-      expect(formatShowDays(2)).toEqual("Last 2 Days");
-      expect(formatShowDays(3)).toEqual("Last 3 Days");
-      expect(formatShowDays(4)).toEqual("Last 4 Days");
     }
   );
 
@@ -201,6 +177,38 @@ describe("DispatchQueue component: table", () => {
 
 
 describe("DispatchQueue component: controls", () => {
+
+  test(
+    "formatShowState, valid",
+    () => {
+      expect(formatShowState("all")).toEqual("All");
+      expect(formatShowState("open")).toEqual("Open");
+      expect(formatShowState("active")).toEqual("Active");
+    }
+  );
+
+  test(
+    "formatShowState, invalid",
+    () => {
+      expect(
+        () => formatShowState(-1)
+      ).toThrow("Invalid show state: -1");
+      expect(
+        () => formatShowState("XYZZY")
+      ).toThrow('Invalid show state: "XYZZY"');
+    }
+  );
+
+  test(
+    "formatShowDays, valid",
+    () => {
+      expect(formatShowDays(0)).toEqual("All Days");
+      expect(formatShowDays(1)).toEqual("Last Day");
+      expect(formatShowDays(2)).toEqual("Last 2 Days");
+      expect(formatShowDays(3)).toEqual("Last 3 Days");
+      expect(formatShowDays(4)).toEqual("Last 4 Days");
+    }
+  );
 
   // test(
   //   "new incident",

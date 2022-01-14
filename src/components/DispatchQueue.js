@@ -1,6 +1,8 @@
 import invariant from "invariant";
+
 import { useContext, useEffect, useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
+
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Col from "react-bootstrap/Col";
@@ -87,6 +89,9 @@ export const formatPriority = ({value}) => {
 
 
 export const formatDateTime = ({value}) => {
+  if (!value) {
+    return "";
+  }
   return value.toFormat("ccc L/c HH:mm");
 }
 
@@ -129,10 +134,7 @@ export const formatArrayOfStrings = ({value}) => {
 const useDispatchQueueTable = (incidents) => {
   // See: https://react-table.tanstack.com/docs/overview
 
-  const data = useMemo(
-    () => (incidents == null) ? [] : Array.from(incidents.values()),
-    [incidents]
-  )
+  const data = useMemo(() => (incidents == null) ? [] : incidents, [incidents]);
 
   const columns = useMemo(
     () => [
@@ -509,8 +511,7 @@ const BottomToolBar = ({table, incidents}) => {
 const DispatchQueueMain = ({table, incidents}) => {
   // Filtering
 
-  // showState may be: all, open, active
-  const [showState, setShowState] = useState("open");
+  const [showState, setShowState] = useState("open");  // all, open, active
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
 
