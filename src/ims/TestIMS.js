@@ -476,13 +476,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return this;
   }
 
-  addMoreIncidents = async (eventID, total) => {
+  nextIncidentNumber = async (eventID) => {
     const incidents = this.testData.incidents[eventID];
-    invariant(incidents != null, `no incidents for event: ${eventID}`);
-
-    const numberToAdd = total - incidents.length;
-
-    // Start with largest incident number
     let nextIncidentNumber = 0;
     for (const incident of incidents) {
       /* istanbul ignore next */
@@ -490,6 +485,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         nextIncidentNumber = incident.number;
       }
     }
+    return nextIncidentNumber;
+  }
+
+  addMoreIncidents = async (eventID, total) => {
+    const incidents = this.testData.incidents[eventID];
+    invariant(incidents != null, `no incidents for event: ${eventID}`);
+
+    let nextIncidentNumber = await this.nextIncidentNumber(eventID);
 
     while (incidents.length < total) {
       nextIncidentNumber += 1;
