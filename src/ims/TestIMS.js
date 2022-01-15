@@ -478,41 +478,41 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
   nextIncidentNumber = async (eventID) => {
     const incidents = this.testData.incidents[eventID];
-    let nextIncidentNumber = 0;
+    let lastIncidentNumber = 0;
     for (const incident of incidents) {
       /* istanbul ignore next */
-      if (incident.number > nextIncidentNumber) {
-        nextIncidentNumber = incident.number;
+      if (incident.number > lastIncidentNumber) {
+        lastIncidentNumber = incident.number;
       }
     }
-    return nextIncidentNumber;
+    return lastIncidentNumber + 1;
+  }
+
+  addIncidentWithSummary = async (eventID, summary) => {
+    const incidents = this.testData.incidents[eventID];
+    const nextIncidentNumber = await this.nextIncidentNumber(eventID);
+    const nextIncident = {
+      event: eventID,
+      number: nextIncidentNumber,
+      created: "2021-08-18T10:10:46+00:00",
+      summary: summary,
+      priority: 3,
+      state: "new",
+      incident_types: [],
+      ranger_handles: [],
+      location: {type: "text", description: ""},
+      incident_reports: [],
+      report_entries: [],
+    };
+    incidents.push(nextIncident);
   }
 
   addMoreIncidents = async (eventID, total) => {
     const incidents = this.testData.incidents[eventID];
     invariant(incidents != null, `no incidents for event: ${eventID}`);
 
-    let nextIncidentNumber = await this.nextIncidentNumber(eventID);
-
     while (incidents.length < total) {
-      nextIncidentNumber += 1;
-
-      const nextIncident = {
-        event: eventID,
-        number: nextIncidentNumber,
-        created: "2021-08-18T10:10:46+00:00",
-        summary: null,
-        priority: 3,
-        state: "new",
-        incident_types: [],
-        ranger_handles: [],
-        location: {type: "text", description: ""},
-        incident_reports: [],
-        report_entries: [],
-      };
-      nextIncident.number = nextIncidentNumber;
-
-      incidents.push(nextIncident);
+      await this.addIncidentWithSummary(eventID, null);
     }
   }
 
