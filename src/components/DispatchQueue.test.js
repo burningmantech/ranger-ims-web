@@ -163,7 +163,7 @@ describe("DispatchQueue component: table", () => {
         for (const numberCell of numberCells) {
           const incidentNumber = parseInt(numberCell.innerHTML);
           expect(
-            () => ims.incidentWithID(event.id, incidentNumber)
+            () => ims.incidentWithNumber(event.id, incidentNumber)
           ).not.toThrow();
         }
 

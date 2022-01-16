@@ -7,6 +7,8 @@ import User from "./User";
 import Event from "./model/Event";
 import Incident from "./model/Incident";
 
+import { Document } from "flexsearch";
+
 
 export default class IncidentManagementSystem {
 
@@ -16,7 +18,8 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store(User, "credentials", "credentials");
     this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
-    this._incidentsStoreMap = new Map();
+    this._incidentsStoreByEvent = new Map();
+    this._searchIndexByEvent = new Map();
 
     // Control the user property so that we can use it to access and update
     // cached credentials.
@@ -52,12 +55,12 @@ export default class IncidentManagementSystem {
   }
 
   _incidentsStore = (eventID) => {
-    if (! this._incidentsStoreMap.has(eventID)) {
-      this._incidentsStoreMap[eventID] = new Store(
+    if (! this._incidentsStoreByEvent.has(eventID)) {
+      this._incidentsStoreByEvent[eventID] = new Store(
         Incident, `incidents:${eventID}`, "incidents"
       );
     }
-    return this._incidentsStoreMap[eventID];
+    return this._incidentsStoreByEvent[eventID];
   }
 
   _fetch = async (request) => {
@@ -383,7 +386,7 @@ export default class IncidentManagementSystem {
     return incidents;
   }
 
-  incidentWithID = async (eventID, number) => {
+  incidentWithNumber = async (eventID, number) => {
     invariant(eventID != null, "eventID argument is required");
     invariant(number != null, "number argument is required");
 
@@ -399,6 +402,42 @@ export default class IncidentManagementSystem {
         `No incident found with event:number: ${eventID}:${number}`
       );
     }
+  }
+
+  // Search
+
+  _searchIndex = async (eventID) => {
+    if (! this._searchIndexByEvent.has(eventID)) {
+      // Create index
+      var index = new Document({
+        id: "number",
+        index: ["number", "summary"],
+      });
+
+      // Populate index
+      for (const incident of await this.incidents(eventID)) {
+        index.add({
+          number: incident.number,
+          summary: incident.summary,
+        });
+      }
+
+      this._searchIndexByEvent[eventID] = index;
+    }
+    return this._searchIndexByEvent[eventID];
+  }
+
+  search = async (eventID, query) => {
+    const index = await this._searchIndex(eventID);
+    const results = await index.search(query);
+
+    const numbers = new Set();
+    for (const result of results) {
+      for (const number of result.result) {
+        numbers.add(number);
+      }
+    }
+    return numbers;
   }
 
 }

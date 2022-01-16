@@ -982,13 +982,13 @@ describe("IMS: incidents", () => {
   );
 
   test(
-    "incidentWithID: found", async () => {
+    "incidentWithNumber: found", async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
         for (const incident of await ims.incidents(event.id)) {
           expect(
-            await ims.incidentWithID(event.id, incident.number)
+            await ims.incidentWithNumber(event.id, incident.number)
           ).toEqualByValue(incident);
         }
       }
@@ -996,15 +996,63 @@ describe("IMS: incidents", () => {
   );
 
   test(
-    "incidentWithID: not found", async () => {
+    "incidentWithNumber: not found", async () => {
       const ims = testIncidentManagementSystem();
       const number = -1;
 
       for (const event of await ims.events()) {
-        expect(ims.incidentWithID(event.id, number)).toRejectWithMessage(
+        expect(ims.incidentWithNumber(event.id, number)).toRejectWithMessage(
           `No incident found with event:number: ${event.id}:${number}`
         );
       }
+    }
+  );
+
+});
+
+
+describe("IMS: search", () => {
+
+  test(
+    "search number", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addMoreIncidents(event.id, 3);
+
+      const search = async (query) => await ims.search(event.id, query);
+
+      expect(await search("1")).toEqual(new Set([1]));
+      expect(await search("2")).toEqual(new Set([2]));
+      expect(await search("3")).toEqual(new Set([3]));
+      expect(await search("1 2")).toEqual(new Set([]));
+    }
+  );
+
+  test(
+    "search summary", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      const catInTree = await ims.addIncidentWithSummary(  // 1
+        event.id, "Cat in tree"
+      );
+      const dogInHouse = await ims.addIncidentWithSummary(  // 2
+        event.id, "Dog in house"
+      );
+      const catInHouse = await ims.addIncidentWithSummary(  // 3
+        event.id, "Cat in house"
+      );
+
+      const search = async (query) => await ims.search(event.id, query);
+
+      expect(await search("tree")).toEqual(new Set([1]));
+      expect(await search("house")).toEqual(new Set([2, 3]));
+      expect(await search("cat")).toEqual(new Set([1, 3]));
+      expect(await search("dog")).toEqual(new Set([2]));
+      expect(await search("dog in house")).toEqual(new Set([2]));
+      expect(await search("dog in tree")).toEqual(new Set([]));
+      expect(await search("turtle")).toEqual(new Set([]));
     }
   );
 

@@ -505,6 +505,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       report_entries: [],
     };
     incidents.push(nextIncident);
+    return nextIncident;
   }
 
   addMoreIncidents = async (eventID, total) => {
