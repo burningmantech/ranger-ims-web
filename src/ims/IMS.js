@@ -414,6 +414,7 @@ export default class IncidentManagementSystem {
         index: [
           {field: "number"},
           {field: "summary", tokenize: "full"},
+          {field: "incidentTypes", tokenize: "full"},
           {field: "rangerHandles", tokenize: "full"},
         ],
       });
@@ -424,6 +425,7 @@ export default class IncidentManagementSystem {
           number: incident.number,
           summary: incident.summary,
           rangerHandles: incident.rangerHandles,
+          incidentTypes: incident.incidentTypes,
         });
       }
 

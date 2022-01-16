@@ -489,7 +489,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   addIncidentWithFields = async (
-    eventID, {summary = null, rangerHandles=[]}
+    eventID, {summary = null, incidentTypes=[], rangerHandles=[]}
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
@@ -500,7 +500,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       summary: summary,
       priority: 3,
       state: "new",
-      incident_types: [],
+      incident_types: incidentTypes,
       ranger_handles: rangerHandles,
       location: {type: "text", description: ""},
       incident_reports: [],
