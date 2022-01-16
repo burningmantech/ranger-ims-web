@@ -508,33 +508,6 @@ const BottomToolBar = ({table, incidents}) => {
 // DispatchQueue component
 
 
-const DispatchQueueMain = ({table, event, incidents}) => {
-  // Filtering
-
-  const [showState, setShowState] = useState("open");  // all, open, active
-  const [showDays, setShowDays] = useState(0);
-  const [searchInput, setSearchInput] = useState("");
-
-  // Render
-
-  return (
-    <div id="queue_wrapper">
-      <h1>Dispatch Queue: {event.name}</h1>
-
-      <TopToolBar
-        table={table}
-        incidents={incidents}
-        showState={showState} setShowState={setShowState}
-        showDays={showDays} setShowDays={setShowDays}
-        searchInput={searchInput} setSearchInput={setSearchInput}
-      />
-      <DispatchQueueTable table={table} />
-      <BottomToolBar table={table} incidents={incidents} />
-    </div>
-  );
-}
-
-
 const DispatchQueue = (props) => {
   invariant(props.event != null, "event property is required");
 
@@ -545,6 +518,9 @@ const DispatchQueue = (props) => {
 
   // Fetch data
 
+  const [showState, setShowState] = useState("open");  // all, open, active
+  const [showDays, setShowDays] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
   const [incidents, setIncidents] = useState(undefined);
 
   useEffect(
@@ -554,7 +530,11 @@ const DispatchQueue = (props) => {
       const fetchIncidents = async () => {
         let incidents;
         try {
-          incidents = await ims.incidents(props.event.id);
+          if (searchInput) {
+            incidents = await ims.search(props.event.id, searchInput);
+          } else {
+            incidents = await ims.incidents(props.event.id);
+          }
         }
         catch (e) {
           console.error(`Unable to fetch incidents: ${e.message}`);
@@ -567,7 +547,7 @@ const DispatchQueue = (props) => {
       fetchIncidents();
 
       return () => { ignore = true; }
-    }, [ims, props.event]
+    }, [ims, props.event, searchInput]
   );
 
   const table = useDispatchQueueTable(incidents);
@@ -581,9 +561,21 @@ const DispatchQueue = (props) => {
     return "Error loading incidents";
   }
   else {
-    return <DispatchQueueMain
-      event={props.event} table={table} incidents={incidents}
-    />;
+    return (
+      <div id="queue_wrapper">
+        <h1>Dispatch Queue: {props.event.name}</h1>
+
+        <TopToolBar
+          table={table}
+          incidents={incidents}
+          showState={showState} setShowState={setShowState}
+          showDays={showDays} setShowDays={setShowDays}
+          searchInput={searchInput} setSearchInput={setSearchInput}
+        />
+        <DispatchQueueTable table={table} />
+        <BottomToolBar table={table} incidents={incidents} />
+      </div>
+    );
   }
 }
 
