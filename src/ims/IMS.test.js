@@ -1014,7 +1014,7 @@ describe("IMS: incidents", () => {
 describe("IMS: search", () => {
 
   test(
-    "search number", async () => {
+    "search by number", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
@@ -1033,7 +1033,7 @@ describe("IMS: search", () => {
   );
 
   test(
-    "search summary", async () => {
+    "search by summary", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
@@ -1074,7 +1074,42 @@ describe("IMS: search", () => {
   );
 
   test(
-    "search ranger handles", async () => {
+    "search by incident types", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      const n = await ims.addIncidentWithFields(  // 1
+        event.id, {incidentTypes: []}
+      );
+      const b = await ims.addIncidentWithFields(  // 2
+        event.id, {incidentTypes: ["Housebound Dogs"]}
+      );
+      const h = await ims.addIncidentWithFields(  // 3
+        event.id, {incidentTypes: ["Treebound Cats"]}
+      );
+      const bh = await ims.addIncidentWithFields(  // 4
+        event.id, {incidentTypes: ["Housebound Dogs", "Treebound Cats"]}
+      );
+
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
+
+      // Full words
+      expect(await search("Housebound Dogs")).toEqual(new Set([2, 4]));
+      expect(await search("Housebound")).toEqual(new Set([2, 4]));
+      expect(await search("Treebound Cats")).toEqual(new Set([3, 4]));
+      expect(await search("Cats")).toEqual(new Set([3, 4]));
+      expect(await search("XYZZY")).toEqual(new Set([]));
+
+      // Partial words - forward
+      expect(await search("House")).toEqual(new Set([2, 4]));
+    }
+  );
+
+  test(
+    "search by ranger handles", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
@@ -1109,41 +1144,6 @@ describe("IMS: search", () => {
 
       // Partial words - full
       expect(await search("uck")).toEqual(new Set([2, 4]));
-    }
-  );
-
-  test(
-    "search incident types", async () => {
-      const ims = testIncidentManagementSystem();
-      const event = await ims.eventWithID("empty");
-
-      const n = await ims.addIncidentWithFields(  // 1
-        event.id, {incidentTypes: []}
-      );
-      const b = await ims.addIncidentWithFields(  // 2
-        event.id, {incidentTypes: ["Housebound Dogs"]}
-      );
-      const h = await ims.addIncidentWithFields(  // 3
-        event.id, {incidentTypes: ["Treebound Cats"]}
-      );
-      const bh = await ims.addIncidentWithFields(  // 4
-        event.id, {incidentTypes: ["Housebound Dogs", "Treebound Cats"]}
-      );
-
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
-      // Full words
-      expect(await search("Housebound Dogs")).toEqual(new Set([2, 4]));
-      expect(await search("Housebound")).toEqual(new Set([2, 4]));
-      expect(await search("Treebound Cats")).toEqual(new Set([3, 4]));
-      expect(await search("Cats")).toEqual(new Set([3, 4]));
-      expect(await search("XYZZY")).toEqual(new Set([]));
-
-      // Partial words - forward
-      expect(await search("House")).toEqual(new Set([2, 4]));
     }
   );
 
