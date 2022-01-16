@@ -411,7 +411,10 @@ export default class IncidentManagementSystem {
       // Create index
       var index = new Document({
         id: "number",
-        index: ["number", "summary"],
+        index: [
+          {field: "number"},
+          {field: "summary", tokenize: "full"},
+        ],
       });
 
       // Populate index

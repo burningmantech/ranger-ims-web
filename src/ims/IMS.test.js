@@ -1058,7 +1058,13 @@ describe("IMS: search", () => {
       expect(await search("dog")).toEqual(new Set([2]));
       expect(await search("dog in house")).toEqual(new Set([2]));
       expect(await search("dog in tree")).toEqual(new Set([]));
+      expect(await search("dog tree")).toEqual(new Set([]));
       expect(await search("turtle")).toEqual(new Set([]));
+
+      // Partial words
+      expect(await search("tr")).toEqual(new Set([1]));
+      expect(await search("e")).toEqual(new Set([1, 2, 3]));
+      expect(await search("ho og")).toEqual(new Set([2]));
     }
   );
 
