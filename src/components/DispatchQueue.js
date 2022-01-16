@@ -508,7 +508,7 @@ const BottomToolBar = ({table, incidents}) => {
 // DispatchQueue component
 
 
-const DispatchQueueMain = ({table, incidents}) => {
+const DispatchQueueMain = ({table, event, incidents}) => {
   // Filtering
 
   const [showState, setShowState] = useState("open");  // all, open, active
@@ -518,7 +518,9 @@ const DispatchQueueMain = ({table, incidents}) => {
   // Render
 
   return (
-    <>
+    <div id="queue_wrapper">
+      <h1>Dispatch Queue: {event.name}</h1>
+
       <TopToolBar
         table={table}
         incidents={incidents}
@@ -528,7 +530,7 @@ const DispatchQueueMain = ({table, incidents}) => {
       />
       <DispatchQueueTable table={table} />
       <BottomToolBar table={table} incidents={incidents} />
-    </>
+    </div>
   );
 }
 
@@ -579,13 +581,10 @@ const DispatchQueue = (props) => {
     return "Error loading incidents";
   }
   else {
-    return (
-      <div id="queue_wrapper">
-        <h1>Dispatch Queue: {props.event.name}</h1>
-        <DispatchQueueMain table={table} incidents={incidents} />
-      </div>
-    );
-  }
+    return <DispatchQueueMain
+      event={props.event} table={table} incidents={incidents}
+    />;
+    }
 }
 
 export default DispatchQueue;
