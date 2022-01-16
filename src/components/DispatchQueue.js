@@ -173,7 +173,7 @@ const useDispatchQueueTable = (incidents) => {
         Cell: formatArrayOfStrings,
       },
       {
-        accessor: "summary",
+        accessor: (incident) => incident.summarize(),
         Header: "Summary",
       },
     ],

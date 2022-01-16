@@ -86,4 +86,12 @@ export default class Incident {
     };
   }
 
+  summarize = () => {
+    if (this.summary) {
+      return this.summary;
+    }
+
+    return "<summary goes here>";
+  }
+
 }
