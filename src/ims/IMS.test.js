@@ -1037,14 +1037,14 @@ describe("IMS: search", () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
-      const catInTree = await ims.addIncidentWithSummary(  // 1
-        event.id, "Cat in tree"
+      const catInTree = await ims.addIncidentWithFields(  // 1
+        event.id, {summary: "Cat in tree"}
       );
-      const dogInHouse = await ims.addIncidentWithSummary(  // 2
-        event.id, "Dog in house"
+      const dogInHouse = await ims.addIncidentWithFields(  // 2
+        event.id, {summary: "Dog in house"}
       );
-      const catInHouse = await ims.addIncidentWithSummary(  // 3
-        event.id, "Cat in house"
+      const catInHouse = await ims.addIncidentWithFields(  // 3
+        event.id, {summary: "Cat in house"}
       );
 
       const search = async (query) => {
@@ -1065,6 +1065,41 @@ describe("IMS: search", () => {
       expect(await search("tr")).toEqual(new Set([1]));
       expect(await search("e")).toEqual(new Set([1, 2, 3]));
       expect(await search("ho og")).toEqual(new Set([2]));
+    }
+  );
+
+
+  test(
+    "search ranger handles", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      const n = await ims.addIncidentWithFields(  // 1
+        event.id, {rangerHandles: []}
+      );
+      const b = await ims.addIncidentWithFields(  // 2
+        event.id, {rangerHandles: ["Bucket"]}
+      );
+      const h = await ims.addIncidentWithFields(  // 3
+        event.id, {rangerHandles: ["Hubcap"]}
+      );
+      const bh = await ims.addIncidentWithFields(  // 4
+        event.id, {rangerHandles: ["Bucket", "Hubcap"]}
+      );
+
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
+
+      expect(await search("Bucket")).toEqual(new Set([2, 4]));
+      expect(await search("Hubcap")).toEqual(new Set([3, 4]));
+      expect(await search("XYZZY")).toEqual(new Set([]));
+
+      // Partial words
+      expect(await search("Buck")).toEqual(new Set([2, 4]));
+      expect(await search("uck")).toEqual(new Set([2, 4]));
+      expect(await search("cap")).toEqual(new Set([3, 4]));
     }
   );
 

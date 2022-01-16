@@ -488,7 +488,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return lastIncidentNumber + 1;
   }
 
-  addIncidentWithSummary = async (eventID, summary) => {
+  addIncidentWithFields = async (
+    eventID, {summary = null, rangerHandles=[]}
+  ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
     const nextIncident = {
@@ -499,7 +501,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       priority: 3,
       state: "new",
       incident_types: [],
-      ranger_handles: [],
+      ranger_handles: rangerHandles,
       location: {type: "text", description: ""},
       incident_reports: [],
       report_entries: [],
@@ -513,7 +515,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     invariant(incidents != null, `no incidents for event: ${eventID}`);
 
     while (incidents.length < total) {
-      await this.addIncidentWithSummary(eventID, null);
+      await this.addIncidentWithFields(eventID, {summary: null});
     }
   }
 
