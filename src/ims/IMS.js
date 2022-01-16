@@ -413,7 +413,7 @@ export default class IncidentManagementSystem {
         id: "number",
         index: [
           {field: "number", tokenize: "strict"},
-          {field: "created", tokenize: "full"},
+          {field: "created", tokenize: "forward"},
           {field: "summary", tokenize: "full"},
           {field: "incidentTypes", tokenize: "forward"},
           {field: "rangerHandles", tokenize: "full"},
