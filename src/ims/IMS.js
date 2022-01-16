@@ -412,9 +412,9 @@ export default class IncidentManagementSystem {
       var index = new Document({
         id: "number",
         index: [
-          {field: "number"},
+          {field: "number", tokenize: "strict"},
           {field: "summary", tokenize: "full"},
-          {field: "incidentTypes", tokenize: "full"},
+          {field: "incidentTypes", tokenize: "forward"},
           {field: "rangerHandles", tokenize: "full"},
         ],
       });

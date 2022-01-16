@@ -1052,6 +1052,7 @@ describe("IMS: search", () => {
         return new Set(incidents.map((incident) => incident.number));
       }
 
+      // Full words
       expect(await search("tree")).toEqual(new Set([1]));
       expect(await search("house")).toEqual(new Set([2, 3]));
       expect(await search("cat")).toEqual(new Set([1, 3]));
@@ -1061,10 +1062,14 @@ describe("IMS: search", () => {
       expect(await search("dog tree")).toEqual(new Set([]));
       expect(await search("turtle")).toEqual(new Set([]));
 
-      // Partial words
+      // Partial words - forward
       expect(await search("tr")).toEqual(new Set([1]));
-      expect(await search("e")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - reverse
       expect(await search("ho og")).toEqual(new Set([2]));
+
+      // Partial words - full
+      expect(await search("e")).toEqual(new Set([1, 2, 3]));
     }
   );
 
@@ -1091,14 +1096,19 @@ describe("IMS: search", () => {
         return new Set(incidents.map((incident) => incident.number));
       }
 
+      // Full words
       expect(await search("Bucket")).toEqual(new Set([2, 4]));
       expect(await search("Hubcap")).toEqual(new Set([3, 4]));
       expect(await search("XYZZY")).toEqual(new Set([]));
 
-      // Partial words
+      // Partial words - forward
       expect(await search("Buck")).toEqual(new Set([2, 4]));
-      expect(await search("uck")).toEqual(new Set([2, 4]));
+
+      // Partial words - reverse
       expect(await search("cap")).toEqual(new Set([3, 4]));
+
+      // Partial words - full
+      expect(await search("uck")).toEqual(new Set([2, 4]));
     }
   );
 
@@ -1125,16 +1135,15 @@ describe("IMS: search", () => {
         return new Set(incidents.map((incident) => incident.number));
       }
 
+      // Full words
       expect(await search("Housebound Dogs")).toEqual(new Set([2, 4]));
       expect(await search("Housebound")).toEqual(new Set([2, 4]));
       expect(await search("Treebound Cats")).toEqual(new Set([3, 4]));
       expect(await search("Cats")).toEqual(new Set([3, 4]));
       expect(await search("XYZZY")).toEqual(new Set([]));
 
-      // Partial words
-      expect(await search("bound")).toEqual(new Set([2, 3, 4]));
+      // Partial words - forward
       expect(await search("House")).toEqual(new Set([2, 4]));
-      expect(await search("ogs")).toEqual(new Set([2, 4]));
     }
   );
 
