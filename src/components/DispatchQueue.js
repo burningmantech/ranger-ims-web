@@ -584,7 +584,7 @@ const DispatchQueue = (props) => {
     return <DispatchQueueMain
       event={props.event} table={table} incidents={incidents}
     />;
-    }
+  }
 }
 
 export default DispatchQueue;
