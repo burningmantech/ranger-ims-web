@@ -413,6 +413,7 @@ export default class IncidentManagementSystem {
         id: "number",
         index: [
           {field: "number", tokenize: "strict"},
+          {field: "created", tokenize: "full"},
           {field: "summary", tokenize: "full"},
           {field: "incidentTypes", tokenize: "forward"},
           {field: "rangerHandles", tokenize: "full"},
@@ -423,6 +424,7 @@ export default class IncidentManagementSystem {
       for (const incident of await this.incidents(eventID)) {
         index.add({
           number: incident.number,
+          created: incident.created.toFormat("cccc L/c HH:mm"),
           summary: incident.summary,
           rangerHandles: incident.rangerHandles,
           incidentTypes: incident.incidentTypes,

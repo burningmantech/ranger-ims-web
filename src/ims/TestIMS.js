@@ -489,14 +489,19 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   addIncidentWithFields = async (
-    eventID, {summary = null, incidentTypes=[], rangerHandles=[]}
+    eventID, {
+      created = DateTime.now(),
+      summary = null,
+      incidentTypes=[],
+      rangerHandles=[],
+    }
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
     const nextIncident = {
       event: eventID,
       number: nextIncidentNumber,
-      created: "2021-08-18T10:10:46+00:00",
+      created: created.toISO(),
       summary: summary,
       priority: 3,
       state: "new",

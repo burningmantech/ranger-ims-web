@@ -1033,17 +1033,55 @@ describe("IMS: search", () => {
   );
 
   test(
+    "search by created", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1 - Sunday 10:10
+        event.id, {created: DateTime.fromISO("2022-01-16T10:10")}
+      );
+      await ims.addIncidentWithFields(  // 2 - Sunday 10:11
+        event.id, {created: DateTime.fromISO("2022-01-16T10:11")}
+      );
+      await ims.addIncidentWithFields(  // 3 - Sunday 11:10
+        event.id, {created: DateTime.fromISO("2022-01-16T11:10")}
+      );
+      await ims.addIncidentWithFields(  // 4 - Wednesday 20:10
+        event.id, {created: DateTime.fromISO("2022-01-19T20:10")}
+      );
+      await ims.addIncidentWithFields(  // 5 - Friday 08:00
+        event.id, {created: DateTime.fromISO("2022-01-21T08:00")}
+      );
+
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
+
+      // Full words
+      expect(await search("Sunday")).toEqual(new Set([1, 2, 3]));
+      expect(await search("Wednesday")).toEqual(new Set([4]));
+      expect(await search("Friday")).toEqual(new Set([5]));
+
+      // Partial words - forward
+      expect(await search("Sun")).toEqual(new Set([1, 2, 3]));
+      expect(await search("Wed")).toEqual(new Set([4]));
+      expect(await search("11:")).toEqual(new Set([2, 3]));
+    }
+  );
+
+  test(
     "search by summary", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
-      const catInTree = await ims.addIncidentWithFields(  // 1
+      await ims.addIncidentWithFields(  // 1
         event.id, {summary: "Cat in tree"}
       );
-      const dogInHouse = await ims.addIncidentWithFields(  // 2
+      await ims.addIncidentWithFields(  // 2
         event.id, {summary: "Dog in house"}
       );
-      const catInHouse = await ims.addIncidentWithFields(  // 3
+      await ims.addIncidentWithFields(  // 3
         event.id, {summary: "Cat in house"}
       );
 
@@ -1078,16 +1116,16 @@ describe("IMS: search", () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
-      const n = await ims.addIncidentWithFields(  // 1
+      await ims.addIncidentWithFields(  // 1
         event.id, {incidentTypes: []}
       );
-      const b = await ims.addIncidentWithFields(  // 2
+      await ims.addIncidentWithFields(  // 2
         event.id, {incidentTypes: ["Housebound Dogs"]}
       );
-      const h = await ims.addIncidentWithFields(  // 3
+      await ims.addIncidentWithFields(  // 3
         event.id, {incidentTypes: ["Treebound Cats"]}
       );
-      const bh = await ims.addIncidentWithFields(  // 4
+      await ims.addIncidentWithFields(  // 4
         event.id, {incidentTypes: ["Housebound Dogs", "Treebound Cats"]}
       );
 
@@ -1113,16 +1151,16 @@ describe("IMS: search", () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
-      const n = await ims.addIncidentWithFields(  // 1
+      await ims.addIncidentWithFields(  // 1
         event.id, {rangerHandles: []}
       );
-      const b = await ims.addIncidentWithFields(  // 2
+      await ims.addIncidentWithFields(  // 2
         event.id, {rangerHandles: ["Bucket"]}
       );
-      const h = await ims.addIncidentWithFields(  // 3
+      await ims.addIncidentWithFields(  // 3
         event.id, {rangerHandles: ["Hubcap"]}
       );
-      const bh = await ims.addIncidentWithFields(  // 4
+      await ims.addIncidentWithFields(  // 4
         event.id, {rangerHandles: ["Bucket", "Hubcap"]}
       );
 
