@@ -432,12 +432,16 @@ export default class IncidentManagementSystem {
     const results = await index.search(query);
 
     const numbers = new Set();
+    const incidents = [];
     for (const result of results) {
       for (const number of result.result) {
-        numbers.add(number);
+        if (!numbers.has(number)) {
+          numbers.add(number);
+          incidents.push(this._incidentsMap.get(number));
+        }
       }
     }
-    return numbers;
+    return incidents;
   }
 
 }

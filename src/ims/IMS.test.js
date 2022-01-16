@@ -1020,7 +1020,10 @@ describe("IMS: search", () => {
 
       await ims.addMoreIncidents(event.id, 3);
 
-      const search = async (query) => await ims.search(event.id, query);
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
 
       expect(await search("1")).toEqual(new Set([1]));
       expect(await search("2")).toEqual(new Set([2]));
@@ -1044,7 +1047,10 @@ describe("IMS: search", () => {
         event.id, "Cat in house"
       );
 
-      const search = async (query) => await ims.search(event.id, query);
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
 
       expect(await search("tree")).toEqual(new Set([1]));
       expect(await search("house")).toEqual(new Set([2, 3]));
