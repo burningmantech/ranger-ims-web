@@ -62,7 +62,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "1",
             number: 1,
-            created: "2021-08-17T17:12:46.720000+00:00",
+            created: "2021-08-17T17:12:46",
             summary: null,
             priority: 5,
             state: "closed",
@@ -80,19 +80,19 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry: true,
-                created: "2020-08-17T17:12:46.730000+00:00",
+                created: "2020-08-17T17:12:46",
                 author: "Operator",
                 text: "Changed description name to: On B road",
               },
               {
                 system_entry:false,
-                created:"2021-08-17T17:23:00.780000+00:00",
+                created:"2021-08-17T17:23:00",
                 author:"Operator",
                 text: "White pickup stopped on road, eventually moved",
               },
               {
                 system_entry:true,
-                created:"2021-08-28T00:37:37.300000+00:00",
+                created:"2021-08-28T00:37:37",
                 author:"Operator",
                 text:"Changed state to: closed",
               },
@@ -101,7 +101,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "1",
             number: 2,
-            created: "2020-08-17T18:45:46.920000+00:00",
+            created: "2020-08-17T18:45:46",
             summary: "Ice cream at the Man",
             priority: 1,
             state: "open",
@@ -116,7 +116,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry:false,
-                created:"2021-08-17T18:45:46.930000+00:00",
+                created:"2021-08-17T18:45:46",
                 author:"Operator",
                 text: "Someone is giving away ice cream at the Man",
               },
@@ -127,7 +127,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 1,
-            created: "2021-02-00T18:45:46.920000+00:00",
+            created: "2021-02-00T18:45:46",
             summary: "Cat in tree",
             priority: 2,
             state: "closed",
@@ -144,7 +144,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 2,
-            created: "2021-03-00T18:45:46.920000+00:00",
+            created: "2021-03-00T18:45:46",
             summary: "Dog in tree",
             priority: 4,
             state: "closed",
@@ -161,7 +161,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 3,
-            created: "2021-04-00T18:45:46.920000+00:00",
+            created: "2021-04-00T18:45:46",
             summary: "Giraffe in tree",
             priority: 6,
             state: "new",
@@ -498,7 +498,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
-    const nextIncident = {
+    const nextIncident = {  // Note: this is JSON, not an Incident object
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
