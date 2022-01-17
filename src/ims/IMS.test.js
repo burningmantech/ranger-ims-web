@@ -1018,17 +1018,15 @@ describe("IMS: search", () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
 
-      await ims.addMoreIncidents(event.id, 3);
+      await ims.addMoreIncidents(event.id, 200);
 
       const search = async (query) => {
         const incidents = await ims.search(event.id, query);
         return new Set(incidents.map((incident) => incident.number));
       }
 
-      expect(await search("1")).toEqual(new Set([1]));
-      expect(await search("2")).toEqual(new Set([2]));
-      expect(await search("3")).toEqual(new Set([3]));
-      expect(await search("1 2")).toEqual(new Set([]));
+      expect(await search("167")).toEqual(new Set([167]));
+      expect(await search("139")).toEqual(new Set([139]));
     }
   );
 
