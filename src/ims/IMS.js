@@ -407,6 +407,8 @@ export default class IncidentManagementSystem {
   // Search
 
   _searchIndex = async (eventID) => {
+    // https://github.com/nextapps-de/flexsearch
+
     if (! this._searchIndexByEvent.has(eventID)) {
       // Create index
       var index = new Document({
@@ -414,20 +416,32 @@ export default class IncidentManagementSystem {
         index: [
           {field: "number", tokenize: "strict"},
           {field: "created", tokenize: "forward"},
+          // FIXME: state
+          // FIXME: priority
           {field: "summary", tokenize: "full"},
+          {field: "location:name", tokenize: "full"},
           {field: "incidentTypes", tokenize: "forward"},
           {field: "rangerHandles", tokenize: "full"},
+          // FIXME: report entries
+          // FIXME: attached incident reports
         ],
       });
 
       // Populate index
       for (const incident of await this.incidents(eventID)) {
+        const location = (incident.location == null) ? {} : incident.location;
+
         index.add({
           number: incident.number,
           created: incident.created.toFormat("cccc L/c HH:mm"),
+          // FIXME: state
+          // FIXME: priority
           summary: incident.summary,
+          location: {name: location.name},
           rangerHandles: incident.rangerHandles,
           incidentTypes: incident.incidentTypes,
+          // FIXME: report entries
+          // FIXME: attached incident reports
         });
       }
 

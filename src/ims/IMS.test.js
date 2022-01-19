@@ -5,6 +5,7 @@ import IncidentManagementSystem from "./IMS";
 import {
   TestIncidentManagementSystem, testIncidentManagementSystem
 } from "./TestIMS";
+import Location from "./model/Location";
 
 
 expect.extend({
@@ -1106,6 +1107,45 @@ describe("IMS: search", () => {
 
       // Partial words - full
       expect(await search("e")).toEqual(new Set([1, 2, 3]));
+    }
+  );
+
+  test(
+    "search by location name", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {location: new Location({name: "Log-Pile House"})}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {location: new Location({name: "Treetop House"})}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {location: new Location({name: "Underground House"})}
+      );
+
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
+
+      // Full words
+      expect(await search("log-pile")).toEqual(new Set([1]));
+      expect(await search("treetop")).toEqual(new Set([2]));
+      expect(await search("underground")).toEqual(new Set([3]));
+      expect(await search("house")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - forward
+      expect(await search("Log-")).toEqual(new Set([1]));
+      expect(await search("Tree")).toEqual(new Set([2]));
+
+      // Partial words - reverse
+      expect(await search("og ile")).toEqual(new Set([1]));
+      expect(await search("use")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - full
+      expect(await search("ou")).toEqual(new Set([1, 2, 3]));
     }
   );
 

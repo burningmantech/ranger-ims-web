@@ -492,13 +492,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     eventID, {
       created = DateTime.now(),
       summary = null,
+      location = null,
       incidentTypes=[],
       rangerHandles=[],
     }
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
-    const nextIncident = {  // Note: this is JSON, not an Incident object
+    const nextIncident = {  // NOTE: this is JSON, not an Incident object
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
@@ -507,7 +508,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       state: "new",
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
-      location: null,
+      location: (location == null) ? null : location.toJSON(),
       incident_reports: [],
       report_entries: [],
     };
