@@ -420,6 +420,7 @@ export default class IncidentManagementSystem {
           // FIXME: priority
           {field: "summary", tokenize: "full"},
           {field: "location:name", tokenize: "full"},
+          {field: "location:description", tokenize: "full"},
           {field: "incidentTypes", tokenize: "forward"},
           {field: "rangerHandles", tokenize: "full"},
           // FIXME: report entries
@@ -430,6 +431,7 @@ export default class IncidentManagementSystem {
       // Populate index
       for (const incident of await this.incidents(eventID)) {
         const location = (incident.location == null) ? {} : incident.location;
+        const address = (location.address == null) ? {} : location.address;
 
         index.add({
           number: incident.number,
@@ -437,7 +439,10 @@ export default class IncidentManagementSystem {
           // FIXME: state
           // FIXME: priority
           summary: incident.summary,
-          location: {name: location.name},
+          location: {
+            name: location.name,
+            description: address.description,
+          },
           rangerHandles: incident.rangerHandles,
           incidentTypes: incident.incidentTypes,
           // FIXME: report entries

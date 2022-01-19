@@ -91,7 +91,7 @@ describe("Location", () => {
       const locationJSON = {
         name: "Underground House",
         type: "garett",
-        description: "Here, by this rocks...",
+        description: "Here, by these rocks...",
         concentric: null,
         radial_hour: null,
         radial_minute: null,

@@ -6,6 +6,7 @@ import {
   TestIncidentManagementSystem, testIncidentManagementSystem
 } from "./TestIMS";
 import Location from "./model/Location";
+import RodGarettAddress from "./model/RodGarettAddress";
 
 
 expect.extend({
@@ -1146,6 +1147,66 @@ describe("IMS: search", () => {
 
       // Partial words - full
       expect(await search("ou")).toEqual(new Set([1, 2, 3]));
+    }
+  );
+
+  test(
+    "search by location address description", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by this lake...",
+            }),
+          }),
+        },
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by this stream...",
+            }),
+          }),
+        },
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by these rocks...",
+            }),
+          }),
+        },
+      );
+
+      const search = async (query) => {
+        const incidents = await ims.search(event.id, query);
+        return new Set(incidents.map((incident) => incident.number));
+      }
+
+      // Full words
+      expect(await search("lake")).toEqual(new Set([1]));
+      expect(await search("stream")).toEqual(new Set([2]));
+      expect(await search("rocks")).toEqual(new Set([3]));
+      expect(await search("here")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - forward
+      expect(await search("lak")).toEqual(new Set([1]));
+      expect(await search("st")).toEqual(new Set([2]));
+
+      // Partial words - reverse
+      expect(await search("ake")).toEqual(new Set([1]));
+      expect(await search("ere")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - full
+      expect(await search("er")).toEqual(new Set([1, 2, 3]));
     }
   );
 
