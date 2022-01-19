@@ -1,10 +1,15 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
 
+import Location from "./Location";
+
 
 export default class Incident {
 
   static fromJSON = (json) => {
+    const location = (
+      (json.location == null) ? null : Location.fromJSON(json.location)
+    );
     try {
       return new Incident(
         {
@@ -14,7 +19,7 @@ export default class Incident {
           "state": json.state,
           "priority": json.priority,
           "summary": json.summary,
-          // "location": json.location,
+          "location": location,
           "rangerHandles": json.ranger_handles,
           "incidentTypes": json.incident_types,
           // "reportEntries": json.report_entries,
@@ -23,7 +28,7 @@ export default class Incident {
       );
     }
     catch (e) {
-      throw new Error(`Invalid incident JSON: ${json}`)
+      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`)
     }
   }
 
@@ -45,7 +50,6 @@ export default class Incident {
     invariant(created != null, "created is required");
     invariant(state != null, "state is required");
     invariant(priority != null, "priority is required");
-    // invariant(location != null, "location is required");
     invariant(rangerHandles != null, "rangerHandles is required");
     invariant(incidentTypes != null, "incidentTypes is required");
     // invariant(reportEntries != null, "reportEntries is required");
@@ -59,7 +63,7 @@ export default class Incident {
     this.state = state;
     this.priority = priority;
     this.summary = summary;
-    // this.location = location;
+    this.location = location;
     this.rangerHandles = rangerHandles;
     this.incidentTypes = incidentTypes;
     // this.reportEntries = reportEntries;
@@ -71,6 +75,9 @@ export default class Incident {
   }
 
   toJSON = () => {
+    const locationJSON = (
+      (this.location == null) ? null : this.location.toJSON()
+    );
     return {
       "event": this.eventID,
       "number": this.number,
@@ -78,7 +85,7 @@ export default class Incident {
       "state": this.state,
       "priority": this.priority,
       "summary": this.summary,
-      // "location": this.location,
+      "location": locationJSON,
       "ranger_handles": this.rangerHandles,
       "incident_types": this.incidentTypes,
       // "report_entries": this.reportEntries,

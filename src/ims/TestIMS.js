@@ -507,7 +507,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       state: "new",
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
-      location: {type: "text", description: ""},
+      location: null,
       incident_reports: [],
       report_entries: [],
     };
