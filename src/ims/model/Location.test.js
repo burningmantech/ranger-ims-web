@@ -103,13 +103,14 @@ describe("Location", () => {
     }
   );
 
-  // test(
-  //   "fromJSON, invalid", () => {
-  //     expect(
-  //       () => Location.fromJSON([])
-  //     ).toThrow(`Invalid location JSON: "1"`);
-  //   }
-  // );
+  test(
+    "fromJSON, invalid", () => {
+      const json = {type: "XYZZY"};
+      expect(
+        () => Location.fromJSON(json)
+      ).toThrow(`Invalid location JSON: ${JSON.stringify(json)}`);
+    }
+  );
 
   test(
     "JSON round-trip through text", () => {

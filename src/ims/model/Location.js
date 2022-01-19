@@ -5,12 +5,10 @@ export default class Location {
 
   static fromJSON = (json) => {
     try {
-      return new Location(
-        {
-          name: json.name,
-          address: RodGarettAddress.fromJSON(json),
-        }
+      const address = (
+        (json.type == null) ? null : RodGarettAddress.fromJSON(json)
       );
+      return new Location({name: json.name, address: address});
     }
     catch (e) {
       throw new Error(`Invalid location JSON: ${JSON.stringify(json)}`)
