@@ -4,7 +4,7 @@ import RodGarettAddress from "./RodGarettAddress";
 describe("RodGarettAddress", () => {
 
   test(
-    "toString, null", () => {
+    "toString, no fields", () => {
       const address = new RodGarettAddress({})
       const result = address.toString();
 
@@ -43,7 +43,7 @@ describe("RodGarettAddress", () => {
   );
 
   test(
-    "toJSON, null", () => {
+    "toJSON, no fields", () => {
       const address = new RodGarettAddress({})
       const addressJSON = {
         type: "garett",

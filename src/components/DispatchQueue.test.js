@@ -8,11 +8,15 @@ import { DateTime } from "luxon";
 import {
   renderWithIMSContext, testIncidentManagementSystem
 } from "../ims/TestIMS";
+import Location from "../ims/model/Location";
+import RodGarettAddress from "../ims/model/RodGarettAddress";
 
 import {
   defaultPageSize,
+  formatAddress,
   formatArrayOfStrings,
   formatDateTime,
+  formatLocation,
   formatPriority,
   formatShowDays,
   formatShowState,
@@ -95,6 +99,209 @@ describe("Table cell formatting functions", () => {
     "formatState, undefined",
     () => {
       expect(formatState({})).toBeUndefined();
+    }
+  );
+
+  test(
+    "formatAddress, all fields",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        concentric: "0",
+        radialHour: 8,
+        radialMinute: 37,
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(
+        `${address.concentric}@` +
+        `${address.radialHour}:${address.radialMinute} ` +
+        `(${address.description})`
+      );
+    }
+  );
+
+  test(
+    "formatAddress, no description",
+    () => {
+      const address = new RodGarettAddress({
+        concentric: "0",
+        radialHour: 8,
+        radialMinute: 37,
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(
+        `${address.concentric}@` +
+        `${address.radialHour}:${address.radialMinute}`
+      );
+    }
+  );
+
+
+  test(
+    "formatAddress, no concentric",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        radialHour: 8,
+        radialMinute: 37,
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(
+        `@${address.radialHour}:${address.radialMinute} ` +
+        `(${address.description})`
+      );
+    }
+  );
+
+  test(
+    "formatAddress, no radial hour",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        concentric: "0",
+        radialMinute: 37,
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(
+        `${address.concentric}@:${address.radialMinute} ` +
+        `(${address.description})`
+      );
+    }
+  );
+
+  test(
+    "formatAddress, no radial minute",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        concentric: "0",
+        radialHour: 8,
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(
+        `${address.concentric}@${address.radialHour}: ` +
+        `(${address.description})`
+      );
+    }
+  );
+
+  test(
+    "formatAddress, no coordinates",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+      });
+      const text = formatAddress({value: address});
+      expect(text).toEqual(`(${address.description})`);
+    }
+  );
+
+  test(
+    "formatAddress, no fields",
+    () => {
+      const address = new RodGarettAddress({});
+      expect(formatAddress({value: address})).toBeNull();
+    }
+  );
+
+  test(
+    "formatAddress, null",
+    () => {
+      expect(formatAddress({value: null})).toBeNull();
+    }
+  );
+
+  test(
+    "formatAddress, invalid",
+    () => {
+      expect(formatAddress({value: -1})).toBeNull();
+      expect(formatAddress({value: "XYZZY"})).toBeNull();
+    }
+  );
+
+  test(
+    "formatAddress, undefined",
+    () => {
+      expect(formatAddress({})).toBeUndefined();
+    }
+  );
+
+
+
+  test(
+    "formatLocation, all fields",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        concentric: "0",
+        radialHour: 8,
+        radialMinute: 37,
+      });
+      const location = new Location({
+        name: "Treetop House",
+        address: address,
+      });
+      const text = formatLocation({value: location});
+      expect(text).toEqual(
+        `${location.name} @ ${formatAddress({value: address})}`
+      );
+    }
+  );
+
+  test(
+    "formatLocation, no name",
+    () => {
+      const address = new RodGarettAddress({
+        description: "Here, by this stream...",
+        concentric: "0",
+        radialHour: 8,
+        radialMinute: 37,
+      });
+      const location = new Location({address: address});
+      const text = formatLocation({value: location});
+      expect(text).toEqual(
+        `${formatAddress({value: address})}`
+      );
+    }
+  );
+
+  test(
+    "formatLocation, no address",
+    () => {
+      const location = new Location({name: "Treetop House"});
+      const text = formatLocation({value: location});
+      expect(text).toEqual(`${location.name}`);
+    }
+  );
+
+  test(
+    "formatLocation, no fields",
+    () => {
+      const location = new Location({});
+      const text = formatLocation({value: location});
+      expect(text).toBeNull();
+    }
+  );
+
+  test(
+    "formatLocation, null",
+    () => {
+      expect(formatLocation({value: null})).toBeNull();
+    }
+  );
+
+  test(
+    "formatLocation, invalid",
+    () => {
+      expect(formatLocation({value: -1})).toBeNull();
+      expect(formatLocation({value: "XYZZY"})).toBeNull();
+    }
+  );
+
+  test(
+    "formatLocation, undefined",
+    () => {
+      expect(formatLocation({})).toBeUndefined();
     }
   );
 

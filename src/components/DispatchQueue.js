@@ -89,15 +89,17 @@ export const formatPriority = ({value}) => {
 
 
 export const formatDateTime = ({value}) => {
-  if (!value) {
+  const dateTime = value;
+  if (!dateTime) {
     return "";
   }
-  return value.toFormat("ccc L/c HH:mm");
+  return dateTime.toFormat("ccc L/c HH:mm");
 }
 
 
 export const formatState = ({value}) => {
-  switch (value) {
+  const state = value;
+  switch (state) {
     case "new":
       return "New";
     case "on_hold":
@@ -109,22 +111,69 @@ export const formatState = ({value}) => {
     case "closed":
       return "Closed";
     default:
-      return value;
+      return state;
+  }
+}
+
+
+export const formatAddress = ({value}) => {
+  const formatCoordinate = (c) => (c == null) ? "" : c;
+
+  const address = value;
+  if (address == null) {
+    return address;
+  }
+  if (
+    address.concentric ||
+    address.radialHour ||
+    address.radialMinute
+  ) {
+    return (
+      `${formatCoordinate(address.concentric)}@` +
+      `${formatCoordinate(address.radialHour)}:` +
+      `${formatCoordinate(address.radialMinute)}` +
+      `${(address.description) ? ` (${address.description})` : ""}`
+    );
+  }
+  else if (address.description) {
+    return `(${address.description})`;
+  } else {
+    return null;
   }
 }
 
 
 export const formatLocation = ({value}) => {
-  // console.error("Location " + JSON.stringify(value));
-  return "?";
+  const location = value;
+  if (location == null) {
+    return location;
+  }
+
+  const addressText = formatAddress({value: location.address});
+
+  if (location.name == null) {
+    if (addressText == null) {
+      return null;
+    } else {
+      return addressText;
+    }
+  }
+  else {
+    if (addressText == null) {
+      return location.name;
+    } else {
+      return `${location.name} @ ${addressText}`;
+    }
+  }
 }
 
 
 export const formatArrayOfStrings = ({value}) => {
-  if (! value) {
+  const strings = value;
+  if (! strings) {
     return "";
   }
-  return value.sort().join(", ");
+  return strings.sort().join(", ");
 }
 
 

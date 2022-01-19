@@ -16,7 +16,7 @@ const addressJSONWithDescription = (description) => {
 describe("Location", () => {
 
   test(
-    "toString, null", () => {
+    "toString, no fields", () => {
       const location = new Location({})
       const result = location.toString();
 
