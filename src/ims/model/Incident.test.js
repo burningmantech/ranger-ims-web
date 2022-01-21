@@ -178,4 +178,26 @@ describe("Incident", () => {
     }
   );
 
+  test(
+    "stateAsText, valid",
+    () => {
+      expect(Incident.stateAsText("new")).toEqual("New");
+      expect(Incident.stateAsText("on_hold")).toEqual("On Hold");
+      expect(Incident.stateAsText("dispatched")).toEqual("Dispatched");
+      expect(Incident.stateAsText("on_scene")).toEqual("On Scene");
+      expect(Incident.stateAsText("closed")).toEqual("Closed");
+    }
+  );
+
+  test(
+    "stateAsText, invalid",
+    () => {
+      for (const value of [-1, "XYZZY"]) {
+        expect(
+          () => Incident.stateAsText(value)
+        ).toThrow(`Invalid state: ${value}`)
+      }
+    }
+  );
+
 });

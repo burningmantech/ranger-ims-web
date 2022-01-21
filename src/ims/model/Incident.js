@@ -32,6 +32,24 @@ export default class Incident {
     }
   }
 
+  static stateAsText = (state) => {
+    invariant(state != null, "state is required");
+    switch (state) {
+      case "new":
+        return "New";
+      case "on_hold":
+        return "On Hold";
+      case "dispatched":
+        return "Dispatched";
+      case "on_scene":
+        return "On Scene";
+      case "closed":
+        return "Closed";
+      default:
+        throw new Error(`Invalid state: ${state}`);
+    }
+  }
+
   constructor({
     eventID,
     number,

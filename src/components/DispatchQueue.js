@@ -13,6 +13,7 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
+import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
 
@@ -99,19 +100,10 @@ export const formatDateTime = ({value}) => {
 
 export const formatState = ({value}) => {
   const state = value;
-  switch (state) {
-    case "new":
-      return "New";
-    case "on_hold":
-      return "On Hold";
-    case "dispatched":
-      return "Dispatched";
-    case "on_scene":
-      return "On Scene";
-    case "closed":
-      return "Closed";
-    default:
-      return state;
+  try {
+    return Incident.stateAsText(state);
+  } catch (e) {
+    return state;
   }
 }
 
