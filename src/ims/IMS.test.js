@@ -1067,6 +1067,28 @@ describe("IMS: search", () => {
   );
 
   test(
+    "search by state", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(event.id, {state: "closed"});  // 1
+      await ims.addIncidentWithFields(event.id, {state: "on_hold"});  // 2
+      await ims.addIncidentWithFields(event.id, {state: "new"});  // 3
+      await ims.addIncidentWithFields(event.id, {state: "dispatched"});  // 4
+      await ims.addIncidentWithFields(event.id, {state: "dispatched"});  // 5
+      await ims.addIncidentWithFields(event.id, {state: "new"});  // 6
+      await ims.addIncidentWithFields(event.id, {state: "on_scene"});  // 7
+
+      // Full words
+      expect(await search(ims, event, "new")).toEqual(new Set([3, 6]));
+      expect(await search(ims, event, "on hold")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dispatched")).toEqual(new Set([4, 5]));
+      expect(await search(ims, event, "on scene")).toEqual(new Set([7]));
+      expect(await search(ims, event, "closed")).toEqual(new Set([1]));
+    }
+  );
+
+  test(
     "search by summary", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");

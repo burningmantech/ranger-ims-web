@@ -2,11 +2,11 @@ import invariant from "invariant";
 import jwtSign from "jsonwebtoken/sign";
 import { DateTime, Duration } from "luxon";
 
-import User from "./User";
-import IncidentManagementSystem from "./IMS";
-import { IMSContext } from "./context";
-
 import { render } from "@testing-library/react";
+
+import IncidentManagementSystem from "./IMS";
+import User from "./User";
+import { IMSContext } from "./context";
 
 
 /* https://stackoverflow.com/a/7616484 */
@@ -491,6 +491,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   addIncidentWithFields = async (
     eventID, {
       created = DateTime.now(),
+      state = "new",
+      priority = 3,
       summary = null,
       location = null,
       incidentTypes=[],
@@ -503,14 +505,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
-      summary: summary,
+      state: state,
       priority: 3,
-      state: "new",
+      summary: summary,
+      location: (location == null) ? null : location.toJSON(),
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
-      location: (location == null) ? null : location.toJSON(),
-      incident_reports: [],
       report_entries: [],
+      incident_reports: [],
     };
     incidents.push(nextIncident);
     return nextIncident;

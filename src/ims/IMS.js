@@ -416,7 +416,7 @@ export default class IncidentManagementSystem {
         index: [
           {field: "number", tokenize: "strict"},
           {field: "created", tokenize: "forward"},
-          // FIXME: state
+          {field: "state", tokenize: "strict"},
           // FIXME: priority
           {field: "summary", tokenize: "full"},
           {field: "location:name", tokenize: "full"},
@@ -436,7 +436,7 @@ export default class IncidentManagementSystem {
         index.add({
           number: incident.number,
           created: incident.created.toFormat("cccc L/c HH:mm"),
-          // FIXME: state
+          state: Incident.stateAsText(incident.state),
           // FIXME: priority
           summary: incident.summary,
           location: {

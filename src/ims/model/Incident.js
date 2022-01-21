@@ -51,17 +51,17 @@ export default class Incident {
   }
 
   constructor({
-    eventID,
-    number,
-    created,
-    state,
-    priority,
-    summary,
-    location,
-    rangerHandles,
-    incidentTypes,
-    reportEntries,
-    incidentReportNumbers,
+    eventID,  // text
+    number,  //  int
+    created,  // DateTime
+    state,  // "new", "on_hold", "dispatched", "on_scene", "closed"
+    priority,  // 1, 3, 5; deprecated: 2, 4
+    summary,  // text
+    location,  // Location
+    rangerHandles,  // [text]
+    incidentTypes,  // [text]
+    reportEntries,  // [ReportEntry]
+    incidentReportNumbers,  // [int]
   }) {
     invariant(eventID != null, "eventID is required");
     invariant(number != null, "number is required");
