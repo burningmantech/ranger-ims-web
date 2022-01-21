@@ -200,4 +200,26 @@ describe("Incident", () => {
     }
   );
 
+  test(
+    "priorityToString, valid",
+    () => {
+      expect(Incident.priorityToString(1)).toEqual("High");
+      expect(Incident.priorityToString(2)).toEqual("High");
+      expect(Incident.priorityToString(3)).toEqual("Normal");
+      expect(Incident.priorityToString(4)).toEqual("Low");
+      expect(Incident.priorityToString(5)).toEqual("Low");
+    }
+  );
+
+  test(
+    "priorityToString, invalid",
+    () => {
+      for (const value of [-1, "XYZZY"]) {
+        expect(
+          () => Incident.priorityToString(value)
+        ).toThrow(`Invalid priority: ${value}`)
+      }
+    }
+  );
+
 });

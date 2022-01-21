@@ -50,6 +50,21 @@ export default class Incident {
     }
   }
 
+  static priorityToString = (priority) => {
+    switch (priority) {
+      case 1:
+      case 2:
+        return "High";
+      case 3:
+        return "Normal";
+      case 4:
+      case 5:
+        return "Low";
+      default:
+        throw new Error(`Invalid priority: ${priority}`);
+    }
+  }
+
   constructor({
     eventID,  // text
     number,  //  int

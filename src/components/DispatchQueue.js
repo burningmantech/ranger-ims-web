@@ -74,7 +74,8 @@ export const SearchIcon = () => {
 
 
 export const formatPriority = ({value}) => {
-  switch (value) {
+  const priority = value;
+  switch (priority) {
     case 1:
     case 2:
       return <HighPriorityIcon />;
