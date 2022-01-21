@@ -1013,6 +1013,12 @@ describe("IMS: incidents", () => {
 });
 
 
+const search = async (ims, event, query) => {
+  const incidents = await ims.search(event.id, query);
+  return new Set(incidents.map((incident) => incident.number));
+}
+
+
 describe("IMS: search", () => {
 
   test(
@@ -1022,13 +1028,8 @@ describe("IMS: search", () => {
 
       await ims.addMoreIncidents(event.id, 200);
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
-      expect(await search("167")).toEqual(new Set([167]));
-      expect(await search("139")).toEqual(new Set([139]));
+      expect(await search(ims, event, "167")).toEqual(new Set([167]));
+      expect(await search(ims, event, "139")).toEqual(new Set([139]));
     }
   );
 
@@ -1053,20 +1054,15 @@ describe("IMS: search", () => {
         event.id, {created: DateTime.fromISO("2022-01-21T08:00")}
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("Sunday")).toEqual(new Set([1, 2, 3]));
-      expect(await search("Wednesday")).toEqual(new Set([4]));
-      expect(await search("Friday")).toEqual(new Set([5]));
+      expect(await search(ims, event, "Sunday")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "Wednesday")).toEqual(new Set([4]));
+      expect(await search(ims, event, "Friday")).toEqual(new Set([5]));
 
       // Partial words - forward
-      expect(await search("Sun")).toEqual(new Set([1, 2, 3]));
-      expect(await search("Wed")).toEqual(new Set([4]));
-      expect(await search("11:")).toEqual(new Set([2, 3]));
+      expect(await search(ims, event, "Sun")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "Wed")).toEqual(new Set([4]));
+      expect(await search(ims, event, "11:")).toEqual(new Set([2, 3]));
     }
   );
 
@@ -1085,29 +1081,24 @@ describe("IMS: search", () => {
         event.id, {summary: "Cat in house"}
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("tree")).toEqual(new Set([1]));
-      expect(await search("house")).toEqual(new Set([2, 3]));
-      expect(await search("cat")).toEqual(new Set([1, 3]));
-      expect(await search("dog")).toEqual(new Set([2]));
-      expect(await search("dog in house")).toEqual(new Set([2]));
-      expect(await search("dog in tree")).toEqual(new Set([]));
-      expect(await search("dog tree")).toEqual(new Set([]));
-      expect(await search("turtle")).toEqual(new Set([]));
+      expect(await search(ims, event, "tree")).toEqual(new Set([1]));
+      expect(await search(ims, event, "house")).toEqual(new Set([2, 3]));
+      expect(await search(ims, event, "cat")).toEqual(new Set([1, 3]));
+      expect(await search(ims, event, "dog")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dog in house")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dog in tree")).toEqual(new Set([]));
+      expect(await search(ims, event, "dog tree")).toEqual(new Set([]));
+      expect(await search(ims, event, "turtle")).toEqual(new Set([]));
 
       // Partial words - forward
-      expect(await search("tr")).toEqual(new Set([1]));
+      expect(await search(ims, event, "tr")).toEqual(new Set([1]));
 
       // Partial words - reverse
-      expect(await search("ho og")).toEqual(new Set([2]));
+      expect(await search(ims, event, "ho og")).toEqual(new Set([2]));
 
       // Partial words - full
-      expect(await search("e")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "e")).toEqual(new Set([1, 2, 3]));
     }
   );
 
@@ -1126,27 +1117,22 @@ describe("IMS: search", () => {
         event.id, {location: new Location({name: "Underground House"})}
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("log-pile")).toEqual(new Set([1]));
-      expect(await search("treetop")).toEqual(new Set([2]));
-      expect(await search("underground")).toEqual(new Set([3]));
-      expect(await search("house")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "log-pile")).toEqual(new Set([1]));
+      expect(await search(ims, event, "treetop")).toEqual(new Set([2]));
+      expect(await search(ims, event, "underground")).toEqual(new Set([3]));
+      expect(await search(ims, event, "house")).toEqual(new Set([1, 2, 3]));
 
       // Partial words - forward
-      expect(await search("Log-")).toEqual(new Set([1]));
-      expect(await search("Tree")).toEqual(new Set([2]));
+      expect(await search(ims, event, "Log-")).toEqual(new Set([1]));
+      expect(await search(ims, event, "Tree")).toEqual(new Set([2]));
 
       // Partial words - reverse
-      expect(await search("og ile")).toEqual(new Set([1]));
-      expect(await search("use")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "og ile")).toEqual(new Set([1]));
+      expect(await search(ims, event, "use")).toEqual(new Set([1, 2, 3]));
 
       // Partial words - full
-      expect(await search("ou")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "ou")).toEqual(new Set([1, 2, 3]));
     }
   );
 
@@ -1186,27 +1172,22 @@ describe("IMS: search", () => {
         },
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("lake")).toEqual(new Set([1]));
-      expect(await search("stream")).toEqual(new Set([2]));
-      expect(await search("rocks")).toEqual(new Set([3]));
-      expect(await search("here")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "lake")).toEqual(new Set([1]));
+      expect(await search(ims, event, "stream")).toEqual(new Set([2]));
+      expect(await search(ims, event, "rocks")).toEqual(new Set([3]));
+      expect(await search(ims, event, "here")).toEqual(new Set([1, 2, 3]));
 
       // Partial words - forward
-      expect(await search("lak")).toEqual(new Set([1]));
-      expect(await search("st")).toEqual(new Set([2]));
+      expect(await search(ims, event, "lak")).toEqual(new Set([1]));
+      expect(await search(ims, event, "st")).toEqual(new Set([2]));
 
       // Partial words - reverse
-      expect(await search("ake")).toEqual(new Set([1]));
-      expect(await search("ere")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "ake")).toEqual(new Set([1]));
+      expect(await search(ims, event, "ere")).toEqual(new Set([1, 2, 3]));
 
       // Partial words - full
-      expect(await search("er")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "er")).toEqual(new Set([1, 2, 3]));
     }
   );
 
@@ -1228,20 +1209,15 @@ describe("IMS: search", () => {
         event.id, {incidentTypes: ["Housebound Dogs", "Treebound Cats"]}
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("Housebound Dogs")).toEqual(new Set([2, 4]));
-      expect(await search("Housebound")).toEqual(new Set([2, 4]));
-      expect(await search("Treebound Cats")).toEqual(new Set([3, 4]));
-      expect(await search("Cats")).toEqual(new Set([3, 4]));
-      expect(await search("XYZZY")).toEqual(new Set([]));
+      expect(await search(ims, event, "Housebound Dogs")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Housebound")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Treebound Cats")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "Cats")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
 
       // Partial words - forward
-      expect(await search("House")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "House")).toEqual(new Set([2, 4]));
     }
   );
 
@@ -1263,24 +1239,19 @@ describe("IMS: search", () => {
         event.id, {rangerHandles: ["Bucket", "Hubcap"]}
       );
 
-      const search = async (query) => {
-        const incidents = await ims.search(event.id, query);
-        return new Set(incidents.map((incident) => incident.number));
-      }
-
       // Full words
-      expect(await search("Bucket")).toEqual(new Set([2, 4]));
-      expect(await search("Hubcap")).toEqual(new Set([3, 4]));
-      expect(await search("XYZZY")).toEqual(new Set([]));
+      expect(await search(ims, event, "Bucket")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Hubcap")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
 
       // Partial words - forward
-      expect(await search("Buck")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Buck")).toEqual(new Set([2, 4]));
 
       // Partial words - reverse
-      expect(await search("cap")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "cap")).toEqual(new Set([3, 4]));
 
       // Partial words - full
-      expect(await search("uck")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "uck")).toEqual(new Set([2, 4]));
     }
   );
 
