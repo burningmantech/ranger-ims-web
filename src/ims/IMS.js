@@ -417,7 +417,7 @@ export default class IncidentManagementSystem {
           {field: "number", tokenize: "strict"},
           {field: "created", tokenize: "forward"},
           {field: "state", tokenize: "strict"},
-          // FIXME: priority
+          {field: "priority", tokenize: "strict"},
           {field: "summary", tokenize: "full"},
           {field: "location:name", tokenize: "full"},
           {field: "location:description", tokenize: "full"},
@@ -433,11 +433,13 @@ export default class IncidentManagementSystem {
         const location = (incident.location == null) ? {} : incident.location;
         const address = (location.address == null) ? {} : location.address;
 
+        console.info(Incident.priorityToString(incident.priority));
+
         index.add({
           number: incident.number,
           created: incident.created.toFormat("cccc L/c HH:mm"),
           state: Incident.stateToString(incident.state),
-          // FIXME: priority
+          priority: Incident.priorityToString(incident.priority),
           summary: incident.summary,
           location: {
             name: location.name,

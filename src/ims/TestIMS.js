@@ -506,7 +506,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       number: nextIncidentNumber,
       created: created.toISO(),
       state: state,
-      priority: 3,
+      priority: priority,
       summary: summary,
       location: (location == null) ? null : location.toJSON(),
       incident_types: incidentTypes,

@@ -1089,6 +1089,24 @@ describe("IMS: search", () => {
   );
 
   test(
+    "search by priority", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(event.id, {priority: 1});  // 1
+      await ims.addIncidentWithFields(event.id, {priority: 2});  // 2
+      await ims.addIncidentWithFields(event.id, {priority: 3});  // 3
+      await ims.addIncidentWithFields(event.id, {priority: 4});  // 4
+      await ims.addIncidentWithFields(event.id, {priority: 5});  // 5
+
+      // Full words
+      expect(await search(ims, event, "low")).toEqual(new Set([4, 5]));
+      expect(await search(ims, event, "normal")).toEqual(new Set([3]));
+      expect(await search(ims, event, "high")).toEqual(new Set([1, 2]));
+    }
+  );
+
+  test(
     "search by summary", async () => {
       const ims = testIncidentManagementSystem();
       const event = await ims.eventWithID("empty");
