@@ -32,7 +32,7 @@ export default class Incident {
     }
   }
 
-  static stateAsText = (state) => {
+  static stateToString = (state) => {
     invariant(state != null, "state is required");
     switch (state) {
       case "new":

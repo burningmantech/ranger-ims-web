@@ -101,7 +101,7 @@ export const formatDateTime = ({value}) => {
 export const formatState = ({value}) => {
   const state = value;
   try {
-    return Incident.stateAsText(state);
+    return Incident.stateToString(state);
   } catch (e) {
     return state;
   }
