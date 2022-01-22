@@ -1039,19 +1039,19 @@ describe("IMS: search", () => {
       const event = await ims.eventWithID("empty");
 
       await ims.addIncidentWithFields(  // 1 - Sunday 10:10
-        event.id, {created: DateTime.fromISO("2022-01-16T10:10")}
+        event.id, {created: DateTime.fromISO("2022-01-16T10:10Z")}
       );
       await ims.addIncidentWithFields(  // 2 - Sunday 10:11
-        event.id, {created: DateTime.fromISO("2022-01-16T10:11")}
+       event.id, {created: DateTime.fromISO("2022-01-16T10:11Z")}
       );
       await ims.addIncidentWithFields(  // 3 - Sunday 11:10
-        event.id, {created: DateTime.fromISO("2022-01-16T11:10")}
+        event.id, {created: DateTime.fromISO("2022-01-16T11:10Z")}
       );
       await ims.addIncidentWithFields(  // 4 - Wednesday 20:10
-        event.id, {created: DateTime.fromISO("2022-01-19T20:10")}
+        event.id, {created: DateTime.fromISO("2022-01-19T20:10Z")}
       );
       await ims.addIncidentWithFields(  // 5 - Friday 08:00
-        event.id, {created: DateTime.fromISO("2022-01-21T08:00")}
+        event.id, {created: DateTime.fromISO("2022-01-21T08:00Z")}
       );
 
       // Full words

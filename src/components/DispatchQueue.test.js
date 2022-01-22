@@ -60,7 +60,7 @@ describe("Table cell formatting functions", () => {
   test(
     "formatDateTime, valid",
     () => {
-      const dateTime = DateTime.fromISO("2021-08-17T17:12:46.720000+00:00");
+      const dateTime = DateTime.fromISO("2021-08-17T17:12:46.720000Z");
 
       expect(
         formatDateTime({value: dateTime})

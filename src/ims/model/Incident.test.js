@@ -11,7 +11,7 @@ describe("Incident", () => {
     "toString", () => {
       const eventID = "1";
       const number = 4;
-      const created = DateTime.fromISO("2021-08-17T17:12:46.720000+00:00");
+      const created = DateTime.fromISO("2021-08-17T17:12:46.72Z");
       const state = "open";
       const priority = 3;
       const location = new Location({});
@@ -41,7 +41,9 @@ describe("Incident", () => {
     "toJSON, with location", () => {
       const eventID = "1";
       const number = 4;
-      const created = DateTime.fromISO("2021-08-17T17:12:46.720000+00:00");
+      const created = DateTime.fromISO(
+        "2021-08-17T17:12:46.72Z"
+      ).setZone("UTC");
       const state = "open";
       const priority = 3;
       const location = new Location({});
@@ -85,7 +87,9 @@ describe("Incident", () => {
     "toJSON, no location", () => {
       const eventID = "1";
       const number = 4;
-      const created = DateTime.fromISO("2021-08-17T17:12:46.720000+00:00");
+      const created = DateTime.fromISO(
+        "2021-08-17T17:12:46.72Z"
+      ).setZone("UTC");
       const state = "open";
       const priority = 3;
       const summary = "Snake in someone's boots";
@@ -128,7 +132,7 @@ describe("Incident", () => {
       const incidentJSON = {
         event: "1",
         number: 1,
-        created: "2021-08-17T17:12:46.000-07:00",
+        created: "2021-08-17T17:12:46.000Z",
         summary: "Vehicle lockout",
         priority: 5,
         state: "closed",
