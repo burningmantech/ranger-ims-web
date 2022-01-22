@@ -92,7 +92,7 @@ export default class Incident {
 
     this.eventID = eventID;
     this.number = number;
-    this.created = created.setZone("UTC");
+    this.created = created.toUTC();
     this.state = state;
     this.priority = priority;
     this.summary = summary;

@@ -43,7 +43,7 @@ describe("Incident", () => {
       const number = 4;
       const created = DateTime.fromISO(
         "2021-08-17T17:12:46.72Z"
-      ).setZone("UTC");
+      ).toUTC();
       const state = "open";
       const priority = 3;
       const location = new Location({});
@@ -89,7 +89,7 @@ describe("Incident", () => {
       const number = 4;
       const created = DateTime.fromISO(
         "2021-08-17T17:12:46.72Z"
-      ).setZone("UTC");
+      ).toUTC();
       const state = "open";
       const priority = 3;
       const summary = "Snake in someone's boots";
