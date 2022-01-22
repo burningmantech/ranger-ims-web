@@ -5,6 +5,12 @@
 import '@testing-library/jest-dom';
 
 
+// Increase timeouts in CI
+if (process.env.CI != null) {
+  jest.setTimeout(1 * 60 * 1000);
+}
+
+
 expect.extend({
 
   toEqualByValue(received, other) {
