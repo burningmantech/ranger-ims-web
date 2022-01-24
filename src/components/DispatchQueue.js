@@ -13,6 +13,7 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { IMSContext } from "../ims/context";
+import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
 
@@ -73,7 +74,8 @@ export const SearchIcon = () => {
 
 
 export const formatPriority = ({value}) => {
-  switch (value) {
+  const priority = value;
+  switch (priority) {
     case 1:
     case 2:
       return <HighPriorityIcon />;
@@ -89,42 +91,82 @@ export const formatPriority = ({value}) => {
 
 
 export const formatDateTime = ({value}) => {
-  if (!value) {
+  const dateTime = value;
+  if (!dateTime) {
     return "";
   }
-  return value.toFormat("ccc L/c HH:mm");
+  return dateTime.toFormat("ccc L/c HH:mm");
 }
 
 
 export const formatState = ({value}) => {
-  switch (value) {
-    case "new":
-      return "New";
-    case "on_hold":
-      return "On Hold";
-    case "dispatched":
-      return "Dispatched";
-    case "on_scene":
-      return "On Scene";
-    case "closed":
-      return "Closed";
-    default:
-      return value;
+  const state = value;
+  try {
+    return Incident.stateToString(state);
+  } catch (e) {
+    return state;
+  }
+}
+
+
+export const formatAddress = ({value}) => {
+  const formatCoordinate = (c) => (c == null) ? "" : c;
+
+  const address = value;
+  if (address == null) {
+    return address;
+  }
+  if (
+    address.concentric ||
+    address.radialHour ||
+    address.radialMinute
+  ) {
+    return (
+      `${formatCoordinate(address.concentric)}@` +
+      `${formatCoordinate(address.radialHour)}:` +
+      `${formatCoordinate(address.radialMinute)}` +
+      `${(address.description) ? ` (${address.description})` : ""}`
+    );
+  }
+  else if (address.description) {
+    return `(${address.description})`;
+  } else {
+    return null;
   }
 }
 
 
 export const formatLocation = ({value}) => {
-  // console.error("Location " + JSON.stringify(value));
-  return "?";
+  const location = value;
+  if (location == null) {
+    return location;
+  }
+
+  const addressText = formatAddress({value: location.address});
+
+  if (location.name == null) {
+    if (addressText == null) {
+      return null;
+    } else {
+      return addressText;
+    }
+  }
+  else {
+    if (addressText == null) {
+      return location.name;
+    } else {
+      return `${location.name} @ ${addressText}`;
+    }
+  }
 }
 
 
 export const formatArrayOfStrings = ({value}) => {
-  if (! value) {
+  const strings = value;
+  if (! strings) {
     return "";
   }
-  return value.sort().join(", ");
+  return strings.sort().join(", ");
 }
 
 
@@ -173,7 +215,7 @@ const useDispatchQueueTable = (incidents) => {
         Cell: formatArrayOfStrings,
       },
       {
-        accessor: "summary",
+        accessor: (incident) => incident.summarize(),
         Header: "Summary",
       },
     ],
@@ -508,31 +550,6 @@ const BottomToolBar = ({table, incidents}) => {
 // DispatchQueue component
 
 
-const DispatchQueueMain = ({table, incidents}) => {
-  // Filtering
-
-  const [showState, setShowState] = useState("open");  // all, open, active
-  const [showDays, setShowDays] = useState(0);
-  const [searchInput, setSearchInput] = useState("");
-
-  // Render
-
-  return (
-    <>
-      <TopToolBar
-        table={table}
-        incidents={incidents}
-        showState={showState} setShowState={setShowState}
-        showDays={showDays} setShowDays={setShowDays}
-        searchInput={searchInput} setSearchInput={setSearchInput}
-      />
-      <DispatchQueueTable table={table} />
-      <BottomToolBar table={table} incidents={incidents} />
-    </>
-  );
-}
-
-
 const DispatchQueue = (props) => {
   invariant(props.event != null, "event property is required");
 
@@ -543,6 +560,9 @@ const DispatchQueue = (props) => {
 
   // Fetch data
 
+  const [showState, setShowState] = useState("open");  // all, open, active
+  const [showDays, setShowDays] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
   const [incidents, setIncidents] = useState(undefined);
 
   useEffect(
@@ -552,7 +572,11 @@ const DispatchQueue = (props) => {
       const fetchIncidents = async () => {
         let incidents;
         try {
-          incidents = await ims.incidents(props.event.id);
+          if (searchInput) {
+            incidents = await ims.search(props.event.id, searchInput);
+          } else {
+            incidents = await ims.incidents(props.event.id);
+          }
         }
         catch (e) {
           console.error(`Unable to fetch incidents: ${e.message}`);
@@ -565,7 +589,7 @@ const DispatchQueue = (props) => {
       fetchIncidents();
 
       return () => { ignore = true; }
-    }, [ims, props.event]
+    }, [ims, props.event, searchInput]
   );
 
   const table = useDispatchQueueTable(incidents);
@@ -582,7 +606,16 @@ const DispatchQueue = (props) => {
     return (
       <div id="queue_wrapper">
         <h1>Dispatch Queue: {props.event.name}</h1>
-        <DispatchQueueMain table={table} incidents={incidents} />
+
+        <TopToolBar
+          table={table}
+          incidents={incidents}
+          showState={showState} setShowState={setShowState}
+          showDays={showDays} setShowDays={setShowDays}
+          searchInput={searchInput} setSearchInput={setSearchInput}
+        />
+        <DispatchQueueTable table={table} />
+        <BottomToolBar table={table} incidents={incidents} />
       </div>
     );
   }

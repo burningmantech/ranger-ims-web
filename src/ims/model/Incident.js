@@ -1,10 +1,15 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
 
+import Location from "./Location";
+
 
 export default class Incident {
 
   static fromJSON = (json) => {
+    const location = (
+      (json.location == null) ? null : Location.fromJSON(json.location)
+    );
     try {
       return new Incident(
         {
@@ -14,7 +19,7 @@ export default class Incident {
           "state": json.state,
           "priority": json.priority,
           "summary": json.summary,
-          // "location": json.location,
+          "location": location,
           "rangerHandles": json.ranger_handles,
           "incidentTypes": json.incident_types,
           // "reportEntries": json.report_entries,
@@ -23,29 +28,61 @@ export default class Incident {
       );
     }
     catch (e) {
-      throw new Error(`Invalid incident JSON: ${json}`)
+      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`)
+    }
+  }
+
+  static stateToString = (state) => {
+    invariant(state != null, "state is required");
+    switch (state) {
+      case "new":
+        return "New";
+      case "on_hold":
+        return "On Hold";
+      case "dispatched":
+        return "Dispatched";
+      case "on_scene":
+        return "On Scene";
+      case "closed":
+        return "Closed";
+      default:
+        throw new Error(`Invalid state: ${state}`);
+    }
+  }
+
+  static priorityToString = (priority) => {
+    switch (priority) {
+      case 1:
+      case 2:
+        return "High";
+      case 3:
+        return "Normal";
+      case 4:
+      case 5:
+        return "Low";
+      default:
+        throw new Error(`Invalid priority: ${priority}`);
     }
   }
 
   constructor({
-    eventID,
-    number,
-    created,
-    state,
-    priority,
-    summary,
-    location,
-    rangerHandles,
-    incidentTypes,
-    reportEntries,
-    incidentReportNumbers,
+    eventID,  // text
+    number,  //  int
+    created,  // DateTime
+    state,  // "new", "on_hold", "dispatched", "on_scene", "closed"
+    priority,  // 1, 3, 5; deprecated: 2, 4
+    summary,  // text
+    location,  // Location
+    rangerHandles,  // [text]
+    incidentTypes,  // [text]
+    reportEntries,  // [ReportEntry]
+    incidentReportNumbers,  // [int]
   }) {
     invariant(eventID != null, "eventID is required");
     invariant(number != null, "number is required");
     invariant(created != null, "created is required");
     invariant(state != null, "state is required");
     invariant(priority != null, "priority is required");
-    // invariant(location != null, "location is required");
     invariant(rangerHandles != null, "rangerHandles is required");
     invariant(incidentTypes != null, "incidentTypes is required");
     // invariant(reportEntries != null, "reportEntries is required");
@@ -55,11 +92,11 @@ export default class Incident {
 
     this.eventID = eventID;
     this.number = number;
-    this.created = created;
+    this.created = created.toUTC();
     this.state = state;
     this.priority = priority;
     this.summary = summary;
-    // this.location = location;
+    this.location = location;
     this.rangerHandles = rangerHandles;
     this.incidentTypes = incidentTypes;
     // this.reportEntries = reportEntries;
@@ -71,6 +108,9 @@ export default class Incident {
   }
 
   toJSON = () => {
+    const locationJSON = (
+      (this.location == null) ? null : this.location.toJSON()
+    );
     return {
       "event": this.eventID,
       "number": this.number,
@@ -78,12 +118,20 @@ export default class Incident {
       "state": this.state,
       "priority": this.priority,
       "summary": this.summary,
-      // "location": this.location,
+      "location": locationJSON,
       "ranger_handles": this.rangerHandles,
       "incident_types": this.incidentTypes,
       // "report_entries": this.reportEntries,
       // "incident_reports": this.incidentReportNumbers,
     };
+  }
+
+  summarize = () => {
+    if (this.summary) {
+      return this.summary;
+    }
+
+    return "<summary goes here>";
   }
 
 }

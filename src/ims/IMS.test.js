@@ -5,6 +5,8 @@ import IncidentManagementSystem from "./IMS";
 import {
   TestIncidentManagementSystem, testIncidentManagementSystem
 } from "./TestIMS";
+import Location from "./model/Location";
+import RodGarettAddress from "./model/RodGarettAddress";
 
 
 expect.extend({
@@ -982,13 +984,13 @@ describe("IMS: incidents", () => {
   );
 
   test(
-    "incidentWithID: found", async () => {
+    "incidentWithNumber: found", async () => {
       const ims = testIncidentManagementSystem();
 
       for (const event of await ims.events()) {
         for (const incident of await ims.incidents(event.id)) {
           expect(
-            await ims.incidentWithID(event.id, incident.number)
+            await ims.incidentWithNumber(event.id, incident.number)
           ).toEqualByValue(incident);
         }
       }
@@ -996,15 +998,300 @@ describe("IMS: incidents", () => {
   );
 
   test(
-    "incidentWithID: not found", async () => {
+    "incidentWithNumber: not found", async () => {
       const ims = testIncidentManagementSystem();
       const number = -1;
 
       for (const event of await ims.events()) {
-        expect(ims.incidentWithID(event.id, number)).toRejectWithMessage(
+        expect(ims.incidentWithNumber(event.id, number)).toRejectWithMessage(
           `No incident found with event:number: ${event.id}:${number}`
         );
       }
+    }
+  );
+
+});
+
+
+const search = async (ims, event, query) => {
+  const incidents = await ims.search(event.id, query);
+  return new Set(incidents.map((incident) => incident.number));
+}
+
+
+describe("IMS: search", () => {
+
+  test(
+    "search by number", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addMoreIncidents(event.id, 200);
+
+      expect(await search(ims, event, "167")).toEqual(new Set([167]));
+      expect(await search(ims, event, "139")).toEqual(new Set([139]));
+    }
+  );
+
+  test(
+    "search by created", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1 - Sunday 10:10
+        event.id, {created: DateTime.fromISO("2022-01-16T10:10Z")}
+      );
+      await ims.addIncidentWithFields(  // 2 - Sunday 10:11
+       event.id, {created: DateTime.fromISO("2022-01-16T10:11Z")}
+      );
+      await ims.addIncidentWithFields(  // 3 - Sunday 11:10
+        event.id, {created: DateTime.fromISO("2022-01-16T11:10Z")}
+      );
+      await ims.addIncidentWithFields(  // 4 - Wednesday 20:10
+        event.id, {created: DateTime.fromISO("2022-01-19T20:10Z")}
+      );
+      await ims.addIncidentWithFields(  // 5 - Friday 08:00
+        event.id, {created: DateTime.fromISO("2022-01-21T08:00Z")}
+      );
+
+      // Full words
+      expect(await search(ims, event, "Sunday")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "Wednesday")).toEqual(new Set([4]));
+      expect(await search(ims, event, "Friday")).toEqual(new Set([5]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "Sun")).toEqual(new Set([1, 2, 3]));
+      expect(await search(ims, event, "Wed")).toEqual(new Set([4]));
+      expect(await search(ims, event, "11:")).toEqual(new Set([2, 3]));
+    }
+  );
+
+  test(
+    "search by state", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(event.id, {state: "closed"});  // 1
+      await ims.addIncidentWithFields(event.id, {state: "on_hold"});  // 2
+      await ims.addIncidentWithFields(event.id, {state: "new"});  // 3
+      await ims.addIncidentWithFields(event.id, {state: "dispatched"});  // 4
+      await ims.addIncidentWithFields(event.id, {state: "dispatched"});  // 5
+      await ims.addIncidentWithFields(event.id, {state: "new"});  // 6
+      await ims.addIncidentWithFields(event.id, {state: "on_scene"});  // 7
+
+      // Full words
+      expect(await search(ims, event, "new")).toEqual(new Set([3, 6]));
+      expect(await search(ims, event, "on hold")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dispatched")).toEqual(new Set([4, 5]));
+      expect(await search(ims, event, "on scene")).toEqual(new Set([7]));
+      expect(await search(ims, event, "closed")).toEqual(new Set([1]));
+    }
+  );
+
+  test(
+    "search by priority", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(event.id, {priority: 1});  // 1
+      await ims.addIncidentWithFields(event.id, {priority: 2});  // 2
+      await ims.addIncidentWithFields(event.id, {priority: 3});  // 3
+      await ims.addIncidentWithFields(event.id, {priority: 4});  // 4
+      await ims.addIncidentWithFields(event.id, {priority: 5});  // 5
+
+      // Full words
+      expect(await search(ims, event, "low")).toEqual(new Set([4, 5]));
+      expect(await search(ims, event, "normal")).toEqual(new Set([3]));
+      expect(await search(ims, event, "high")).toEqual(new Set([1, 2]));
+    }
+  );
+
+  test(
+    "search by summary", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {summary: "Cat in tree"}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {summary: "Dog in house"}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {summary: "Cat in house"}
+      );
+
+      // Full words
+      expect(await search(ims, event, "tree")).toEqual(new Set([1]));
+      expect(await search(ims, event, "house")).toEqual(new Set([2, 3]));
+      expect(await search(ims, event, "cat")).toEqual(new Set([1, 3]));
+      expect(await search(ims, event, "dog")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dog in house")).toEqual(new Set([2]));
+      expect(await search(ims, event, "dog in tree")).toEqual(new Set([]));
+      expect(await search(ims, event, "dog tree")).toEqual(new Set([]));
+      expect(await search(ims, event, "turtle")).toEqual(new Set([]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "tr")).toEqual(new Set([1]));
+
+      // Partial words - reverse
+      expect(await search(ims, event, "ho og")).toEqual(new Set([2]));
+
+      // Partial words - full
+      expect(await search(ims, event, "e")).toEqual(new Set([1, 2, 3]));
+    }
+  );
+
+  test(
+    "search by location name", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {location: new Location({name: "Log-Pile House"})}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {location: new Location({name: "Treetop House"})}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {location: new Location({name: "Underground House"})}
+      );
+
+      // Full words
+      expect(await search(ims, event, "log-pile")).toEqual(new Set([1]));
+      expect(await search(ims, event, "treetop")).toEqual(new Set([2]));
+      expect(await search(ims, event, "underground")).toEqual(new Set([3]));
+      expect(await search(ims, event, "house")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "Log-")).toEqual(new Set([1]));
+      expect(await search(ims, event, "Tree")).toEqual(new Set([2]));
+
+      // Partial words - reverse
+      expect(await search(ims, event, "og ile")).toEqual(new Set([1]));
+      expect(await search(ims, event, "use")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - full
+      expect(await search(ims, event, "ou")).toEqual(new Set([1, 2, 3]));
+    }
+  );
+
+  test(
+    "search by location address description", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by this lake...",
+            }),
+          }),
+        },
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by this stream...",
+            }),
+          }),
+        },
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id,
+        {
+          location: new Location({
+            address: new RodGarettAddress({
+              description: "Here, by these rocks...",
+            }),
+          }),
+        },
+      );
+
+      // Full words
+      expect(await search(ims, event, "lake")).toEqual(new Set([1]));
+      expect(await search(ims, event, "stream")).toEqual(new Set([2]));
+      expect(await search(ims, event, "rocks")).toEqual(new Set([3]));
+      expect(await search(ims, event, "here")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "lak")).toEqual(new Set([1]));
+      expect(await search(ims, event, "st")).toEqual(new Set([2]));
+
+      // Partial words - reverse
+      expect(await search(ims, event, "ake")).toEqual(new Set([1]));
+      expect(await search(ims, event, "ere")).toEqual(new Set([1, 2, 3]));
+
+      // Partial words - full
+      expect(await search(ims, event, "er")).toEqual(new Set([1, 2, 3]));
+    }
+  );
+
+  test(
+    "search by incident types", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {incidentTypes: []}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {incidentTypes: ["Housebound Dogs"]}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {incidentTypes: ["Treebound Cats"]}
+      );
+      await ims.addIncidentWithFields(  // 4
+        event.id, {incidentTypes: ["Housebound Dogs", "Treebound Cats"]}
+      );
+
+      // Full words
+      expect(await search(ims, event, "Housebound Dogs")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Housebound")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Treebound Cats")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "Cats")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "House")).toEqual(new Set([2, 4]));
+    }
+  );
+
+  test(
+    "search by ranger handles", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {rangerHandles: []}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {rangerHandles: ["Bucket"]}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {rangerHandles: ["Hubcap"]}
+      );
+      await ims.addIncidentWithFields(  // 4
+        event.id, {rangerHandles: ["Bucket", "Hubcap"]}
+      );
+
+      // Full words
+      expect(await search(ims, event, "Bucket")).toEqual(new Set([2, 4]));
+      expect(await search(ims, event, "Hubcap")).toEqual(new Set([3, 4]));
+      expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
+      // Partial words - forward
+      expect(await search(ims, event, "Buck")).toEqual(new Set([2, 4]));
+
+      // Partial words - reverse
+      expect(await search(ims, event, "cap")).toEqual(new Set([3, 4]));
+
+      // Partial words - full
+      expect(await search(ims, event, "uck")).toEqual(new Set([2, 4]));
     }
   );
 

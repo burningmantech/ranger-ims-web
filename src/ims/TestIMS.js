@@ -2,11 +2,11 @@ import invariant from "invariant";
 import jwtSign from "jsonwebtoken/sign";
 import { DateTime, Duration } from "luxon";
 
-import User from "./User";
-import IncidentManagementSystem from "./IMS";
-import { IMSContext } from "./context";
-
 import { render } from "@testing-library/react";
+
+import IncidentManagementSystem from "./IMS";
+import User from "./User";
+import { IMSContext } from "./context";
 
 
 /* https://stackoverflow.com/a/7616484 */
@@ -62,7 +62,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "1",
             number: 1,
-            created: "2021-08-17T17:12:46.720000+00:00",
+            created: "2021-08-17T17:12:46",
             summary: null,
             priority: 5,
             state: "closed",
@@ -80,19 +80,19 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry: true,
-                created: "2020-08-17T17:12:46.730000+00:00",
+                created: "2020-08-17T17:12:46",
                 author: "Operator",
                 text: "Changed description name to: On B road",
               },
               {
                 system_entry:false,
-                created:"2021-08-17T17:23:00.780000+00:00",
+                created:"2021-08-17T17:23:00",
                 author:"Operator",
                 text: "White pickup stopped on road, eventually moved",
               },
               {
                 system_entry:true,
-                created:"2021-08-28T00:37:37.300000+00:00",
+                created:"2021-08-28T00:37:37",
                 author:"Operator",
                 text:"Changed state to: closed",
               },
@@ -101,7 +101,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "1",
             number: 2,
-            created: "2020-08-17T18:45:46.920000+00:00",
+            created: "2020-08-17T18:45:46",
             summary: "Ice cream at the Man",
             priority: 1,
             state: "open",
@@ -116,7 +116,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [
               {
                 system_entry:false,
-                created:"2021-08-17T18:45:46.930000+00:00",
+                created:"2021-08-17T18:45:46",
                 author:"Operator",
                 text: "Someone is giving away ice cream at the Man",
               },
@@ -127,7 +127,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 1,
-            created: "2021-02-00T18:45:46.920000+00:00",
+            created: "2021-02-00T18:45:46",
             summary: "Cat in tree",
             priority: 2,
             state: "closed",
@@ -144,7 +144,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 2,
-            created: "2021-03-00T18:45:46.920000+00:00",
+            created: "2021-03-00T18:45:46",
             summary: "Dog in tree",
             priority: 4,
             state: "closed",
@@ -161,7 +161,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           {
             event: "2",
             number: 3,
-            created: "2021-04-00T18:45:46.920000+00:00",
+            created: "2021-04-00T18:45:46",
             summary: "Giraffe in tree",
             priority: 6,
             state: "new",
@@ -476,40 +476,54 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return this;
   }
 
+  nextIncidentNumber = async (eventID) => {
+    const incidents = this.testData.incidents[eventID];
+    let lastIncidentNumber = 0;
+    for (const incident of incidents) {
+      /* istanbul ignore next */
+      if (incident.number > lastIncidentNumber) {
+        lastIncidentNumber = incident.number;
+      }
+    }
+    return lastIncidentNumber + 1;
+  }
+
+  addIncidentWithFields = async (
+    eventID, {
+      created = DateTime.now(),
+      state = "new",
+      priority = 3,
+      summary = null,
+      location = null,
+      incidentTypes=[],
+      rangerHandles=[],
+    }
+  ) => {
+    const incidents = this.testData.incidents[eventID];
+    const nextIncidentNumber = await this.nextIncidentNumber(eventID);
+    const nextIncident = {  // NOTE: this is JSON, not an Incident object
+      event: eventID,
+      number: nextIncidentNumber,
+      created: created.toISO(),
+      state: state,
+      priority: priority,
+      summary: summary,
+      location: (location == null) ? null : location.toJSON(),
+      incident_types: incidentTypes,
+      ranger_handles: rangerHandles,
+      report_entries: [],
+      incident_reports: [],
+    };
+    incidents.push(nextIncident);
+    return nextIncident;
+  }
+
   addMoreIncidents = async (eventID, total) => {
     const incidents = this.testData.incidents[eventID];
     invariant(incidents != null, `no incidents for event: ${eventID}`);
 
-    const numberToAdd = total - incidents.length;
-
-    // Start with largest incident number
-    let nextIncidentNumber = 0;
-    for (const incident of incidents) {
-      /* istanbul ignore next */
-      if (incident.number > nextIncidentNumber) {
-        nextIncidentNumber = incident.number;
-      }
-    }
-
     while (incidents.length < total) {
-      nextIncidentNumber += 1;
-
-      const nextIncident = {
-        event: eventID,
-        number: nextIncidentNumber,
-        created: "2021-08-18T10:10:46+00:00",
-        summary: null,
-        priority: 3,
-        state: "new",
-        incident_types: [],
-        ranger_handles: [],
-        location: {type: "text", description: ""},
-        incident_reports: [],
-        report_entries: [],
-      };
-      nextIncident.number = nextIncidentNumber;
-
-      incidents.push(nextIncident);
+      await this.addIncidentWithFields(eventID, {summary: null});
     }
   }
 

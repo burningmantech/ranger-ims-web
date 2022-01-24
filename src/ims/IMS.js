@@ -7,6 +7,8 @@ import User from "./User";
 import Event from "./model/Event";
 import Incident from "./model/Incident";
 
+import { Document } from "flexsearch";
+
 
 export default class IncidentManagementSystem {
 
@@ -16,7 +18,8 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store(User, "credentials", "credentials");
     this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
-    this._incidentsStoreMap = new Map();
+    this._incidentsStoreByEvent = new Map();
+    this._searchIndexByEvent = new Map();
 
     // Control the user property so that we can use it to access and update
     // cached credentials.
@@ -52,12 +55,12 @@ export default class IncidentManagementSystem {
   }
 
   _incidentsStore = (eventID) => {
-    if (! this._incidentsStoreMap.has(eventID)) {
-      this._incidentsStoreMap[eventID] = new Store(
+    if (! this._incidentsStoreByEvent.has(eventID)) {
+      this._incidentsStoreByEvent[eventID] = new Store(
         Incident, `incidents:${eventID}`, "incidents"
       );
     }
-    return this._incidentsStoreMap[eventID];
+    return this._incidentsStoreByEvent[eventID];
   }
 
   _fetch = async (request) => {
@@ -383,7 +386,7 @@ export default class IncidentManagementSystem {
     return incidents;
   }
 
-  incidentWithID = async (eventID, number) => {
+  incidentWithNumber = async (eventID, number) => {
     invariant(eventID != null, "eventID argument is required");
     invariant(number != null, "number argument is required");
 
@@ -399,6 +402,76 @@ export default class IncidentManagementSystem {
         `No incident found with event:number: ${eventID}:${number}`
       );
     }
+  }
+
+  // Search
+
+  _searchIndex = async (eventID) => {
+    // https://github.com/nextapps-de/flexsearch
+
+    if (! this._searchIndexByEvent.has(eventID)) {
+      // Create index
+      var index = new Document({
+        id: "number",
+        index: [
+          {field: "number", tokenize: "strict"},
+          {field: "created", tokenize: "forward"},
+          {field: "state", tokenize: "strict"},
+          {field: "priority", tokenize: "strict"},
+          {field: "summary", tokenize: "full"},
+          {field: "location:name", tokenize: "full"},
+          {field: "location:description", tokenize: "full"},
+          {field: "incidentTypes", tokenize: "forward"},
+          {field: "rangerHandles", tokenize: "full"},
+          // FIXME: report entries
+          // FIXME: attached incident reports
+        ],
+      });
+
+      // Populate index
+      for (const incident of await this.incidents(eventID)) {
+        const location = (incident.location == null) ? {} : incident.location;
+        const address = (location.address == null) ? {} : location.address;
+
+        console.info(Incident.priorityToString(incident.priority));
+
+        index.add({
+          number: incident.number,
+          created: incident.created.toFormat("cccc L/c HH:mm"),
+          state: Incident.stateToString(incident.state),
+          priority: Incident.priorityToString(incident.priority),
+          summary: incident.summary,
+          location: {
+            name: location.name,
+            description: address.description,
+          },
+          rangerHandles: incident.rangerHandles,
+          incidentTypes: incident.incidentTypes,
+          // FIXME: report entries
+          // FIXME: attached incident reports
+        });
+      }
+
+      this._searchIndexByEvent[eventID] = index;
+    }
+    return this._searchIndexByEvent[eventID];
+  }
+
+  search = async (eventID, query) => {
+    const index = await this._searchIndex(eventID);
+    const results = await index.search(query);
+
+    const numbers = new Set();
+    const incidents = [];
+    for (const result of results) {
+      for (const number of result.result) {
+        if (!numbers.has(number)) {
+          numbers.add(number);
+          incidents.push(this._incidentsMap.get(number));
+        }
+      }
+    }
+    return incidents;
   }
 
 }
