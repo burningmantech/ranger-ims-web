@@ -348,6 +348,7 @@ describe("DispatchQueue component: table", () => {
 
         await ims.addMoreIncidents(event.id, incidentCount);
 
+        // Make sure addMoreIncidents worked
         const incidents = await ims.incidents(event.id);
         invariant(
           incidents.length == incidentCount,
@@ -489,12 +490,44 @@ describe("DispatchQueue component: controls", () => {
     }
   );
 
-  // test(
-  //   "search",
-  //   async () => {
+  test(
+    "search",
+    async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
 
-  //   }
-  // );
+      await ims.addIncidentWithFields(  // 1
+        event.id, {summary: "Cat in tree"}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {summary: "Dog in house"}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {summary: "Cat in house"}
+      );
+
+      await act(async () => {
+        renderWithIMSContext(<DispatchQueue event={event} />, ims);
+      });
+
+      const searchValue = "house";
+      const searchField = document.getElementById("search_input");
+      await act(async () => {
+        // The delay here is a work-around to an issue in testing-library:
+        // https://github.com/testing-library/user-event/issues/387#issuecomment-1020522982
+        await userEvent.type(searchField, searchValue, {delay: 0.00001});
+      });
+
+      expect(searchField).toHaveValue(searchValue);
+
+      const numberCells = Array.from(document.getElementsByClassName(
+        "queue_incident_number"
+      ));
+      const numbers = numberCells.map((cell) => parseInt(cell.innerHTML));
+
+      expect(new Set(numbers)).toEqual(new Set([2, 3]))
+    }
+  );
 
   // test(
   //   "pagination",
