@@ -68,7 +68,7 @@ const EventDropdown = (props) => {
       );
     }
 
-    return events.map(
+    return events.sort().map(
       (event) => {
         return (
           <NavDropdown.Item key={event.id} className="nav_event_id" href={URLs.event(event)}>
