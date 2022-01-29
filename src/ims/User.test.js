@@ -24,7 +24,7 @@ describe("User", () => {
   );
 
   test(
-    "fromJSON", () => {
+    "fromJSON, valid", () => {
       const username = "Hubcap";
       const credentials = {
         number: 1,
@@ -39,6 +39,14 @@ describe("User", () => {
       const resultJSON = result.toJSON();
 
       expect(resultJSON).toEqual(userJSON);
+    }
+  );
+
+  test(
+    "fromJSON, no credentials", () => {
+      const username = "Hubcap";
+      const userJSON = {username: username};
+      expect(() => User.fromJSON(userJSON)).toThrow("credentials is required");
     }
   );
 

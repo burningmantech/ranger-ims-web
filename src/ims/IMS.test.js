@@ -84,6 +84,23 @@ describe("IMS: init", () => {
     }
   );
 
+  test(
+    "_incidentsStore",
+    () => {
+      const url = "/ims/api/bag";
+      const ims = new IncidentManagementSystem(url);
+      const eventID = "XYZZY";
+
+      expect(ims._incidentsStoreByEvent[eventID]).toBeUndefined();
+      const store1 = ims._incidentsStore(eventID);
+      const store2 = ims._incidentsStore(eventID);
+      console.error(store1);
+      console.error(store2);
+      console.error(store1 === store2);
+      expect(store1 === store2).toBe(true);
+    }
+  );
+
 });
 
 
@@ -1292,6 +1309,27 @@ describe("IMS: search", () => {
 
       // Partial words - full
       expect(await search(ims, event, "uck")).toEqual(new Set([2, 4]));
+    }
+  );
+
+
+  test(
+    "search by multiple fields", async () => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addIncidentWithFields(  // 1
+        event.id, {summary: "Bucket fell on angry dude"}
+      );
+      await ims.addIncidentWithFields(  // 2
+        event.id, {rangerHandles: ["Bucket"]}
+      );
+      await ims.addIncidentWithFields(  // 3
+        event.id, {rangerHandles: ["Hubcap"]}
+      );
+
+      expect(await search(ims, event, "Bucket")).toEqual(new Set([1, 2]));
+      expect(await search(ims, event, "Hubcap")).toEqual(new Set([3]));
     }
   );
 

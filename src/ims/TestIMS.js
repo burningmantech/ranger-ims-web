@@ -424,6 +424,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
         switch (eventChild) {
           case "incidents":
+            /* istanbul ignore else */
             if (rest != "") {
               console.debug(`Issuing event ${eventID} incidents response.`);
               return this._jsonResponse(this.testData.incidents[eventID]);

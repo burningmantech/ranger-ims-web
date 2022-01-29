@@ -56,11 +56,12 @@ export default class IncidentManagementSystem {
 
   _incidentsStore = (eventID) => {
     if (! this._incidentsStoreByEvent.has(eventID)) {
-      this._incidentsStoreByEvent[eventID] = new Store(
+      const store = new Store(
         Incident, `incidents:${eventID}`, "incidents"
       );
+      this._incidentsStoreByEvent.set(eventID, store);
     }
-    return this._incidentsStoreByEvent[eventID];
+    return this._incidentsStoreByEvent.get(eventID);
   }
 
   _fetch = async (request) => {
@@ -146,7 +147,7 @@ export default class IncidentManagementSystem {
     return response;
   }
 
-  _fetchAndCacheJSON = async(store, {lifespan, urlParams}={}) => {
+  _fetchAndCacheJSON = async(store, {lifespan, urlParams}) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -385,7 +386,6 @@ export default class IncidentManagementSystem {
     this._incidentsMap = new Map(
       incidents.map(incident => [incident.number, incident])
     );
-
     return incidents;
   }
 
@@ -455,9 +455,9 @@ export default class IncidentManagementSystem {
         });
       }
 
-      this._searchIndexByEvent[eventID] = index;
+      this._searchIndexByEvent.set(eventID, index);
     }
-    return this._searchIndexByEvent[eventID];
+    return this._searchIndexByEvent.get(eventID);
   }
 
   search = async (eventID, query) => {
