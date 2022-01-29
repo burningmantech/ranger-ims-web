@@ -77,10 +77,6 @@ describe("EventDropdown component", () => {
       document.getElementsByClassName("nav_event_id")
     );
     const eventNames = eventItems.map((item) => item.innerHTML);
-
-    screen.debug()
-    console.info(eventItems);
-
     const events = await ims.events();
     const expectedEventNames = events.map((event) => event.name);
 
