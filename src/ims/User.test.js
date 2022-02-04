@@ -19,7 +19,7 @@ describe("User", () => {
     expect(result).toEqual(userJSON);
   });
 
-  test("fromJSON", () => {
+  test("fromJSON, valid", () => {
     const username = "Hubcap";
     const credentials = {
       number: 1,
@@ -34,6 +34,12 @@ describe("User", () => {
     const resultJSON = result.toJSON();
 
     expect(resultJSON).toEqual(userJSON);
+  });
+
+  test("fromJSON, no credentials", () => {
+    const username = "Hubcap";
+    const userJSON = { username: username };
+    expect(() => User.fromJSON(userJSON)).toThrow("credentials is required");
   });
 
   test("JSON round-trip through text", () => {

@@ -73,6 +73,17 @@ describe("IMS: init", () => {
     expect(ims.user).toBeNull();
     expect(ims._credentialStore).not.toBeNull();
   });
+
+  test("_incidentsStore", () => {
+    const url = "/ims/api/bag";
+    const ims = new IncidentManagementSystem(url);
+    const eventID = "XYZZY";
+
+    expect(ims._incidentsStoreByEvent[eventID]).toBeUndefined();
+    const store1 = ims._incidentsStore(eventID);
+    const store2 = ims._incidentsStore(eventID);
+    expect(store1).toBe(store2);
+  });
 });
 
 describe("IMS: HTTP requests", () => {
@@ -309,7 +320,7 @@ describe("IMS: bag", () => {
     const ims = testIncidentManagementSystem();
 
     // Expire the cache immediately
-    ims.bagCacheLifetime = { seconds: 0 };
+    ims.bagCacheLifespan = { seconds: 0 };
 
     await ims.bag();
     await ims.bag();
@@ -320,7 +331,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bagCacheLifetime = { seconds: 0 };
+    ims.bagCacheLifespan = { seconds: 0 };
 
     const bag1 = await ims.bag();
     const bag2 = await ims.bag();
@@ -331,7 +342,7 @@ describe("IMS: bag", () => {
   test("load bag twice: expired, changed", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bagCacheLifetime = { seconds: 0 };
+    ims.bagCacheLifespan = { seconds: 0 };
 
     const bag1 = await ims.bag();
 
@@ -728,7 +739,7 @@ describe("IMS: events", () => {
     let requestCount = 0 - ims.requestsReceived.length;
 
     // Expire the cache immediately
-    ims.eventsCacheLifetime = { seconds: 0 };
+    ims.eventsCacheLifespan = { seconds: 0 };
 
     await ims.events();
     await ims.events();
@@ -741,7 +752,7 @@ describe("IMS: events", () => {
   test("load events twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.eventsCacheLifetime = { seconds: 0 };
+    ims.eventsCacheLifespan = { seconds: 0 };
 
     const events1 = await ims.events();
     const events2 = await ims.events();
@@ -832,7 +843,7 @@ describe("IMS: incidents", () => {
   test("load incidents twice: expired, unchanged", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.incidentsCacheLifetime = { seconds: 0 };
+    ims.incidentsCacheLifespan = { seconds: 0 };
 
     const incidents1 = await ims.incidents("1");
     const incidents2 = await ims.incidents("1");
@@ -884,31 +895,26 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1 - Sunday 10:10
-      event.id,
-      { created: DateTime.fromISO("2022-01-16T10:10Z") }
-    );
-    await ims.addIncidentWithFields(
-      // 2 - Sunday 10:11
-      event.id,
-      { created: DateTime.fromISO("2022-01-16T10:11Z") }
-    );
-    await ims.addIncidentWithFields(
-      // 3 - Sunday 11:10
-      event.id,
-      { created: DateTime.fromISO("2022-01-16T11:10Z") }
-    );
-    await ims.addIncidentWithFields(
-      // 4 - Wednesday 20:10
-      event.id,
-      { created: DateTime.fromISO("2022-01-19T20:10Z") }
-    );
-    await ims.addIncidentWithFields(
-      // 5 - Friday 08:00
-      event.id,
-      { created: DateTime.fromISO("2022-01-21T08:00Z") }
-    );
+    // 1 - Sunday 10:10
+    await ims.addIncidentWithFields(event.id, {
+      created: DateTime.fromISO("2022-01-16T10:10Z"),
+    });
+    // 2 - Sunday 10:11
+    await ims.addIncidentWithFields(event.id, {
+      created: DateTime.fromISO("2022-01-16T10:11Z"),
+    });
+    // 3 - Sunday 11:10
+    await ims.addIncidentWithFields(event.id, {
+      created: DateTime.fromISO("2022-01-16T11:10Z"),
+    });
+    // 4 - Wednesday 20:10
+    await ims.addIncidentWithFields(event.id, {
+      created: DateTime.fromISO("2022-01-19T20:10Z"),
+    });
+    // 5 - Friday 08:00
+    await ims.addIncidentWithFields(event.id, {
+      created: DateTime.fromISO("2022-01-21T08:00Z"),
+    });
 
     // Full words
     expect(await search(ims, event, "Sunday")).toEqual(new Set([1, 2, 3]));
@@ -961,21 +967,9 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1
-      event.id,
-      { summary: "Cat in tree" }
-    );
-    await ims.addIncidentWithFields(
-      // 2
-      event.id,
-      { summary: "Dog in house" }
-    );
-    await ims.addIncidentWithFields(
-      // 3
-      event.id,
-      { summary: "Cat in house" }
-    );
+    await ims.addIncidentWithFields(event.id, { summary: "Cat in tree" }); // 1
+    await ims.addIncidentWithFields(event.id, { summary: "Dog in house" }); // 2
+    await ims.addIncidentWithFields(event.id, { summary: "Cat in house" }); // 3
 
     // Full words
     expect(await search(ims, event, "tree")).toEqual(new Set([1]));
@@ -1001,21 +995,18 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1
-      event.id,
-      { location: new Location({ name: "Log-Pile House" }) }
-    );
-    await ims.addIncidentWithFields(
-      // 2
-      event.id,
-      { location: new Location({ name: "Treetop House" }) }
-    );
-    await ims.addIncidentWithFields(
-      // 3
-      event.id,
-      { location: new Location({ name: "Underground House" }) }
-    );
+    // 1
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({ name: "Log-Pile House" }),
+    });
+    // 2
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({ name: "Treetop House" }),
+    });
+    // 3
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({ name: "Underground House" }),
+    });
 
     // Full words
     expect(await search(ims, event, "log-pile")).toEqual(new Set([1]));
@@ -1039,39 +1030,30 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1
-      event.id,
-      {
-        location: new Location({
-          address: new RodGarettAddress({
-            description: "Here, by this lake...",
-          }),
+    // 1
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({
+        address: new RodGarettAddress({
+          description: "Here, by this lake...",
         }),
-      }
-    );
-    await ims.addIncidentWithFields(
-      // 2
-      event.id,
-      {
-        location: new Location({
-          address: new RodGarettAddress({
-            description: "Here, by this stream...",
-          }),
+      }),
+    });
+    // 2
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({
+        address: new RodGarettAddress({
+          description: "Here, by this stream...",
         }),
-      }
-    );
-    await ims.addIncidentWithFields(
-      // 3
-      event.id,
-      {
-        location: new Location({
-          address: new RodGarettAddress({
-            description: "Here, by these rocks...",
-          }),
+      }),
+    });
+    // 3
+    await ims.addIncidentWithFields(event.id, {
+      location: new Location({
+        address: new RodGarettAddress({
+          description: "Here, by these rocks...",
         }),
-      }
-    );
+      }),
+    });
 
     // Full words
     expect(await search(ims, event, "lake")).toEqual(new Set([1]));
@@ -1095,26 +1077,20 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1
-      event.id,
-      { incidentTypes: [] }
-    );
-    await ims.addIncidentWithFields(
-      // 2
-      event.id,
-      { incidentTypes: ["Housebound Dogs"] }
-    );
-    await ims.addIncidentWithFields(
-      // 3
-      event.id,
-      { incidentTypes: ["Treebound Cats"] }
-    );
-    await ims.addIncidentWithFields(
-      // 4
-      event.id,
-      { incidentTypes: ["Housebound Dogs", "Treebound Cats"] }
-    );
+    // 1
+    await ims.addIncidentWithFields(event.id, { incidentTypes: [] });
+    // 2
+    await ims.addIncidentWithFields(event.id, {
+      incidentTypes: ["Housebound Dogs"],
+    });
+    // 3
+    await ims.addIncidentWithFields(event.id, {
+      incidentTypes: ["Treebound Cats"],
+    });
+    // 4
+    await ims.addIncidentWithFields(event.id, {
+      incidentTypes: ["Housebound Dogs", "Treebound Cats"],
+    });
 
     // Full words
     expect(await search(ims, event, "Housebound Dogs")).toEqual(
@@ -1133,26 +1109,16 @@ describe("IMS: search", () => {
     const ims = testIncidentManagementSystem();
     const event = await ims.eventWithID("empty");
 
-    await ims.addIncidentWithFields(
-      // 1
-      event.id,
-      { rangerHandles: [] }
-    );
-    await ims.addIncidentWithFields(
-      // 2
-      event.id,
-      { rangerHandles: ["Bucket"] }
-    );
-    await ims.addIncidentWithFields(
-      // 3
-      event.id,
-      { rangerHandles: ["Hubcap"] }
-    );
-    await ims.addIncidentWithFields(
-      // 4
-      event.id,
-      { rangerHandles: ["Bucket", "Hubcap"] }
-    );
+    // 1
+    await ims.addIncidentWithFields(event.id, { rangerHandles: [] });
+    // 2
+    await ims.addIncidentWithFields(event.id, { rangerHandles: ["Bucket"] });
+    // 3
+    await ims.addIncidentWithFields(event.id, { rangerHandles: ["Hubcap"] });
+    // 4
+    await ims.addIncidentWithFields(event.id, {
+      rangerHandles: ["Bucket", "Hubcap"],
+    });
 
     // Full words
     expect(await search(ims, event, "Bucket")).toEqual(new Set([2, 4]));
@@ -1167,5 +1133,22 @@ describe("IMS: search", () => {
 
     // Partial words - full
     expect(await search(ims, event, "uck")).toEqual(new Set([2, 4]));
+  });
+
+  test("search by multiple fields", async () => {
+    const ims = testIncidentManagementSystem();
+    const event = await ims.eventWithID("empty");
+
+    // 1
+    await ims.addIncidentWithFields(event.id, {
+      summary: "Bucket fell on angry dude",
+    });
+    // 2
+    await ims.addIncidentWithFields(event.id, { rangerHandles: ["Bucket"] });
+    // 3
+    await ims.addIncidentWithFields(event.id, { rangerHandles: ["Hubcap"] });
+
+    expect(await search(ims, event, "Bucket")).toEqual(new Set([1, 2]));
+    expect(await search(ims, event, "Hubcap")).toEqual(new Set([3]));
   });
 });

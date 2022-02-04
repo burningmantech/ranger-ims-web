@@ -53,13 +53,10 @@ export default class IncidentManagementSystem {
 
   _incidentsStore = (eventID) => {
     if (!this._incidentsStoreByEvent.has(eventID)) {
-      this._incidentsStoreByEvent[eventID] = new Store(
-        Incident,
-        `incidents:${eventID}`,
-        "incidents"
-      );
+      const store = new Store(Incident, `incidents:${eventID}`, "incidents");
+      this._incidentsStoreByEvent.set(eventID, store);
     }
-    return this._incidentsStoreByEvent[eventID];
+    return this._incidentsStoreByEvent.get(eventID);
   };
 
   _fetch = async (request) => {
@@ -99,8 +96,8 @@ export default class IncidentManagementSystem {
     return response;
   };
 
-  _fetchJSONFromServer = async (url, options = {}) => {
-    const requestHeaders = new Headers(options["headers"]);
+  _fetchJSONFromServer = async (url, { headers, json, eTag } = {}) => {
+    const requestHeaders = new Headers(headers);
 
     // Ensure content type is JSON
     if (requestHeaders.has("Content-Type")) {
@@ -113,18 +110,18 @@ export default class IncidentManagementSystem {
     }
 
     const requestOptions = { headers: requestHeaders };
-    if (options["json"] == null) {
+    if (json == null) {
       requestOptions.method = "GET";
 
-      if (options["eTag"] != null) {
-        requestHeaders.set("If-None-Match", options["eTag"]);
+      if (eTag != null) {
+        requestHeaders.set("If-None-Match", eTag);
       }
     } else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(options["json"]);
+      requestOptions.body = JSON.stringify(json);
 
-      if (options["eTag"] != null) {
-        requestHeaders.set("If-Match", options["eTag"]);
+      if (eTag != null) {
+        requestHeaders.set("If-Match", eTag);
       }
     }
 
@@ -141,7 +138,7 @@ export default class IncidentManagementSystem {
     return response;
   };
 
-  _fetchAndCacheJSON = async (store, lifetime, urlParams) => {
+  _fetchAndCacheJSON = async (store, { lifespan, urlParams }) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -171,8 +168,7 @@ export default class IncidentManagementSystem {
     }
     invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
 
-    const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSONFromServer(url, fetchOptions);
+    const response = await this._fetchJSONFromServer(url, { eTag: cachedETag });
 
     let _value;
     let _eTag;
@@ -198,7 +194,7 @@ export default class IncidentManagementSystem {
     const value = _value;
     const eTag = _eTag;
 
-    store.store(value, eTag, lifetime);
+    store.store(value, eTag, lifespan);
 
     return value;
   };
@@ -207,10 +203,12 @@ export default class IncidentManagementSystem {
   //  Configuration
   ////
 
-  bagCacheLifetime = { hours: 1 };
+  bagCacheLifespan = { hours: 1 };
 
   bag = async () => {
-    return this._fetchAndCacheJSON(this._bagStore, this.bagCacheLifetime);
+    return this._fetchAndCacheJSON(this._bagStore, {
+      lifespan: this.bagCacheLifespan,
+    });
   };
 
   ////
@@ -332,13 +330,12 @@ export default class IncidentManagementSystem {
 
   // Events
 
-  eventsCacheLifetime = { minutes: 5 };
+  eventsCacheLifespan = { minutes: 5 };
 
   events = async () => {
-    const events = await this._fetchAndCacheJSON(
-      this._eventsStore,
-      this.eventsCacheLifetime
-    );
+    const events = await this._fetchAndCacheJSON(this._eventsStore, {
+      lifespan: this.eventsCacheLifespan,
+    });
     this._eventsMap = new Map(events.map((event) => [event.id, event]));
     return events;
   };
@@ -358,15 +355,17 @@ export default class IncidentManagementSystem {
 
   // Incidents
 
-  incidentsCacheLifetime = { minutes: 5 };
+  incidentsCacheLifespan = { minutes: 5 };
 
   incidents = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
     const incidents = await this._fetchAndCacheJSON(
       this._incidentsStore(eventID),
-      this.incidentsCacheLifetime,
-      { event_id: eventID }
+      {
+        lifespan: this.incidentsCacheLifespan,
+        urlParams: { event_id: eventID },
+      }
     );
     this._incidentsMap = new Map(
       incidents.map((incident) => [incident.number, incident])
@@ -442,9 +441,9 @@ export default class IncidentManagementSystem {
         });
       }
 
-      this._searchIndexByEvent[eventID] = index;
+      this._searchIndexByEvent.set(eventID, index);
     }
-    return this._searchIndexByEvent[eventID];
+    return this._searchIndexByEvent.get(eventID);
   };
 
   search = async (eventID, query) => {

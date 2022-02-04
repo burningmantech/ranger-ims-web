@@ -96,13 +96,13 @@ describe("Store", () => {
     expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
   });
 
-  test("store lifetime", () => {
+  test("store lifespan", () => {
     const store = jsonStore();
     const value = null;
-    const lifetime = { seconds: 60 };
-    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
+    const lifespan = { seconds: 60 };
+    const nowPlusLifespan = DateTime.local().plus({ seconds: 59 });
 
-    store.store(null, undefined, lifetime);
+    store.store(null, undefined, lifespan);
 
     const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
     const json = JSON.parse(jsonText);
@@ -110,7 +110,7 @@ describe("Store", () => {
 
     // We computed expiration before and after the call, so the actual value
     // will be somewhere in between.
-    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+    expect(expiration).toBeAfterDateTime(nowPlusLifespan);
     expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
       expiration
     );
@@ -193,10 +193,10 @@ describe("Store", () => {
 
   test("load expiration", () => {
     const store = stuffNThingsStore();
-    const lifetime = { seconds: 60 };
-    const nowPlusLifetime = DateTime.local().plus({ seconds: 59 });
+    const lifespan = { seconds: 60 };
+    const nowPlusLifespan = DateTime.local().plus({ seconds: 59 });
 
-    store.store(null, undefined, lifetime);
+    store.store(null, undefined, lifespan);
 
     const container = store.load();
     const expiration = DateTime.fromISO(container.expiration);
@@ -205,7 +205,7 @@ describe("Store", () => {
 
     // We computed expiration before and after the call, so the actual value
     // will be somewhere in between.
-    expect(expiration).toBeAfterDateTime(nowPlusLifetime);
+    expect(expiration).toBeAfterDateTime(nowPlusLifespan);
     expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
       expiration
     );
