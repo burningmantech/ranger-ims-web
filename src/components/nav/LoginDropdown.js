@@ -6,21 +6,18 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
 
-
 const LoginDropdown = (props) => {
   const imsContext = useContext(IMSContext);
-  const ims = (imsContext === undefined) ? undefined : imsContext.ims;
+  const ims = imsContext === undefined ? undefined : imsContext.ims;
 
   let user;
   if (ims === undefined) {
     console.error("No IMS context available.");
     user = null;
-  }
-  else {
+  } else {
     if (ims.isLoggedIn()) {
       user = ims.user;
-    }
-    else {
+    } else {
       user = null;
     }
   }
@@ -31,14 +28,11 @@ const LoginDropdown = (props) => {
       const expiration = oldUser.credentials.expiration;
       console.debug(
         `Previously authenticated as ${oldUser}, ` +
-        `expired ${expiration} (${expiration.toRelative()})`
+          `expired ${expiration} (${expiration.toRelative()})`
       );
     }
-    return (
-      <Nav.Item id="nav_user_dropdown">Not Logged In</Nav.Item>
-    );
-  }
-  else {
+    return <Nav.Item id="nav_user_dropdown">Not Logged In</Nav.Item>;
+  } else {
     async function onLogout(eventKey, event) {
       await ims.logout();
     }
@@ -49,6 +43,6 @@ const LoginDropdown = (props) => {
       </NavDropdown>
     );
   }
-}
+};
 
 export default LoginDropdown;

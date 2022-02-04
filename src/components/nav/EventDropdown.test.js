@@ -1,16 +1,17 @@
 import "@testing-library/jest-dom/extend-expect";
 
 import { act, render, screen, fireEvent } from "@testing-library/react";
-import userEvent from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
-import { renderWithIMSContext, testIncidentManagementSystem } from "../../ims/TestIMS";
+import {
+  renderWithIMSContext,
+  testIncidentManagementSystem,
+} from "../../ims/TestIMS";
 
 import EventDropdown from "./EventDropdown";
 
-
 describe("EventDropdown component", () => {
-
   test("id", async () => {
     await act(async () => {
       renderWithIMSContext(<EventDropdown />, testIncidentManagementSystem());
@@ -34,9 +35,9 @@ describe("EventDropdown component", () => {
   test("events fail to load", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.events = jest.fn(
-      async () => { throw new Error("because reasons..."); }
-    );
+    ims.events = jest.fn(async () => {
+      throw new Error("because reasons...");
+    });
 
     const spy = jest.spyOn(console, "error");
 
@@ -78,7 +79,7 @@ describe("EventDropdown component", () => {
     );
     const eventNames = eventItems.map((item) => item.innerHTML);
 
-    screen.debug()
+    screen.debug();
     console.info(eventItems);
 
     const events = await ims.events();
@@ -100,5 +101,4 @@ describe("EventDropdown component", () => {
       expect(url.pathname).toEqual(URLs.event(event));
     }
   });
-
 });

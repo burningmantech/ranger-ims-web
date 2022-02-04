@@ -6,26 +6,19 @@ import { renderWithIMSContext } from "../ims/TestIMS";
 
 import NotFoundPage from "./NotFoundPage";
 
-
 describe("NotFoundPage component", () => {
+  test("not found", async () => {
+    const path = "/xyzzy/";
 
-  test(
-    "not found", async () => {
-      const path = "/xyzzy/";
+    renderWithIMSContext(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
 
-      renderWithIMSContext(
-        <MemoryRouter initialEntries={[path]}>
-          <Routes>
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("Resource not found:")
-      ).toBeInTheDocument();
-      expect(await screen.findByText(path)).toBeInTheDocument();
-    }
-  );
-
+    expect(await screen.findByText("Resource not found:")).toBeInTheDocument();
+    expect(await screen.findByText(path)).toBeInTheDocument();
+  });
 });

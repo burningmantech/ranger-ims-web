@@ -2,14 +2,13 @@ import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
 
 import {
-  renderWithIMSContext, testIncidentManagementSystem
+  renderWithIMSContext,
+  testIncidentManagementSystem,
 } from "../ims/TestIMS";
 
 import BagTable from "./BagTable";
 
-
 describe("BagTable component", () => {
-
   test("id", async () => {
     await act(async () => {
       renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
@@ -34,9 +33,9 @@ describe("BagTable component", () => {
   test("bag fails to load", async () => {
     const ims = testIncidentManagementSystem();
 
-    ims.bag = jest.fn(
-      async () => { throw new Error("because reasons..."); }
-    );
+    ims.bag = jest.fn(async () => {
+      throw new Error("because reasons...");
+    });
 
     const spy = jest.spyOn(console, "error");
 
@@ -46,9 +45,7 @@ describe("BagTable component", () => {
       await screen.findByText("Error loading URL bag")
     ).toBeInTheDocument();
 
-    expect(spy).toHaveBeenCalledWith(
-      "Unable to fetch bag: because reasons..."
-    );
+    expect(spy).toHaveBeenCalledWith("Unable to fetch bag: because reasons...");
   });
 
   test("loaded bag", async () => {
@@ -83,5 +80,4 @@ describe("BagTable component", () => {
       await screen.findByText("ERROR: no URLs in bag")
     ).toBeInTheDocument();
   });
-
 });

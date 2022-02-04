@@ -9,12 +9,12 @@ import LoginDropdown from "./LoginDropdown";
 
 import logo from "../../logo.svg";
 
-
 const NavigationBar = (props) => {
   return (
     <Navbar id={props.id}>
       <Navbar.Brand href={URLs.ims} id="nav_home_link">
-        <Image id="nav_home_image"
+        <Image
+          id="nav_home_image"
           width="50"
           height="33"
           alt="Ranger IMS"
@@ -23,11 +23,15 @@ const NavigationBar = (props) => {
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive_navbar_nav" />
       <Navbar.Collapse id="responsive_navbar_nav">
-        <Nav className="mr-auto"><EventDropdown /></Nav>
-        <Nav><LoginDropdown /></Nav>
+        <Nav className="mr-auto">
+          <EventDropdown />
+        </Nav>
+        <Nav>
+          <LoginDropdown />
+        </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
-}
+};
 
 export default NavigationBar;

@@ -6,7 +6,6 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
 
-
 const EventDropdown = (props) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
@@ -18,28 +17,29 @@ const EventDropdown = (props) => {
 
   const [events, setEvents] = useState(undefined);
 
-  useEffect(
-    () => {
-      let ignore = false;
+  useEffect(() => {
+    let ignore = false;
 
-      const fetchEvents = async () => {
-        let events;
-        try {
-          events = await ims.events();
-        }
-        catch (e) {
-          console.error(`Unable to fetch events: ${e.message}`);
-          events = null;
-        }
-
-        if (! ignore) { setEvents(events); }
+    const fetchEvents = async () => {
+      let events;
+      try {
+        events = await ims.events();
+      } catch (e) {
+        console.error(`Unable to fetch events: ${e.message}`);
+        events = null;
       }
 
-      fetchEvents();
+      if (!ignore) {
+        setEvents(events);
+      }
+    };
 
-      return () => { ignore = true; }
-    }, [ims]
-  );
+    fetchEvents();
+
+    return () => {
+      ignore = true;
+    };
+  }, [ims]);
 
   // Render
 
@@ -68,22 +68,24 @@ const EventDropdown = (props) => {
       );
     }
 
-    return events.sort().map(
-      (event) => {
-        return (
-          <NavDropdown.Item key={event.id} className="nav_event_id" href={URLs.event(event)}>
-            {event.name}
-          </NavDropdown.Item>
-        );
-      }
-    );
-  }
+    return events.sort().map((event) => {
+      return (
+        <NavDropdown.Item
+          key={event.id}
+          className="nav_event_id"
+          href={URLs.event(event)}
+        >
+          {event.name}
+        </NavDropdown.Item>
+      );
+    });
+  };
 
   return (
     <NavDropdown title="Event" id="nav_events_dropdown">
       {items()}
     </NavDropdown>
   );
-}
+};
 
 export default EventDropdown;

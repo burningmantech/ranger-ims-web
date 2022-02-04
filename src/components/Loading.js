@@ -1,7 +1,6 @@
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 
-
 const Loading = (props) => {
   return (
     <Alert variant="light">
@@ -10,6 +9,6 @@ const Loading = (props) => {
       </Spinner>
     </Alert>
   );
-}
+};
 
 export default Loading;

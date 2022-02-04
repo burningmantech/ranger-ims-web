@@ -1,7 +1,6 @@
 import BagTable from "../components/BagTable";
 import Page from "../components/Page";
 
-
 const AdminPage = (props) => {
   return (
     <Page>
@@ -9,6 +8,6 @@ const AdminPage = (props) => {
       <BagTable />
     </Page>
   );
-}
+};
 
 export default AdminPage;

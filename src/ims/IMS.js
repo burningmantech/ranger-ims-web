@@ -9,9 +9,7 @@ import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
 
-
 export default class IncidentManagementSystem {
-
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
@@ -37,8 +35,7 @@ export default class IncidentManagementSystem {
       set: (user) => {
         if (user === null) {
           this._credentialStore.remove();
-        }
-        else {
+        } else {
           this._credentialStore.store(user, null);
         }
 
@@ -55,54 +52,54 @@ export default class IncidentManagementSystem {
   }
 
   _incidentsStore = (eventID) => {
-    if (! this._incidentsStoreByEvent.has(eventID)) {
+    if (!this._incidentsStoreByEvent.has(eventID)) {
       this._incidentsStoreByEvent[eventID] = new Store(
-        Incident, `incidents:${eventID}`, "incidents"
+        Incident,
+        `incidents:${eventID}`,
+        "incidents"
       );
     }
     return this._incidentsStoreByEvent[eventID];
-  }
+  };
 
   _fetch = async (request) => {
     let authenticated;
     if (this.isLoggedIn()) {
       authenticated = true;
       request.headers.set(
-        "Authorization", `Bearer ${this.user.credentials.token}`
+        "Authorization",
+        `Bearer ${this.user.credentials.token}`
       );
-    }
-    else {
+    } else {
       authenticated = false;
     }
 
     console.debug(
       `Issuing ${authenticated ? "authenticated" : "unauthenticated"} ` +
-      `request: ${request.method} ${request.url}`
+        `request: ${request.method} ${request.url}`
     );
     const response = await fetch(request);
 
-    if (! response.ok) {
+    if (!response.ok) {
       if (response.status === 401) {
         if (authenticated) {
           console.warn(`Authentication failed for resource: ${request.url}`);
           await this.logout();
-        }
-        else {
+        } else {
           console.debug(`Authentication required for resource: ${request.url}`);
         }
-      }
-      else {
+      } else {
         console.error(
           "Non-OK response from server " +
-          `(${response.status}: ${response.statusText})`
+            `(${response.status}: ${response.statusText})`
         );
       }
     }
 
     return response;
-  }
+  };
 
-  _fetchJSONFromServer = async (url, options={}) => {
+  _fetchJSONFromServer = async (url, options = {}) => {
     const requestHeaders = new Headers(options["headers"]);
 
     // Ensure content type is JSON
@@ -111,8 +108,7 @@ export default class IncidentManagementSystem {
       if (contentType !== "application/json") {
         throw new Error(`Not JSON content-type: ${contentType}`);
       }
-    }
-    else {
+    } else {
       requestHeaders.set("Content-Type", "application/json");
     }
 
@@ -123,10 +119,9 @@ export default class IncidentManagementSystem {
       if (options["eTag"] != null) {
         requestHeaders.set("If-None-Match", options["eTag"]);
       }
-    }
-    else {
+    } else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(options["json"]);;
+      requestOptions.body = JSON.stringify(options["json"]);
 
       if (options["eTag"] != null) {
         requestHeaders.set("If-Match", options["eTag"]);
@@ -144,9 +139,9 @@ export default class IncidentManagementSystem {
     }
 
     return response;
-  }
+  };
 
-  _fetchAndCacheJSON = async(store, lifetime, urlParams) => {
+  _fetchAndCacheJSON = async (store, lifetime, urlParams) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -162,27 +157,27 @@ export default class IncidentManagementSystem {
 
     // The bag is special because we don't get it's URL from the bag because the
     // bag is special because...
-    let url = (
-      (store.endpointID === "bag")
-      ? this.bagURL
-      : (await this.bag()).urls[store.endpointID]
-    );
+    let url =
+      store.endpointID === "bag"
+        ? this.bagURL
+        : (await this.bag()).urls[store.endpointID];
     invariant(url != null, `No "${store.endpointID}" URL found in bag`);
 
     // Replace URL parameters with values
     for (const paramName in urlParams) {
       const value = urlParams[paramName];
-      invariant(value != null, `Undefined parameter: ${paramName}`)
+      invariant(value != null, `Undefined parameter: ${paramName}`);
       url = url.replace(`{${paramName}}`, value);
     }
-    invariant(! url.includes("{"), `Unknown parameters found in URL: ${url}`);
+    invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
 
     const fetchOptions = { eTag: cachedETag };
     const response = await this._fetchJSONFromServer(url, fetchOptions);
 
     let _value;
     let _eTag;
-    if (response.status === 304) {  // NOT_MODIFIED
+    if (response.status === 304) {
+      // NOT_MODIFIED
       // The server says it's still the same, so keep the cached value.
       // Don't return yet... we'll store it below to update the expiration.
       _value = cachedValue;
@@ -190,12 +185,10 @@ export default class IncidentManagementSystem {
       console.debug(
         `Retrieved ${store.storeID} from cache (ETag: ${cachedETag})`
       );
-    }
-    else if (! response.ok) {
+    } else if (!response.ok) {
       // The server says "poop", so say "poop" to the caller.
       throw new Error(`Failed to retrieve ${store.storeID}.`);
-    }
-    else {
+    } else {
       // The server has a new value for us.
       _eTag = response.headers.get("ETag");
       const json = await response.json();
@@ -208,7 +201,7 @@ export default class IncidentManagementSystem {
     store.store(value, eTag, lifetime);
 
     return value;
-  }
+  };
 
   ////
   //  Configuration
@@ -218,7 +211,7 @@ export default class IncidentManagementSystem {
 
   bag = async () => {
     return this._fetchAndCacheJSON(this._bagStore, this.bagCacheLifetime);
-  }
+  };
 
   ////
   //  Authentication
@@ -234,11 +227,13 @@ export default class IncidentManagementSystem {
     console.info(`Authenticating to IMS server as ${username}...`);
 
     const requestJSON = {
-      identification: username, password: credentials.password
+      identification: username,
+      password: credentials.password,
     };
-    const response = await this._fetchJSONFromServer(
-      bag.urls.auth, { json: requestJSON, headers: {} }
-    );
+    const response = await this._fetchJSONFromServer(bag.urls.auth, {
+      json: requestJSON,
+      headers: {},
+    });
 
     // Authentication failure yields a 401 response with a JSON error.
     let failureReason;
@@ -246,29 +241,24 @@ export default class IncidentManagementSystem {
       let responseJSON;
       try {
         responseJSON = await response.json();
-      }
-      catch (e) {
+      } catch (e) {
         responseJSON = null;
       }
 
       if (responseJSON === null) {
         failureReason = "non-JSON response for login";
-      }
-      else {
+      } else {
         if (responseJSON.status === "invalid-credentials") {
           console.warn(`Credentials for ${username} are invalid.`);
           return false;
         }
         failureReason = `unknown JSON error status: ${responseJSON.status}`;
       }
-    }
-    else {
-      failureReason = (
-        `HTTP error status ${response.status} ${response.statusText}`
-      );
+    } else {
+      failureReason = `HTTP error status ${response.status} ${response.statusText}`;
     }
 
-    if (! response.ok) {
+    if (!response.ok) {
       throw new Error(`Failed to authenticate: ${failureReason}`);
     }
 
@@ -291,8 +281,8 @@ export default class IncidentManagementSystem {
     if (preferredUsername != null && preferredUsername !== username) {
       console.debug(
         "Using preferred username in retrieved credentials " +
-        `(${preferredUsername}), ` +
-        `which differs from submitted username (${username})`
+          `(${preferredUsername}), ` +
+          `which differs from submitted username (${username})`
       );
       username = preferredUsername;
     }
@@ -306,12 +296,10 @@ export default class IncidentManagementSystem {
 
     this.user = new User(username, imsCredentials);
 
-    console.info(
-      `Logged in as ${this.user} until ${expiration.toISO()}.`
-    );
+    console.info(`Logged in as ${this.user} until ${expiration.toISO()}.`);
 
     return true;
-  }
+  };
 
   logout = async () => {
     console.info(`Logging out as ${this.user}...`);
@@ -319,7 +307,7 @@ export default class IncidentManagementSystem {
     // longer needed.
     this.user = null;
     return true;
-  }
+  };
 
   /*
    * Determine whether we have a user with non-expired credentials.
@@ -331,7 +319,7 @@ export default class IncidentManagementSystem {
     }
 
     return DateTime.local() < user.credentials.expiration;
-  }
+  };
 
   ////
   //  Data
@@ -340,7 +328,7 @@ export default class IncidentManagementSystem {
   flushCaches = () => {
     console.info("Flushing all caches...");
     Store.removeAll();
-  }
+  };
 
   // Events
 
@@ -348,11 +336,12 @@ export default class IncidentManagementSystem {
 
   events = async () => {
     const events = await this._fetchAndCacheJSON(
-      this._eventsStore, this.eventsCacheLifetime
+      this._eventsStore,
+      this.eventsCacheLifetime
     );
-    this._eventsMap = new Map(events.map(event => [event.id, event]));
+    this._eventsMap = new Map(events.map((event) => [event.id, event]));
     return events;
-  }
+  };
 
   eventWithID = async (id) => {
     invariant(id != null, "id argument is required");
@@ -365,7 +354,7 @@ export default class IncidentManagementSystem {
     } else {
       throw new Error(`No event found with ID: ${id}`);
     }
-  }
+  };
 
   // Incidents
 
@@ -377,14 +366,14 @@ export default class IncidentManagementSystem {
     const incidents = await this._fetchAndCacheJSON(
       this._incidentsStore(eventID),
       this.incidentsCacheLifetime,
-      { "event_id": eventID },
+      { event_id: eventID }
     );
     this._incidentsMap = new Map(
-      incidents.map(incident => [incident.number, incident])
+      incidents.map((incident) => [incident.number, incident])
     );
 
     return incidents;
-  }
+  };
 
   incidentWithNumber = async (eventID, number) => {
     invariant(eventID != null, "eventID argument is required");
@@ -392,7 +381,8 @@ export default class IncidentManagementSystem {
 
     await this.incidents(eventID);
     invariant(
-      this._incidentsMap != null, "this._incidentsMap did not initialize"
+      this._incidentsMap != null,
+      "this._incidentsMap did not initialize"
     );
 
     if (this._incidentsMap.has(number)) {
@@ -402,27 +392,27 @@ export default class IncidentManagementSystem {
         `No incident found with event:number: ${eventID}:${number}`
       );
     }
-  }
+  };
 
   // Search
 
   _searchIndex = async (eventID) => {
     // https://github.com/nextapps-de/flexsearch
 
-    if (! this._searchIndexByEvent.has(eventID)) {
+    if (!this._searchIndexByEvent.has(eventID)) {
       // Create index
       var index = new Document({
         id: "number",
         index: [
-          {field: "number", tokenize: "strict"},
-          {field: "created", tokenize: "forward"},
-          {field: "state", tokenize: "strict"},
-          {field: "priority", tokenize: "strict"},
-          {field: "summary", tokenize: "full"},
-          {field: "location:name", tokenize: "full"},
-          {field: "location:description", tokenize: "full"},
-          {field: "incidentTypes", tokenize: "forward"},
-          {field: "rangerHandles", tokenize: "full"},
+          { field: "number", tokenize: "strict" },
+          { field: "created", tokenize: "forward" },
+          { field: "state", tokenize: "strict" },
+          { field: "priority", tokenize: "strict" },
+          { field: "summary", tokenize: "full" },
+          { field: "location:name", tokenize: "full" },
+          { field: "location:description", tokenize: "full" },
+          { field: "incidentTypes", tokenize: "forward" },
+          { field: "rangerHandles", tokenize: "full" },
           // FIXME: report entries
           // FIXME: attached incident reports
         ],
@@ -430,8 +420,8 @@ export default class IncidentManagementSystem {
 
       // Populate index
       for (const incident of await this.incidents(eventID)) {
-        const location = (incident.location == null) ? {} : incident.location;
-        const address = (location.address == null) ? {} : location.address;
+        const location = incident.location == null ? {} : incident.location;
+        const address = location.address == null ? {} : location.address;
 
         console.info(Incident.priorityToString(incident.priority));
 
@@ -455,7 +445,7 @@ export default class IncidentManagementSystem {
       this._searchIndexByEvent[eventID] = index;
     }
     return this._searchIndexByEvent[eventID];
-  }
+  };
 
   search = async (eventID, query) => {
     const index = await this._searchIndex(eventID);
@@ -472,6 +462,5 @@ export default class IncidentManagementSystem {
       }
     }
     return incidents;
-  }
-
+  };
 }

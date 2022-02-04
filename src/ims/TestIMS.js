@@ -8,21 +8,20 @@ import IncidentManagementSystem from "./IMS";
 import User from "./User";
 import { IMSContext } from "./context";
 
-
 /* https://stackoverflow.com/a/7616484 */
 const hashText = (text) => {
-  var hash = 0, i, chr;
+  var hash = 0,
+    i,
+    chr;
   for (i = 0; i < text.length; i++) {
     chr = text.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     hash |= 0;
   }
   return hash;
-}
-
+};
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
-
   static timeout = Duration.fromObject({ minutes: 5 });
 
   constructor(bagURL) {
@@ -57,8 +56,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "4", name: "Event Four" },
         { id: "empty", name: "Empty Event" },
       ],
-      incidents: {  // Lists of incidents, indexes by event ID
-        "1": [
+      incidents: {
+        // Lists of incidents, indexes by event ID
+        1: [
           {
             event: "1",
             number: 1,
@@ -85,16 +85,16 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
                 text: "Changed description name to: On B road",
               },
               {
-                system_entry:false,
-                created:"2021-08-17T17:23:00",
-                author:"Operator",
+                system_entry: false,
+                created: "2021-08-17T17:23:00",
+                author: "Operator",
                 text: "White pickup stopped on road, eventually moved",
               },
               {
-                system_entry:true,
-                created:"2021-08-28T00:37:37",
-                author:"Operator",
-                text:"Changed state to: closed",
+                system_entry: true,
+                created: "2021-08-28T00:37:37",
+                author: "Operator",
+                text: "Changed state to: closed",
               },
             ],
           },
@@ -115,15 +115,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             incident_reports: [],
             report_entries: [
               {
-                system_entry:false,
-                created:"2021-08-17T18:45:46",
-                author:"Operator",
+                system_entry: false,
+                created: "2021-08-17T18:45:46",
+                author: "Operator",
                 text: "Someone is giving away ice cream at the Man",
               },
             ],
           },
         ],
-        "2": [
+        2: [
           {
             event: "2",
             number: 1,
@@ -176,9 +176,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             report_entries: [],
           },
         ],
-        "3": [],
-        "4": [],
-        "empty": [],
+        3: [],
+        4: [],
+        empty: [],
       },
     };
 
@@ -189,7 +189,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     invariant(
       eventIDs == incidentEventIDs,
       "Events and incidents index keys mismatched: " +
-      `${eventIDs} != ${incidentEventIDs}`
+        `${eventIDs} != ${incidentEventIDs}`
     );
     for (const eventID of Object.keys(this.testData.incidents)) {
       const incidents = this.testData.incidents[eventID];
@@ -197,15 +197,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         invariant(
           eventID == incident.event,
           `Incident #${incident.number} in event ID ${eventID} has ` +
-          `mismatched event ID: ${incident.event}`
+            `mismatched event ID: ${incident.event}`
         );
       }
       const incidentNumbers = incidents.map((i) => i.number);
       invariant(
         cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
         `Incident numbers in event ID ${eventID} contain duplicates: ` +
-        `${incidentNumbers}`
-      )
+          `${incidentNumbers}`
+      );
     }
 
     this.requestsReceived = [];
@@ -214,85 +214,64 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   }
 
   _notFoundResponse = () => {
-    return new Response(
-      "Resource not found",
-      {
-        status: 404,
-        statusText: "Resource Not Found",
-        headers: { "Content-Type": "text/plain" }
-      },
-    )
-  }
+    return new Response("Resource not found", {
+      status: 404,
+      statusText: "Resource Not Found",
+      headers: { "Content-Type": "text/plain" },
+    });
+  };
 
   _authTextResponse = () => {
-    return new Response(
-      "Authentication required.",
-      {
-        status: 401,
-        statusText: "Authentication Required",
-        headers: { "Content-Type": "text/plain" }
-      },
-    )
-  }
+    return new Response("Authentication required.", {
+      status: 401,
+      statusText: "Authentication Required",
+      headers: { "Content-Type": "text/plain" },
+    });
+  };
 
   _authJSONResponse = () => {
-    return new Response(
-      JSON.stringify({}),
-      {
-        status: 401,
-        statusText: "Authentication Required",
-        headers: { "Content-Type": "application/json" }
-      },
-    )
-  }
+    return new Response(JSON.stringify({}), {
+      status: 401,
+      statusText: "Authentication Required",
+      headers: { "Content-Type": "application/json" },
+    });
+  };
 
   _authFailedResponse = () => {
-    return new Response(
-      JSON.stringify({ status: "invalid-credentials" }),
-      {
-        status: 401,
-        statusText: "Authentication Failed",
-        headers: { "Content-Type": "application/json" }
-      },
-    )
-  }
+    return new Response(JSON.stringify({ status: "invalid-credentials" }), {
+      status: 401,
+      statusText: "Authentication Failed",
+      headers: { "Content-Type": "application/json" },
+    });
+  };
 
   _forbiddenResponse = () => {
-    return new Response(
-      "No soup for you!",
-      {
-        status: 403,
-        statusText: "Forbidden",
-        headers: { "Content-Type": "text/plain" }
-      },
-    )
-  }
+    return new Response("No soup for you!", {
+      status: 403,
+      statusText: "Forbidden",
+      headers: { "Content-Type": "text/plain" },
+    });
+  };
 
   _jsonResponse = (json) => {
     const body = JSON.stringify(json);
-    return new Response(
-      body,
-      {
-        status: 200,
-        statusText: "Okay, here's some JSON",
-        headers: {
-          "Content-Type": "application/json",
-          "ETag": '"' + hashText(body) + '"',
-        }
+    return new Response(body, {
+      status: 200,
+      statusText: "Okay, here's some JSON",
+      headers: {
+        "Content-Type": "application/json",
+        ETag: '"' + hashText(body) + '"',
       },
-    )
-  }
+    });
+  };
 
   _textResponse = (json) => {
-    return new Response(
-      "Hello!",
-      {
-        status: 200,
-        statusText: "Okay, here's some text",
-        headers: { "Content-Type": "text/plain" }
-      },
-    )
-  }
+    return new Response("Hello!", {
+      status: 200,
+      statusText: "Okay, here's some text",
+      headers: { "Content-Type": "text/plain" },
+    });
+  };
 
   _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
@@ -317,7 +296,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         exp: now + 60,
         // iat: now,
         preferred_username: username,
-      }
+      };
       switch (username) {
         case "Hubcap":
           break;
@@ -335,15 +314,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     }
 
     return this._jsonResponse(responseJSON);
-  }
+  };
 
   __mockFetch = async (request) => {
     let _path;
     try {
       const url = new URL(request.url);
       _path = url.pathname;
-    }
-    catch {
+    } catch {
       _path = request.url;
     }
     const path = _path;
@@ -383,7 +361,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         break;
 
       case path == "/text_hello":
-      console.debug("Issuing hello text response.");
+        console.debug("Issuing hello text response.");
         return this._textResponse();
 
       case path == "/ims/api/bag":
@@ -417,10 +395,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
       case path.startsWith(bag.urls.events):
         let rest = path.substring(bag.urls.events.length);
-        const eventID = rest.split("/", 1)[0]
+        const eventID = rest.split("/", 1)[0];
 
         rest = rest.substring(eventID.length + 1);
-        const eventChild = rest.split("/", 1)[0]
+        const eventChild = rest.split("/", 1)[0];
 
         switch (eventChild) {
           case "incidents":
@@ -436,7 +414,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
     /* istanbul ignore next */
     throw new Error(`Unexpected request: ${request.method} ${path}`);
-  }
+  };
 
   _mockFetch = async (request) => {
     let response = await this.__mockFetch(request);
@@ -445,17 +423,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       const ifNoneMatch = request.headers.get("If-None-Match");
       const responseETag = response.headers.get("ETag");
       if (ifNoneMatch !== null && responseETag !== null) {
-        for (const matchETag of ifNoneMatch.split(/, */)) {  // Can be > 1 ETag
+        for (const matchETag of ifNoneMatch.split(/, */)) {
+          // Can be > 1 ETag
           if (matchETag == responseETag) {
             console.debug("Matching ETag found; responding with NOT_MODIFIED");
-            response = new Response(
-              `Matched ETag: ${responseETag}`,
-              {
-                status: 304,
-                statusText: "Not modified.",
-                headers: { "Content-Type": "text/plain" },
-              }
-            );
+            response = new Response(`Matched ETag: ${responseETag}`, {
+              status: 304,
+              statusText: "Not modified.",
+              headers: { "Content-Type": "text/plain" },
+            });
           }
         }
       }
@@ -464,17 +440,17 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this.requestsReceived.push([request, response]);
 
     return response;
-  }
+  };
 
   // For testing
   asHubcap = async () => {
     const username = "Hubcap";
     const password = username;
 
-    await this.login(username, {password: password});
+    await this.login(username, { password: password });
 
     return this;
-  }
+  };
 
   nextIncidentNumber = async (eventID) => {
     const incidents = this.testData.incidents[eventID];
@@ -486,29 +462,31 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       }
     }
     return lastIncidentNumber + 1;
-  }
+  };
 
   addIncidentWithFields = async (
-    eventID, {
+    eventID,
+    {
       created = DateTime.now(),
       state = "new",
       priority = 3,
       summary = null,
       location = null,
-      incidentTypes=[],
-      rangerHandles=[],
+      incidentTypes = [],
+      rangerHandles = [],
     }
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
-    const nextIncident = {  // NOTE: this is JSON, not an Incident object
+    const nextIncident = {
+      // NOTE: this is JSON, not an Incident object
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
       state: state,
       priority: priority,
       summary: summary,
-      location: (location == null) ? null : location.toJSON(),
+      location: location == null ? null : location.toJSON(),
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
       report_entries: [],
@@ -516,32 +494,29 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     };
     incidents.push(nextIncident);
     return nextIncident;
-  }
+  };
 
   addMoreIncidents = async (eventID, total) => {
     const incidents = this.testData.incidents[eventID];
     invariant(incidents != null, `no incidents for event: ${eventID}`);
 
     while (incidents.length < total) {
-      await this.addIncidentWithFields(eventID, {summary: null});
+      await this.addIncidentWithFields(eventID, { summary: null });
     }
-  }
-
+  };
 }
-
 
 export function testIncidentManagementSystem(username) {
   const ims = new TestIncidentManagementSystem("/ims/api/bag");
 
   if (username !== undefined) {
-    ims.user = new User(
-      username, { expiration: DateTime.local().plus({ hours: 1 }) }
-    );
+    ims.user = new User(username, {
+      expiration: DateTime.local().plus({ hours: 1 }),
+    });
   }
 
   return ims;
 }
-
 
 export const renderWithIMSContext = (content, ims, ...renderOptions) => {
   if (ims == null) {
@@ -549,11 +524,7 @@ export const renderWithIMSContext = (content, ims, ...renderOptions) => {
   }
 
   return render(
-    (
-      <IMSContext.Provider value={{ims: ims}}>
-        {content}
-      </IMSContext.Provider>
-    ),
+    <IMSContext.Provider value={{ ims: ims }}>{content}</IMSContext.Provider>,
     ...renderOptions
   );
-}
+};

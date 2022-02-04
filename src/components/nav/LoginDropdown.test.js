@@ -4,15 +4,16 @@ import "@testing-library/jest-dom/extend-expect";
 import { act } from "react-dom/test-utils";
 
 import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 
 import User from "../../ims/User";
-import { renderWithIMSContext, testIncidentManagementSystem } from "../../ims/TestIMS";
+import {
+  renderWithIMSContext,
+  testIncidentManagementSystem,
+} from "../../ims/TestIMS";
 import LoginDropdown from "./LoginDropdown";
 
-
 describe("LoginDropdown component", () => {
-
   test("id", () => {
     render(<LoginDropdown />);
 
@@ -55,7 +56,7 @@ describe("LoginDropdown component", () => {
 
     expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
-      `expired ${expiration} (${expiration.toRelative()})`
+        `expired ${expiration} (${expiration.toRelative()})`
     );
   });
 
@@ -63,7 +64,8 @@ describe("LoginDropdown component", () => {
     const username = "Hubcap";
 
     renderWithIMSContext(
-      <LoginDropdown />, testIncidentManagementSystem(username)
+      <LoginDropdown />,
+      testIncidentManagementSystem(username)
     );
 
     expect(screen.queryByText(username)).toBeInTheDocument();
@@ -73,7 +75,8 @@ describe("LoginDropdown component", () => {
     const username = "Hubcap";
 
     renderWithIMSContext(
-      <LoginDropdown />, testIncidentManagementSystem(username)
+      <LoginDropdown />,
+      testIncidentManagementSystem(username)
     );
 
     await act(async () => {
@@ -88,7 +91,9 @@ describe("LoginDropdown component", () => {
     const ims = testIncidentManagementSystem(username);
 
     let notified = false;
-    ims.delegate = () => { notified = true; }
+    ims.delegate = () => {
+      notified = true;
+    };
 
     renderWithIMSContext(<LoginDropdown />, ims);
 
@@ -99,5 +104,4 @@ describe("LoginDropdown component", () => {
 
     expect(notified).toBe(true);
   });
-
 });

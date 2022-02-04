@@ -7,7 +7,6 @@ import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 
-
 const BagTable = (props) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
@@ -19,34 +18,41 @@ const BagTable = (props) => {
 
   const [bag, setBag] = useState(undefined);
 
-  useEffect(
-    () => {
-      let ignore = false;
+  useEffect(() => {
+    let ignore = false;
 
-      const fetchBag = async () => {
-        let bag;
-        try {
-          bag = await ims.bag();
-        }
-        catch (e) {
-          console.error(`Unable to fetch bag: ${e.message}`);
-          bag = null;
-        }
-
-        if (! ignore) { setBag(bag); }
+    const fetchBag = async () => {
+      let bag;
+      try {
+        bag = await ims.bag();
+      } catch (e) {
+        console.error(`Unable to fetch bag: ${e.message}`);
+        bag = null;
       }
 
-      fetchBag();
+      if (!ignore) {
+        setBag(bag);
+      }
+    };
 
-      return () => { ignore = true; }
-    }, [ims]
-  );
+    fetchBag();
+
+    return () => {
+      ignore = true;
+    };
+  }, [ims]);
 
   // Render
 
   const fullRow = (content) => {
-    return <tr><td colSpan="2" className="text-center">{content}</td></tr>;
-  }
+    return (
+      <tr>
+        <td colSpan="2" className="text-center">
+          {content}
+        </td>
+      </tr>
+    );
+  };
 
   const rows = () => {
     if (bag === undefined) {
@@ -55,30 +61,27 @@ const BagTable = (props) => {
       return fullRow("Error loading URL bag");
     }
 
-    if (! bag.urls) {
+    if (!bag.urls) {
       return fullRow("ERROR: no URLs in bag");
     }
 
     const link = (url) => {
       if (url.includes("{")) {
         return url;
-      }
-      else {
+      } else {
         return <a href={url}>{url}</a>;
       }
-    }
+    };
 
-    return Object.entries(bag.urls).map(
-      ([name, url]) => {
-        return (
-          <tr key={name}>
-            <td>{name}</td>
-            <td>{link(url)}</td>
-          </tr>
-        );
-      }
-    );
-  }
+    return Object.entries(bag.urls).map(([name, url]) => {
+      return (
+        <tr key={name}>
+          <td>{name}</td>
+          <td>{link(url)}</td>
+        </tr>
+      );
+    });
+  };
 
   return (
     <Table responsive striped bordered hover id="bag_table">
@@ -92,6 +95,6 @@ const BagTable = (props) => {
       <tbody>{rows()}</tbody>
     </Table>
   );
-}
+};
 
 export default BagTable;

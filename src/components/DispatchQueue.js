@@ -17,63 +17,93 @@ import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
 
-
 export const defaultPageSize = 25;
 
-
 // Icons
-
 
 export const UnknownPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/question-circle-fill/
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-question-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-question-circle-fill"
+      viewBox="0 0 16 16"
+    >
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" />
     </svg>
   );
-}
+};
 
 export const LowPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/arrow-down-circle-fill/
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-arrow-down-circle-fill"
+      viewBox="0 0 16 16"
+    >
+      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" />
     </svg>
   );
-}
+};
 
 export const NormalPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/circle-fill/
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-circle-fill" viewBox="0 0 16 16">
-      <circle cx="8" cy="8" r="8"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-circle-fill"
+      viewBox="0 0 16 16"
+    >
+      <circle cx="8" cy="8" r="8" />
     </svg>
   );
-}
+};
 
 export const HighPriorityIcon = () => {
   // https://icons.getbootstrap.com/icons/arrow-up-circle-fill/
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-arrow-up-circle-fill"
+      viewBox="0 0 16 16"
+    >
+      <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" />
     </svg>
   );
-}
+};
 
 export const SearchIcon = () => {
   // https://icons.getbootstrap.com/icons/search/
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
-      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-search"
+      viewBox="0 0 16 16"
+    >
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
     </svg>
   );
-}
-
+};
 
 // Table cell formatting
 
-
-export const formatPriority = ({value}) => {
+export const formatPriority = ({ value }) => {
   const priority = value;
   switch (priority) {
     case 1:
@@ -87,62 +117,53 @@ export const formatPriority = ({value}) => {
     default:
       return <UnknownPriorityIcon />;
   }
-}
+};
 
-
-export const formatDateTime = ({value}) => {
+export const formatDateTime = ({ value }) => {
   const dateTime = value;
   if (!dateTime) {
     return "";
   }
   return dateTime.toFormat("ccc L/c HH:mm");
-}
+};
 
-
-export const formatState = ({value}) => {
+export const formatState = ({ value }) => {
   const state = value;
   try {
     return Incident.stateToString(state);
   } catch (e) {
     return state;
   }
-}
+};
 
-
-export const formatAddress = ({value}) => {
-  const formatCoordinate = (c) => (c == null) ? "" : c;
+export const formatAddress = ({ value }) => {
+  const formatCoordinate = (c) => (c == null ? "" : c);
 
   const address = value;
   if (address == null) {
     return address;
   }
-  if (
-    address.concentric ||
-    address.radialHour ||
-    address.radialMinute
-  ) {
+  if (address.concentric || address.radialHour || address.radialMinute) {
     return (
       `${formatCoordinate(address.concentric)}@` +
       `${formatCoordinate(address.radialHour)}:` +
       `${formatCoordinate(address.radialMinute)}` +
-      `${(address.description) ? ` (${address.description})` : ""}`
+      `${address.description ? ` (${address.description})` : ""}`
     );
-  }
-  else if (address.description) {
+  } else if (address.description) {
     return `(${address.description})`;
   } else {
     return null;
   }
-}
+};
 
-
-export const formatLocation = ({value}) => {
+export const formatLocation = ({ value }) => {
   const location = value;
   if (location == null) {
     return location;
   }
 
-  const addressText = formatAddress({value: location.address});
+  const addressText = formatAddress({ value: location.address });
 
   if (location.name == null) {
     if (addressText == null) {
@@ -150,33 +171,29 @@ export const formatLocation = ({value}) => {
     } else {
       return addressText;
     }
-  }
-  else {
+  } else {
     if (addressText == null) {
       return location.name;
     } else {
       return `${location.name} @ ${addressText}`;
     }
   }
-}
+};
 
-
-export const formatArrayOfStrings = ({value}) => {
+export const formatArrayOfStrings = ({ value }) => {
   const strings = value;
-  if (! strings) {
+  if (!strings) {
     return "";
   }
   return strings.sort().join(", ");
-}
-
+};
 
 // Table hook
-
 
 const useDispatchQueueTable = (incidents) => {
   // See: https://react-table.tanstack.com/docs/overview
 
-  const data = useMemo(() => (incidents == null) ? [] : incidents, [incidents]);
+  const data = useMemo(() => (incidents == null ? [] : incidents), [incidents]);
 
   const columns = useMemo(
     () => [
@@ -223,81 +240,57 @@ const useDispatchQueueTable = (incidents) => {
   );
 
   return useTable(
-    {columns, data, initialState: {pageSize: defaultPageSize}},
-    usePagination,
+    { columns, data, initialState: { pageSize: defaultPageSize } },
+    usePagination
   );
-}
-
+};
 
 // Table component
 
-
-const DispatchQueueTable = ({table}) => {
+const DispatchQueueTable = ({ table }) => {
   return (
     <Row>
-
       <Col>
-
         {/* Table of incidents */}
 
         <Table striped hover id="queue_table" {...table.getTableProps()}>
           <thead>
-            {
-              table.headerGroups.map(
-                headerGroup => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {
-                      headerGroup.headers.map(
-                        column => (
-                          <th {...column.getHeaderProps()}>
-                            {column.render("Header")}
-                          </th>
-                        )
-                      )
-                    }
-                  </tr>
-                )
-              )
-            }
+            {table.headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps()}>
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
           <tbody {...table.getTableBodyProps()}>
-            {
-              table.page.map(
-                (row, i) => {
-                  table.prepareRow(row)
-                  return (
-                    <tr className="queue_incident_row" {...row.getRowProps()}>
-                      {
-                        row.cells.map(
-                        cell => {
-                            return (
-                              <td
-                                className={`queue_incident_${cell.column.id}`}
-                                {...cell.getCellProps()}
-                              >
-                                {cell.render("Cell")}
-                              </td>
-                            )
-                          }
-                        )
-                      }
-                    </tr>
-                  )
-                }
-              )
-            }
+            {table.page.map((row, i) => {
+              table.prepareRow(row);
+              return (
+                <tr className="queue_incident_row" {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <td
+                        className={`queue_incident_${cell.column.id}`}
+                        {...cell.getCellProps()}
+                      >
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </Table>
-
       </Col>
-
     </Row>
   );
-}
-
+};
 
 // Table controls
-
 
 export const formatShowState = (showState) => {
   switch (showState) {
@@ -310,10 +303,9 @@ export const formatShowState = (showState) => {
     default:
       throw new Error(`Invalid show state: ${JSON.stringify(showState)}`);
   }
-}
+};
 
-
-const ShowStateControl = ({table, incidents, showState, setShowState}) => {
+const ShowStateControl = ({ table, incidents, showState, setShowState }) => {
   const currentState = formatShowState(showState);
 
   return (
@@ -323,23 +315,18 @@ const ShowStateControl = ({table, incidents, showState, setShowState}) => {
       size="sm"
       variant="default"
     >
-      {
-        ["all", "open", "active"].map(
-          showState => (
-            <Dropdown.Item
-              id={`queue_show_state_${showState}`}
-              key={showState}
-              onClick={() => setShowState(showState)}
-            >
-              {formatShowState(showState)}
-            </Dropdown.Item>
-          )
-        )
-      }
+      {["all", "open", "active"].map((showState) => (
+        <Dropdown.Item
+          id={`queue_show_state_${showState}`}
+          key={showState}
+          onClick={() => setShowState(showState)}
+        >
+          {formatShowState(showState)}
+        </Dropdown.Item>
+      ))}
     </DropdownButton>
   );
-}
-
+};
 
 export const formatShowDays = (showDays) => {
   switch (showDays) {
@@ -350,10 +337,9 @@ export const formatShowDays = (showDays) => {
     default:
       return `Last ${showDays} Days`;
   }
-}
+};
 
-
-const ShowDaysControl = ({table, incidents, showDays, setShowDays}) => {
+const ShowDaysControl = ({ table, incidents, showDays, setShowDays }) => {
   const currentDays = formatShowDays(showDays);
 
   return (
@@ -363,28 +349,22 @@ const ShowDaysControl = ({table, incidents, showDays, setShowDays}) => {
       size="sm"
       variant="default"
     >
-      {
-        [0, 1, 2, 3, 4].map(
-          showDays => (
-            <Dropdown.Item
-              id={`queue_show_days_${showDays}`}
-              key={showDays}
-              onClick={() => setShowDays(showDays)}
-            >
-              {formatShowDays(showDays)}
-            </Dropdown.Item>
-          )
-        )
-      }
+      {[0, 1, 2, 3, 4].map((showDays) => (
+        <Dropdown.Item
+          id={`queue_show_days_${showDays}`}
+          key={showDays}
+          onClick={() => setShowDays(showDays)}
+        >
+          {formatShowDays(showDays)}
+        </Dropdown.Item>
+      ))}
     </DropdownButton>
   );
-}
+};
 
-
-const ShowRowsControl = ({table, incidents}) => {
-  const currentRows = (
-    (table.state.pageSize === incidents.length) ? "All" : table.state.pageSize
-  );
+const ShowRowsControl = ({ table, incidents }) => {
+  const currentRows =
+    table.state.pageSize === incidents.length ? "All" : table.state.pageSize;
 
   return (
     <DropdownButton
@@ -393,65 +373,63 @@ const ShowRowsControl = ({table, incidents}) => {
       size="sm"
       variant="default"
     >
-      {
-        [0,1,2,4].map(
-          multiple => (
-            <Dropdown.Item
-              id={`queue_show_rows_${multiple}`}
-              key={multiple}
-              onClick={
-                () => table.setPageSize(
-                  (multiple === 0) ? incidents.length : multiple * defaultPageSize
-                )
-              }
-            >
-              {
-                (multiple === 0) ? "All" : multiple * defaultPageSize
-              } Rows
-            </Dropdown.Item>
-          )
-        )
-      }
+      {[0, 1, 2, 4].map((multiple) => (
+        <Dropdown.Item
+          id={`queue_show_rows_${multiple}`}
+          key={multiple}
+          onClick={() =>
+            table.setPageSize(
+              multiple === 0 ? incidents.length : multiple * defaultPageSize
+            )
+          }
+        >
+          {multiple === 0 ? "All" : multiple * defaultPageSize} Rows
+        </Dropdown.Item>
+      ))}
     </DropdownButton>
   );
-}
+};
 
-
-const SearchBar = ({searchInput, setSearchInput}) => {
+const SearchBar = ({ searchInput, setSearchInput }) => {
   const handleSearchInput = (event) => {
     setSearchInput(event.target.value);
-  }
+  };
 
   // Note: using Form causes submit-on-enter, which we don't want.
   // There's probably a correct way to disable that.
   return (
     // <Form>
-      <Form.Group id="search_bar" controlId="search_input">
-        <Form.Label size="sm"><SearchIcon /></Form.Label>
-        <Form.Control
-          type="search"
-          placeholder="Search"
-          value={searchInput}
-          inputMode="latin"
-          autoComplete="off"
-          size="sm"
-          onChange={handleSearchInput}
-        />
-      </Form.Group>
+    <Form.Group id="search_bar" controlId="search_input">
+      <Form.Label size="sm">
+        <SearchIcon />
+      </Form.Label>
+      <Form.Control
+        type="search"
+        placeholder="Search"
+        value={searchInput}
+        inputMode="latin"
+        autoComplete="off"
+        size="sm"
+        onChange={handleSearchInput}
+      />
+    </Form.Group>
     // </Form>
   );
-}
-
+};
 
 const TopToolBar = ({
-  table, incidents,
-  searchInput, setSearchInput,
-  showState, setShowState,
-  showDays, setShowDays,
+  table,
+  incidents,
+  searchInput,
+  setSearchInput,
+  showState,
+  setShowState,
+  showDays,
+  setShowDays,
 }) => {
   return (
     <Row id="queue_top_toolbar">
-  {/*
+      {/*
         <p>
           <a href="../incident_reports/">
             <span className="glyphicon glyphicon-arrow-right" /> Incident Reports
@@ -460,7 +438,6 @@ const TopToolBar = ({
    */}
 
       <Col sm={5}>
-
         <ButtonGroup id="queue_nav_controls" size="sm">
           <Button id="queue_new_incident" variant="primary" size="sm">
             New
@@ -469,16 +446,19 @@ const TopToolBar = ({
 
         <ButtonGroup id="queue_display_controls" size="sm">
           <ShowStateControl
-            table={table} incidents={incidents}
-            showState={showState} setShowState={setShowState}
+            table={table}
+            incidents={incidents}
+            showState={showState}
+            setShowState={setShowState}
           />
           <ShowDaysControl
-            table={table} incidents={incidents}
-            showDays={showDays} setShowDays={setShowDays}
+            table={table}
+            incidents={incidents}
+            showDays={showDays}
+            setShowDays={setShowDays}
           />
           <ShowRowsControl table={table} incidents={incidents} />
         </ButtonGroup>
-
       </Col>
 
       <Col sm={7}>
@@ -486,69 +466,74 @@ const TopToolBar = ({
       </Col>
     </Row>
   );
-}
+};
 
-
-const BottomToolBar = ({table, incidents}) => {
+const BottomToolBar = ({ table, incidents }) => {
   return (
     <Row>
-
       <Col>
-
         <div>
-          <button onClick={() => table.gotoPage(0)} disabled={!table.canPreviousPage}>
-            {'<<'}
-          </button>{' '}
-          <button onClick={() => table.previousPage()} disabled={!table.canPreviousPage}>
-            {'<'}
-          </button>{' '}
-          <button onClick={() => table.nextPage()} disabled={!table.canNextPage}>
-            {'>'}
-          </button>{' '}
-          <button onClick={() => table.gotoPage(table.pageCount - 1)} disabled={!table.canNextPage}>
-            {'>>'}
-          </button>{' '}
+          <button
+            onClick={() => table.gotoPage(0)}
+            disabled={!table.canPreviousPage}
+          >
+            {"<<"}
+          </button>{" "}
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.canPreviousPage}
+          >
+            {"<"}
+          </button>{" "}
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.canNextPage}
+          >
+            {">"}
+          </button>{" "}
+          <button
+            onClick={() => table.gotoPage(table.pageCount - 1)}
+            disabled={!table.canNextPage}
+          >
+            {">>"}
+          </button>{" "}
           <span>
-            Page{' '}
+            Page{" "}
             <strong>
               {table.state.pageIndex + 1} of {table.pageOptions.length}
-            </strong>{' '}
+            </strong>{" "}
           </span>
           <span>
-            | Go to page:{' '}
+            | Go to page:{" "}
             <input
               type="number"
               defaultValue={table.state.pageIndex + 1}
-              onChange={e => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0
-                table.gotoPage(page)
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.gotoPage(page);
               }}
-              style={{ width: '100px' }}
+              style={{ width: "100px" }}
             />
-          </span>{' '}
+          </span>{" "}
           <select
             value={table.state.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value))
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
             }}
           >
-            {[25, 50, 100].map(pageSize => (
+            {[25, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>
             ))}
           </select>
         </div>
-
       </Col>
-
     </Row>
   );
-}
-
+};
 
 // DispatchQueue component
-
 
 const DispatchQueue = (props) => {
   invariant(props.event != null, "event property is required");
@@ -560,37 +545,38 @@ const DispatchQueue = (props) => {
 
   // Fetch data
 
-  const [showState, setShowState] = useState("open");  // all, open, active
+  const [showState, setShowState] = useState("open"); // all, open, active
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [incidents, setIncidents] = useState(undefined);
 
-  useEffect(
-    () => {
-      let ignore = false;
+  useEffect(() => {
+    let ignore = false;
 
-      const fetchIncidents = async () => {
-        let incidents;
-        try {
-          if (searchInput) {
-            incidents = await ims.search(props.event.id, searchInput);
-          } else {
-            incidents = await ims.incidents(props.event.id);
-          }
+    const fetchIncidents = async () => {
+      let incidents;
+      try {
+        if (searchInput) {
+          incidents = await ims.search(props.event.id, searchInput);
+        } else {
+          incidents = await ims.incidents(props.event.id);
         }
-        catch (e) {
-          console.error(`Unable to fetch incidents: ${e.message}`);
-          incidents = null;
-        }
-
-        if (! ignore) { setIncidents(incidents); }
+      } catch (e) {
+        console.error(`Unable to fetch incidents: ${e.message}`);
+        incidents = null;
       }
 
-      fetchIncidents();
+      if (!ignore) {
+        setIncidents(incidents);
+      }
+    };
 
-      return () => { ignore = true; }
-    }, [ims, props.event, searchInput]
-  );
+    fetchIncidents();
+
+    return () => {
+      ignore = true;
+    };
+  }, [ims, props.event, searchInput]);
 
   const table = useDispatchQueueTable(incidents);
 
@@ -598,11 +584,9 @@ const DispatchQueue = (props) => {
 
   if (incidents === undefined) {
     return <Loading />;
-  }
-  else if (incidents === null) {
+  } else if (incidents === null) {
     return "Error loading incidents";
-  }
-  else {
+  } else {
     return (
       <div id="queue_wrapper">
         <h1>Dispatch Queue: {props.event.name}</h1>
@@ -610,15 +594,18 @@ const DispatchQueue = (props) => {
         <TopToolBar
           table={table}
           incidents={incidents}
-          showState={showState} setShowState={setShowState}
-          showDays={showDays} setShowDays={setShowDays}
-          searchInput={searchInput} setSearchInput={setSearchInput}
+          showState={showState}
+          setShowState={setShowState}
+          showDays={showDays}
+          setShowDays={setShowDays}
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
         />
         <DispatchQueueTable table={table} />
         <BottomToolBar table={table} incidents={incidents} />
       </div>
     );
   }
-}
+};
 
 export default DispatchQueue;

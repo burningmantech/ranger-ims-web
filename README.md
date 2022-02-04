@@ -13,7 +13,6 @@ This project provides a web client for the server.
 
 The application is implemented using [React](https://reactjs.org/).
 
-
 ## Development
 
 ### Install dependencies
