@@ -138,7 +138,7 @@ export default class IncidentManagementSystem {
     return response;
   };
 
-  _fetchAndCacheJSON = async (store, lifetime, urlParams) => {
+  _fetchAndCacheJSON = async (store, lifespan, urlParams) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
@@ -194,7 +194,7 @@ export default class IncidentManagementSystem {
     const value = _value;
     const eTag = _eTag;
 
-    store.store(value, eTag, lifetime);
+    store.store(value, eTag, lifespan);
 
     return value;
   };
@@ -203,10 +203,10 @@ export default class IncidentManagementSystem {
   //  Configuration
   ////
 
-  bagCacheLifetime = { hours: 1 };
+  bagCacheLifespan = { hours: 1 };
 
   bag = async () => {
-    return this._fetchAndCacheJSON(this._bagStore, this.bagCacheLifetime);
+    return this._fetchAndCacheJSON(this._bagStore, this.bagCacheLifespan);
   };
 
   ////
@@ -328,12 +328,12 @@ export default class IncidentManagementSystem {
 
   // Events
 
-  eventsCacheLifetime = { minutes: 5 };
+  eventsCacheLifespan = { minutes: 5 };
 
   events = async () => {
     const events = await this._fetchAndCacheJSON(
       this._eventsStore,
-      this.eventsCacheLifetime
+      this.eventsCacheLifespan
     );
     this._eventsMap = new Map(events.map((event) => [event.id, event]));
     return events;
@@ -354,14 +354,14 @@ export default class IncidentManagementSystem {
 
   // Incidents
 
-  incidentsCacheLifetime = { minutes: 5 };
+  incidentsCacheLifespan = { minutes: 5 };
 
   incidents = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
     const incidents = await this._fetchAndCacheJSON(
       this._incidentsStore(eventID),
-      this.incidentsCacheLifetime,
+      this.incidentsCacheLifespan,
       { event_id: eventID }
     );
     this._incidentsMap = new Map(
