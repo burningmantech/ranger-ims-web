@@ -1,24 +1,18 @@
 # Docs:
 # https://help.github.com/en/actions/automating-your-workflow-with-github-actions
 
-
-
 name: CI/CD
 
 on: [push]
 
-
 jobs:
-
   unit:
-
     name: Unit Tests
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-
       - name: Checkout source code
         uses: actions/checkout@v2
 
@@ -47,7 +41,6 @@ jobs:
           GITHUB_USER: ${{ github.actor }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
 
-
   docker:
     name: Build Docker image
 
@@ -55,7 +48,6 @@ jobs:
     timeout-minutes: 15
 
     steps:
-
       - name: Checkout source code
         uses: actions/checkout@v2
 
@@ -73,9 +65,7 @@ jobs:
           name: images
           path: images
 
-
   test-docker:
-
     name: Test Docker image
 
     needs: [docker]
@@ -84,7 +74,6 @@ jobs:
     timeout-minutes: 10
 
     steps:
-
       - name: Checkout source code
         uses: actions/checkout@v2
 

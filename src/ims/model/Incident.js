@@ -3,34 +3,28 @@ import { DateTime } from "luxon";
 
 import Location from "./Location";
 
-
 export default class Incident {
-
   static fromJSON = (json) => {
-    const location = (
-      (json.location == null) ? null : Location.fromJSON(json.location)
-    );
+    const location =
+      json.location == null ? null : Location.fromJSON(json.location);
     try {
-      return new Incident(
-        {
-          "eventID": json.event,
-          "number": json.number,
-          "created": DateTime.fromISO(json.created),
-          "state": json.state,
-          "priority": json.priority,
-          "summary": json.summary,
-          "location": location,
-          "rangerHandles": json.ranger_handles,
-          "incidentTypes": json.incident_types,
-          // "reportEntries": json.report_entries,
-          // "incidentReportNumbers": json.incident_reports,
-        }
-      );
+      return new Incident({
+        eventID: json.event,
+        number: json.number,
+        created: DateTime.fromISO(json.created),
+        state: json.state,
+        priority: json.priority,
+        summary: json.summary,
+        location: location,
+        rangerHandles: json.ranger_handles,
+        incidentTypes: json.incident_types,
+        // "reportEntries": json.report_entries,
+        // "incidentReportNumbers": json.incident_reports,
+      });
+    } catch (e) {
+      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
     }
-    catch (e) {
-      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`)
-    }
-  }
+  };
 
   static stateToString = (state) => {
     invariant(state != null, "state is required");
@@ -48,7 +42,7 @@ export default class Incident {
       default:
         throw new Error(`Invalid state: ${state}`);
     }
-  }
+  };
 
   static priorityToString = (priority) => {
     switch (priority) {
@@ -63,20 +57,20 @@ export default class Incident {
       default:
         throw new Error(`Invalid priority: ${priority}`);
     }
-  }
+  };
 
   constructor({
-    eventID,  // text
-    number,  //  int
-    created,  // DateTime
-    state,  // "new", "on_hold", "dispatched", "on_scene", "closed"
-    priority,  // 1, 3, 5; deprecated: 2, 4
-    summary,  // text
-    location,  // Location
-    rangerHandles,  // [text]
-    incidentTypes,  // [text]
-    reportEntries,  // [ReportEntry]
-    incidentReportNumbers,  // [int]
+    eventID, // text
+    number, //  int
+    created, // DateTime
+    state, // "new", "on_hold", "dispatched", "on_scene", "closed"
+    priority, // 1, 3, 5; deprecated: 2, 4
+    summary, // text
+    location, // Location
+    rangerHandles, // [text]
+    incidentTypes, // [text]
+    reportEntries, // [ReportEntry]
+    incidentReportNumbers, // [int]
   }) {
     invariant(eventID != null, "eventID is required");
     invariant(number != null, "number is required");
@@ -105,26 +99,24 @@ export default class Incident {
 
   toString = () => {
     return `(${this.eventID}#${this.number})`;
-  }
+  };
 
   toJSON = () => {
-    const locationJSON = (
-      (this.location == null) ? null : this.location.toJSON()
-    );
+    const locationJSON = this.location == null ? null : this.location.toJSON();
     return {
-      "event": this.eventID,
-      "number": this.number,
-      "created": this.created.toISO(),
-      "state": this.state,
-      "priority": this.priority,
-      "summary": this.summary,
-      "location": locationJSON,
-      "ranger_handles": this.rangerHandles,
-      "incident_types": this.incidentTypes,
+      event: this.eventID,
+      number: this.number,
+      created: this.created.toISO(),
+      state: this.state,
+      priority: this.priority,
+      summary: this.summary,
+      location: locationJSON,
+      ranger_handles: this.rangerHandles,
+      incident_types: this.incidentTypes,
       // "report_entries": this.reportEntries,
       // "incident_reports": this.incidentReportNumbers,
     };
-  }
+  };
 
   summarize = () => {
     if (this.summary) {
@@ -132,6 +124,5 @@ export default class Incident {
     }
 
     return "<summary goes here>";
-  }
-
+  };
 }

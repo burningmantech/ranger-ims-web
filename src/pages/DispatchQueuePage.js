@@ -8,7 +8,6 @@ import Loading from "../components/Loading";
 import Page from "../components/Page";
 import DispatchQueue from "../components/DispatchQueue";
 
-
 export const DispatchQueuePage = (props) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
@@ -20,33 +19,34 @@ export const DispatchQueuePage = (props) => {
 
   const [event, setEvent] = useState(undefined);
 
-  useEffect(
-    () => {
-      const eventID = () => {
-        invariant(props.id != null, "id property is required");
-        return props.id;
+  useEffect(() => {
+    const eventID = () => {
+      invariant(props.id != null, "id property is required");
+      return props.id;
+    };
+
+    let ignore = false;
+
+    const fetchEvent = async () => {
+      let event;
+      try {
+        event = await ims.eventWithID(eventID());
+      } catch (e) {
+        console.error(`Unable to fetch event: ${e.message}`);
+        event = null;
       }
 
-      let ignore = false;
-
-      const fetchEvent = async () => {
-        let event;
-        try {
-          event = await ims.eventWithID(eventID());
-        }
-        catch (e) {
-          console.error(`Unable to fetch event: ${e.message}`);
-          event = null;
-        }
-
-        if (! ignore) { setEvent(event); }
+      if (!ignore) {
+        setEvent(event);
       }
+    };
 
-      fetchEvent();
+    fetchEvent();
 
-      return () => { ignore = true; }
-    }, [ims, props.id, props.match]
-  );
+    return () => {
+      ignore = true;
+    };
+  }, [ims, props.id, props.match]);
 
   // Render
 
@@ -61,16 +61,17 @@ export const DispatchQueuePage = (props) => {
       <DispatchQueue event={event} />
     </Page>
   );
-}
+};
 
 export const RoutedDispatchQueuePage = () => {
   const params = useParams();
 
-  invariant(params.eventID != null, "eventID parameter is required: " + JSON.stringify(params));
-
-  return (
-    <DispatchQueuePage id={params.eventID} />
+  invariant(
+    params.eventID != null,
+    "eventID parameter is required: " + JSON.stringify(params)
   );
-}
+
+  return <DispatchQueuePage id={params.eventID} />;
+};
 
 export default RoutedDispatchQueuePage;

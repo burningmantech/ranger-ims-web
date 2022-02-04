@@ -15,9 +15,7 @@ import ModalTitle from "react-bootstrap/ModalTitle";
 
 import { IMSContext } from "../ims/context";
 
-
 const Login = (props) => {
-
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
@@ -28,26 +26,24 @@ const Login = (props) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const [_ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [_ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const onUsernameChange = (event) => {
     setUsername(event.target.value);
-  }
+  };
 
   const onPasswordChange = (event) => {
     setPassword(event.target.value);
-  }
+  };
 
   if (ims.isLoggedIn()) {
     return <>{props.children}</>;
-  }
-  else {
+  } else {
     async function onLogin(event) {
       event.preventDefault();
       try {
-        await ims.login(username, {password: password});
-      }
-      catch (e) {
+        await ims.login(username, { password: password });
+      } catch (e) {
         const errorMessage = e.message;
         console.error(`Login failed: ${errorMessage}`);
         setErrorMessage(errorMessage);
@@ -60,8 +56,7 @@ const Login = (props) => {
     let Error;
     if (errorMessage === null) {
       Error = "";
-    }
-    else {
+    } else {
       Error = (
         <Alert variant="danger">
           <Alert.Heading>Login Failed</Alert.Heading>
@@ -74,13 +69,11 @@ const Login = (props) => {
       <Container>
         <Form onSubmit={onLogin}>
           <ModalDialog>
-
             <ModalHeader>
               <ModalTitle>Authorization Required</ModalTitle>
             </ModalHeader>
 
             <ModalBody>
-
               {Error}
 
               <Form.Group controlId="username_field">
@@ -111,18 +104,18 @@ const Login = (props) => {
                   value={password}
                 />
               </Form.Group>
-
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="primary" type="submit">Log In</Button>
+              <Button variant="primary" type="submit">
+                Log In
+              </Button>
             </ModalFooter>
-
           </ModalDialog>
         </Form>
       </Container>
     );
   }
-}
+};
 
 export default Login;

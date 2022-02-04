@@ -4,35 +4,31 @@ import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 
 import { EventPage } from "./EventPage";
 
-
 describe("EventPage component", () => {
+  test("redirect to queue", async () => {
+    const DispatchQueuePage = () => {
+      const params = useParams();
+      return <p>{params.eventID}</p>;
+    };
 
-  test(
-    "redirect to queue", async () => {
-      const DispatchQueuePage = () => {
-        const params = useParams();
-        return <p>{params.eventID}</p>;
-      }
+    const eventID = "rad_event_of_awesome";
 
-      const eventID = "rad_event_of_awesome";
+    render(
+      <MemoryRouter initialEntries={[`/events/${eventID}/`]}>
+        <Routes>
+          {/* Event Page */}
+          <Route path={"/events/:eventID/"} element={<EventPage />} />
 
-      render(
-        <MemoryRouter initialEntries={[`/events/${eventID}/`]}>
-          <Routes>
-            {/* Event Page */}
-            <Route path={"/events/:eventID/"} element={<EventPage />} />
+          {/* Dispatch Queue Page */}
+          <Route
+            path={"/events/:eventID/queue"}
+            element={<DispatchQueuePage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
 
-            {/* Dispatch Queue Page */}
-            <Route path={"/events/:eventID/queue"} element={
-              <DispatchQueuePage />
-            } />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      // Same expectations as for /ims (see next test)
-      expect(screen.queryByText(eventID)).toBeInTheDocument();
-    }
-  );
-
+    // Same expectations as for /ims (see next test)
+    expect(screen.queryByText(eventID)).toBeInTheDocument();
+  });
 });

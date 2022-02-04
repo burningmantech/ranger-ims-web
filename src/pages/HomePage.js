@@ -1,6 +1,5 @@
 import Page from "../components/Page";
 
-
 const HomePage = (props) => {
   return (
     <Page>
@@ -8,6 +7,6 @@ const HomePage = (props) => {
       ...
     </Page>
   );
-}
+};
 
 export default HomePage;

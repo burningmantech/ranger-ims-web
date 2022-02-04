@@ -1,8 +1,6 @@
 import { DateTime } from "luxon";
 
-
 export default class Store {
-
   static _storage = window.localStorage;
 
   static removeAll() {
@@ -21,53 +19,44 @@ export default class Store {
     if (object == null) {
       // null
       return null;
-    }
-    else if (this.modelClass == null) {
+    } else if (this.modelClass == null) {
       // JSON
       return object;
-    }
-    else if (object.constructor === Array) {
+    } else if (object.constructor === Array) {
       // Array of model objects
       return object.map((element) => element.toJSON());
-    }
-    else {
+    } else {
       // Model object
       return object.toJSON();
     }
-  }
+  };
 
   deserializeValue = (json) => {
     if (json == null) {
       // null
       return null;
-    }
-    else if (this.modelClass == null) {
+    } else if (this.modelClass == null) {
       // JSON
       return json;
-    }
-    else if (json.constructor === Array) {
+    } else if (json.constructor === Array) {
       // Array of model objects
-      return json.map(
-        (jsonObject) => this.modelClass.fromJSON(jsonObject)
-      );
-    }
-    else {
+      return json.map((jsonObject) => this.modelClass.fromJSON(jsonObject));
+    } else {
       // Model object
       return this.modelClass.fromJSON(json);
     }
-  }
+  };
 
   store = (object, tag, lifespan) => {
     const value = this.serializeValue(object);
-    const expiration = (
-      (lifespan == null) ? undefined: DateTime.local().plus(lifespan)
-    );
+    const expiration =
+      lifespan == null ? undefined : DateTime.local().plus(lifespan);
 
     const container = { value: value, tag: tag, expiration: expiration };
 
     this._storage.setItem(this.storeID, JSON.stringify(container));
     console.debug(`Stored ${this.storeID} in cache (tag:${tag}).`);
-  }
+  };
 
   load = () => {
     const jsonText = this._storage.getItem(this.storeID);
@@ -81,16 +70,13 @@ export default class Store {
       console.error(message);
       this.remove();
       return { value: null };
-    }
+    };
 
     let container;
     try {
       container = JSON.parse(jsonText);
-    }
-    catch (e) {
-      return error(
-        `Unable to parse JSON container for ${this.storeID}: ${e}`
-      );
+    } catch (e) {
+      return error(`Unable to parse JSON container for ${this.storeID}: ${e}`);
     }
 
     const { value: valueJSON, tag, expiration: expirationJSON } = container;
@@ -102,23 +88,20 @@ export default class Store {
     let _value;
     try {
       _value = this.deserializeValue(valueJSON);
-    }
-    catch (e) {
+    } catch (e) {
       return error(`Invalid JSON for cached ${this.storeID}: ${e}`);
     }
     const value = _value;
 
-    const expiration = (
-      (expirationJSON == null) ? undefined : DateTime.fromISO(expirationJSON)
-    );
+    const expiration =
+      expirationJSON == null ? undefined : DateTime.fromISO(expirationJSON);
 
     console.debug(`Loaded cached ${this.storeID}.`);
     return { value: value, tag: tag, expiration: expiration };
-  }
+  };
 
   remove = () => {
     this._storage.removeItem(this.storeID);
     console.debug(`Removed cached ${this.storeID}.`);
-  }
-
+  };
 }

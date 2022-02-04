@@ -9,5 +9,5 @@ export const URLs = {
   incidents: (event) => `${eventsURL}${event.id}/incidents/`,
   incident: (event, number) => `${eventsURL}${event.id}/incidents/${number}`,
   admin: adminURL,
-}
+};
 Object.freeze(URLs);

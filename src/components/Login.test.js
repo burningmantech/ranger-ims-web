@@ -2,15 +2,16 @@ import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
 import { act, render, screen } from "@testing-library/react";
-import userEvent from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 
 import User from "../ims/User";
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
+import {
+  renderWithIMSContext,
+  testIncidentManagementSystem,
+} from "../ims/TestIMS";
 import Login from "./Login";
 
-
 describe("Login component", () => {
-
   afterEach(() => {
     testIncidentManagementSystem().logout();
   });
@@ -52,7 +53,7 @@ describe("Login component", () => {
 
   test("no user -> log in -> content", async () => {
     const ims = testIncidentManagementSystem();
-    const content = "Hello, World!"
+    const content = "Hello, World!";
     const username = "Hubcap";
     const password = username;
 
@@ -67,7 +68,7 @@ describe("Login component", () => {
 
   test("no user -> invalid log in -> no content", async () => {
     const ims = testIncidentManagementSystem();
-    const content = "Hello, World!"
+    const content = "Hello, World!";
     const username = "Hubcap";
     const password = "Not My Password";
 
@@ -80,8 +81,7 @@ describe("Login component", () => {
     try {
       const element = await screen.findByText(content);
       expect(element).not.toBeInTheDocument();
-    }
-    catch(e) {
+    } catch (e) {
       expect(e.name).toEqual("TestingLibraryElementError");
     }
 
@@ -91,11 +91,13 @@ describe("Login component", () => {
   test("no user -> log in exception -> error message", async () => {
     const message = "Whoops! Something went wrong...";
     const ims = testIncidentManagementSystem();
-    const content = "Hello, World!"
+    const content = "Hello, World!";
     const username = "Hubcap";
     const password = username;
 
-    ims.login = jest.fn(async () => { throw new Error(message); });
+    ims.login = jest.fn(async () => {
+      throw new Error(message);
+    });
 
     await act(async () => {
       renderWithIMSContext(<Login>{content}</Login>, ims);
@@ -107,5 +109,4 @@ describe("Login component", () => {
 
     expect(await screen.findByText(message)).toBeInTheDocument();
   });
-
 });

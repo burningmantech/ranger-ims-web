@@ -3,17 +3,15 @@ import { act, render, screen } from "@testing-library/react";
 
 import AdminPage from "./AdminPage";
 
-import { renderWithIMSContext, testIncidentManagementSystem } from "../ims/TestIMS";
-
+import {
+  renderWithIMSContext,
+  testIncidentManagementSystem,
+} from "../ims/TestIMS";
 
 describe("AdminPage component", () => {
+  test("heading", async () => {
+    renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
 
-  test(
-    "heading", async () => {
-      renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
-
-      expect(await screen.findByText("Admin Console")).toBeInTheDocument();
-    }
-  );
-
+    expect(await screen.findByText("Admin Console")).toBeInTheDocument();
+  });
 });
