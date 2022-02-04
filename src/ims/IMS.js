@@ -96,8 +96,8 @@ export default class IncidentManagementSystem {
     return response;
   };
 
-  _fetchJSONFromServer = async (url, options = {}) => {
-    const requestHeaders = new Headers(options["headers"]);
+  _fetchJSONFromServer = async (url, { headers, json, eTag } = {}) => {
+    const requestHeaders = new Headers(headers);
 
     // Ensure content type is JSON
     if (requestHeaders.has("Content-Type")) {
@@ -110,18 +110,18 @@ export default class IncidentManagementSystem {
     }
 
     const requestOptions = { headers: requestHeaders };
-    if (options["json"] == null) {
+    if (json == null) {
       requestOptions.method = "GET";
 
-      if (options["eTag"] != null) {
-        requestHeaders.set("If-None-Match", options["eTag"]);
+      if (eTag != null) {
+        requestHeaders.set("If-None-Match", eTag);
       }
     } else {
       requestOptions.method = "POST";
-      requestOptions.body = JSON.stringify(options["json"]);
+      requestOptions.body = JSON.stringify(json);
 
-      if (options["eTag"] != null) {
-        requestHeaders.set("If-Match", options["eTag"]);
+      if (eTag != null) {
+        requestHeaders.set("If-Match", eTag);
       }
     }
 
@@ -168,8 +168,7 @@ export default class IncidentManagementSystem {
     }
     invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
 
-    const fetchOptions = { eTag: cachedETag };
-    const response = await this._fetchJSONFromServer(url, fetchOptions);
+    const response = await this._fetchJSONFromServer(url, { eTag: cachedETag });
 
     let _value;
     let _eTag;
