@@ -82,10 +82,7 @@ describe("IMS: init", () => {
     expect(ims._incidentsStoreByEvent[eventID]).toBeUndefined();
     const store1 = ims._incidentsStore(eventID);
     const store2 = ims._incidentsStore(eventID);
-    console.error(store1);
-    console.error(store2);
-    console.error(store1 === store2);
-    expect(store1 === store2).toBe(true);
+    expect(store1).toBe(store2);
   });
 });
 
