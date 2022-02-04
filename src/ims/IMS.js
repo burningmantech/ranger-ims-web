@@ -53,13 +53,10 @@ export default class IncidentManagementSystem {
 
   _incidentsStore = (eventID) => {
     if (!this._incidentsStoreByEvent.has(eventID)) {
-      this._incidentsStoreByEvent[eventID] = new Store(
-        Incident,
-        `incidents:${eventID}`,
-        "incidents"
-      );
+      const store = new Store(Incident, `incidents:${eventID}`, "incidents");
+      this._incidentsStoreByEvent.set(eventID, store);
     }
-    return this._incidentsStoreByEvent[eventID];
+    return this._incidentsStoreByEvent.get(eventID);
   };
 
   _fetch = async (request) => {
@@ -442,9 +439,9 @@ export default class IncidentManagementSystem {
         });
       }
 
-      this._searchIndexByEvent[eventID] = index;
+      this._searchIndexByEvent.set(eventID, index);
     }
-    return this._searchIndexByEvent[eventID];
+    return this._searchIndexByEvent.get(eventID);
   };
 
   search = async (eventID, query) => {
