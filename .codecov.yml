@@ -7,3 +7,7 @@ coverage:
       default:
         informational: false
         target: 100%
+
+parsers:
+  javascript:
+    enable_partials: yes
