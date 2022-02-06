@@ -358,7 +358,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._jsonResponse(requestJSON);
         }
         /* istanbul ignore next */
-        break;
+        throw new Error("unimplemented");
 
       case path == "/text_hello":
         console.debug("Issuing hello text response.");
@@ -371,7 +371,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._jsonResponse(bag);
         }
         /* istanbul ignore next */
-        break;
+        throw new Error("unimplemented");
 
       case path == bag.urls.auth:
         /* istanbul ignore else */
@@ -382,7 +382,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._authResponse(requestJSON);
         }
         /* istanbul ignore next */
-        break;
+        throw new Error("unimplemented");
 
       case path == bag.urls.events:
         /* istanbul ignore else */
@@ -391,7 +391,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           return this._jsonResponse(this.testData.events);
         }
         /* istanbul ignore next */
-        break;
+        throw new Error("unimplemented");
 
       case path.startsWith(bag.urls.events):
         let rest = path.substring(bag.urls.events.length);
@@ -402,14 +402,17 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
         switch (eventChild) {
           case "incidents":
+            /* istanbul ignore else */
             if (rest != "") {
               console.debug(`Issuing event ${eventID} incidents response.`);
               return this._jsonResponse(this.testData.incidents[eventID]);
             }
+            /* istanbul ignore next */
+            throw new Error("unimplemented");
         }
 
         /* istanbul ignore next */
-        break;
+        throw new Error("unimplemented");
     }
 
     /* istanbul ignore next */
