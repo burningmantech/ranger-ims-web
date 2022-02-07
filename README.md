@@ -1,7 +1,8 @@
 # Ranger Incident Management System — Web Client
 
-[![Build Status](https://github.com/burningmantech/ranger-ims-web/workflows/CI%2fCD/badge.svg)](https://github.com/burningmantech/ranger-ims-web/actions)
-[![Code Coverage](https://codecov.io/github/burningmantech/ranger-ims-web/coverage.svg?branch=master)](https://codecov.io/github/burningmantech/ranger-ims-web?branch=master)
+[![GitHub Actions Build Status](https://github.com/burningmantech/ranger-ims-web/workflows/CI%2fCD/badge.svg)](https://github.com/burningmantech/ranger-ims-web/actions)
+[![Tested Code Coverage](https://codecov.io/github/burningmantech/ranger-ims-web/coverage.svg?branch=master)](https://codecov.io/github/burningmantech/ranger-ims-web?branch=master)
+[![DeepScan Grade](https://deepscan.io/api/teams/16805/projects/20111/branches/537679/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=16805&pid=20111&bid=537679)
 
 This software package implements software to provide logging for incidents as they occur and to aid in the dispatch of resources to respond to those incidents.
 It is presently tailored to the specific needs of the Black Rock Rangers in Black Rock City.
