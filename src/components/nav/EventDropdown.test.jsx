@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 
-import { act, render, screen, fireEvent } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";

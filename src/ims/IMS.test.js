@@ -2,10 +2,7 @@ import { DateTime } from "luxon";
 
 import Store from "./Store";
 import IncidentManagementSystem from "./IMS";
-import {
-  TestIncidentManagementSystem,
-  testIncidentManagementSystem,
-} from "./TestIMS";
+import { testIncidentManagementSystem } from "./TestIMS";
 import Location from "./model/Location";
 import RodGarettAddress from "./model/RodGarettAddress";
 

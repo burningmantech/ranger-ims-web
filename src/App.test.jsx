@@ -3,7 +3,7 @@ import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
-import { renderWithRoute, testIncidentManagementSystem } from "./ims/TestIMS";
+import { testIncidentManagementSystem } from "./ims/TestIMS";
 import { URLs } from "./URLs";
 import App from "./App";
 

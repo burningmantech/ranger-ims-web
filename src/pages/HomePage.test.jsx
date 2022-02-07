@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
-import { act, render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import User from "../ims/User";
 import {

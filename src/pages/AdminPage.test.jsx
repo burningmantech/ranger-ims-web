@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, render, screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 
 import AdminPage from "./AdminPage";
 
