@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import jwtSign from "jsonwebtoken/sign";
 import { DateTime, Duration } from "luxon";
 
 import { render } from "@testing-library/react";
@@ -307,7 +306,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         default:
           return this._authFailedResponse();
       }
-      responseJSON.token = jwtSign(jwtPayload, "SEKRET");
+      // Generate a JWT (with no signature)
+      responseJSON.token =
+        btoa(JSON.stringify({ alg: "none" })) +
+        "." +
+        btoa(JSON.stringify(jwtPayload)) +
+        ".";
     }
 
     return this._jsonResponse(responseJSON);
