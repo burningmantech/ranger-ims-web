@@ -913,6 +913,9 @@ describe("IMS: search", () => {
       created: DateTime.fromISO("2022-01-21T08:00Z"),
     });
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
     // Full words
     expect(await search(ims, event, "Sunday")).toEqual(new Set([1, 2, 3]));
     expect(await search(ims, event, "Wednesday")).toEqual(new Set([4]));
@@ -936,6 +939,9 @@ describe("IMS: search", () => {
     await ims.addIncidentWithFields(event.id, { state: "new" }); // 6
     await ims.addIncidentWithFields(event.id, { state: "on_scene" }); // 7
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
     // Full words
     expect(await search(ims, event, "new")).toEqual(new Set([3, 6]));
     expect(await search(ims, event, "on hold")).toEqual(new Set([2]));
@@ -954,6 +960,9 @@ describe("IMS: search", () => {
     await ims.addIncidentWithFields(event.id, { priority: 4 }); // 4
     await ims.addIncidentWithFields(event.id, { priority: 5 }); // 5
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
     // Full words
     expect(await search(ims, event, "low")).toEqual(new Set([4, 5]));
     expect(await search(ims, event, "normal")).toEqual(new Set([3]));
@@ -967,6 +976,9 @@ describe("IMS: search", () => {
     await ims.addIncidentWithFields(event.id, { summary: "Cat in tree" }); // 1
     await ims.addIncidentWithFields(event.id, { summary: "Dog in house" }); // 2
     await ims.addIncidentWithFields(event.id, { summary: "Cat in house" }); // 3
+
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
 
     // Full words
     expect(await search(ims, event, "tree")).toEqual(new Set([1]));
@@ -1004,6 +1016,9 @@ describe("IMS: search", () => {
     await ims.addIncidentWithFields(event.id, {
       location: new Location({ name: "Underground House" }),
     });
+
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
 
     // Full words
     expect(await search(ims, event, "log-pile")).toEqual(new Set([1]));
@@ -1052,6 +1067,9 @@ describe("IMS: search", () => {
       }),
     });
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
     // Full words
     expect(await search(ims, event, "lake")).toEqual(new Set([1]));
     expect(await search(ims, event, "stream")).toEqual(new Set([2]));
@@ -1089,6 +1107,9 @@ describe("IMS: search", () => {
       incidentTypes: ["Housebound Dogs", "Treebound Cats"],
     });
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
     // Full words
     expect(await search(ims, event, "Housebound Dogs")).toEqual(
       new Set([2, 4])
@@ -1116,6 +1137,9 @@ describe("IMS: search", () => {
     await ims.addIncidentWithFields(event.id, {
       rangerHandles: ["Bucket", "Hubcap"],
     });
+
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
 
     // Full words
     expect(await search(ims, event, "Bucket")).toEqual(new Set([2, 4]));
@@ -1145,6 +1169,10 @@ describe("IMS: search", () => {
     // 3
     await ims.addIncidentWithFields(event.id, { rangerHandles: ["Hubcap"] });
 
+    // No result
+    expect(await search(ims, event, "XYZZY")).toEqual(new Set([]));
+
+    // Full words
     expect(await search(ims, event, "Bucket")).toEqual(new Set([1, 2]));
     expect(await search(ims, event, "Hubcap")).toEqual(new Set([3]));
   });

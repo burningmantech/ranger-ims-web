@@ -454,7 +454,11 @@ export default class IncidentManagementSystem {
     const incidents = [];
     for (const result of results) {
       for (const number of result.result) {
-        if (!numbers.has(number)) {
+        /* istanbul ignore next */
+        if (numbers.has(number)) {
+          // This (results.length > 1) doesn't happen in our code
+          throw new Error("Tests needed for this path");
+        } else {
           numbers.add(number);
           incidents.push(this._incidentsMap.get(number));
         }
