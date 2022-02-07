@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
 import { act } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
 import {
