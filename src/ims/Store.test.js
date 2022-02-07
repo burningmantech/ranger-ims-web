@@ -102,7 +102,7 @@ describe("Store", () => {
     const lifespan = { seconds: 60 };
     const nowPlusLifespan = DateTime.local().plus({ seconds: 59 });
 
-    store.store(null, undefined, lifespan);
+    store.store(value, undefined, lifespan);
 
     const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
     const json = JSON.parse(jsonText);
@@ -117,7 +117,7 @@ describe("Store", () => {
 
     // Test the entire container content for completeness
     expect(jsonText).toEqual(
-      JSON.stringify({ value: null, expiration: json.expiration })
+      JSON.stringify({ value: value, expiration: json.expiration })
     );
   });
 
