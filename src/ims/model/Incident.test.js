@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
 
-import Event from "./Event";
 import Incident from "./Incident";
 import Location from "./Location";
 
