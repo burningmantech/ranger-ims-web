@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import {

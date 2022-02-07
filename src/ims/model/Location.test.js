@@ -1,16 +1,6 @@
 import Location from "./Location";
 import RodGarettAddress from "./RodGarettAddress";
 
-const addressJSONWithDescription = (description) => {
-  return {
-    type: "garett",
-    description: description,
-    concentric: null,
-    radial_hour: null,
-    radial_minute: null,
-  };
-};
-
 describe("Location", () => {
   test("toString, no fields", () => {
     const location = new Location({});

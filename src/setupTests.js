@@ -58,7 +58,7 @@ expect.extend({
     try {
       await promise;
     } catch (e) {
-      if (e.message == message) {
+      if (e.message === message) {
         return {
           message: () => `Rejected with given message: ${e.message}`,
           pass: true,

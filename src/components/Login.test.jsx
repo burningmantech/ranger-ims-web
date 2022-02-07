@@ -1,10 +1,9 @@
 import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
-import { act, render, screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import User from "../ims/User";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
