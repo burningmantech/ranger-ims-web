@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import jwtDecode from "jsonwebtoken/decode";
 import { DateTime } from "luxon";
 
 import Store from "./Store";
@@ -8,6 +7,15 @@ import Event from "./model/Event";
 import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
+
+const jwtDecode = (token) => {
+  try {
+    return JSON.parse(atob(token.split(".")[1]));
+  } catch (e) {
+    console.error(`Unable to decode JWT ${token}: ${e}`);
+    return null;
+  }
+};
 
 export default class IncidentManagementSystem {
   constructor(bagURL) {
