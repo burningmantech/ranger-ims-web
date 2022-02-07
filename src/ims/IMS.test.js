@@ -16,7 +16,7 @@ expect.extend({
     }
 
     const contentType = request.headers.get("Content-Type");
-    if (contentType != "application/json") {
+    if (contentType !== "application/json") {
       return {
         message: () => `Request Content-Type is not JSON: ${contentType}`,
         pass: false,
@@ -282,7 +282,8 @@ describe("IMS: HTTP requests", () => {
 describe("IMS: bag", () => {
   test("load bag: request content type", async () => {
     const ims = testIncidentManagementSystem();
-    const bag = await ims.bag();
+
+    await ims.bag();
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -374,7 +375,7 @@ describe("IMS: bag", () => {
     const bagStore = new Store(null, "bag", "bag");
 
     // Fetch the bag from the server
-    const bag1 = await ims.bag();
+    await ims.bag();
 
     // Get the stored ETag
     const { tag: eTag1 } = bagStore.load();
@@ -382,11 +383,11 @@ describe("IMS: bag", () => {
     // Re-write the cached value with the same ETag and stale expiration
     bagStore.store(testBag, eTag1, { seconds: 0 });
 
-    const bag2 = await ims.bag();
+    const bag = await ims.bag();
 
     // We expect use the (re-written) cached bag, given the unchanged ETag on
     // the server.
-    expect(bag2).toEqual(testBag);
+    expect(bag).toEqual(testBag);
   });
 
   test("load cached bag: expired, different ETag", async () => {
@@ -640,7 +641,7 @@ describe("IMS: authentication", () => {
       notified = true;
     };
 
-    const result = await ims.login(username, { password: password });
+    await ims.login(username, { password: password });
 
     expect(notified).toBe(true);
   });
