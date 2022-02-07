@@ -276,9 +276,6 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   _authResponse = (requestJSON) => {
     const username = requestJSON.identification;
     const password = requestJSON.password;
-    const expiration = DateTime.local().plus(
-      TestIncidentManagementSystem.timeout
-    );
 
     if (username != password) {
       return this._authFailedResponse();
