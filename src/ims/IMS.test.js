@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 
 import Store from "./Store";
+import { jwtDecode } from "./IMS";
 import IncidentManagementSystem from "./IMS";
 import { testIncidentManagementSystem } from "./TestIMS";
 import Location from "./model/Location";
@@ -51,6 +52,28 @@ expect.extend({
       pass: true,
     };
   },
+});
+
+describe("jwtDecode", () => {
+  test("decode, valid", () => {
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+      "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ." +
+      "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+    const jwt = jwtDecode(token);
+
+    expect(jwt.sub).toEqual("1234567890");
+    expect(jwt.name).toEqual("John Doe");
+    expect(jwt.iat).toEqual(1516239022);
+  });
+
+  test("decode, invalid", () => {
+    const token = "XYZZY";
+    const jwt = jwtDecode(token);
+
+    expect(jwt).toBeNull();
+  });
 });
 
 describe("IMS: init", () => {

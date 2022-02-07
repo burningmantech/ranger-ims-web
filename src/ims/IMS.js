@@ -8,7 +8,7 @@ import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
 
-const jwtDecode = (token) => {
+export const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
