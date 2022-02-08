@@ -3,6 +3,14 @@ import { DateTime } from "luxon";
 import User from "./User";
 
 describe("User", () => {
+  test("toString", () => {
+    const username = "Hubcap";
+    const credentials = { expiration: DateTime.local() };
+    const user = new User(username, credentials);
+
+    expect(user.toString()).toEqual(username);
+  });
+
   test("toJSON", () => {
     const username = "Hubcap";
     const credentials = {
