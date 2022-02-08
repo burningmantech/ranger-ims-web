@@ -33,6 +33,7 @@ export const DispatchQueuePage = (props) => {
         event = await ims.eventWithID(eventID());
       } catch (e) {
         console.error(`Unable to fetch event: ${e.message}`);
+        console.error(e);
         event = null;
       }
 
@@ -46,7 +47,7 @@ export const DispatchQueuePage = (props) => {
     return () => {
       ignore = true;
     };
-  }, [ims, props.id, props.match]);
+  }, [ims, props.id]);
 
   // Render
 

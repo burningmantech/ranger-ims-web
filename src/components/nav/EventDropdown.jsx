@@ -26,6 +26,7 @@ const EventDropdown = (props) => {
         events = await ims.events();
       } catch (e) {
         console.error(`Unable to fetch events: ${e.message}`);
+        console.error(e);
         events = null;
       }
 
