@@ -5,6 +5,7 @@ import { render } from "@testing-library/react";
 
 import IncidentManagementSystem from "./IMS";
 import User from "./User";
+import Incident from "./model/Incident";
 import { IMSContext } from "./context";
 
 /* https://stackoverflow.com/a/7616484 */
@@ -18,6 +19,13 @@ const hashText = (text) => {
     hash |= 0;
   }
   return hash;
+};
+
+const assertFrom = (name, value, array) => {
+  invariant(
+    array.indexOf(value) != -1,
+    `${name} must be one of [${array}], not ${value}`
+  );
 };
 
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
@@ -162,7 +170,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             number: 3,
             created: "2021-04-00T18:45:46",
             summary: "Giraffe in tree",
-            priority: 6,
+            priority: 5,
             state: "new",
             incident_types: ["Dog"],
             ranger_handles: [],
@@ -192,13 +200,22 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     );
     for (const eventID of Object.keys(this.testData.incidents)) {
       const incidents = this.testData.incidents[eventID];
+
+      // Check incident values
       for (const incident of incidents) {
         invariant(
           eventID == incident.event,
-          `Incident #${incident.number} in event ID ${eventID} has ` +
-            `mismatched event ID: ${incident.event}`
+          `${incident} has mismatched event ID: ${incident.event}`
+        );
+        assertFrom(`${incident} state`, incident.state, Incident.states);
+        assertFrom(
+          `${incident} priority`,
+          incident.priority,
+          Incident.priorities
         );
       }
+
+      // Check for duplicate incident numbers
       const incidentNumbers = incidents.map((i) => i.number);
       invariant(
         cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
