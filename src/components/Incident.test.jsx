@@ -50,9 +50,41 @@ describe("Incident component: display", () => {
 
         const select = screen.getByLabelText("Priority:");
 
-        console.error(incident);
-
         expect(parseInt(select.value)).toEqual(incident.priority);
+
+        cleanup();
+      }
+    }
+  });
+
+  test("incident summary, value", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      for (const incident of await ims.incidents(event.id)) {
+        renderWithIMSContext(<Incident incident={incident} />, ims);
+
+        const textField = screen.getByLabelText("Summary:");
+
+        const expected = incident.summary == null ? "" : incident.summary;
+
+        expect(textField.value).toEqual(expected);
+
+        cleanup();
+      }
+    }
+  });
+
+  test("incident summary, placeholder", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      for (const incident of await ims.incidents(event.id)) {
+        renderWithIMSContext(<Incident incident={incident} />, ims);
+
+        const textField = screen.getByLabelText("Summary:");
+
+        expect(textField.placeholder).toEqual("default value");
 
         cleanup();
       }
