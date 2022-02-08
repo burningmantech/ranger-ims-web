@@ -21,6 +21,7 @@ describe("IncidentPage component", () => {
         );
 
         expect(screen.queryByText("Loading...")).toBeInTheDocument();
+
         cleanup();
       }
     }
@@ -46,6 +47,7 @@ describe("IncidentPage component", () => {
       expect(
         await screen.findByText("Error loading incident")
       ).toBeInTheDocument();
+
       cleanup();
     }
   });
@@ -64,6 +66,7 @@ describe("IncidentPage component", () => {
         expect(
           await screen.findByText(`Incident #${incident.number}`)
         ).toBeInTheDocument();
+
         cleanup();
       }
     }
@@ -96,6 +99,7 @@ describe("RoutedIncidentPage component", () => {
         expect(
           await screen.findByText(`Incident #${incident.number}`)
         ).toBeInTheDocument();
+
         cleanup();
       }
     }

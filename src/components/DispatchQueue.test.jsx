@@ -276,6 +276,7 @@ describe("DispatchQueue component: table", () => {
       }
 
       ims.flushCaches(); // Reset IMS state
+
       cleanup(); // Reset React state
     }
   });
@@ -430,6 +431,7 @@ describe("DispatchQueue component: loading", () => {
       renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
       expect(screen.queryByText("Loading...")).toBeInTheDocument();
+
       cleanup();
     }
   });
@@ -453,6 +455,7 @@ describe("DispatchQueue component: loading", () => {
       expect(spy).toHaveBeenCalledWith(
         "Unable to fetch incidents: because reasons..."
       );
+
       cleanup();
     }
   });
