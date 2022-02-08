@@ -17,6 +17,7 @@ const Login = lazy(() => import("./components/Login"));
 const HomePage = lazy(() => import("./pages/HomePage"));
 const EventPage = lazy(() => import("./pages/EventPage"));
 const DispatchQueuePage = lazy(() => import("./pages/DispatchQueuePage"));
+const IncidentPage = lazy(() => import("./pages/IncidentPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
@@ -71,6 +72,16 @@ const App = (props) => {
               element={
                 <Login>
                   <DispatchQueuePage />
+                </Login>
+              }
+            />
+
+            {/* Incident Page */}
+            <Route
+              path={`${URLs.events}:eventID/incidents/:incidentNumber`}
+              element={
+                <Login>
+                  <IncidentPage />
                 </Login>
               }
             />
