@@ -56,7 +56,7 @@ const SelectPriority = ({ priority }) => {
     <LabeledSelect
       id="incident_priority"
       label="Priority"
-      values={IncidentModel.priorities}
+      values={IncidentModel.nonDeprecatedPriorities(priority)}
       selected={priority}
       valueToString={IncidentModel.priorityToString}
     />

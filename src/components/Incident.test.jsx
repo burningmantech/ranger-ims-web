@@ -40,4 +40,22 @@ describe("Incident component: display", () => {
       }
     }
   });
+
+  test("incident priority", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      for (const incident of await ims.incidents(event.id)) {
+        renderWithIMSContext(<Incident incident={incident} />, ims);
+
+        const select = screen.getByLabelText("Priority:");
+
+        console.error(incident);
+
+        expect(parseInt(select.value)).toEqual(incident.priority);
+
+        cleanup();
+      }
+    }
+  });
 });
