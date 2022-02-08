@@ -395,10 +395,7 @@ const SearchBar = ({ searchInput, setSearchInput }) => {
     setSearchInput(event.target.value);
   };
 
-  // Note: using Form causes submit-on-enter, which we don't want.
-  // There's probably a correct way to disable that.
   return (
-    // <Form>
     <Form.Group id="search_bar" controlId="search_input">
       <Form.Label size="sm">
         <SearchIcon />
@@ -413,7 +410,6 @@ const SearchBar = ({ searchInput, setSearchInput }) => {
         onChange={handleSearchInput}
       />
     </Form.Group>
-    // </Form>
   );
 };
 
