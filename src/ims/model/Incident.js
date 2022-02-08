@@ -26,6 +26,8 @@ export default class Incident {
     }
   };
 
+  static states = ["new", "on_hold", "dispatched", "on_scene", "closed"];
+
   static stateToString = (state) => {
     invariant(state != null, "state is required");
     switch (state) {
@@ -43,6 +45,8 @@ export default class Incident {
         throw new Error(`Invalid state: ${state}`);
     }
   };
+
+  static priorities = [1, 3, 5];
 
   static priorityToString = (priority) => {
     switch (priority) {
