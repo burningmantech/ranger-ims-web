@@ -186,4 +186,54 @@ describe("Incident", () => {
       );
     }
   });
+
+  test("summarize, with summary", () => {
+    const eventID = "1";
+    const number = 4;
+    const created = DateTime.now();
+    const state = "open";
+    const priority = 3;
+    const location = new Location({});
+    const summary = "Snake in someone's boots";
+    const rangerHandles = [];
+    const incidentTypes = [];
+    const incident = new Incident({
+      eventID: eventID,
+      number: number,
+      created: created,
+      state: state,
+      priority: priority,
+      summary: summary,
+      location: location,
+      rangerHandles: rangerHandles,
+      incidentTypes: incidentTypes,
+    });
+
+    expect(incident.summarize()).toEqual(summary);
+  });
+
+  test("summarize, without summary", () => {
+    const eventID = "1";
+    const number = 4;
+    const created = DateTime.now();
+    const state = "open";
+    const priority = 3;
+    const location = new Location({});
+    const summary = null;
+    const rangerHandles = [];
+    const incidentTypes = [];
+    const incident = new Incident({
+      eventID: eventID,
+      number: number,
+      created: created,
+      state: state,
+      priority: priority,
+      summary: summary,
+      location: location,
+      rangerHandles: rangerHandles,
+      incidentTypes: incidentTypes,
+    });
+
+    expect(incident.summarize()).toEqual("<summary goes here>");
+  });
 });

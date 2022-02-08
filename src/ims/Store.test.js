@@ -272,4 +272,27 @@ describe("Store", () => {
 
     expect(store.load().value).toBe(null);
   });
+
+  test("remove all", () => {
+    const store1 = stuffNThingsStore();
+    const stuffNThings = new StuffNThings(
+      STUFF_STORE_STUFF,
+      STUFF_STORE_THINGS
+    );
+
+    store1.store(stuffNThings);
+
+    const store2 = jsonStore();
+    const value = { stuff: [1, 2, 3], things: "these" };
+
+    store2.store(value);
+
+    expect(store1.load().value).not.toBe(null);
+    expect(store2.load().value).not.toBe(null);
+
+    Store.removeAll();
+
+    expect(store1.load().value).toBe(null);
+    expect(store2.load().value).toBe(null);
+  });
 });

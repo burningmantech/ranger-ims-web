@@ -78,6 +78,14 @@ describe("Location", () => {
     expect(resultJSON).toEqual(locationJSON);
   });
 
+  test("fromJSON, no type", () => {
+    const locationJSON = { name: "Underground House" };
+    const result = Location.fromJSON(locationJSON);
+    const resultJSON = result.toJSON();
+
+    expect(resultJSON).toEqual(locationJSON);
+  });
+
   test("fromJSON, invalid", () => {
     const json = { type: "XYZZY" };
     expect(() => Location.fromJSON(json)).toThrow(
