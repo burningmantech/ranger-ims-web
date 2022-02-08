@@ -8,8 +8,8 @@ import {
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
 
-describe("Incident component: loading", () => {
-  test("title with event name", async () => {
+describe("Incident component: display", () => {
+  test("incident number", async () => {
     const ims = testIncidentManagementSystem();
 
     for (const event of await ims.events()) {
@@ -19,6 +19,23 @@ describe("Incident component: loading", () => {
         expect(
           await screen.findByText(`Incident #${incident.number}`)
         ).toBeInTheDocument();
+
+        cleanup();
+      }
+    }
+  });
+
+  test("incident state", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      for (const incident of await ims.incidents(event.id)) {
+        renderWithIMSContext(<Incident incident={incident} />, ims);
+
+        const select = screen.getByLabelText("State:");
+
+        expect(select.value).toEqual(incident.state);
+
         cleanup();
       }
     }
