@@ -26,19 +26,28 @@ export default class Incident {
     }
   };
 
-  static states = ["new", "on_hold", "dispatched", "on_scene", "closed"];
+  static states = Object.freeze([
+    "new",
+    "open",
+    "dispatched",
+    "on_scene",
+    "on_hold",
+    "closed",
+  ]);
 
   static stateToString = (state) => {
     invariant(state != null, "state is required");
     switch (state) {
       case "new":
         return "New";
-      case "on_hold":
-        return "On Hold";
+      case "open":
+        return "Open";
       case "dispatched":
         return "Dispatched";
       case "on_scene":
         return "On Scene";
+      case "on_hold":
+        return "On Hold";
       case "closed":
         return "Closed";
       default:
@@ -46,7 +55,23 @@ export default class Incident {
     }
   };
 
-  static priorities = [1, 3, 5];
+  static priorities = Object.freeze([1, 2, 3, 4, 5]);
+
+  static nonDeprecatedPriorities = (priority) => {
+    // Remove deprecated values (2 and 4)
+    // However, if the passed-in priority is itself a deprecated value, remove the
+    // other corresponding value (2->1, 4->5) instead, so that we preserve the
+    // existing value.
+    let priorities = Incident.priorities;
+    for (const [deprecated, replacement] of [
+      [2, 1],
+      [4, 5],
+    ]) {
+      const remove = priority == deprecated ? replacement : deprecated;
+      priorities = priorities.filter((p) => p != remove);
+    }
+    return priorities;
+  };
 
   static priorityToString = (priority) => {
     switch (priority) {

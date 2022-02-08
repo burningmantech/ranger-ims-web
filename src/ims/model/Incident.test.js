@@ -171,6 +171,15 @@ describe("Incident", () => {
     }
   });
 
+  test("nonDeprecatedPriorities", () => {
+    expect(Incident.nonDeprecatedPriorities()).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(1)).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(2)).toEqual([2, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(3)).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(4)).toEqual([1, 3, 4]);
+    expect(Incident.nonDeprecatedPriorities(5)).toEqual([1, 3, 5]);
+  });
+
   test("priorityToString, valid", () => {
     expect(Incident.priorityToString(1)).toEqual("High");
     expect(Incident.priorityToString(2)).toEqual("High");
