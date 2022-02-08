@@ -326,6 +326,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       _path = request.url;
     }
     const path = _path;
+    console.debug(`Handling request for: ${path}`);
 
     const bag = this.testData.bag;
 
@@ -398,6 +399,11 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         let rest = path.substring(bag.urls.events.length);
         const eventID = rest.split("/", 1)[0];
 
+        const incidents = this.testData.incidents[eventID];
+        if (incidents == null) {
+          return this._notFoundResponse(); // No such event
+        }
+
         rest = rest.substring(eventID.length + 1);
         const eventChild = rest.split("/", 1)[0];
 
@@ -406,7 +412,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             /* istanbul ignore else */
             if (rest != "") {
               console.debug(`Issuing event ${eventID} incidents response.`);
-              return this._jsonResponse(this.testData.incidents[eventID]);
+              return this._jsonResponse(incidents);
             }
             /* istanbul ignore next */
             throw new Error("unimplemented");
