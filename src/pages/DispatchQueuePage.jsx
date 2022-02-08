@@ -33,6 +33,7 @@ export const DispatchQueuePage = (props) => {
         event = await ims.eventWithID(eventID());
       } catch (e) {
         console.error(`Unable to fetch event: ${e.message}`);
+        console.error(e);
         event = null;
       }
 

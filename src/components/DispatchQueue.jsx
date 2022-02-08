@@ -563,6 +563,7 @@ const DispatchQueue = (props) => {
         }
       } catch (e) {
         console.error(`Unable to fetch incidents: ${e.message}`);
+        console.error(e);
         incidents = null;
       }
 

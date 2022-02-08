@@ -27,6 +27,7 @@ const BagTable = (props) => {
         bag = await ims.bag();
       } catch (e) {
         console.error(`Unable to fetch bag: ${e.message}`);
+        console.error(e);
         bag = null;
       }
 
