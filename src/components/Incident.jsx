@@ -2,13 +2,30 @@ import invariant from "invariant";
 
 import { useContext } from "react";
 
+import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
 import { IMSContext } from "../ims/context";
 import IncidentModel from "../ims/model/Incident";
+
+const Label = ({ id, label }) => {
+  return (
+    <Form.Label htmlFor={id} className="my-auto me-1">
+      {label}:
+    </Form.Label>
+  );
+};
+
+const FormGroup = ({ as, children }) => {
+  return (
+    <Form.Group as={as} className="d-flex align-items-center p-2">
+      {children}
+    </Form.Group>
+  );
+};
 
 const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
   invariant(id != null, "id property is required");
@@ -18,10 +35,8 @@ const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
   invariant(valueToString != null, "valueToString property is required");
 
   return (
-    <Form.Group className="d-flex align-items-center p-2">
-      <Form.Label htmlFor={id} className="my-auto me-1">
-        {label}:
-      </Form.Label>
+    <FormGroup>
+      <Label id={id} label={label} />
       <Form.Select id={id} size="sm" className="w-auto" defaultValue={selected}>
         {values.map((value) => (
           <option key={value} value={value}>
@@ -29,30 +44,24 @@ const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
           </option>
         ))}
       </Form.Select>
-    </Form.Group>
+    </FormGroup>
   );
 };
 
-const LabeledTextField = ({ id, label, value, defaultValue }) => {
+const LabeledTextField = ({ id, value, placeholder }) => {
   invariant(id != null, "id property is required");
-  invariant(label != null, "label property is required");
-  invariant(defaultValue != null, "defaultValue property is required");
+  invariant(placeholder != null, "placeholder property is required");
 
   // className="d-inline w-auto"
   return (
-    <Form.Group className="d-flex align-items-center p-2">
-      <Form.Label htmlFor={id} className="my-auto me-1">
-        {label}:
-      </Form.Label>
-      <Form.Control
-        type="text"
-        inputMode="latin-prose"
-        id={id}
-        size="sm"
-        value={value}
-        placeholder={defaultValue}
-      />
-    </Form.Group>
+    <Form.Control
+      type="text"
+      inputMode="latin-prose"
+      id={id}
+      size="sm"
+      defaultValue={value}
+      placeholder={placeholder}
+    />
   );
 };
 
@@ -84,14 +93,43 @@ const SelectPriority = ({ priority }) => {
   );
 };
 
-const SummaryTextField = ({ summary }) => {
+const SummaryCard = ({ summary }) => {
   return (
-    <LabeledTextField
-      id="incident_summary"
-      label="Summary"
-      value={summary}
-      defaultValue="default value"
-    />
+    <Card>
+      <Card.Body className="bg-light p-1">
+        <FormGroup>
+          <Label id="incident_summary" label="Summary" />
+          <LabeledTextField
+            id="incident_summary"
+            value={summary}
+            placeholder="Summary"
+          />
+        </FormGroup>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const LocationCard = ({ locationName }) => {
+  return (
+    <Card>
+      <Card.Body className="bg-light p-1">
+        <FormGroup as={Container}>
+          <Row>
+            <Col sm={2}>
+              <Label id="incident_location_name" label="Name" />
+            </Col>
+            <Col sm={10}>
+              <LabeledTextField
+                id="incident_location_name"
+                value={locationName}
+                placeholder="Location Name"
+              />
+            </Col>
+          </Row>
+        </FormGroup>
+      </Card.Body>
+    </Card>
   );
 };
 
@@ -119,7 +157,13 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <SummaryTextField summary={incident.summary} />
+          <SummaryCard summary={incident.summary} />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <LocationCard locationName={incident.location.name} />
         </Col>
       </Row>
     </div>
