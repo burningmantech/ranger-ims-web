@@ -94,7 +94,7 @@ describe("EventDropdown component", () => {
 
     for (const event of await ims.events()) {
       const url = new URL(screen.getByText(event.name).href);
-      expect(url.pathname).toEqual(URLs.event(event));
+      expect(url.pathname).toEqual(URLs.event(event.id));
     }
   });
 });

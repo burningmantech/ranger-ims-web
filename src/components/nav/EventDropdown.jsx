@@ -74,7 +74,7 @@ const EventDropdown = () => {
         <NavDropdown.Item
           key={event.id}
           className="nav_event_id"
-          href={URLs.event(event)}
+          href={URLs.event(event.id)}
         >
           {event.name}
         </NavDropdown.Item>
