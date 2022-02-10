@@ -1,6 +1,6 @@
 import Page from "../components/Page";
 
-const HomePage = (props) => {
+const HomePage = () => {
   return (
     <Page>
       <h1>Ranger Incident Management System</h1>

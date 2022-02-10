@@ -8,7 +8,10 @@ import Loading from "../components/Loading";
 import Page from "../components/Page";
 import Incident from "../components/Incident";
 
-export const IncidentPage = (props) => {
+export const IncidentPage = ({ eventID, incidentNumber }) => {
+  invariant(eventID != null, "eventID property is required");
+  invariant(incidentNumber != null, "incidentNumber property is required");
+
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
@@ -20,24 +23,12 @@ export const IncidentPage = (props) => {
   const [incident, setIncident] = useState(undefined);
 
   useEffect(() => {
-    const eventID = () => {
-      invariant(props.eventID != null, "eventID property is required");
-      return props.eventID;
-    };
-    const incidentNumber = () => {
-      invariant(
-        props.incidentNumber != null,
-        "incidentNumber property is required"
-      );
-      return props.incidentNumber;
-    };
-
     let ignore = false;
 
     const fetchIncident = async () => {
       let incident;
       try {
-        incident = await ims.incidentWithNumber(eventID(), incidentNumber());
+        incident = await ims.incidentWithNumber(eventID, incidentNumber);
       } catch (e) {
         console.error(`Unable to fetch incident: ${e.message}`);
         console.error(e);
@@ -54,7 +45,7 @@ export const IncidentPage = (props) => {
     return () => {
       ignore = true;
     };
-  }, [ims, props.eventID, props.incidentNumber]);
+  }, [ims, eventID, incidentNumber]);
 
   // Render
 

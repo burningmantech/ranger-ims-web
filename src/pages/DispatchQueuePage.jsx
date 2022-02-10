@@ -8,7 +8,7 @@ import Loading from "../components/Loading";
 import Page from "../components/Page";
 import DispatchQueue from "../components/DispatchQueue";
 
-export const DispatchQueuePage = (props) => {
+export const DispatchQueuePage = ({ id }) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
@@ -21,8 +21,8 @@ export const DispatchQueuePage = (props) => {
 
   useEffect(() => {
     const eventID = () => {
-      invariant(props.id != null, "id property is required");
-      return props.id;
+      invariant(id != null, "id property is required");
+      return id;
     };
 
     let ignore = false;
@@ -47,7 +47,7 @@ export const DispatchQueuePage = (props) => {
     return () => {
       ignore = true;
     };
-  }, [ims, props.id]);
+  }, [ims, id]);
 
   // Render
 

@@ -21,27 +21,27 @@ const IncidentPage = lazy(() => import("./pages/IncidentPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
-const App = (props) => {
-  invariant(props.ims != null, "ims property is required");
+const App = ({ ims, routerClass }) => {
+  invariant(ims != null, "ims property is required");
 
   let Router;
-  if (props.router == null) {
+  if (routerClass == null) {
     Router = BrowserRouter;
   } else {
-    Router = props.router;
+    Router = routerClass;
   }
 
   const [_user, setUser] = useState(null);
 
   // Get notified when login/logout happens
-  props.ims.delegate = () => {
-    setUser(props.ims.user);
+  ims.delegate = () => {
+    setUser(ims.user);
   };
 
   return (
     <Router>
       <Suspense fallback={<Loading />}>
-        <IMSContext.Provider value={{ ims: props.ims }}>
+        <IMSContext.Provider value={{ ims: ims }}>
           <Routes>
             {/* Redirect root to IMS */}
             <Route path="/" element={<Navigate to={URLs.ims} />} />

@@ -4,15 +4,13 @@ import { useContext } from "react";
 
 import { IMSContext } from "../ims/context";
 
-const Incident = (props) => {
-  invariant(props.incident != null, "incident property is required");
+const Incident = ({ incident }) => {
+  invariant(incident != null, "incident property is required");
 
   const imsContext = useContext(IMSContext);
   const ims = imsContext.ims;
 
   invariant(ims != null, "No IMS");
-
-  const incident = props.incident;
 
   return (
     <div id="incident_wrapper">
