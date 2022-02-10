@@ -15,7 +15,7 @@ import ModalTitle from "react-bootstrap/ModalTitle";
 
 import { IMSContext } from "../ims/context";
 
-const Login = (props) => {
+const Login = ({ children }) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
@@ -37,7 +37,7 @@ const Login = (props) => {
   };
 
   if (ims.isLoggedIn()) {
-    return <>{props.children}</>;
+    return <>{children}</>;
   } else {
     async function onLogin(event) {
       event.preventDefault();

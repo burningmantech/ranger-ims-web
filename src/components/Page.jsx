@@ -2,12 +2,12 @@ import Container from "react-bootstrap/Container";
 
 import NavigationBar from "../components/nav/NavigationBar";
 
-const Home = (props) => {
+const Home = ({ children }) => {
   return (
     <Container id="page" fluid>
       <NavigationBar id="page_navigation" />
 
-      {props.children}
+      {children}
 
       <footer>
         <hr />

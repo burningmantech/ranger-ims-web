@@ -9,9 +9,9 @@ import LoginDropdown from "./LoginDropdown";
 
 import logo from "../../logo.svg";
 
-const NavigationBar = (props) => {
+const NavigationBar = ({ id }) => {
   return (
-    <Navbar id={props.id}>
+    <Navbar id={id}>
       <Navbar.Brand href={URLs.ims} id="nav_home_link">
         <Image
           id="nav_home_image"

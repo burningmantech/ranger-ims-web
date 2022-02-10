@@ -535,8 +535,8 @@ const BottomToolBar = ({ table, incidents }) => {
 
 // DispatchQueue component
 
-const DispatchQueue = (props) => {
-  invariant(props.event != null, "event property is required");
+const DispatchQueue = ({ event }) => {
+  invariant(event != null, "event property is required");
 
   const imsContext = useContext(IMSContext);
   const ims = imsContext.ims;
@@ -557,9 +557,9 @@ const DispatchQueue = (props) => {
       let incidents;
       try {
         if (searchInput) {
-          incidents = await ims.search(props.event.id, searchInput);
+          incidents = await ims.search(event.id, searchInput);
         } else {
-          incidents = await ims.incidents(props.event.id);
+          incidents = await ims.incidents(event.id);
         }
       } catch (e) {
         console.error(`Unable to fetch incidents: ${e.message}`);
@@ -577,7 +577,7 @@ const DispatchQueue = (props) => {
     return () => {
       ignore = true;
     };
-  }, [ims, props.event, searchInput]);
+  }, [ims, event, searchInput]);
 
   const table = useDispatchQueueTable(incidents);
 
@@ -590,7 +590,7 @@ const DispatchQueue = (props) => {
   } else {
     return (
       <div id="queue_wrapper">
-        <h1>Dispatch Queue: {props.event.name}</h1>
+        <h1>Dispatch Queue: {event.name}</h1>
 
         <TopToolBar
           table={table}
