@@ -115,7 +115,17 @@ const SummaryCard = ({ summary }) => {
   );
 };
 
-const LocationCard = ({ locationName, locationDescription }) => {
+const radialHours = [null].concat(RodGarettAddress.radialHours);
+const radialMinutes = [null].concat(RodGarettAddress.radialMinutes);
+
+const LocationCard = ({
+  locationName,
+  locationDescription,
+  locationConcentric,
+  locationRadialHour,
+  locationRadialMinute,
+  concentricStreets,
+}) => {
   return (
     <Card>
       <Card.Body className="bg-light p-1">
@@ -142,8 +152,9 @@ const LocationCard = ({ locationName, locationDescription }) => {
                 id="incident_location_address_radial_hour"
                 size="sm"
                 style={{ flex: "initial", width: "5em" }}
+                defaultValue={locationRadialHour}
               >
-                {RodGarettAddress.radialStreetNames.map((value) => (
+                {radialHours.map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
@@ -155,8 +166,9 @@ const LocationCard = ({ locationName, locationDescription }) => {
                 id="incident_location_address_radial_minute"
                 size="sm"
                 style={{ flex: "initial", width: "5em" }}
+                defaultValue={locationRadialMinute}
               >
-                {RodGarettAddress.radialMinutes.map((value) => (
+                {radialMinutes.map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
@@ -168,35 +180,10 @@ const LocationCard = ({ locationName, locationDescription }) => {
                 id="incident_location_address_concentric"
                 size="sm"
                 style={{ flex: "initial", width: "20em" }}
+                defaultValue={locationConcentric}
               >
                 {/* FIXME: 2019 street names; get event-specific names from IMS. */}
-                {[
-                  "Esplanade",
-                  "A",
-                  "B",
-                  "C",
-                  "D",
-                  "E",
-                  "F",
-                  "G",
-                  "H",
-                  "I",
-                  "J",
-                  "K",
-                  "L",
-                  "3:00 B Plaza",
-                  "3:00 G Plaza",
-                  "4:30 B Plaza",
-                  "4:30 G Plaza",
-                  "Center Camp Plaza",
-                  "Route 66",
-                  "Rod's Ring Road",
-                  "6:00 I Plaza",
-                  "7:30 B Plaza",
-                  "7:30 G Plaza",
-                  "9:00 B Plaza",
-                  "9:00 G Plaza",
-                ].map((value) => (
+                {concentricStreets.map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
@@ -230,6 +217,35 @@ const Incident = ({ incident }) => {
 
   invariant(ims != null, "No IMS");
 
+  const concentricStreets = [
+    null,
+    "Esplanade",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "3:00 B Plaza",
+    "3:00 G Plaza",
+    "4:30 B Plaza",
+    "4:30 G Plaza",
+    "Center Camp Plaza",
+    "Route 66",
+    "Rod's Ring Road",
+    "6:00 I Plaza",
+    "7:30 B Plaza",
+    "7:30 G Plaza",
+    "9:00 B Plaza",
+    "9:00 G Plaza",
+  ];
+
   return (
     <div id="incident_wrapper">
       <h1>Incident #{incident.number}</h1>
@@ -252,7 +268,14 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <LocationCard locationName={incident.location.name} />
+          <LocationCard
+            locationName={incident.location.name}
+            locationDescription={incident.location.address.description}
+            locationConcentric={incident.location.address.concentric}
+            locationRadialHour={incident.location.address.radialHour}
+            locationRadialMinute={incident.location.address.radialMinute}
+            concentricStreets={concentricStreets}
+          />
         </Col>
       </Row>
     </div>
