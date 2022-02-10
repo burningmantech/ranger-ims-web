@@ -45,8 +45,8 @@ export default class Incident {
       [2, 1],
       [4, 5],
     ]) {
-      const remove = priority == deprecated ? replacement : deprecated;
-      priorities = priorities.filter((p) => p != remove);
+      const remove = priority === deprecated ? replacement : deprecated;
+      priorities = priorities.filter((p) => p !== remove);
     }
     return priorities;
   };
