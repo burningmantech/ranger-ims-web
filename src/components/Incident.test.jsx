@@ -84,7 +84,7 @@ describe("Incident component: display", () => {
 
         const textField = screen.getByLabelText("Summary:");
 
-        expect(textField.placeholder).toEqual("default value");
+        expect(textField.placeholder).toEqual("One-line summary of incident");
 
         cleanup();
       }

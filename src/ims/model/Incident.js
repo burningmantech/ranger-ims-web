@@ -4,28 +4,6 @@ import { DateTime } from "luxon";
 import Location from "./Location";
 
 export default class Incident {
-  static fromJSON = (json) => {
-    const location =
-      json.location == null ? null : Location.fromJSON(json.location);
-    try {
-      return new Incident({
-        eventID: json.event,
-        number: json.number,
-        created: DateTime.fromISO(json.created),
-        state: json.state,
-        priority: json.priority,
-        summary: json.summary,
-        location: location,
-        rangerHandles: json.ranger_handles,
-        incidentTypes: json.incident_types,
-        // "reportEntries": json.report_entries,
-        // "incidentReportNumbers": json.incident_reports,
-      });
-    } catch (e) {
-      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
-    }
-  };
-
   static states = Object.freeze([
     "new",
     "open",
@@ -85,6 +63,28 @@ export default class Incident {
         return "Low";
       default:
         throw new Error(`Invalid priority: ${priority}`);
+    }
+  };
+
+  static fromJSON = (json) => {
+    const location =
+      json.location == null ? null : Location.fromJSON(json.location);
+    try {
+      return new Incident({
+        eventID: json.event,
+        number: json.number,
+        created: DateTime.fromISO(json.created),
+        state: json.state,
+        priority: json.priority,
+        summary: json.summary,
+        location: location,
+        rangerHandles: json.ranger_handles,
+        incidentTypes: json.incident_types,
+        // "reportEntries": json.report_entries,
+        // "incidentReportNumbers": json.incident_reports,
+      });
+    } catch (e) {
+      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
     }
   };
 
