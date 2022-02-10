@@ -12,11 +12,11 @@ export const renderWithURL = (url, username, ims) => {
     ims = testIncidentManagementSystem(username);
   }
 
-  const Router = (props) => {
-    return <MemoryRouter initialEntries={[url]}>{props.children}</MemoryRouter>;
+  const Router = ({ children }) => {
+    return <MemoryRouter initialEntries={[url]}>{children}</MemoryRouter>;
   };
 
-  return render(<App ims={ims} router={Router} />);
+  return render(<App ims={ims} routerClass={Router} />);
 };
 
 describe("App component", () => {

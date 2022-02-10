@@ -1,7 +1,7 @@
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
 
-const Loading = (props) => {
+const Loading = () => {
   return (
     <Alert variant="light">
       <Spinner animation="border" role="status">

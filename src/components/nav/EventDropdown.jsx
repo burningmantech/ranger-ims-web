@@ -6,7 +6,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
 
-const EventDropdown = (props) => {
+const EventDropdown = () => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;

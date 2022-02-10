@@ -7,7 +7,7 @@ import { IMSContext } from "../ims/context";
 
 import Loading from "../components/Loading";
 
-const BagTable = (props) => {
+const BagTable = () => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;

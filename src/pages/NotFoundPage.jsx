@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 
 import Page from "../components/Page";
 
-const NotFoundPage = (props) => {
+const NotFoundPage = () => {
   const location = useLocation();
 
   return (

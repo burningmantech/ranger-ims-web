@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-export const EventPage = (props) => {
+export const EventPage = () => {
   return <Navigate to="queue" />;
 };
 
