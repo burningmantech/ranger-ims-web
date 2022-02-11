@@ -12,6 +12,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
+import { URLs } from "../URLs";
 import { IMSContext } from "../ims/context";
 import Incident from "../ims/model/Incident";
 
@@ -247,7 +248,13 @@ const useDispatchQueueTable = (incidents) => {
 
 // Table component
 
-const DispatchQueueTable = ({ table }) => {
+const DispatchQueueTable = ({ table, event }) => {
+  const handleRowClick = (incidentNumber) => {
+    const url = URLs.incident(event.id, incidentNumber);
+    const context = `${event.id}:${incidentNumber}`;
+    window.open(url, context);
+  };
+
   return (
     <Row>
       <Col>
@@ -269,7 +276,11 @@ const DispatchQueueTable = ({ table }) => {
             {table.page.map((row, i) => {
               table.prepareRow(row);
               return (
-                <tr className="queue_incident_row" {...row.getRowProps()}>
+                <tr
+                  className="queue_incident_row"
+                  onClick={() => handleRowClick(row.cells[0].value)}
+                  {...row.getRowProps()}
+                >
                   {row.cells.map((cell) => {
                     return (
                       <td
@@ -539,11 +550,14 @@ const DispatchQueue = ({ event }) => {
 
   invariant(ims != null, "No IMS");
 
-  // Fetch data
+  // State
 
   const [showState, setShowState] = useState("open"); // all, open, active
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
+
+  // Fetch incident data
+
   const [incidents, setIncidents] = useState(undefined);
 
   useEffect(() => {
@@ -598,7 +612,7 @@ const DispatchQueue = ({ event }) => {
           searchInput={searchInput}
           setSearchInput={setSearchInput}
         />
-        <DispatchQueueTable table={table} />
+        <DispatchQueueTable table={table} event={event} />
         <BottomToolBar table={table} incidents={incidents} />
       </div>
     );
