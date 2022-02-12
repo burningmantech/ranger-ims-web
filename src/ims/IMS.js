@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
+import ConcentricStreet from "./model/Event";
 import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
@@ -24,6 +25,11 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store(User, "credentials", "credentials");
     this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
+    this._concentricStreetsStore = new Store(
+      null,
+      "concentric_streets",
+      "streets"
+    );
     this._incidentsStoreByEvent = new Map();
     this._searchIndexByEvent = new Map();
 
@@ -338,7 +344,7 @@ export default class IncidentManagementSystem {
 
   // Events
 
-  eventsCacheLifespan = { minutes: 5 };
+  eventsCacheLifespan = { minutes: 15 };
 
   events = async () => {
     const events = await this._fetchAndCacheJSON(this._eventsStore, {
@@ -359,6 +365,40 @@ export default class IncidentManagementSystem {
     } else {
       throw new Error(`No event found with ID: ${id}`);
     }
+  };
+
+  // Concentric Streets
+
+  concentricStreetsCacheLifespan = { minutes: 15 };
+
+  _allConcentricStreets = async () => {
+    const concentricStreets = await this._fetchAndCacheJSON(
+      this._concentricStreetsStore,
+      {
+        lifespan: this.concentricStreetsCacheLifespan,
+      }
+    );
+
+    const allConcentricStreetsMap = new Map();
+    for (const eventID of Object.keys(concentricStreets)) {
+      const eventConcentricStreetsMap = new Map();
+      const eventJSON = concentricStreets[eventID];
+      for (const concentricStreetID of Object.keys(eventJSON)) {
+        const concentricStreetName = eventJSON[concentricStreetID];
+        const concentricStreet = new ConcentricStreet(
+          concentricStreetID,
+          concentricStreetName
+        );
+        eventConcentricStreetsMap.set(concentricStreetID, concentricStreet);
+      }
+      allConcentricStreetsMap.set(eventID, eventConcentricStreetsMap);
+    }
+    return allConcentricStreetsMap;
+  };
+
+  concentricStreets = async (eventID) => {
+    const allConcentricStreetsMap = await this._allConcentricStreets();
+    return allConcentricStreetsMap.get(eventID);
   };
 
   // Incidents

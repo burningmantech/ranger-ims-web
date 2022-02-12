@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -125,6 +125,8 @@ const LocationCard = ({
   locationRadialMinute,
   concentricStreets,
 }) => {
+  console.info(concentricStreets);
+
   return (
     <Card>
       <Card.Body className="bg-light p-1">
@@ -182,9 +184,9 @@ const LocationCard = ({
                 defaultValue={locationConcentric}
               >
                 {/* FIXME: 2019 street names; get event-specific names from IMS. */}
-                {concentricStreets.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
+                {Array.from(concentricStreets, ([id, street]) => (
+                  <option key={street.id} value={street.id}>
+                    {street.name}
                   </option>
                 ))}
               </Form.Select>
@@ -216,34 +218,34 @@ const Incident = ({ incident }) => {
 
   invariant(ims != null, "No IMS");
 
-  const concentricStreets = [
-    null,
-    "Esplanade",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "3:00 B Plaza",
-    "3:00 G Plaza",
-    "4:30 B Plaza",
-    "4:30 G Plaza",
-    "Center Camp Plaza",
-    "Route 66",
-    "Rod's Ring Road",
-    "6:00 I Plaza",
-    "7:30 B Plaza",
-    "7:30 G Plaza",
-    "9:00 B Plaza",
-    "9:00 G Plaza",
-  ];
+  // Fetch concentric street data
+
+  const [concentricStreets, setConcentricStreets] = useState([]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchConcentricStreets = async () => {
+      let concentricStreets;
+      try {
+        concentricStreets = await ims.concentricStreets(incident.eventID);
+      } catch (e) {
+        console.error(`Unable to fetch concentric streets: ${e.message}`);
+        console.error(e);
+        concentricStreets = [];
+      }
+
+      if (!ignore) {
+        setConcentricStreets(concentricStreets);
+      }
+    };
+
+    fetchConcentricStreets();
+
+    return () => {
+      ignore = true;
+    };
+  }, [ims, incident.eventID]);
 
   return (
     <div id="incident_wrapper">
