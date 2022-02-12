@@ -407,10 +407,10 @@ describe("DispatchQueue component: controls", () => {
 
     expect(searchField).toHaveValue(searchValue);
 
-    const numberCells = Array.from(
-      document.getElementsByClassName("queue_incident_number")
+    const numbers = Array.from(
+      document.getElementsByClassName("queue_incident_number"),
+      (cell) => parseInt(cell.innerHTML)
     );
-    const numbers = numberCells.map((cell) => parseInt(cell.innerHTML));
 
     expect(new Set(numbers)).toEqual(new Set([2, 3]));
   });
