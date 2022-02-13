@@ -1,7 +1,5 @@
 import { URLs } from "./URLs";
 
-import Event from "./ims/model/Event";
-
 describe("URLs", () => {
   test("event", () => {
     const eventID = "TTITD";
