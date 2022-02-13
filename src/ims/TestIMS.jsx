@@ -198,9 +198,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       "Events and incidents index keys mismatched: " +
         `${eventIDs} != ${incidentEventIDs}`
     );
-    for (const eventID of Object.keys(this.testData.incidents)) {
-      const incidents = this.testData.incidents[eventID];
-
+    for (const [eventID, incidents] of Object.entries(
+      this.testData.incidents
+    )) {
       // Check incident values
       for (const incident of incidents) {
         invariant(

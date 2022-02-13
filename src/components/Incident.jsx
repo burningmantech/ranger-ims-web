@@ -125,8 +125,6 @@ const LocationCard = ({
   locationRadialMinute,
   concentricStreets,
 }) => {
-  console.info(concentricStreets);
-
   return (
     <Card>
       <Card.Body className="bg-light p-1">

@@ -379,21 +379,19 @@ export default class IncidentManagementSystem {
       }
     );
 
-    const allConcentricStreetsMap = new Map();
-    for (const eventID of Object.keys(concentricStreets)) {
-      const eventConcentricStreetsMap = new Map();
-      const eventJSON = concentricStreets[eventID];
-      for (const concentricStreetID of Object.keys(eventJSON)) {
-        const concentricStreetName = eventJSON[concentricStreetID];
-        const concentricStreet = new ConcentricStreet(
-          concentricStreetID,
-          concentricStreetName
-        );
-        eventConcentricStreetsMap.set(concentricStreetID, concentricStreet);
-      }
-      allConcentricStreetsMap.set(eventID, eventConcentricStreetsMap);
-    }
-    return allConcentricStreetsMap;
+    return new Map(
+      // Convert [eventID, eventJSON] to [eventID, streetsMap]
+      Object.entries(concentricStreets).map(([eventID, eventJSON]) => [
+        eventID,
+        new Map(
+          // Convert [streetID, streetName] to [streetID, street]
+          Object.entries(eventJSON).map(([streetID, streetName]) => [
+            streetID,
+            new ConcentricStreet(streetID, streetName),
+          ])
+        ),
+      ])
+    );
   };
 
   concentricStreets = async (eventID) => {
