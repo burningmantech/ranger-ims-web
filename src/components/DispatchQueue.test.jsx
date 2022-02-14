@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
 
+import { URLs } from "../URLs";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
@@ -278,6 +279,35 @@ describe("DispatchQueue component: table", () => {
       ims.flushCaches(); // Reset IMS state
 
       cleanup(); // Reset React state
+    }
+  });
+
+  test("click row -> open incident in new tab", async () => {
+    const ims = testIncidentManagementSystem();
+    const event = await ims.eventWithID("empty");
+    const incidentCount = defaultPageSize;
+
+    await ims.addMoreIncidents(event.id, incidentCount);
+
+    await act(async () => {
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    });
+
+    for (const row of document.getElementsByClassName("queue_incident_row")) {
+      const numberCell = row.querySelector(".queue_incident_number");
+      const incidentNumber = parseInt(numberCell.innerHTML);
+
+      for (const cell of row.getElementsByTagName("td")) {
+        const url = URLs.incident(event.id, incidentNumber);
+        const context = `${event.id}:${incidentNumber}`;
+
+        console.info(incidentNumber);
+
+        window.open = jest.fn();
+        await userEvent.click(cell);
+
+        expect(window.open).toHaveBeenCalledWith(url, context);
+      }
     }
   });
 });
