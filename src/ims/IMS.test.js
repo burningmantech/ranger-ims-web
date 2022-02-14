@@ -148,7 +148,7 @@ describe("IMS: HTTP requests", () => {
   test("_fetchJSONFromServer: non-JSON content type", async () => {
     const ims = testIncidentManagementSystem();
 
-    expect(
+    await expect(
       ims._fetchJSONFromServer(ims.bagURL, {
         headers: { "Content-Type": "text/plain" },
       })
@@ -793,8 +793,63 @@ describe("IMS: events", () => {
     const ims = testIncidentManagementSystem();
     const id = "XYZZY";
 
-    expect(ims.eventWithID(id)).toRejectWithMessage(
+    await expect(ims.eventWithID(id)).toRejectWithMessage(
       `No event found with ID: ${id}`
+    );
+  });
+});
+
+describe("IMS: incidents", () => {
+  afterEach(() => {
+    // Reset cached data
+    Store.removeAll();
+  });
+
+  test("_allConcentricStreets, ok", async () => {
+    const ims = await testIncidentManagementSystem().asHubcap();
+
+    const eventMap = await ims._allConcentricStreets();
+
+    expect(Array.from(eventMap.keys()).sort()).toEqual(
+      Array.from(Object.keys(ims.testData.streets)).sort()
+    );
+    for (const [eventID, streetMap] of Object.entries(eventMap)) {
+      expect(streetMap.keys().sort()).toEqual(
+        Array.from(Object.keys(ims.testData.streets[eventID])).sort()
+      );
+      for (const [streetID, street] of Object.entries(streetMap)) {
+        expect(street.name).toEqual(ims.testData.streets[eventID][streetID]);
+      }
+    }
+  });
+
+  test("_allConcentricStreets, failed", async () => {
+    const ims = await testIncidentManagementSystem();
+    ims.testData.bag.urls.streets = "/forbidden";
+    ims.asHubcap();
+
+    await expect(ims._allConcentricStreets()).toRejectWithMessage(
+      "Failed to retrieve concentric_streets."
+    );
+  });
+
+  test("concentricStreets: valid event", async () => {
+    const ims = testIncidentManagementSystem();
+
+    for (const event of await ims.events()) {
+      const concentricStreets = await ims.concentricStreets(event.id);
+      expect(Array.from(concentricStreets.keys()).sort()).toEqual(
+        Array.from(Object.keys(ims.testData.streets[event.id]).sort())
+      );
+    }
+  });
+
+  test("concentricStreets: no such event", async () => {
+    const ims = testIncidentManagementSystem();
+    const id = "XYZZY";
+
+    await expect(ims.concentricStreets(id)).toRejectWithMessage(
+      `No streets found for event with ID: ${id}`
     );
   });
 });
@@ -889,7 +944,9 @@ describe("IMS: incidents", () => {
     const number = -1;
 
     for (const event of await ims.events()) {
-      expect(ims.incidentWithNumber(event.id, number)).toRejectWithMessage(
+      await expect(
+        ims.incidentWithNumber(event.id, number)
+      ).toRejectWithMessage(
         `No incident found with event:number: ${event.id}:${number}`
       );
     }

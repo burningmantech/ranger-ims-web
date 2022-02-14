@@ -41,7 +41,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           bag: "/ims/api/bag",
           auth: "/ims/api/auth",
           // access: "/ims/api/access",
-          // streets:  "/ims/api/streets",
+          streets: "/ims/api/streets",
           // personnel: "/ims/api/personnel/",
           // incident_types:  "/ims/api/incident_types/",
           events: "/ims/api/events/",
@@ -63,8 +63,22 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "4", name: "Event Four" },
         { id: "empty", name: "Empty Event" },
       ],
+      streets: {
+        // Indexed concentric streets, indexed by event ID
+        1: {
+          A: "A Street",
+          B: "B Street",
+          C: "C Street",
+          D: "D Street",
+          E: "E Street",
+        },
+        2: {},
+        3: {},
+        4: {},
+        empty: {},
+      },
       incidents: {
-        // Lists of incidents, indexes by event ID
+        // Lists of incidents, indexed by event ID
         1: [
           {
             event: "1",
@@ -192,6 +206,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     // Validate above test data a bit
     const cmp = (a) => JSON.stringify(a.sort());
     const eventIDs = cmp(this.testData.events.map((e) => e.id));
+    // Streets are indexed by event ID
+    const streetEventIDs = cmp(Object.keys(this.testData.incidents));
+    invariant(
+      eventIDs == streetEventIDs,
+      "Events and streets index keys mismatched: " +
+        `${eventIDs} != ${streetEventIDs}`
+    );
+    // Incidents are indexed by event ID
     const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
       eventIDs == incidentEventIDs,
@@ -213,6 +235,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           incident.priority,
           Incident.priorities
         );
+        if (incident.location != null) {
+          if (incident.location.concentric != null) {
+            assertFrom(
+              `${incident} concentric street`,
+              incident.location.concentric,
+              Object.keys(this.testData.streets[incident.event])
+            );
+          }
+        }
       }
 
       // Check for duplicate incident numbers
@@ -435,6 +466,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             throw new Error("unimplemented");
         }
 
+        /* istanbul ignore next */
+        throw new Error("unimplemented");
+
+      case path == bag.urls.streets:
+        /* istanbul ignore else */
+        if (request.method === "GET") {
+          console.debug("Issuing streets response.");
+          return this._jsonResponse(this.testData.streets);
+        }
         /* istanbul ignore next */
         throw new Error("unimplemented");
     }

@@ -354,16 +354,16 @@ export default class IncidentManagementSystem {
     return events;
   };
 
-  eventWithID = async (id) => {
-    invariant(id != null, "id argument is required");
+  eventWithID = async (eventID) => {
+    invariant(eventID != null, "eventID argument is required");
 
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
 
-    if (this._eventsMap.has(id)) {
-      return this._eventsMap.get(id);
+    if (this._eventsMap.has(eventID)) {
+      return this._eventsMap.get(eventID);
     } else {
-      throw new Error(`No event found with ID: ${id}`);
+      throw new Error(`No event found with ID: ${eventID}`);
     }
   };
 
@@ -372,7 +372,7 @@ export default class IncidentManagementSystem {
   concentricStreetsCacheLifespan = { minutes: 15 };
 
   _allConcentricStreets = async () => {
-    const concentricStreets = await this._fetchAndCacheJSON(
+    const eventMap = await this._fetchAndCacheJSON(
       this._concentricStreetsStore,
       {
         lifespan: this.concentricStreetsCacheLifespan,
@@ -380,12 +380,12 @@ export default class IncidentManagementSystem {
     );
 
     return new Map(
-      // Convert [eventID, eventJSON] to [eventID, streetsMap]
-      Object.entries(concentricStreets).map(([eventID, eventJSON]) => [
+      // Convert [eventID, streetsJSON] to [eventID, streetsMap]
+      Object.entries(eventMap).map(([eventID, streetsJSON]) => [
         eventID,
         new Map(
           // Convert [streetID, streetName] to [streetID, street]
-          Object.entries(eventJSON).map(([streetID, streetName]) => [
+          Object.entries(streetsJSON).map(([streetID, streetName]) => [
             streetID,
             new ConcentricStreet(streetID, streetName),
           ])
@@ -396,7 +396,12 @@ export default class IncidentManagementSystem {
 
   concentricStreets = async (eventID) => {
     const allConcentricStreetsMap = await this._allConcentricStreets();
-    return allConcentricStreetsMap.get(eventID);
+    const concentricStreets = allConcentricStreetsMap.get(eventID);
+    if (concentricStreets === undefined) {
+      throw new Error(`No streets found for event with ID: ${eventID}`);
+    }
+    console.log(concentricStreets);
+    return concentricStreets;
   };
 
   // Incidents
