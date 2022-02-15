@@ -1,10 +1,10 @@
 import invariant from "invariant";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 
 import { IMSContext } from "./context";
 
-const imsFromContext = () => {
+const useIMS = () => {
   const imsContext = useContext(IMSContext);
   const ims = imsContext.ims;
 
@@ -16,7 +16,7 @@ const imsFromContext = () => {
 export const useBag = ({ setBag }) => {
   invariant(setBag != null, "setBag property is required");
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -47,7 +47,7 @@ export const useBag = ({ setBag }) => {
 export const useEvents = ({ setEvents }) => {
   invariant(setEvents != null, "setEvents property is required");
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -79,7 +79,7 @@ export const useEvent = ({ eventID, setEvent }) => {
   invariant(eventID != null, "eventID property is required");
   invariant(setEvent != null, "setEvent property is required");
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -112,7 +112,7 @@ export const useIncidents = ({ eventID, searchInput, setIncidents }) => {
   invariant(setIncidents != null, "setIncidents property is required");
   invariant(searchInput != null, "searchInput property is required");
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -149,7 +149,7 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
   invariant(incidentNumber != null, "incidentNumber property is required");
   invariant(setIncident != null, "setIncident property is required");
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -184,7 +184,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
     "setConcentricStreets property is required"
   );
 
-  const ims = imsFromContext();
+  const ims = useIMS();
 
   useEffect(() => {
     let ignore = false;
@@ -194,7 +194,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
       try {
         concentricStreets = await ims.concentricStreets(eventID);
       } catch (e) {
-        console.error(`Unable to fetch concentric streets: ${e.message}`);
+        console.error(`Unable to fetch event concentric streets: ${e.message}`);
         console.error(e);
         concentricStreets = [];
       }
