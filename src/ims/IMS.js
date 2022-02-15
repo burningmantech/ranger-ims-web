@@ -371,7 +371,7 @@ export default class IncidentManagementSystem {
 
   concentricStreetsCacheLifespan = { minutes: 15 };
 
-  _allConcentricStreets = async () => {
+  allConcentricStreets = async () => {
     const eventMap = await this._fetchAndCacheJSON(
       this._concentricStreetsStore,
       {
@@ -395,7 +395,7 @@ export default class IncidentManagementSystem {
   };
 
   concentricStreets = async (eventID) => {
-    const allConcentricStreetsMap = await this._allConcentricStreets();
+    const allConcentricStreetsMap = await this.allConcentricStreets();
     const concentricStreets = allConcentricStreetsMap.get(eventID);
     if (concentricStreets === undefined) {
       throw new Error(`No streets found for event with ID: ${eventID}`);

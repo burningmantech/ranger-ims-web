@@ -805,10 +805,10 @@ describe("IMS: incidents", () => {
     Store.removeAll();
   });
 
-  test("_allConcentricStreets, ok", async () => {
+  test("allConcentricStreets, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
-    const eventMap = await ims._allConcentricStreets();
+    const eventMap = await ims.allConcentricStreets();
 
     expect(Array.from(eventMap.keys()).sort()).toEqual(
       Array.from(Object.keys(ims.testData.streets)).sort()
@@ -823,12 +823,12 @@ describe("IMS: incidents", () => {
     }
   });
 
-  test("_allConcentricStreets, failed", async () => {
+  test("allConcentricStreets, failed", async () => {
     const ims = await testIncidentManagementSystem();
     ims.testData.bag.urls.streets = "/forbidden";
     ims.asHubcap();
 
-    await expect(ims._allConcentricStreets()).toRejectWithMessage(
+    await expect(ims.allConcentricStreets()).toRejectWithMessage(
       "Failed to retrieve concentric_streets."
     );
   });
