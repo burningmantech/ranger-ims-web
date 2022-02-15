@@ -400,7 +400,6 @@ export default class IncidentManagementSystem {
     if (concentricStreets === undefined) {
       throw new Error(`No streets found for event with ID: ${eventID}`);
     }
-    console.log(concentricStreets);
     return concentricStreets;
   };
 
