@@ -13,7 +13,7 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { URLs } from "../URLs";
-import { IMSContext } from "../ims/context";
+import { useIncidents } from "../ims/effects";
 import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
@@ -545,11 +545,6 @@ const BottomToolBar = ({ table, incidents }) => {
 const DispatchQueue = ({ event }) => {
   invariant(event != null, "event property is required");
 
-  const imsContext = useContext(IMSContext);
-  const ims = imsContext.ims;
-
-  invariant(ims != null, "No IMS");
-
   // State
 
   const [showState, setShowState] = useState("open"); // all, open, active
@@ -560,34 +555,11 @@ const DispatchQueue = ({ event }) => {
 
   const [incidents, setIncidents] = useState(undefined);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchIncidents = async () => {
-      let incidents;
-      try {
-        if (searchInput) {
-          incidents = await ims.search(event.id, searchInput);
-        } else {
-          incidents = await ims.incidents(event.id);
-        }
-      } catch (e) {
-        console.error(`Unable to fetch incidents: ${e.message}`);
-        console.error(e);
-        incidents = null;
-      }
-
-      if (!ignore) {
-        setIncidents(incidents);
-      }
-    };
-
-    fetchIncidents();
-
-    return () => {
-      ignore = true;
-    };
-  }, [event, searchInput]);
+  useIncidents({
+    eventID: event.id,
+    setIncidents: setIncidents,
+    searchInput: searchInput,
+  });
 
   const table = useDispatchQueueTable(incidents);
 

@@ -9,6 +9,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 
 import { IMSContext } from "../ims/context";
+import { useConcentricStreets } from "../ims/effects";
 import IncidentModel from "../ims/model/Incident";
 import RodGarettAddress from "../ims/model/RodGarettAddress";
 
@@ -225,30 +226,10 @@ const Incident = ({ incident }) => {
 
   const [concentricStreets, setConcentricStreets] = useState([]);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchConcentricStreets = async () => {
-      let concentricStreets;
-      try {
-        concentricStreets = await ims.concentricStreets(incident.eventID);
-      } catch (e) {
-        console.error(`Unable to fetch concentric streets: ${e.message}`);
-        console.error(e);
-        concentricStreets = [];
-      }
-
-      if (!ignore) {
-        setConcentricStreets(concentricStreets);
-      }
-    };
-
-    fetchConcentricStreets();
-
-    return () => {
-      ignore = true;
-    };
-  }, [incident.eventID]);
+  useConcentricStreets({
+    eventID: incident.eventID,
+    setConcentricStreets: setConcentricStreets,
+  });
 
   return (
     <div id="incident_wrapper">

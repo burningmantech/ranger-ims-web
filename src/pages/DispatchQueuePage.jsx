@@ -3,12 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { IMSContext } from "../ims/context";
+import { useEvent } from "../ims/effects";
 
 import Loading from "../components/Loading";
 import Page from "../components/Page";
 import DispatchQueue from "../components/DispatchQueue";
 
-export const DispatchQueuePage = ({ id }) => {
+export const DispatchQueuePage = ({ eventID }) => {
   const imsContext = useContext(IMSContext);
   invariant(imsContext != null, "IMS context is required");
   const ims = imsContext.ims;
@@ -19,35 +20,7 @@ export const DispatchQueuePage = ({ id }) => {
 
   const [event, setEvent] = useState(undefined);
 
-  useEffect(() => {
-    const eventID = () => {
-      invariant(id != null, "id property is required");
-      return id;
-    };
-
-    let ignore = false;
-
-    const fetchEvent = async () => {
-      let event;
-      try {
-        event = await ims.eventWithID(eventID());
-      } catch (e) {
-        console.error(`Unable to fetch event: ${e.message}`);
-        console.error(e);
-        event = null;
-      }
-
-      if (!ignore) {
-        setEvent(event);
-      }
-    };
-
-    fetchEvent();
-
-    return () => {
-      ignore = true;
-    };
-  }, [id]);
+  useEvent({ eventID: eventID, setEvent: setEvent });
 
   // Render
 
@@ -72,7 +45,7 @@ export const RoutedDispatchQueuePage = () => {
     "eventID parameter is required: " + JSON.stringify(params)
   );
 
-  return <DispatchQueuePage id={params.eventID} />;
+  return <DispatchQueuePage eventID={params.eventID} />;
 };
 
 export default RoutedDispatchQueuePage;

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { IMSContext } from "../ims/context";
+import { useIncident } from "../ims/effects";
 
 import Loading from "../components/Loading";
 import Page from "../components/Page";
@@ -22,30 +23,11 @@ export const IncidentPage = ({ eventID, incidentNumber }) => {
 
   const [incident, setIncident] = useState(undefined);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchIncident = async () => {
-      let incident;
-      try {
-        incident = await ims.incidentWithNumber(eventID, incidentNumber);
-      } catch (e) {
-        console.error(`Unable to fetch incident: ${e.message}`);
-        console.error(e);
-        incident = null;
-      }
-
-      if (!ignore) {
-        setIncident(incident);
-      }
-    };
-
-    fetchIncident();
-
-    return () => {
-      ignore = true;
-    };
-  }, [eventID, incidentNumber]);
+  useIncident({
+    eventID: eventID,
+    incidentNumber: incidentNumber,
+    setIncident: setIncident,
+  });
 
   // Render
 

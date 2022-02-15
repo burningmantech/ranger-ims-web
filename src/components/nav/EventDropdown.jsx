@@ -1,46 +1,18 @@
 import invariant from "invariant";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { URLs } from "../../URLs";
 import { IMSContext } from "../../ims/context";
+import { useEvents } from "../../ims/effects";
 
 const EventDropdown = () => {
-  const imsContext = useContext(IMSContext);
-  invariant(imsContext != null, "IMS context is required");
-  const ims = imsContext.ims;
-
-  invariant(ims != null, "No IMS");
-
   // Fetch data
 
   const [events, setEvents] = useState(undefined);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchEvents = async () => {
-      let events;
-      try {
-        events = await ims.events();
-      } catch (e) {
-        console.error(`Unable to fetch events: ${e.message}`);
-        console.error(e);
-        events = null;
-      }
-
-      if (!ignore) {
-        setEvents(events);
-      }
-    };
-
-    fetchEvents();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  useEvents({ setEvents: setEvents });
 
   // Render
 
