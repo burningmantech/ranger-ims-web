@@ -114,8 +114,26 @@ const SummaryCard = ({ summary }) => {
   );
 };
 
-const radialHours = [null].concat(RodGarettAddress.radialHours);
-const radialMinutes = [null].concat(RodGarettAddress.radialMinutes);
+const Select = ({ id, width, selected, options }) => {
+  {
+    /* FIXME: Can we set width via Bootstrap instead of style? */
+  }
+  return (
+    <Form.Select
+      id={id}
+      size="sm"
+      style={{ flex: "initial", width: width }}
+      value={selected}
+    >
+      <option key={null} value={null} />
+      {Array.from(options, ([key, value]) => (
+        <option key={key} value={key}>
+          {value}
+        </option>
+      ))}
+    </Form.Select>
+  );
+};
 
 const LocationCard = ({
   locationName,
@@ -146,48 +164,35 @@ const LocationCard = ({
           </Col>
           <Col sm={10}>
             <InputGroup id="incident_location_address">
-              {/* FIXME: Can we set width via Bootstrap instead of style? */}
-              <Form.Select
+              <Select
                 id="incident_location_address_radial_hour"
-                size="sm"
-                style={{ flex: "initial", width: "5em" }}
-                defaultValue={locationRadialHour}
-              >
-                {radialHours.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </Form.Select>
+                width="5em"
+                selected={locationRadialHour}
+                options={RodGarettAddress.radialHours.map((value) => [
+                  value,
+                  value,
+                ])}
+              />
               <InputGroup.Text>:</InputGroup.Text>
-              {/* FIXME: Can we set width via Bootstrap instead of style? */}
-              <Form.Select
+              <Select
                 id="incident_location_address_radial_minute"
-                size="sm"
-                style={{ flex: "initial", width: "5em" }}
-                defaultValue={locationRadialMinute}
-              >
-                {radialMinutes.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </Form.Select>
+                width="5em"
+                selected={locationRadialMinute}
+                options={RodGarettAddress.radialMinutes.map((value) => [
+                  value,
+                  value,
+                ])}
+              />
               <InputGroup.Text>@</InputGroup.Text>
-              {/* FIXME: Can we set width via Bootstrap instead of style? */}
-              <Form.Select
+              <Select
                 id="incident_location_address_concentric"
-                size="sm"
-                style={{ flex: "initial", width: "20em" }}
-                defaultValue={locationConcentric}
-              >
-                {/* FIXME: 2019 street names; get event-specific names from IMS. */}
-                {Array.from(concentricStreets, ([id, street]) => (
-                  <option key={street.id} value={street.id}>
-                    {street.name}
-                  </option>
-                ))}
-              </Form.Select>
+                width="20em"
+                selected={locationConcentric}
+                options={Array.from(concentricStreets, ([id, street]) => [
+                  street.id,
+                  street.name,
+                ])}
+              />
             </InputGroup>
           </Col>
         </FormGroup>
