@@ -104,8 +104,7 @@ export const SearchIcon = () => {
 
 // Table cell formatting
 
-export const formatPriority = ({ value }) => {
-  const priority = value;
+export const formatPriority = (priority) => {
   switch (priority) {
     case 1:
     case 2:
@@ -120,16 +119,14 @@ export const formatPriority = ({ value }) => {
   }
 };
 
-export const formatDateTime = ({ value }) => {
-  const dateTime = value;
+export const formatDateTime = (dateTime) => {
   if (!dateTime) {
     return "";
   }
   return dateTime.toFormat("ccc L/c HH:mm");
 };
 
-export const formatState = ({ value }) => {
-  const state = value;
+export const formatState = (state) => {
   try {
     return Incident.stateToString(state);
   } catch (e) {
@@ -137,10 +134,9 @@ export const formatState = ({ value }) => {
   }
 };
 
-export const formatAddress = ({ value }) => {
+export const formatAddress = (address) => {
   const formatCoordinate = (c) => (c == null ? "" : c);
 
-  const address = value;
   if (address == null) {
     return address;
   }
@@ -158,13 +154,12 @@ export const formatAddress = ({ value }) => {
   }
 };
 
-export const formatLocation = ({ value }) => {
-  const location = value;
+export const formatLocation = (location) => {
   if (location == null) {
     return location;
   }
 
-  const addressText = formatAddress({ value: location.address });
+  const addressText = formatAddress(location.address);
 
   if (location.name == null) {
     if (addressText == null) {
@@ -181,8 +176,7 @@ export const formatLocation = ({ value }) => {
   }
 };
 
-export const formatArrayOfStrings = ({ value }) => {
-  const strings = value;
+export const formatArrayOfStrings = (strings) => {
   if (!strings) {
     return "";
   }
@@ -205,32 +199,32 @@ const useDispatchQueueTable = (incidents) => {
       {
         accessor: "priority",
         Header: <abbr title="Priority">Pri</abbr>,
-        Cell: formatPriority,
+        Cell: ({ value }) => formatPriority(value),
       },
       {
         accessor: "created",
         Header: "Created",
-        Cell: formatDateTime,
+        Cell: ({ value }) => formatDateTime(value),
       },
       {
         accessor: "state",
         Header: "State",
-        Cell: formatState,
+        Cell: ({ value }) => formatState(value),
       },
       {
         accessor: "rangerHandles",
         Header: "Rangers",
-        Cell: formatArrayOfStrings,
+        Cell: ({ value }) => formatArrayOfStrings(value),
       },
       {
         accessor: "location",
         Header: "Location",
-        Cell: formatLocation,
+        Cell: ({ value }) => formatLocation(value),
       },
       {
         accessor: "incidentTypes",
         Header: "Types",
-        Cell: formatArrayOfStrings,
+        Cell: ({ value }) => formatArrayOfStrings(value),
       },
       {
         accessor: (incident) => incident.summarize(),

@@ -32,50 +32,50 @@ import DispatchQueue from "./DispatchQueue";
 
 describe("Table cell formatting functions", () => {
   test("formatPriority, valid", () => {
-    expect(formatPriority({ value: 1 })).toEqual(<HighPriorityIcon />);
-    expect(formatPriority({ value: 2 })).toEqual(<HighPriorityIcon />);
-    expect(formatPriority({ value: 3 })).toEqual(<NormalPriorityIcon />);
-    expect(formatPriority({ value: 4 })).toEqual(<LowPriorityIcon />);
-    expect(formatPriority({ value: 5 })).toEqual(<LowPriorityIcon />);
+    expect(formatPriority(1)).toEqual(<HighPriorityIcon />);
+    expect(formatPriority(2)).toEqual(<HighPriorityIcon />);
+    expect(formatPriority(3)).toEqual(<NormalPriorityIcon />);
+    expect(formatPriority(4)).toEqual(<LowPriorityIcon />);
+    expect(formatPriority(5)).toEqual(<LowPriorityIcon />);
   });
 
   test("formatPriority, invalid", () => {
-    expect(formatPriority({ value: -1 })).toEqual(<UnknownPriorityIcon />);
-    expect(formatPriority({ value: "XYZZY" })).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority(-1)).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority("XYZZY")).toEqual(<UnknownPriorityIcon />);
   });
 
   test("formatPriority, undefined", () => {
-    expect(formatPriority({})).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority()).toEqual(<UnknownPriorityIcon />);
   });
 
   test("formatDateTime, valid", () => {
     const dateTime = DateTime.fromISO("2021-08-17T17:12:46.720000Z");
 
-    expect(formatDateTime({ value: dateTime })).toEqual(
+    expect(formatDateTime(dateTime)).toEqual(
       dateTime.toFormat("ccc L/c HH:mm")
     );
   });
 
   test("formatDateTime, undefined/null", () => {
-    expect(formatDateTime({ value: undefined })).toEqual("");
-    expect(formatDateTime({ value: null })).toEqual("");
+    expect(formatDateTime(undefined)).toEqual("");
+    expect(formatDateTime(null)).toEqual("");
   });
 
   test("formatState, valid", () => {
-    expect(formatState({ value: "new" })).toEqual("New");
-    expect(formatState({ value: "on_hold" })).toEqual("On Hold");
-    expect(formatState({ value: "dispatched" })).toEqual("Dispatched");
-    expect(formatState({ value: "on_scene" })).toEqual("On Scene");
-    expect(formatState({ value: "closed" })).toEqual("Closed");
+    expect(formatState("new")).toEqual("New");
+    expect(formatState("on_hold")).toEqual("On Hold");
+    expect(formatState("dispatched")).toEqual("Dispatched");
+    expect(formatState("on_scene")).toEqual("On Scene");
+    expect(formatState("closed")).toEqual("Closed");
   });
 
   test("formatState, invalid", () => {
-    expect(formatState({ value: -1 })).toEqual(-1);
-    expect(formatState({ value: "XYZZY" })).toEqual("XYZZY");
+    expect(formatState(-1)).toEqual(-1);
+    expect(formatState("XYZZY")).toEqual("XYZZY");
   });
 
   test("formatState, undefined", () => {
-    expect(formatState({})).toBeUndefined();
+    expect(formatState()).toBeUndefined();
   });
 
   test("formatAddress, all fields", () => {
@@ -85,7 +85,7 @@ describe("Table cell formatting functions", () => {
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@` +
         `${address.concentric} ` +
@@ -99,7 +99,7 @@ describe("Table cell formatting functions", () => {
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@${address.concentric}`
     );
@@ -111,7 +111,7 @@ describe("Table cell formatting functions", () => {
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@ ` +
         `(${address.description})`
@@ -124,7 +124,7 @@ describe("Table cell formatting functions", () => {
       concentric: "0",
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(
       `:${address.radialMinute}@${address.concentric} ` +
         `(${address.description})`
@@ -137,7 +137,7 @@ describe("Table cell formatting functions", () => {
       concentric: "0",
       radialHour: 8,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(
       `${address.radialHour}:@${address.concentric} ` +
         `(${address.description})`
@@ -148,26 +148,26 @@ describe("Table cell formatting functions", () => {
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address);
     expect(text).toEqual(`(${address.description})`);
   });
 
   test("formatAddress, no fields", () => {
     const address = new RodGarettAddress({});
-    expect(formatAddress({ value: address })).toBeNull();
+    expect(formatAddress(address)).toBeNull();
   });
 
   test("formatAddress, null", () => {
-    expect(formatAddress({ value: null })).toBeNull();
+    expect(formatAddress(null)).toBeNull();
   });
 
   test("formatAddress, invalid", () => {
-    expect(formatAddress({ value: -1 })).toBeNull();
-    expect(formatAddress({ value: "XYZZY" })).toBeNull();
+    expect(formatAddress(-1)).toBeNull();
+    expect(formatAddress("XYZZY")).toBeNull();
   });
 
   test("formatAddress, undefined", () => {
-    expect(formatAddress({})).toBeUndefined();
+    expect(formatAddress()).toBeUndefined();
   });
 
   test("formatLocation, all fields", () => {
@@ -181,10 +181,8 @@ describe("Table cell formatting functions", () => {
       name: "Treetop House",
       address: address,
     });
-    const text = formatLocation({ value: location });
-    expect(text).toEqual(
-      `${location.name} @ ${formatAddress({ value: address })}`
-    );
+    const text = formatLocation(location);
+    expect(text).toEqual(`${location.name} @ ${formatAddress(address)}`);
   });
 
   test("formatLocation, no name", () => {
@@ -195,49 +193,49 @@ describe("Table cell formatting functions", () => {
       radialMinute: 37,
     });
     const location = new Location({ address: address });
-    const text = formatLocation({ value: location });
-    expect(text).toEqual(`${formatAddress({ value: address })}`);
+    const text = formatLocation(location);
+    expect(text).toEqual(`${formatAddress(address)}`);
   });
 
   test("formatLocation, no address", () => {
     const location = new Location({ name: "Treetop House" });
-    const text = formatLocation({ value: location });
+    const text = formatLocation(location);
     expect(text).toEqual(`${location.name}`);
   });
 
   test("formatLocation, no fields", () => {
     const location = new Location({});
-    const text = formatLocation({ value: location });
+    const text = formatLocation(location);
     expect(text).toBeNull();
   });
 
   test("formatLocation, null", () => {
-    expect(formatLocation({ value: null })).toBeNull();
+    expect(formatLocation(null)).toBeNull();
   });
 
   test("formatLocation, invalid", () => {
-    expect(formatLocation({ value: -1 })).toBeNull();
-    expect(formatLocation({ value: "XYZZY" })).toBeNull();
+    expect(formatLocation(-1)).toBeNull();
+    expect(formatLocation("XYZZY")).toBeNull();
   });
 
   test("formatLocation, undefined", () => {
-    expect(formatLocation({})).toBeUndefined();
+    expect(formatLocation()).toBeUndefined();
   });
 
   test("formatArrayOfStrings, empty", () => {
-    expect(formatArrayOfStrings({ value: [] })).toEqual("");
+    expect(formatArrayOfStrings([])).toEqual("");
   });
 
   test("formatArrayOfStrings, one", () => {
-    expect(formatArrayOfStrings({ value: ["one"] })).toEqual("one");
+    expect(formatArrayOfStrings(["one"])).toEqual("one");
   });
 
   test("formatArrayOfStrings, two", () => {
-    expect(formatArrayOfStrings({ value: ["one", "two"] })).toEqual("one, two");
+    expect(formatArrayOfStrings(["one", "two"])).toEqual("one, two");
   });
 
   test("formatArrayOfStrings, undefined", () => {
-    expect(formatArrayOfStrings({})).toEqual("");
+    expect(formatArrayOfStrings()).toEqual("");
   });
 });
 
