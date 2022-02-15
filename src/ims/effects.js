@@ -41,7 +41,7 @@ export const useBag = ({ setBag }) => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [ims, setBag]);
 };
 
 export const useEvents = ({ setEvents }) => {
@@ -72,7 +72,7 @@ export const useEvents = ({ setEvents }) => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [ims, setEvents]);
 };
 
 export const useEvent = ({ eventID, setEvent }) => {
@@ -104,7 +104,7 @@ export const useEvent = ({ eventID, setEvent }) => {
     return () => {
       ignore = true;
     };
-  }, [eventID]);
+  }, [ims, eventID, setEvent]);
 };
 
 export const useIncidents = ({ eventID, searchInput, setIncidents }) => {
@@ -141,7 +141,7 @@ export const useIncidents = ({ eventID, searchInput, setIncidents }) => {
     return () => {
       ignore = true;
     };
-  }, [eventID, searchInput]);
+  }, [ims, eventID, searchInput, setIncidents]);
 };
 
 export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
@@ -174,7 +174,7 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
     return () => {
       ignore = true;
     };
-  }, [eventID, incidentNumber]);
+  }, [ims, eventID, incidentNumber, setIncident]);
 };
 
 export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
@@ -209,5 +209,5 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
     return () => {
       ignore = true;
     };
-  }, [eventID]);
+  }, [ims, eventID, setConcentricStreets]);
 };
