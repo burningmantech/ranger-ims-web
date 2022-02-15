@@ -40,7 +40,7 @@ const EventDropdown = () => {
     return () => {
       ignore = true;
     };
-  }, [ims]);
+  }, []);
 
   // Render
 

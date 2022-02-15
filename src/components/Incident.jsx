@@ -248,7 +248,7 @@ const Incident = ({ incident }) => {
     return () => {
       ignore = true;
     };
-  }, [ims, incident.eventID]);
+  }, [incident.eventID]);
 
   return (
     <div id="incident_wrapper">

@@ -47,7 +47,7 @@ export const DispatchQueuePage = ({ id }) => {
     return () => {
       ignore = true;
     };
-  }, [ims, id]);
+  }, [id]);
 
   // Render
 

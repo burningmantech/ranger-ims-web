@@ -45,7 +45,7 @@ export const IncidentPage = ({ eventID, incidentNumber }) => {
     return () => {
       ignore = true;
     };
-  }, [ims, eventID, incidentNumber]);
+  }, [eventID, incidentNumber]);
 
   // Render
 

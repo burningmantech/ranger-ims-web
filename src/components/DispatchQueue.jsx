@@ -587,7 +587,7 @@ const DispatchQueue = ({ event }) => {
     return () => {
       ignore = true;
     };
-  }, [ims, event, searchInput]);
+  }, [event, searchInput]);
 
   const table = useDispatchQueueTable(incidents);
 

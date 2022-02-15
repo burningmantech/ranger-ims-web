@@ -41,7 +41,7 @@ const BagTable = () => {
     return () => {
       ignore = true;
     };
-  }, [ims]);
+  }, []);
 
   // Render
 
