@@ -5,7 +5,7 @@ describe("RodGarettAddress", () => {
     const address = new RodGarettAddress({});
     const result = address.toString();
 
-    expect(result).toEqual(`?@?:? ()`);
+    expect(result).toEqual(`?:?@? ()`);
   });
 
   test("toString, text", () => {
@@ -13,7 +13,7 @@ describe("RodGarettAddress", () => {
     const address = new RodGarettAddress({ description: description });
     const result = address.toString();
 
-    expect(result).toEqual(`?@?:? (${description})`);
+    expect(result).toEqual(`?:?@? (${description})`);
   });
 
   test("toString, garett", () => {
@@ -30,7 +30,7 @@ describe("RodGarettAddress", () => {
     const result = address.toString();
 
     expect(result).toEqual(
-      `${concentric}@${radialHour}:${radialMinute} (${description})`
+      `${radialHour}:${radialMinute}@${concentric} (${description})`
     );
   });
 

@@ -87,8 +87,8 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatAddress({ value: address });
     expect(text).toEqual(
-      `${address.concentric}@` +
-        `${address.radialHour}:${address.radialMinute} ` +
+      `${address.radialHour}:${address.radialMinute}@` +
+        `${address.concentric} ` +
         `(${address.description})`
     );
   });
@@ -101,7 +101,7 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatAddress({ value: address });
     expect(text).toEqual(
-      `${address.concentric}@` + `${address.radialHour}:${address.radialMinute}`
+      `${address.radialHour}:${address.radialMinute}@${address.concentric}`
     );
   });
 
@@ -113,7 +113,7 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatAddress({ value: address });
     expect(text).toEqual(
-      `@${address.radialHour}:${address.radialMinute} ` +
+      `${address.radialHour}:${address.radialMinute}@ ` +
         `(${address.description})`
     );
   });
@@ -126,7 +126,7 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatAddress({ value: address });
     expect(text).toEqual(
-      `${address.concentric}@:${address.radialMinute} ` +
+      `:${address.radialMinute}@${address.concentric} ` +
         `(${address.description})`
     );
   });
@@ -139,7 +139,7 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatAddress({ value: address });
     expect(text).toEqual(
-      `${address.concentric}@${address.radialHour}: ` +
+      `${address.radialHour}:@${address.concentric} ` +
         `(${address.description})`
     );
   });

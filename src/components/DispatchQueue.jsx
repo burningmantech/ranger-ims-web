@@ -146,9 +146,9 @@ export const formatAddress = ({ value }) => {
   }
   if (address.concentric || address.radialHour || address.radialMinute) {
     return (
-      `${formatCoordinate(address.concentric)}@` +
       `${formatCoordinate(address.radialHour)}:` +
-      `${formatCoordinate(address.radialMinute)}` +
+      `${formatCoordinate(address.radialMinute)}@` +
+      `${formatCoordinate(address.concentric)}` +
       `${address.description ? ` (${address.description})` : ""}`
     );
   } else if (address.description) {

@@ -44,9 +44,9 @@ export default class RodGarettAddress {
       return value == null ? alternate : value;
     };
     return (
-      `${formatNull(this.concentric, "?")}@` +
       `${formatNull(this.radialHour, "?")}:` +
-      `${formatNull(this.radialMinute, "?")} ` +
+      `${formatNull(this.radialMinute, "?")}@` +
+      `${formatNull(this.concentric, "?")} ` +
       `(${formatNull(this.description, "")})`
     );
   };
