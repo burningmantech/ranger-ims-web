@@ -243,6 +243,9 @@ const useDispatchQueueTable = (incidents) => {
 // Table component
 
 const DispatchQueueTable = ({ table, event }) => {
+  invariant(table != null, "table argument is required");
+  invariant(event != null, "event argument is required");
+
   const handleRowClick = (incidentNumber) => {
     const url = URLs.incident(event.id, incidentNumber);
     const context = `${event.id}:${incidentNumber}`;
@@ -311,6 +314,11 @@ export const formatShowState = (showState) => {
 };
 
 const ShowStateControl = ({ table, incidents, showState, setShowState }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(showState != null, "showState argument is required");
+  invariant(setShowState != null, "setShowState argument is required");
+
   const currentState = formatShowState(showState);
 
   return (
@@ -345,6 +353,11 @@ export const formatShowDays = (showDays) => {
 };
 
 const ShowDaysControl = ({ table, incidents, showDays, setShowDays }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(showDays != null, "showDays argument is required");
+  invariant(setShowDays != null, "setShowDays argument is required");
+
   const currentDays = formatShowDays(showDays);
 
   return (
@@ -368,6 +381,9 @@ const ShowDaysControl = ({ table, incidents, showDays, setShowDays }) => {
 };
 
 const ShowRowsControl = ({ table, incidents }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+
   const currentRows =
     table.state.pageSize === incidents.length ? "All" : table.state.pageSize;
 
@@ -396,6 +412,9 @@ const ShowRowsControl = ({ table, incidents }) => {
 };
 
 const SearchBar = ({ searchInput, setSearchInput }) => {
+  invariant(searchInput != null, "searchInput argument is required");
+  invariant(setSearchInput != null, "setSearchInput argument is required");
+
   const handleSearchInput = (event) => {
     setSearchInput(event.target.value);
   };
@@ -428,6 +447,15 @@ const TopToolBar = ({
   showDays,
   setShowDays,
 }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(searchInput != null, "searchInput argument is required");
+  invariant(setSearchInput != null, "setSearchInput argument is required");
+  invariant(showState != null, "showState argument is required");
+  invariant(setShowState != null, "setShowState argument is required");
+  invariant(showDays != null, "showDays argument is required");
+  invariant(setShowDays != null, "setShowDays argument is required");
+
   return (
     <Row id="queue_top_toolbar">
       {/*
