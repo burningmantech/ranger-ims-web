@@ -39,10 +39,20 @@ const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
   invariant(selected != null, "selected property is required");
   invariant(valueToString != null, "valueToString property is required");
 
+  const onChange = (event) => {
+    console.info(event);
+  };
+
   return (
     <FormGroup>
       <Label id={id} label={label} />
-      <Form.Select id={id} size="sm" className="w-auto" defaultValue={selected}>
+      <Form.Select
+        id={id}
+        size="sm"
+        className="w-auto"
+        defaultValue={selected}
+        onChange={onChange}
+      >
         {values.map((value) => (
           <option key={value} value={value}>
             {valueToString(value)}
@@ -116,15 +126,22 @@ const SummaryCard = ({ summary }) => {
 };
 
 const Select = ({ id, width, selected, options }) => {
-  {
-    /* FIXME: Can we set width via Bootstrap instead of style? */
-  }
+  invariant(id != null, "id property is required");
+  invariant(width != null, "width property is required");
+  invariant(options != null, "options property is required");
+
+  const onChange = (event) => {
+    console.info(event);
+  };
+
+  // FIXME: Can we set width via Bootstrap instead of style?
   return (
     <Form.Select
       id={id}
       size="sm"
       style={{ flex: "initial", width: width }}
-      value={selected}
+      value={selected == null ? "" : selected}
+      onChange={onChange}
     >
       <option key={null} value={null} />
       {Array.from(options, ([key, value]) => (
