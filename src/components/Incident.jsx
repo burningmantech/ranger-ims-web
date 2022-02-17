@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";

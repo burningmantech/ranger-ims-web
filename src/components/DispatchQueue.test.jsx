@@ -79,67 +79,115 @@ describe("Table cell formatting functions", () => {
   });
 
   test("formatAddress, all fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@` +
-        `${address.concentric} ` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no description", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.radialHour}:${address.radialMinute}@${address.concentric}`
+      `${address.radialHour}:${address.radialMinute}@` +
+        `${concentricStreets.get(address.concentric)}`
     );
   });
 
   test("formatAddress, no concentric", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.radialHour}:${address.radialMinute}@ ` +
+      `${address.radialHour}:${address.radialMinute}@- ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no radial hour", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialMinute: 37,
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `:${address.radialMinute}@${address.concentric} ` +
+      `-:${address.radialMinute}@` +
+        `${concentricStreetName} ` +
+        `(${address.description})`
+    );
+  });
+
+  test("formatAddress, radial minute < 10", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
+    const address = new RodGarettAddress({
+      description: "Here, by this stream...",
+      concentric: concentricStreetID,
+      radialHour: 8,
+      radialMinute: 3,
+    });
+    const text = formatAddress(address, concentricStreets);
+    expect(text).toEqual(
+      `${address.radialHour}:0${address.radialMinute}@` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no radial minute", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.radialHour}:@${address.concentric} ` +
+      `${address.radialHour}:-@` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
@@ -148,13 +196,13 @@ describe("Table cell formatting functions", () => {
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
     });
-    const text = formatAddress(address);
+    const text = formatAddress(address, new Map());
     expect(text).toEqual(`(${address.description})`);
   });
 
   test("formatAddress, no fields", () => {
     const address = new RodGarettAddress({});
-    expect(formatAddress(address)).toBeNull();
+    expect(formatAddress(address, new Map())).toBeNull();
   });
 
   test("formatAddress, null", () => {
@@ -171,9 +219,14 @@ describe("Table cell formatting functions", () => {
   });
 
   test("formatLocation, all fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
@@ -181,11 +234,18 @@ describe("Table cell formatting functions", () => {
       name: "Treetop House",
       address: address,
     });
-    const text = formatLocation(location);
-    expect(text).toEqual(`${location.name} @ ${formatAddress(address)}`);
+    const text = formatLocation(location, concentricStreets);
+    expect(text).toEqual(
+      `${location.name} @ ${formatAddress(address, concentricStreets)}`
+    );
   });
 
   test("formatLocation, no name", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
       concentric: "0",
@@ -193,19 +253,29 @@ describe("Table cell formatting functions", () => {
       radialMinute: 37,
     });
     const location = new Location({ address: address });
-    const text = formatLocation(location);
-    expect(text).toEqual(`${formatAddress(address)}`);
+    const text = formatLocation(location, concentricStreets);
+    expect(text).toEqual(`${formatAddress(address, concentricStreets)}`);
   });
 
   test("formatLocation, no address", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const location = new Location({ name: "Treetop House" });
-    const text = formatLocation(location);
+    const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(`${location.name}`);
   });
 
   test("formatLocation, no fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const location = new Location({});
-    const text = formatLocation(location);
+    const text = formatLocation(location, concentricStreets);
     expect(text).toBeNull();
   });
 

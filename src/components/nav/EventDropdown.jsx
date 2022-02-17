@@ -1,10 +1,8 @@
-import invariant from "invariant";
 import { useState } from "react";
 
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 import { URLs } from "../../URLs";
-import { IMSContext } from "../../ims/context";
 import { useEvents } from "../../ims/effects";
 
 const EventDropdown = () => {

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
 
 import Button from "react-bootstrap/Button";
@@ -13,7 +13,7 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { URLs } from "../URLs";
-import { useIncidents } from "../ims/effects";
+import { useAllConcentricStreets, useIncidents } from "../ims/effects";
 import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
@@ -134,17 +134,22 @@ export const formatState = (state) => {
   }
 };
 
-export const formatAddress = (address) => {
-  const formatCoordinate = (c) => (c == null ? "" : c);
+export const formatAddress = (address, concentricStreets) => {
+  const formatCoordinate = (c) => (c == null ? "-" : c.toString());
+  const formatMinute = (m) => (m == null ? "-" : m.toString().padStart(2, "0"));
 
   if (address == null) {
     return address;
   }
   if (address.concentric || address.radialHour || address.radialMinute) {
+    const concentric =
+      concentricStreets == null
+        ? null
+        : concentricStreets.get(address.concentric);
     return (
       `${formatCoordinate(address.radialHour)}:` +
-      `${formatCoordinate(address.radialMinute)}@` +
-      `${formatCoordinate(address.concentric)}` +
+      `${formatMinute(address.radialMinute)}@` +
+      `${formatCoordinate(concentric)}` +
       `${address.description ? ` (${address.description})` : ""}`
     );
   } else if (address.description) {
@@ -154,12 +159,12 @@ export const formatAddress = (address) => {
   }
 };
 
-export const formatLocation = (location) => {
+export const formatLocation = (location, concentricStreets) => {
   if (location == null) {
     return location;
   }
 
-  const addressText = formatAddress(location.address);
+  const addressText = formatAddress(location.address, concentricStreets);
 
   if (location.name == null) {
     if (addressText == null) {
@@ -186,6 +191,14 @@ export const formatArrayOfStrings = (strings) => {
 // Table hook
 
 const useDispatchQueueTable = (incidents) => {
+  // Fetch concentric street data
+
+  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
+
+  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
+
+  invariant(allConcentricStreets != null, "allConcentricStreets is null");
+
   // See: https://react-table.tanstack.com/docs/overview
 
   const data = useMemo(() => (incidents == null ? [] : incidents), [incidents]);
@@ -193,45 +206,51 @@ const useDispatchQueueTable = (incidents) => {
   const columns = useMemo(
     () => [
       {
-        accessor: "number",
+        id: "number",
+        accessor: (incident) => incident.number,
         Header: <abbr title="Number">#</abbr>,
       },
       {
-        accessor: "priority",
+        id: "priority",
+        accessor: (incident) => formatPriority(incident.priority),
         Header: <abbr title="Priority">Pri</abbr>,
-        Cell: ({ value }) => formatPriority(value),
       },
       {
-        accessor: "created",
+        id: "created",
+        accessor: (incident) => formatDateTime(incident.created),
         Header: "Created",
-        Cell: ({ value }) => formatDateTime(value),
       },
       {
-        accessor: "state",
+        id: "state",
+        accessor: (incident) => formatState(incident.state),
         Header: "State",
-        Cell: ({ value }) => formatState(value),
       },
       {
-        accessor: "rangerHandles",
+        id: "ranger_handles",
+        accessor: (incident) => formatArrayOfStrings(incident.rangerHandles),
         Header: "Rangers",
-        Cell: ({ value }) => formatArrayOfStrings(value),
       },
       {
-        accessor: "location",
+        id: "location",
+        accessor: (incident) =>
+          formatLocation(
+            incident.location,
+            allConcentricStreets.get(incident.eventID)
+          ),
         Header: "Location",
-        Cell: ({ value }) => formatLocation(value),
       },
       {
-        accessor: "incidentTypes",
+        id: "incident_types",
+        accessor: (incident) => formatArrayOfStrings(incident.incidentTypes),
         Header: "Types",
-        Cell: ({ value }) => formatArrayOfStrings(value),
       },
       {
+        id: "summary",
         accessor: (incident) => incident.summarize(),
         Header: "Summary",
       },
     ],
-    []
+    [allConcentricStreets]
   );
 
   return useTable(

@@ -1,9 +1,7 @@
-import invariant from "invariant";
 import { useState } from "react";
 
 import Table from "react-bootstrap/Table";
 
-import { IMSContext } from "../ims/context";
 import { useBag } from "../ims/effects";
 
 import Loading from "../components/Loading";
@@ -13,7 +11,7 @@ const BagTable = () => {
 
   const [bag, setBag] = useState(undefined);
 
-  useBag({ event: event, setBag: setBag });
+  useBag({ setBag: setBag });
 
   // Render
 

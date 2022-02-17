@@ -177,6 +177,40 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
   }, [ims, eventID, incidentNumber, setIncident]);
 };
 
+export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
+  invariant(
+    setAllConcentricStreets != null,
+    "setAllConcentricStreets property is required"
+  );
+
+  const ims = useIMS();
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchConcentricStreets = async () => {
+      let concentricStreets;
+      try {
+        concentricStreets = await ims.allConcentricStreets();
+      } catch (e) {
+        console.error(`Unable to fetch all concentric streets: ${e.message}`);
+        console.error(e);
+        concentricStreets = new Map();
+      }
+
+      if (!ignore) {
+        setAllConcentricStreets(concentricStreets);
+      }
+    };
+
+    fetchConcentricStreets();
+
+    return () => {
+      ignore = true;
+    };
+  }, [ims, setAllConcentricStreets]);
+};
+
 export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
   invariant(eventID != null, "eventID property is required");
   invariant(
