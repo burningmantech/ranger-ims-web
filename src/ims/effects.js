@@ -13,6 +13,16 @@ const useIMS = () => {
   return ims;
 };
 
+const tryWithFallback = async (description, fallback, f, ...args) => {
+  try {
+    return await f.apply(null, args);
+  } catch (e) {
+    console.error(`Unable to ${description}: ${e.message}`);
+    console.error(e);
+    return fallback;
+  }
+};
+
 export const useBag = ({ setBag }) => {
   invariant(setBag != null, "setBag property is required");
 
@@ -22,14 +32,7 @@ export const useBag = ({ setBag }) => {
     let ignore = false;
 
     const fetchBag = async () => {
-      let bag;
-      try {
-        bag = await ims.bag();
-      } catch (e) {
-        console.error(`Unable to fetch bag: ${e.message}`);
-        console.error(e);
-        bag = null;
-      }
+      const bag = await tryWithFallback("fetch bag", null, ims.bag);
 
       if (!ignore) {
         setBag(bag);
@@ -53,14 +56,7 @@ export const useEvents = ({ setEvents }) => {
     let ignore = false;
 
     const fetchEvents = async () => {
-      let events;
-      try {
-        events = await ims.events();
-      } catch (e) {
-        console.error(`Unable to fetch events: ${e.message}`);
-        console.error(e);
-        events = null;
-      }
+      const events = await tryWithFallback("fetch events", null, ims.events);
 
       if (!ignore) {
         setEvents(events);
@@ -85,14 +81,12 @@ export const useEvent = ({ eventID, setEvent }) => {
     let ignore = false;
 
     const fetchEvent = async () => {
-      let event;
-      try {
-        event = await ims.eventWithID(eventID);
-      } catch (e) {
-        console.error(`Unable to fetch event: ${e.message}`);
-        console.error(e);
-        event = null;
-      }
+      const event = await tryWithFallback(
+        "fetch event",
+        null,
+        ims.eventWithID,
+        eventID
+      );
 
       if (!ignore) {
         setEvent(event);
@@ -118,18 +112,20 @@ export const useIncidents = ({ eventID, searchInput, setIncidents }) => {
     let ignore = false;
 
     const fetchIncidents = async () => {
-      let incidents;
-      try {
-        if (searchInput) {
-          incidents = await ims.search(eventID, searchInput);
-        } else {
-          incidents = await ims.incidents(eventID);
-        }
-      } catch (e) {
-        console.error(`Unable to fetch incidents: ${e.message}`);
-        console.error(e);
-        incidents = null;
-      }
+      const incidents = searchInput
+        ? await tryWithFallback(
+            "search incidents",
+            null,
+            ims.search,
+            eventID,
+            searchInput
+          )
+        : await tryWithFallback(
+            "fetch incidents",
+            null,
+            ims.incidents,
+            eventID
+          );
 
       if (!ignore) {
         setIncidents(incidents);
@@ -155,14 +151,13 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
     let ignore = false;
 
     const fetchIncident = async () => {
-      let incident;
-      try {
-        incident = await ims.incidentWithNumber(eventID, incidentNumber);
-      } catch (e) {
-        console.error(`Unable to fetch incident: ${e.message}`);
-        console.error(e);
-        incident = null;
-      }
+      const incident = await tryWithFallback(
+        "fetch incident",
+        null,
+        ims.incidentWithNumber,
+        eventID,
+        incidentNumber
+      );
 
       if (!ignore) {
         setIncident(incident);
@@ -189,14 +184,11 @@ export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
     let ignore = false;
 
     const fetchConcentricStreets = async () => {
-      let concentricStreets;
-      try {
-        concentricStreets = await ims.allConcentricStreets();
-      } catch (e) {
-        console.error(`Unable to fetch all concentric streets: ${e.message}`);
-        console.error(e);
-        concentricStreets = new Map();
-      }
+      const concentricStreets = await tryWithFallback(
+        "fetch all concentric streets",
+        null,
+        ims.allConcentricStreets
+      );
 
       if (!ignore) {
         setAllConcentricStreets(concentricStreets);
@@ -224,14 +216,12 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
     let ignore = false;
 
     const fetchConcentricStreets = async () => {
-      let concentricStreets;
-      try {
-        concentricStreets = await ims.concentricStreets(eventID);
-      } catch (e) {
-        console.error(`Unable to fetch event concentric streets: ${e.message}`);
-        console.error(e);
-        concentricStreets = [];
-      }
+      const concentricStreets = await tryWithFallback(
+        "fetch event concentric streets",
+        [],
+        ims.concentricStreets,
+        eventID
+      );
 
       if (!ignore) {
         setConcentricStreets(concentricStreets);
