@@ -162,11 +162,11 @@ const LocationCard = ({
   concentricStreets,
 }) => {
   return (
-    <Card>
+    <Card id="incident_location_card">
       <Card.Body className="bg-light p-1">
         <FormGroup as={Row}>
           <Col sm={2}>
-            <Label id="incident_location_name" label="Name" />
+            <Label id="incident_location_name" label="Location Name" />
           </Col>
           <Col sm={10}>
             <LabeledTextField

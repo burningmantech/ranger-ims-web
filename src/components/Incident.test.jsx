@@ -92,7 +92,7 @@ describe("Incident component: display", () => {
           renderWithIMSContext(<Incident incident={incident} />, ims);
         });
 
-        const textField = screen.getByLabelText("Name:");
+        const textField = screen.getByLabelText("Location Name:");
         const location = incident.location;
         const name = location == null ? null : location.name;
 
