@@ -108,20 +108,29 @@ const SelectPriority = ({ priority }) => {
   );
 };
 
+const Well = ({ children, id }) => {
+  invariant(children != null, "children property is required");
+  invariant(id != null, "id property is required");
+
+  return (
+    <Card id={id} className="m-2">
+      <Card.Body className="bg-light p-1">{children}</Card.Body>
+    </Card>
+  );
+};
+
 const SummaryCard = ({ summary }) => {
   return (
-    <Card>
-      <Card.Body className="bg-light p-1">
-        <FormGroup>
-          <Label id="incident_summary" label="Summary" />
-          <LabeledTextField
-            id="incident_summary"
-            value={summary}
-            placeholder="One-line summary of incident"
-          />
-        </FormGroup>
-      </Card.Body>
-    </Card>
+    <Well id="incident_summary_card">
+      <FormGroup>
+        <Label id="incident_summary" label="Summary" />
+        <LabeledTextField
+          id="incident_summary"
+          value={summary}
+          placeholder="One-line summary of incident"
+        />
+      </FormGroup>
+    </Well>
   );
 };
 
@@ -162,72 +171,107 @@ const LocationCard = ({
   concentricStreets,
 }) => {
   return (
-    <Card id="incident_location_card">
-      <Card.Body className="bg-light p-1">
-        <FormGroup as={Row}>
-          <Col sm={2}>
-            <Label id="incident_location_name" label="Location Name" />
-          </Col>
-          <Col sm={10}>
-            <LabeledTextField
-              id="incident_location_name"
-              value={locationName}
-              placeholder="Name of location (camp, art project, …)"
+    <Well id="incident_location_card">
+      <Card.Title className="text-center">Location</Card.Title>
+      <FormGroup as={Row}>
+        <Col sm={2}>
+          <Label id="incident_location_name" label="Name" />
+        </Col>
+        <Col sm={10}>
+          <LabeledTextField
+            id="incident_location_name"
+            value={locationName}
+            placeholder="Name of location (camp, art project, …)"
+          />
+        </Col>
+      </FormGroup>
+      <FormGroup as={Row}>
+        <Col sm={2}>
+          <Label id="incident_location_address" label="Address" />
+        </Col>
+        <Col sm={10}>
+          <InputGroup id="incident_location_address">
+            <Select
+              id="incident_location_address_radial_hour"
+              width="5em"
+              selected={locationRadialHour}
+              options={RodGarettAddress.radialHours.map((value) => [
+                value,
+                value,
+              ])}
             />
-          </Col>
-        </FormGroup>
-        <FormGroup as={Row}>
-          <Col sm={2}>
-            <Label id="incident_location_address" label="Address" />
-          </Col>
-          <Col sm={10}>
-            <InputGroup id="incident_location_address">
-              <Select
-                id="incident_location_address_radial_hour"
-                width="5em"
-                selected={locationRadialHour}
-                options={RodGarettAddress.radialHours.map((value) => [
-                  value,
-                  value,
-                ])}
-              />
-              <InputGroup.Text>:</InputGroup.Text>
-              <Select
-                id="incident_location_address_radial_minute"
-                width="5em"
-                selected={locationRadialMinute}
-                options={RodGarettAddress.radialMinutes.map((value) => [
-                  value,
-                  value,
-                ])}
-              />
-              <InputGroup.Text>@</InputGroup.Text>
-              <Select
-                id="incident_location_address_concentric"
-                width="20em"
-                selected={locationConcentric}
-                options={Array.from(concentricStreets, ([id, street]) => [
-                  street.id,
-                  street.name,
-                ])}
-              />
-            </InputGroup>
-          </Col>
-        </FormGroup>
-        <FormGroup as={Row}>
-          <Col sm={2}>
-            <Label id="incident_location_description" label="Description" />
-          </Col>
-          <Col sm={10}>
-            <LabeledTextField
-              id="incident_location_description"
-              value={locationDescription}
-              placeholder="Description of location"
+            <InputGroup.Text>:</InputGroup.Text>
+            <Select
+              id="incident_location_address_radial_minute"
+              width="5em"
+              selected={locationRadialMinute}
+              options={RodGarettAddress.radialMinutes.map((value) => [
+                value,
+                value,
+              ])}
             />
-          </Col>
-        </FormGroup>
-      </Card.Body>
-    </Card>
+            <InputGroup.Text>@</InputGroup.Text>
+            <Select
+              id="incident_location_address_concentric"
+              width="20em"
+              selected={locationConcentric}
+              options={Array.from(concentricStreets, ([id, street]) => [
+                street.id,
+                street.name,
+              ])}
+            />
+          </InputGroup>
+        </Col>
+      </FormGroup>
+      <FormGroup as={Row}>
+        <Col sm={2}>
+          <Label id="incident_location_description" label="Description" />
+        </Col>
+        <Col sm={10}>
+          <LabeledTextField
+            id="incident_location_description"
+            value={locationDescription}
+            placeholder="Description of location"
+          />
+        </Col>
+      </FormGroup>
+    </Well>
+  );
+};
+
+const RangersCard = () => {
+  return (
+    <Well id="incident_location_card">
+      <Card.Title className="text-center">Rangers</Card.Title>
+      ...rangers card...
+    </Well>
+  );
+};
+
+const IncidentTypesCard = () => {
+  return (
+    <Well id="incident_location_card">
+      <Card.Title className="text-center">Incident Types</Card.Title>
+      ...incident types card...
+    </Well>
+  );
+};
+
+const AttachedIncidentReportsCard = () => {
+  return (
+    <Well id="incident_reports_card">
+      <Card.Title className="text-center">Incident Reports</Card.Title>
+      ...incident reports card...
+    </Well>
+  );
+};
+
+const NarrativeCard = () => {
+  return (
+    <Well id="incident_narrative_card">
+      <Card.Title className="text-center">Incident Narrative</Card.Title>
+      ...narrative card...
+    </Well>
   );
 };
 
@@ -278,6 +322,27 @@ const Incident = ({ incident }) => {
             locationRadialMinute={incident.location.address.radialMinute}
             concentricStreets={concentricStreets}
           />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <RangersCard />
+        </Col>
+        <Col>
+          <IncidentTypesCard />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <AttachedIncidentReportsCard />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <NarrativeCard />
         </Col>
       </Row>
     </div>
