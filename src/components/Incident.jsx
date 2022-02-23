@@ -108,13 +108,23 @@ const SelectPriority = ({ priority }) => {
   );
 };
 
-const Well = ({ children, id }) => {
+const Well = ({ children, id, title }) => {
   invariant(children != null, "children property is required");
   invariant(id != null, "id property is required");
 
+  let Title;
+  if (title == null) {
+    Title = () => "";
+  } else {
+    Title = () => <Card.Title className="text-center">{title}</Card.Title>;
+  }
+
   return (
     <Card id={id} className="m-2">
-      <Card.Body className="bg-light p-1">{children}</Card.Body>
+      <Card.Body className="bg-light p-1">
+        <Title />
+        {children}
+      </Card.Body>
     </Card>
   );
 };
@@ -171,8 +181,7 @@ const LocationCard = ({
   concentricStreets,
 }) => {
   return (
-    <Well id="incident_location_card">
-      <Card.Title className="text-center">Location</Card.Title>
+    <Well id="incident_location_card" title="Location">
       <FormGroup as={Row}>
         <Col sm={2}>
           <Label id="incident_location_name" label="Name" />
@@ -241,8 +250,7 @@ const LocationCard = ({
 
 const RangersCard = () => {
   return (
-    <Well id="incident_location_card">
-      <Card.Title className="text-center">Rangers</Card.Title>
+    <Well id="incident_location_card" title="Rangers">
       ...rangers card...
     </Well>
   );
@@ -250,8 +258,7 @@ const RangersCard = () => {
 
 const IncidentTypesCard = () => {
   return (
-    <Well id="incident_location_card">
-      <Card.Title className="text-center">Incident Types</Card.Title>
+    <Well id="incident_location_card" title="Incident Types">
       ...incident types card...
     </Well>
   );
@@ -259,8 +266,7 @@ const IncidentTypesCard = () => {
 
 const AttachedIncidentReportsCard = () => {
   return (
-    <Well id="incident_reports_card">
-      <Card.Title className="text-center">Incident Reports</Card.Title>
+    <Well id="incident_reports_card" title="Incident Reports">
       ...incident reports card...
     </Well>
   );
@@ -268,8 +274,7 @@ const AttachedIncidentReportsCard = () => {
 
 const NarrativeCard = () => {
   return (
-    <Well id="incident_narrative_card">
-      <Card.Title className="text-center">Incident Narrative</Card.Title>
+    <Well id="incident_narrative_card" title="Incident Narrative">
       ...narrative card...
     </Well>
   );
