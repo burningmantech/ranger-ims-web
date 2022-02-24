@@ -4,104 +4,45 @@ import Incident from "./Incident";
 import Location from "./Location";
 
 describe("Incident", () => {
-  test("toString", () => {
-    const eventID = "1";
-    const number = 4;
-    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z");
-    const state = "open";
-    const priority = 3;
-    const location = new Location({});
-    const summary = "Snake in someone's boots";
-    const rangerHandles = ["Bucket", "Hubcap"];
-    const incidentTypes = ["Medical", "Theme Camp"];
-    const anIncident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-    });
-    const result = anIncident.toString();
-
-    expect(result).toEqual(`(${eventID}#${number})`);
+  test("stateToString, valid", () => {
+    expect(Incident.stateToString("new")).toEqual("New");
+    expect(Incident.stateToString("on_hold")).toEqual("On Hold");
+    expect(Incident.stateToString("dispatched")).toEqual("Dispatched");
+    expect(Incident.stateToString("on_scene")).toEqual("On Scene");
+    expect(Incident.stateToString("closed")).toEqual("Closed");
   });
 
-  test("toJSON, with location", () => {
-    const eventID = "1";
-    const number = 4;
-    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z").toUTC();
-    const state = "open";
-    const priority = 3;
-    const location = new Location({});
-    const summary = "Snake in someone's boots";
-    const rangerHandles = ["Bucket", "Hubcap"];
-    const incidentTypes = ["Medical", "Theme Camp"];
-    const anIncident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-    });
-    const result = anIncident.toJSON();
-
-    expect(JSON.stringify(result)).toEqual(
-      JSON.stringify({
-        event: eventID,
-        number: number,
-        created: created,
-        state: state,
-        priority: priority,
-        summary: summary,
-        location: location,
-        ranger_handles: rangerHandles,
-        incident_types: incidentTypes,
-      })
-    );
+  test("stateToString, invalid", () => {
+    for (const value of [-1, "XYZZY"]) {
+      expect(() => Incident.stateToString(value)).toThrow(
+        `Invalid state: ${value}`
+      );
+    }
   });
 
-  test("toJSON, no location", () => {
-    const eventID = "1";
-    const number = 4;
-    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z").toUTC();
-    const state = "open";
-    const priority = 3;
-    const summary = "Snake in someone's boots";
-    const rangerHandles = ["Bucket", "Hubcap"];
-    const incidentTypes = ["Medical", "Theme Camp"];
-    const anIncident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-    });
-    const result = anIncident.toJSON();
+  test("nonDeprecatedPriorities", () => {
+    expect(Incident.nonDeprecatedPriorities()).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(1)).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(2)).toEqual([2, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(3)).toEqual([1, 3, 5]);
+    expect(Incident.nonDeprecatedPriorities(4)).toEqual([1, 3, 4]);
+    expect(Incident.nonDeprecatedPriorities(5)).toEqual([1, 3, 5]);
+  });
 
-    expect(JSON.stringify(result)).toEqual(
-      JSON.stringify({
-        event: eventID,
-        number: number,
-        created: created,
-        state: state,
-        priority: priority,
-        summary: summary,
-        location: null,
-        ranger_handles: rangerHandles,
-        incident_types: incidentTypes,
-      })
-    );
+  test("priorityToString, valid", () => {
+    expect(Incident.priorityToString(1)).toEqual("High");
+    expect(Incident.priorityToString(2)).toEqual("High");
+    expect(Incident.priorityToString(3)).toEqual("Normal");
+    expect(Incident.priorityToString(4)).toEqual("Low");
+    expect(Incident.priorityToString(5)).toEqual("Low");
+  });
+
+  test("priorityToString, invalid", () => {
+    for (const value of [-1, "XYZZY"]) {
+      expect(() => Incident.priorityToString(value)).toThrow(
+        `Invalid priority: ${value}`
+      );
+    }
   });
 
   test("fromJSON, valid", () => {
@@ -155,45 +96,104 @@ describe("Incident", () => {
     expect(() => Incident.fromJSON({})).toThrow(`Invalid incident JSON: {}`);
   });
 
-  test("stateToString, valid", () => {
-    expect(Incident.stateToString("new")).toEqual("New");
-    expect(Incident.stateToString("on_hold")).toEqual("On Hold");
-    expect(Incident.stateToString("dispatched")).toEqual("Dispatched");
-    expect(Incident.stateToString("on_scene")).toEqual("On Scene");
-    expect(Incident.stateToString("closed")).toEqual("Closed");
+  test("toString", () => {
+    const eventID = "1";
+    const number = 4;
+    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z");
+    const state = "open";
+    const priority = 3;
+    const location = new Location({});
+    const summary = "Snake in someone's boots";
+    const rangerHandles = ["Bucket", "Hubcap"];
+    const incidentTypes = ["Medical", "Theme Camp"];
+    const incident = new Incident({
+      eventID: eventID,
+      number: number,
+      created: created,
+      state: state,
+      priority: priority,
+      summary: summary,
+      location: location,
+      rangerHandles: rangerHandles,
+      incidentTypes: incidentTypes,
+    });
+    const result = incident.toString();
+
+    expect(result).toEqual(`(${eventID}#${number})`);
   });
 
-  test("stateToString, invalid", () => {
-    for (const value of [-1, "XYZZY"]) {
-      expect(() => Incident.stateToString(value)).toThrow(
-        `Invalid state: ${value}`
-      );
-    }
+  test("toJSON, with location", () => {
+    const eventID = "1";
+    const number = 4;
+    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z").toUTC();
+    const state = "open";
+    const priority = 3;
+    const location = new Location({});
+    const summary = "Snake in someone's boots";
+    const rangerHandles = ["Bucket", "Hubcap"];
+    const incidentTypes = ["Medical", "Theme Camp"];
+    const incident = new Incident({
+      eventID: eventID,
+      number: number,
+      created: created,
+      state: state,
+      priority: priority,
+      summary: summary,
+      location: location,
+      rangerHandles: rangerHandles,
+      incidentTypes: incidentTypes,
+    });
+    const result = incident.toJSON();
+
+    expect(JSON.stringify(result)).toEqual(
+      JSON.stringify({
+        event: eventID,
+        number: number,
+        created: created,
+        state: state,
+        priority: priority,
+        summary: summary,
+        location: location,
+        ranger_handles: rangerHandles,
+        incident_types: incidentTypes,
+      })
+    );
   });
 
-  test("nonDeprecatedPriorities", () => {
-    expect(Incident.nonDeprecatedPriorities()).toEqual([1, 3, 5]);
-    expect(Incident.nonDeprecatedPriorities(1)).toEqual([1, 3, 5]);
-    expect(Incident.nonDeprecatedPriorities(2)).toEqual([2, 3, 5]);
-    expect(Incident.nonDeprecatedPriorities(3)).toEqual([1, 3, 5]);
-    expect(Incident.nonDeprecatedPriorities(4)).toEqual([1, 3, 4]);
-    expect(Incident.nonDeprecatedPriorities(5)).toEqual([1, 3, 5]);
-  });
+  test("toJSON, no location", () => {
+    const eventID = "1";
+    const number = 4;
+    const created = DateTime.fromISO("2021-08-17T17:12:46.72Z").toUTC();
+    const state = "open";
+    const priority = 3;
+    const summary = "Snake in someone's boots";
+    const rangerHandles = ["Bucket", "Hubcap"];
+    const incidentTypes = ["Medical", "Theme Camp"];
+    const incident = new Incident({
+      eventID: eventID,
+      number: number,
+      created: created,
+      state: state,
+      priority: priority,
+      summary: summary,
+      rangerHandles: rangerHandles,
+      incidentTypes: incidentTypes,
+    });
+    const result = incident.toJSON();
 
-  test("priorityToString, valid", () => {
-    expect(Incident.priorityToString(1)).toEqual("High");
-    expect(Incident.priorityToString(2)).toEqual("High");
-    expect(Incident.priorityToString(3)).toEqual("Normal");
-    expect(Incident.priorityToString(4)).toEqual("Low");
-    expect(Incident.priorityToString(5)).toEqual("Low");
-  });
-
-  test("priorityToString, invalid", () => {
-    for (const value of [-1, "XYZZY"]) {
-      expect(() => Incident.priorityToString(value)).toThrow(
-        `Invalid priority: ${value}`
-      );
-    }
+    expect(JSON.stringify(result)).toEqual(
+      JSON.stringify({
+        event: eventID,
+        number: number,
+        created: created,
+        state: state,
+        priority: priority,
+        summary: summary,
+        location: null,
+        ranger_handles: rangerHandles,
+        incident_types: incidentTypes,
+      })
+    );
   });
 
   test("summarize, with summary", () => {
