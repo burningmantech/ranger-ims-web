@@ -6,6 +6,7 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import ListGroup from "react-bootstrap/ListGroup";
 import Row from "react-bootstrap/Row";
 
 import { IMSContext } from "../ims/context";
@@ -121,7 +122,7 @@ const Well = ({ children, id, title }) => {
 
   return (
     <Card id={id} className="m-2">
-      <Card.Body className="bg-light p-1">
+      <Card.Body className="bg-light p-2">
         <Title />
         {children}
       </Card.Body>
@@ -248,25 +249,35 @@ const LocationCard = ({
   );
 };
 
-const RangersCard = () => {
+const RangersCard = ({ rangers }) => {
+  invariant(rangers != null, "rangers property is required");
+
   return (
-    <Well id="incident_location_card" title="Rangers">
+    <Well id="incident_rangers_card" title="Rangers">
       ...rangers card...
     </Well>
   );
 };
 
-const IncidentTypesCard = () => {
+const IncidentTypesCard = ({ incidentTypes }) => {
+  invariant(incidentTypes != null, "incidentTypes property is required");
+
   return (
-    <Well id="incident_location_card" title="Incident Types">
-      ...incident types card...
+    <Well id="incident_types_card" title="Incident Types">
+      <ListGroup>
+        {incidentTypes
+          .sort()
+          .map((incidentType) => [
+            <ListGroup.Item key={incidentType}>{incidentType}</ListGroup.Item>,
+          ])}
+      </ListGroup>
     </Well>
   );
 };
 
 const AttachedIncidentReportsCard = () => {
   return (
-    <Well id="incident_reports_card" title="Incident Reports">
+    <Well id="incident_reports_card" title="Attached Incident Reports">
       ...incident reports card...
     </Well>
   );
@@ -332,10 +343,10 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <RangersCard />
+          <RangersCard rangers={[]} />
         </Col>
         <Col>
-          <IncidentTypesCard />
+          <IncidentTypesCard incidentTypes={incident.incidentTypes} />
         </Col>
       </Row>
 
