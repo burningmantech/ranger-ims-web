@@ -1,47 +1,17 @@
-import invariant from "invariant";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 
 import Table from "react-bootstrap/Table";
 
-import { IMSContext } from "../ims/context";
+import { useBag } from "../ims/effects";
 
 import Loading from "../components/Loading";
 
 const BagTable = () => {
-  const imsContext = useContext(IMSContext);
-  invariant(imsContext != null, "IMS context is required");
-  const ims = imsContext.ims;
-
-  invariant(ims != null, "No IMS");
-
   // Fetch data
 
   const [bag, setBag] = useState(undefined);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchBag = async () => {
-      let bag;
-      try {
-        bag = await ims.bag();
-      } catch (e) {
-        console.error(`Unable to fetch bag: ${e.message}`);
-        console.error(e);
-        bag = null;
-      }
-
-      if (!ignore) {
-        setBag(bag);
-      }
-    };
-
-    fetchBag();
-
-    return () => {
-      ignore = true;
-    };
-  }, [ims]);
+  useBag({ setBag: setBag });
 
   // Render
 

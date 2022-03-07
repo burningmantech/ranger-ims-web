@@ -1,5 +1,26 @@
+label {
+  font-weight: bold;
+}
+
+a.navbar-brand > img {
+  width: 30px;
+  height: 30px;
+}
+
 #queue_table {
   font-size: 10pt;
+}
+
+#search_bar {
+  display: flex;
+}
+
+#search_bar > label {
+  margin: 5px;
+}
+
+#search_bar > input {
+  flex: 2;
 }
 
 #queue_table > tbody > tr:hover {
@@ -13,21 +34,4 @@
 #queue_table > thead > tr > td,
 #queue_table > thead > tr > th {
   padding: 6px;
-}
-
-a.navbar-brand > img {
-  width: 30px;
-  height: 30px;
-}
-
-#search_bar {
-  display: flex;
-}
-
-#search_bar > label {
-  margin: 5px;
-}
-
-#search_bar > input {
-  flex: 2;
 }

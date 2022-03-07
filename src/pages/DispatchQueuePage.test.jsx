@@ -17,7 +17,7 @@ describe("DispatchQueuePage component", () => {
     const ims = testIncidentManagementSystem();
 
     for (const event of await ims.events()) {
-      renderWithIMSContext(<DispatchQueuePage id={event.id} />, ims);
+      renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
 
       expect(screen.queryByText("Loading...")).toBeInTheDocument();
       cleanup();
@@ -27,7 +27,7 @@ describe("DispatchQueuePage component", () => {
   test("invalid event ID", async () => {
     const eventID = "XYZZY";
 
-    renderWithIMSContext(<DispatchQueuePage id={eventID} />);
+    renderWithIMSContext(<DispatchQueuePage eventID={eventID} />);
 
     expect(await screen.findByText("Error loading event")).toBeInTheDocument();
   });
@@ -36,7 +36,7 @@ describe("DispatchQueuePage component", () => {
     const ims = testIncidentManagementSystem();
 
     for (const event of await ims.events()) {
-      renderWithIMSContext(<DispatchQueuePage id={event.id} />, ims);
+      renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
 
       // DispatchQueue component renders event name
       expect(

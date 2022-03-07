@@ -74,10 +74,10 @@ describe("EventDropdown component", () => {
       await userEvent.click(screen.getByText("Event"));
     });
 
-    const eventItems = Array.from(
-      document.getElementsByClassName("nav_event_id")
+    const eventNames = Array.from(
+      document.getElementsByClassName("nav_event_id"),
+      (item) => item.innerHTML
     );
-    const eventNames = eventItems.map((item) => item.innerHTML);
     const events = await ims.events();
     const expectedEventNames = events.map((event) => event.name);
 
@@ -94,7 +94,7 @@ describe("EventDropdown component", () => {
 
     for (const event of await ims.events()) {
       const url = new URL(screen.getByText(event.name).href);
-      expect(url.pathname).toEqual(URLs.event(event));
+      expect(url.pathname).toEqual(URLs.event(event.id));
     }
   });
 });

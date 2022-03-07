@@ -4,6 +4,68 @@ import { DateTime } from "luxon";
 import Location from "./Location";
 
 export default class Incident {
+  static states = Object.freeze([
+    "new",
+    "open",
+    "dispatched",
+    "on_scene",
+    "on_hold",
+    "closed",
+  ]);
+
+  static stateToString = (state) => {
+    invariant(state != null, "state is required");
+    switch (state) {
+      case "new":
+        return "New";
+      case "open":
+        return "Open";
+      case "dispatched":
+        return "Dispatched";
+      case "on_scene":
+        return "On Scene";
+      case "on_hold":
+        return "On Hold";
+      case "closed":
+        return "Closed";
+      default:
+        throw new Error(`Invalid state: ${state}`);
+    }
+  };
+
+  static priorities = Object.freeze([1, 2, 3, 4, 5]);
+
+  static nonDeprecatedPriorities = (priority) => {
+    // Remove deprecated values (2 and 4)
+    // However, if the passed-in priority is itself a deprecated value, remove the
+    // other corresponding value (2->1, 4->5) instead, so that we preserve the
+    // existing value.
+    let priorities = Incident.priorities;
+    for (const [deprecated, replacement] of [
+      [2, 1],
+      [4, 5],
+    ]) {
+      const remove = priority === deprecated ? replacement : deprecated;
+      priorities = priorities.filter((p) => p !== remove);
+    }
+    return priorities;
+  };
+
+  static priorityToString = (priority) => {
+    switch (priority) {
+      case 1:
+      case 2:
+        return "High";
+      case 3:
+        return "Normal";
+      case 4:
+      case 5:
+        return "Low";
+      default:
+        throw new Error(`Invalid priority: ${priority}`);
+    }
+  };
+
   static fromJSON = (json) => {
     const location =
       json.location == null ? null : Location.fromJSON(json.location);
@@ -23,39 +85,6 @@ export default class Incident {
       });
     } catch (e) {
       throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
-    }
-  };
-
-  static stateToString = (state) => {
-    invariant(state != null, "state is required");
-    switch (state) {
-      case "new":
-        return "New";
-      case "on_hold":
-        return "On Hold";
-      case "dispatched":
-        return "Dispatched";
-      case "on_scene":
-        return "On Scene";
-      case "closed":
-        return "Closed";
-      default:
-        throw new Error(`Invalid state: ${state}`);
-    }
-  };
-
-  static priorityToString = (priority) => {
-    switch (priority) {
-      case 1:
-      case 2:
-        return "High";
-      case 3:
-        return "Normal";
-      case 4:
-      case 5:
-        return "Low";
-      default:
-        throw new Error(`Invalid priority: ${priority}`);
     }
   };
 

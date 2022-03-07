@@ -101,7 +101,7 @@ describe("App component", () => {
     const ims = testIncidentManagementSystem(username);
 
     for (const event of await ims.events()) {
-      renderWithURL(URLs.event(event), username, ims);
+      renderWithURL(URLs.event(event.id), username, ims);
 
       expect(
         await screen.findByText(`Dispatch Queue: ${event.name}`)

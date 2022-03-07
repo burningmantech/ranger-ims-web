@@ -5,6 +5,7 @@ import { render } from "@testing-library/react";
 
 import IncidentManagementSystem from "./IMS";
 import User from "./User";
+import Incident from "./model/Incident";
 import { IMSContext } from "./context";
 
 /* https://stackoverflow.com/a/7616484 */
@@ -20,6 +21,13 @@ const hashText = (text) => {
   return hash;
 };
 
+const assertFrom = (name, value, array) => {
+  invariant(
+    array.indexOf(value) != -1,
+    `${name} must be one of [${array}], not ${value}`
+  );
+};
+
 export class TestIncidentManagementSystem extends IncidentManagementSystem {
   static timeout = Duration.fromObject({ minutes: 5 });
 
@@ -33,7 +41,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
           bag: "/ims/api/bag",
           auth: "/ims/api/auth",
           // access: "/ims/api/access",
-          // streets:  "/ims/api/streets",
+          streets: "/ims/api/streets",
           // personnel: "/ims/api/personnel/",
           // incident_types:  "/ims/api/incident_types/",
           events: "/ims/api/events/",
@@ -55,8 +63,22 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         { id: "4", name: "Event Four" },
         { id: "empty", name: "Empty Event" },
       ],
+      streets: {
+        // Indexed concentric streets, indexed by event ID
+        1: {
+          A: "A Street",
+          B: "B Street",
+          C: "C Street",
+          D: "D Street",
+          E: "E Street",
+        },
+        2: {},
+        3: {},
+        4: {},
+        empty: {},
+      },
       incidents: {
-        // Lists of incidents, indexes by event ID
+        // Lists of incidents, indexed by event ID
         1: [
           {
             event: "1",
@@ -162,7 +184,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             number: 3,
             created: "2021-04-00T18:45:46",
             summary: "Giraffe in tree",
-            priority: 6,
+            priority: 5,
             state: "new",
             incident_types: ["Dog"],
             ranger_handles: [],
@@ -184,21 +206,47 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     // Validate above test data a bit
     const cmp = (a) => JSON.stringify(a.sort());
     const eventIDs = cmp(this.testData.events.map((e) => e.id));
+    // Streets are indexed by event ID
+    const streetEventIDs = cmp(Object.keys(this.testData.incidents));
+    invariant(
+      eventIDs == streetEventIDs,
+      "Events and streets index keys mismatched: " +
+        `${eventIDs} != ${streetEventIDs}`
+    );
+    // Incidents are indexed by event ID
     const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
       eventIDs == incidentEventIDs,
       "Events and incidents index keys mismatched: " +
         `${eventIDs} != ${incidentEventIDs}`
     );
-    for (const eventID of Object.keys(this.testData.incidents)) {
-      const incidents = this.testData.incidents[eventID];
+    for (const [eventID, incidents] of Object.entries(
+      this.testData.incidents
+    )) {
+      // Check incident values
       for (const incident of incidents) {
         invariant(
           eventID == incident.event,
-          `Incident #${incident.number} in event ID ${eventID} has ` +
-            `mismatched event ID: ${incident.event}`
+          `${incident} has mismatched event ID: ${incident.event}`
         );
+        assertFrom(`${incident} state`, incident.state, Incident.states);
+        assertFrom(
+          `${incident} priority`,
+          incident.priority,
+          Incident.priorities
+        );
+        if (incident.location != null) {
+          if (incident.location.concentric != null) {
+            assertFrom(
+              `${incident} concentric street`,
+              incident.location.concentric,
+              Object.keys(this.testData.streets[incident.event])
+            );
+          }
+        }
       }
+
+      // Check for duplicate incident numbers
       const incidentNumbers = incidents.map((i) => i.number);
       invariant(
         cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
@@ -418,6 +466,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
             throw new Error("unimplemented");
         }
 
+        /* istanbul ignore next */
+        throw new Error("unimplemented");
+
+      case path == bag.urls.streets:
+        /* istanbul ignore else */
+        if (request.method === "GET") {
+          console.debug("Issuing streets response.");
+          return this._jsonResponse(this.testData.streets);
+        }
         /* istanbul ignore next */
         throw new Error("unimplemented");
     }

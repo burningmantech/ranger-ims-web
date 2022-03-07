@@ -1,28 +1,26 @@
 import { URLs } from "./URLs";
 
-import Event from "./ims/model/Event";
-
 describe("URLs", () => {
   test("event", () => {
-    const event = new Event("TOT", "That One Time...");
+    const eventID = "TTITD";
 
-    expect(URLs.event(event)).toEqual(`${URLs.events}${event.id}/`);
+    expect(URLs.event(eventID)).toEqual(`${URLs.events}${eventID}/`);
   });
 
   test("incidents", () => {
-    const event = new Event("TOT", "That One Time...");
+    const eventID = "TTITD";
 
-    expect(URLs.incidents(event)).toEqual(
-      `${URLs.events}${event.id}/incidents/`
+    expect(URLs.incidents(eventID)).toEqual(
+      `${URLs.events}${eventID}/incidents/`
     );
   });
 
   test("incident", () => {
-    const event = new Event("TOT", "That One Time...");
+    const eventID = "TTITD";
     const incidentNumber = 765;
 
-    expect(URLs.incident(event, incidentNumber)).toEqual(
-      `${URLs.events}${event.id}/incidents/${incidentNumber}`
+    expect(URLs.incident(eventID, incidentNumber)).toEqual(
+      `${URLs.events}${eventID}/incidents/${incidentNumber}`
     );
   });
 });

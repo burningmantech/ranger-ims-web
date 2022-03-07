@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
 
+import { URLs } from "../URLs";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
@@ -31,114 +32,162 @@ import DispatchQueue from "./DispatchQueue";
 
 describe("Table cell formatting functions", () => {
   test("formatPriority, valid", () => {
-    expect(formatPriority({ value: 1 })).toEqual(<HighPriorityIcon />);
-    expect(formatPriority({ value: 2 })).toEqual(<HighPriorityIcon />);
-    expect(formatPriority({ value: 3 })).toEqual(<NormalPriorityIcon />);
-    expect(formatPriority({ value: 4 })).toEqual(<LowPriorityIcon />);
-    expect(formatPriority({ value: 5 })).toEqual(<LowPriorityIcon />);
+    expect(formatPriority(1)).toEqual(<HighPriorityIcon />);
+    expect(formatPriority(2)).toEqual(<HighPriorityIcon />);
+    expect(formatPriority(3)).toEqual(<NormalPriorityIcon />);
+    expect(formatPriority(4)).toEqual(<LowPriorityIcon />);
+    expect(formatPriority(5)).toEqual(<LowPriorityIcon />);
   });
 
   test("formatPriority, invalid", () => {
-    expect(formatPriority({ value: -1 })).toEqual(<UnknownPriorityIcon />);
-    expect(formatPriority({ value: "XYZZY" })).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority(-1)).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority("XYZZY")).toEqual(<UnknownPriorityIcon />);
   });
 
   test("formatPriority, undefined", () => {
-    expect(formatPriority({})).toEqual(<UnknownPriorityIcon />);
+    expect(formatPriority()).toEqual(<UnknownPriorityIcon />);
   });
 
   test("formatDateTime, valid", () => {
     const dateTime = DateTime.fromISO("2021-08-17T17:12:46.720000Z");
 
-    expect(formatDateTime({ value: dateTime })).toEqual(
+    expect(formatDateTime(dateTime)).toEqual(
       dateTime.toFormat("ccc L/c HH:mm")
     );
   });
 
   test("formatDateTime, undefined/null", () => {
-    expect(formatDateTime({ value: undefined })).toEqual("");
-    expect(formatDateTime({ value: null })).toEqual("");
+    expect(formatDateTime(undefined)).toEqual("");
+    expect(formatDateTime(null)).toEqual("");
   });
 
   test("formatState, valid", () => {
-    expect(formatState({ value: "new" })).toEqual("New");
-    expect(formatState({ value: "on_hold" })).toEqual("On Hold");
-    expect(formatState({ value: "dispatched" })).toEqual("Dispatched");
-    expect(formatState({ value: "on_scene" })).toEqual("On Scene");
-    expect(formatState({ value: "closed" })).toEqual("Closed");
+    expect(formatState("new")).toEqual("New");
+    expect(formatState("on_hold")).toEqual("On Hold");
+    expect(formatState("dispatched")).toEqual("Dispatched");
+    expect(formatState("on_scene")).toEqual("On Scene");
+    expect(formatState("closed")).toEqual("Closed");
   });
 
   test("formatState, invalid", () => {
-    expect(formatState({ value: -1 })).toEqual(-1);
-    expect(formatState({ value: "XYZZY" })).toEqual("XYZZY");
+    expect(formatState(-1)).toEqual(-1);
+    expect(formatState("XYZZY")).toEqual("XYZZY");
   });
 
   test("formatState, undefined", () => {
-    expect(formatState({})).toBeUndefined();
+    expect(formatState()).toBeUndefined();
   });
 
   test("formatAddress, all fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.concentric}@` +
-        `${address.radialHour}:${address.radialMinute} ` +
+      `${address.radialHour}:${address.radialMinute}@` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no description", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.concentric}@` + `${address.radialHour}:${address.radialMinute}`
+      `${address.radialHour}:${address.radialMinute}@` +
+        `${concentricStreets.get(address.concentric)}`
     );
   });
 
   test("formatAddress, no concentric", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
       radialHour: 8,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `@${address.radialHour}:${address.radialMinute} ` +
+      `${address.radialHour}:${address.radialMinute}@- ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no radial hour", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialMinute: 37,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.concentric}@:${address.radialMinute} ` +
+      `-:${address.radialMinute}@` +
+        `${concentricStreetName} ` +
+        `(${address.description})`
+    );
+  });
+
+  test("formatAddress, radial minute < 10", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
+    const address = new RodGarettAddress({
+      description: "Here, by this stream...",
+      concentric: concentricStreetID,
+      radialHour: 8,
+      radialMinute: 3,
+    });
+    const text = formatAddress(address, concentricStreets);
+    expect(text).toEqual(
+      `${address.radialHour}:0${address.radialMinute}@` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
 
   test("formatAddress, no radial minute", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
-      `${address.concentric}@${address.radialHour}: ` +
+      `${address.radialHour}:-@` +
+        `${concentricStreetName} ` +
         `(${address.description})`
     );
   });
@@ -147,32 +196,37 @@ describe("Table cell formatting functions", () => {
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
     });
-    const text = formatAddress({ value: address });
+    const text = formatAddress(address, new Map());
     expect(text).toEqual(`(${address.description})`);
   });
 
   test("formatAddress, no fields", () => {
     const address = new RodGarettAddress({});
-    expect(formatAddress({ value: address })).toBeNull();
+    expect(formatAddress(address, new Map())).toBeNull();
   });
 
   test("formatAddress, null", () => {
-    expect(formatAddress({ value: null })).toBeNull();
+    expect(formatAddress(null)).toBeNull();
   });
 
   test("formatAddress, invalid", () => {
-    expect(formatAddress({ value: -1 })).toBeNull();
-    expect(formatAddress({ value: "XYZZY" })).toBeNull();
+    expect(formatAddress(-1)).toBeNull();
+    expect(formatAddress("XYZZY")).toBeNull();
   });
 
   test("formatAddress, undefined", () => {
-    expect(formatAddress({})).toBeUndefined();
+    expect(formatAddress()).toBeUndefined();
   });
 
   test("formatLocation, all fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
-      concentric: "0",
+      concentric: concentricStreetID,
       radialHour: 8,
       radialMinute: 37,
     });
@@ -180,13 +234,18 @@ describe("Table cell formatting functions", () => {
       name: "Treetop House",
       address: address,
     });
-    const text = formatLocation({ value: location });
+    const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(
-      `${location.name} @ ${formatAddress({ value: address })}`
+      `${location.name} @ ${formatAddress(address, concentricStreets)}`
     );
   });
 
   test("formatLocation, no name", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
       concentric: "0",
@@ -194,49 +253,59 @@ describe("Table cell formatting functions", () => {
       radialMinute: 37,
     });
     const location = new Location({ address: address });
-    const text = formatLocation({ value: location });
-    expect(text).toEqual(`${formatAddress({ value: address })}`);
+    const text = formatLocation(location, concentricStreets);
+    expect(text).toEqual(`${formatAddress(address, concentricStreets)}`);
   });
 
   test("formatLocation, no address", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const location = new Location({ name: "Treetop House" });
-    const text = formatLocation({ value: location });
+    const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(`${location.name}`);
   });
 
   test("formatLocation, no fields", () => {
+    const concentricStreetID = "0";
+    const concentricStreetName = "Zero";
+    const concentricStreets = new Map([
+      [concentricStreetID, concentricStreetName],
+    ]);
     const location = new Location({});
-    const text = formatLocation({ value: location });
+    const text = formatLocation(location, concentricStreets);
     expect(text).toBeNull();
   });
 
   test("formatLocation, null", () => {
-    expect(formatLocation({ value: null })).toBeNull();
+    expect(formatLocation(null)).toBeNull();
   });
 
   test("formatLocation, invalid", () => {
-    expect(formatLocation({ value: -1 })).toBeNull();
-    expect(formatLocation({ value: "XYZZY" })).toBeNull();
+    expect(formatLocation(-1)).toBeNull();
+    expect(formatLocation("XYZZY")).toBeNull();
   });
 
   test("formatLocation, undefined", () => {
-    expect(formatLocation({})).toBeUndefined();
+    expect(formatLocation()).toBeUndefined();
   });
 
   test("formatArrayOfStrings, empty", () => {
-    expect(formatArrayOfStrings({ value: [] })).toEqual("");
+    expect(formatArrayOfStrings([])).toEqual("");
   });
 
   test("formatArrayOfStrings, one", () => {
-    expect(formatArrayOfStrings({ value: ["one"] })).toEqual("one");
+    expect(formatArrayOfStrings(["one"])).toEqual("one");
   });
 
   test("formatArrayOfStrings, two", () => {
-    expect(formatArrayOfStrings({ value: ["one", "two"] })).toEqual("one, two");
+    expect(formatArrayOfStrings(["one", "two"])).toEqual("one, two");
   });
 
   test("formatArrayOfStrings, undefined", () => {
-    expect(formatArrayOfStrings({})).toEqual("");
+    expect(formatArrayOfStrings()).toEqual("");
   });
 });
 
@@ -276,7 +345,37 @@ describe("DispatchQueue component: table", () => {
       }
 
       ims.flushCaches(); // Reset IMS state
+
       cleanup(); // Reset React state
+    }
+  });
+
+  test("click row -> open incident in new tab", async () => {
+    const ims = testIncidentManagementSystem();
+    const event = await ims.eventWithID("empty");
+    const incidentCount = defaultPageSize;
+
+    await ims.addMoreIncidents(event.id, incidentCount);
+
+    await act(async () => {
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    });
+
+    for (const row of document.getElementsByClassName("queue_incident_row")) {
+      const numberCell = row.querySelector(".queue_incident_number");
+      const incidentNumber = parseInt(numberCell.innerHTML);
+
+      for (const cell of row.getElementsByTagName("td")) {
+        const url = URLs.incident(event.id, incidentNumber);
+        const context = `${event.id}:${incidentNumber}`;
+
+        console.info(incidentNumber);
+
+        window.open = jest.fn();
+        await userEvent.click(cell);
+
+        expect(window.open).toHaveBeenCalledWith(url, context);
+      }
     }
   });
 });
@@ -406,10 +505,10 @@ describe("DispatchQueue component: controls", () => {
 
     expect(searchField).toHaveValue(searchValue);
 
-    const numberCells = Array.from(
-      document.getElementsByClassName("queue_incident_number")
+    const numbers = Array.from(
+      document.getElementsByClassName("queue_incident_number"),
+      (cell) => parseInt(cell.innerHTML)
     );
-    const numbers = numberCells.map((cell) => parseInt(cell.innerHTML));
 
     expect(new Set(numbers)).toEqual(new Set([2, 3]));
   });
@@ -430,6 +529,7 @@ describe("DispatchQueue component: loading", () => {
       renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
       expect(screen.queryByText("Loading...")).toBeInTheDocument();
+
       cleanup();
     }
   });
@@ -453,6 +553,7 @@ describe("DispatchQueue component: loading", () => {
       expect(spy).toHaveBeenCalledWith(
         "Unable to fetch incidents: because reasons..."
       );
+
       cleanup();
     }
   });

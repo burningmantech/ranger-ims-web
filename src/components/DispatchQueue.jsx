@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { usePagination, useTable } from "react-table";
 
 import Button from "react-bootstrap/Button";
@@ -12,7 +12,8 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
-import { IMSContext } from "../ims/context";
+import { URLs } from "../URLs";
+import { useAllConcentricStreets, useIncidents } from "../ims/effects";
 import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
@@ -103,8 +104,7 @@ export const SearchIcon = () => {
 
 // Table cell formatting
 
-export const formatPriority = ({ value }) => {
-  const priority = value;
+export const formatPriority = (priority) => {
   switch (priority) {
     case 1:
     case 2:
@@ -119,16 +119,14 @@ export const formatPriority = ({ value }) => {
   }
 };
 
-export const formatDateTime = ({ value }) => {
-  const dateTime = value;
+export const formatDateTime = (dateTime) => {
   if (!dateTime) {
     return "";
   }
   return dateTime.toFormat("ccc L/c HH:mm");
 };
 
-export const formatState = ({ value }) => {
-  const state = value;
+export const formatState = (state) => {
   try {
     return Incident.stateToString(state);
   } catch (e) {
@@ -136,18 +134,22 @@ export const formatState = ({ value }) => {
   }
 };
 
-export const formatAddress = ({ value }) => {
-  const formatCoordinate = (c) => (c == null ? "" : c);
+export const formatAddress = (address, concentricStreets) => {
+  const formatCoordinate = (c) => (c == null ? "-" : c.toString());
+  const formatMinute = (m) => (m == null ? "-" : m.toString().padStart(2, "0"));
 
-  const address = value;
   if (address == null) {
     return address;
   }
   if (address.concentric || address.radialHour || address.radialMinute) {
+    const concentric =
+      concentricStreets == null
+        ? null
+        : concentricStreets.get(address.concentric);
     return (
-      `${formatCoordinate(address.concentric)}@` +
       `${formatCoordinate(address.radialHour)}:` +
-      `${formatCoordinate(address.radialMinute)}` +
+      `${formatMinute(address.radialMinute)}@` +
+      `${formatCoordinate(concentric)}` +
       `${address.description ? ` (${address.description})` : ""}`
     );
   } else if (address.description) {
@@ -157,13 +159,12 @@ export const formatAddress = ({ value }) => {
   }
 };
 
-export const formatLocation = ({ value }) => {
-  const location = value;
+export const formatLocation = (location, concentricStreets) => {
   if (location == null) {
     return location;
   }
 
-  const addressText = formatAddress({ value: location.address });
+  const addressText = formatAddress(location.address, concentricStreets);
 
   if (location.name == null) {
     if (addressText == null) {
@@ -180,8 +181,7 @@ export const formatLocation = ({ value }) => {
   }
 };
 
-export const formatArrayOfStrings = ({ value }) => {
-  const strings = value;
+export const formatArrayOfStrings = (strings) => {
   if (!strings) {
     return "";
   }
@@ -191,6 +191,14 @@ export const formatArrayOfStrings = ({ value }) => {
 // Table hook
 
 const useDispatchQueueTable = (incidents) => {
+  // Fetch concentric street data
+
+  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
+
+  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
+
+  invariant(allConcentricStreets != null, "allConcentricStreets is null");
+
   // See: https://react-table.tanstack.com/docs/overview
 
   const data = useMemo(() => (incidents == null ? [] : incidents), [incidents]);
@@ -198,45 +206,51 @@ const useDispatchQueueTable = (incidents) => {
   const columns = useMemo(
     () => [
       {
-        accessor: "number",
+        id: "number",
+        accessor: (incident) => incident.number,
         Header: <abbr title="Number">#</abbr>,
       },
       {
-        accessor: "priority",
+        id: "priority",
+        accessor: (incident) => formatPriority(incident.priority),
         Header: <abbr title="Priority">Pri</abbr>,
-        Cell: formatPriority,
       },
       {
-        accessor: "created",
+        id: "created",
+        accessor: (incident) => formatDateTime(incident.created),
         Header: "Created",
-        Cell: formatDateTime,
       },
       {
-        accessor: "state",
+        id: "state",
+        accessor: (incident) => formatState(incident.state),
         Header: "State",
-        Cell: formatState,
       },
       {
-        accessor: "rangerHandles",
+        id: "ranger_handles",
+        accessor: (incident) => formatArrayOfStrings(incident.rangerHandles),
         Header: "Rangers",
-        Cell: formatArrayOfStrings,
       },
       {
-        accessor: "location",
+        id: "location",
+        accessor: (incident) =>
+          formatLocation(
+            incident.location,
+            allConcentricStreets.get(incident.eventID)
+          ),
         Header: "Location",
-        Cell: formatLocation,
       },
       {
-        accessor: "incidentTypes",
+        id: "incident_types",
+        accessor: (incident) => formatArrayOfStrings(incident.incidentTypes),
         Header: "Types",
-        Cell: formatArrayOfStrings,
       },
       {
+        id: "summary",
         accessor: (incident) => incident.summarize(),
         Header: "Summary",
       },
     ],
-    []
+    [allConcentricStreets]
   );
 
   return useTable(
@@ -247,7 +261,16 @@ const useDispatchQueueTable = (incidents) => {
 
 // Table component
 
-const DispatchQueueTable = ({ table }) => {
+const DispatchQueueTable = ({ table, event }) => {
+  invariant(table != null, "table argument is required");
+  invariant(event != null, "event argument is required");
+
+  const handleRowClick = (incidentNumber) => {
+    const url = URLs.incident(event.id, incidentNumber);
+    const context = `${event.id}:${incidentNumber}`;
+    window.open(url, context);
+  };
+
   return (
     <Row>
       <Col>
@@ -269,7 +292,11 @@ const DispatchQueueTable = ({ table }) => {
             {table.page.map((row, i) => {
               table.prepareRow(row);
               return (
-                <tr className="queue_incident_row" {...row.getRowProps()}>
+                <tr
+                  className="queue_incident_row"
+                  onClick={() => handleRowClick(row.cells[0].value)}
+                  {...row.getRowProps()}
+                >
                   {row.cells.map((cell) => {
                     return (
                       <td
@@ -306,6 +333,11 @@ export const formatShowState = (showState) => {
 };
 
 const ShowStateControl = ({ table, incidents, showState, setShowState }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(showState != null, "showState argument is required");
+  invariant(setShowState != null, "setShowState argument is required");
+
   const currentState = formatShowState(showState);
 
   return (
@@ -340,6 +372,11 @@ export const formatShowDays = (showDays) => {
 };
 
 const ShowDaysControl = ({ table, incidents, showDays, setShowDays }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(showDays != null, "showDays argument is required");
+  invariant(setShowDays != null, "setShowDays argument is required");
+
   const currentDays = formatShowDays(showDays);
 
   return (
@@ -363,6 +400,9 @@ const ShowDaysControl = ({ table, incidents, showDays, setShowDays }) => {
 };
 
 const ShowRowsControl = ({ table, incidents }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+
   const currentRows =
     table.state.pageSize === incidents.length ? "All" : table.state.pageSize;
 
@@ -391,14 +431,14 @@ const ShowRowsControl = ({ table, incidents }) => {
 };
 
 const SearchBar = ({ searchInput, setSearchInput }) => {
+  invariant(searchInput != null, "searchInput argument is required");
+  invariant(setSearchInput != null, "setSearchInput argument is required");
+
   const handleSearchInput = (event) => {
     setSearchInput(event.target.value);
   };
 
-  // Note: using Form causes submit-on-enter, which we don't want.
-  // There's probably a correct way to disable that.
   return (
-    // <Form>
     <Form.Group id="search_bar" controlId="search_input">
       <Form.Label size="sm">
         <SearchIcon />
@@ -413,7 +453,6 @@ const SearchBar = ({ searchInput, setSearchInput }) => {
         onChange={handleSearchInput}
       />
     </Form.Group>
-    // </Form>
   );
 };
 
@@ -427,6 +466,15 @@ const TopToolBar = ({
   showDays,
   setShowDays,
 }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+  invariant(searchInput != null, "searchInput argument is required");
+  invariant(setSearchInput != null, "setSearchInput argument is required");
+  invariant(showState != null, "showState argument is required");
+  invariant(setShowState != null, "setShowState argument is required");
+  invariant(showDays != null, "showDays argument is required");
+  invariant(setShowDays != null, "setShowDays argument is required");
+
   return (
     <Row id="queue_top_toolbar">
       {/*
@@ -538,46 +586,21 @@ const BottomToolBar = ({ table, incidents }) => {
 const DispatchQueue = ({ event }) => {
   invariant(event != null, "event property is required");
 
-  const imsContext = useContext(IMSContext);
-  const ims = imsContext.ims;
-
-  invariant(ims != null, "No IMS");
-
-  // Fetch data
+  // State
 
   const [showState, setShowState] = useState("open"); // all, open, active
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
+
+  // Fetch incident data
+
   const [incidents, setIncidents] = useState(undefined);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchIncidents = async () => {
-      let incidents;
-      try {
-        if (searchInput) {
-          incidents = await ims.search(event.id, searchInput);
-        } else {
-          incidents = await ims.incidents(event.id);
-        }
-      } catch (e) {
-        console.error(`Unable to fetch incidents: ${e.message}`);
-        console.error(e);
-        incidents = null;
-      }
-
-      if (!ignore) {
-        setIncidents(incidents);
-      }
-    };
-
-    fetchIncidents();
-
-    return () => {
-      ignore = true;
-    };
-  }, [ims, event, searchInput]);
+  useIncidents({
+    eventID: event.id,
+    setIncidents: setIncidents,
+    searchInput: searchInput,
+  });
 
   const table = useDispatchQueueTable(incidents);
 
@@ -602,7 +625,7 @@ const DispatchQueue = ({ event }) => {
           searchInput={searchInput}
           setSearchInput={setSearchInput}
         />
-        <DispatchQueueTable table={table} />
+        <DispatchQueueTable table={table} event={event} />
         <BottomToolBar table={table} incidents={incidents} />
       </div>
     );

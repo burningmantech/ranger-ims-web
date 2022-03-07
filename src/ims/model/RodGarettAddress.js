@@ -1,4 +1,8 @@
 export default class RodGarettAddress {
+  static radialHours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  static radialMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
   static fromJSON = (json) => {
     try {
       if (json.type === "text") {
@@ -40,9 +44,9 @@ export default class RodGarettAddress {
       return value == null ? alternate : value;
     };
     return (
-      `${formatNull(this.concentric, "?")}@` +
       `${formatNull(this.radialHour, "?")}:` +
-      `${formatNull(this.radialMinute, "?")} ` +
+      `${formatNull(this.radialMinute, "?")}@` +
+      `${formatNull(this.concentric, "?")} ` +
       `(${formatNull(this.description, "")})`
     );
   };

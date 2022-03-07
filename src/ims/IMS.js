@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
+import ConcentricStreet from "./model/Event";
 import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
@@ -24,6 +25,11 @@ export default class IncidentManagementSystem {
     this._credentialStore = new Store(User, "credentials", "credentials");
     this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
+    this._concentricStreetsStore = new Store(
+      null,
+      "concentric_streets",
+      "streets"
+    );
     this._incidentsStoreByEvent = new Map();
     this._searchIndexByEvent = new Map();
 
@@ -338,7 +344,7 @@ export default class IncidentManagementSystem {
 
   // Events
 
-  eventsCacheLifespan = { minutes: 5 };
+  eventsCacheLifespan = { minutes: 15 };
 
   events = async () => {
     const events = await this._fetchAndCacheJSON(this._eventsStore, {
@@ -348,17 +354,53 @@ export default class IncidentManagementSystem {
     return events;
   };
 
-  eventWithID = async (id) => {
-    invariant(id != null, "id argument is required");
+  eventWithID = async (eventID) => {
+    invariant(eventID != null, "eventID argument is required");
 
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
 
-    if (this._eventsMap.has(id)) {
-      return this._eventsMap.get(id);
+    if (this._eventsMap.has(eventID)) {
+      return this._eventsMap.get(eventID);
     } else {
-      throw new Error(`No event found with ID: ${id}`);
+      throw new Error(`No event found with ID: ${eventID}`);
     }
+  };
+
+  // Concentric Streets
+
+  concentricStreetsCacheLifespan = { minutes: 15 };
+
+  allConcentricStreets = async () => {
+    const eventMap = await this._fetchAndCacheJSON(
+      this._concentricStreetsStore,
+      {
+        lifespan: this.concentricStreetsCacheLifespan,
+      }
+    );
+
+    return new Map(
+      // Convert [eventID, streetsJSON] to [eventID, streetsMap]
+      Object.entries(eventMap).map(([eventID, streetsJSON]) => [
+        eventID,
+        new Map(
+          // Convert [streetID, streetName] to [streetID, street]
+          Object.entries(streetsJSON).map(([streetID, streetName]) => [
+            streetID,
+            new ConcentricStreet(streetID, streetName),
+          ])
+        ),
+      ])
+    );
+  };
+
+  concentricStreets = async (eventID) => {
+    const allConcentricStreetsMap = await this.allConcentricStreets();
+    const concentricStreets = allConcentricStreetsMap.get(eventID);
+    if (concentricStreets === undefined) {
+      throw new Error(`No streets found for event with ID: ${eventID}`);
+    }
+    return concentricStreets;
   };
 
   // Incidents
