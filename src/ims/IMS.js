@@ -472,8 +472,6 @@ export default class IncidentManagementSystem {
         const location = incident.location == null ? {} : incident.location;
         const address = location.address == null ? {} : location.address;
 
-        console.info(Incident.priorityToString(incident.priority));
-
         index.add({
           number: incident.number,
           created: incident.created.toFormat("cccc L/c HH:mm"),
@@ -498,22 +496,11 @@ export default class IncidentManagementSystem {
 
   search = async (eventID, query) => {
     const index = await this._searchIndex(eventID);
-    const results = await index.search(query);
-
-    const numbers = new Set();
-    const incidents = [];
-    for (const result of results) {
-      for (const number of result.result) {
-        /* istanbul ignore next */
-        if (numbers.has(number)) {
-          // This (results.length > 1) doesn't happen in our code
-          throw new Error("Tests needed for this path");
-        } else {
-          numbers.add(number);
-          incidents.push(this._incidentsMap.get(number));
-        }
-      }
-    }
-    return incidents;
+    // index.search() returns an iterable of result objects.
+    // result.result is the incident number.
+    const numbers = new Set(
+      Array.from(await index.search(query), (result) => result.result).flat()
+    );
+    return Array.from(numbers, (number) => this._incidentsMap.get(number));
   };
 }
