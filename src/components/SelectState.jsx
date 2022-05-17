@@ -4,7 +4,7 @@ import Incident from "../ims/model/Incident";
 
 import LabeledSelect from "./LabeledSelect";
 
-const SelectState = ({ state }) => {
+const SelectState = ({ state, onChange }) => {
   invariant(state != null, "state property is required");
 
   return (
@@ -13,7 +13,8 @@ const SelectState = ({ state }) => {
       label="State"
       values={Incident.states}
       selected={state}
-      valueToString={Incident.stateToString}
+      valueToName={Incident.stateToString}
+      onChange={onChange}
     />
   );
 };
