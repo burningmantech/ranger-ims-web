@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import IncidentModel from "../ims/model/Incident";
+import Incident from "../ims/model/Incident";
 
 import LabeledSelect from "./LabeledSelect";
 
@@ -11,9 +11,9 @@ const SelectState = ({ state }) => {
     <LabeledSelect
       id="incident_state"
       label="State"
-      values={IncidentModel.states}
+      values={Incident.states}
       selected={state}
-      valueToString={IncidentModel.stateToString}
+      valueToString={Incident.stateToString}
     />
   );
 };
