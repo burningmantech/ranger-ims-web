@@ -12,7 +12,12 @@ describe("LabeledSelect component", () => {
 
     for (const value of values) {
       render(
-        <LabeledSelect id="id" label="label" values={values} selected={value} />
+        <LabeledSelect
+          id="id"
+          label="label"
+          values={values}
+          defaultValue={value}
+        />
       );
 
       const select = screen.getByLabelText("label:");
@@ -35,7 +40,7 @@ describe("LabeledSelect component", () => {
             id="id"
             label="label"
             values={values}
-            selected={startValue}
+            defaultValue={startValue}
           />
         );
 
@@ -62,7 +67,7 @@ describe("LabeledSelect component", () => {
             id="id"
             label="label"
             values={values}
-            selected={startValue}
+            defaultValue={startValue}
             onChange={onChange}
           />
         );

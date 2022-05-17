@@ -9,14 +9,14 @@ const LabeledSelect = ({
   id,
   label,
   values,
-  selected,
+  defaultValue,
   valueToName,
   onChange,
 }) => {
   invariant(id != null, "id property is required");
   invariant(label != null, "label property is required");
   invariant(values != null, "values property is required");
-  invariant(selected != null, "selected property is required");
+  invariant(defaultValue != null, "defaultValue property is required");
 
   if (valueToName == null) {
     valueToName = (value) => value;
@@ -29,7 +29,7 @@ const LabeledSelect = ({
         id={id}
         size="sm"
         className="w-auto"
-        defaultValue={selected}
+        defaultValue={defaultValue}
         onChange={onChange}
       >
         {values.map((value) => (

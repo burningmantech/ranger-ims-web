@@ -41,7 +41,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_hour"
               width="5em"
-              selected={locationRadialHour}
+              value={locationRadialHour}
               options={RodGarettAddress.radialHours.map((value) => [
                 value,
                 value,
@@ -51,7 +51,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_minute"
               width="5em"
-              selected={locationRadialMinute}
+              value={locationRadialMinute}
               options={RodGarettAddress.radialMinutes.map((value) => [
                 value,
                 value,
@@ -61,7 +61,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              selected={locationConcentric}
+              value={locationConcentric}
               options={Array.from(concentricStreets, ([id, street]) => [
                 street.id,
                 street.name,

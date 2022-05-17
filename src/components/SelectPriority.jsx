@@ -12,7 +12,7 @@ const SelectPriority = ({ priority }) => {
       id="incident_priority"
       label="Priority"
       values={Incident.nonDeprecatedPriorities(priority)}
-      selected={priority}
+      defaultValue={priority}
       valueToName={Incident.priorityToString}
     />
   );

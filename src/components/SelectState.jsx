@@ -12,7 +12,7 @@ const SelectState = ({ state, onChange }) => {
       id="incident_state"
       label="State"
       values={Incident.states}
-      selected={state}
+      defaultValue={state}
       valueToName={Incident.stateToString}
       onChange={onChange}
     />
