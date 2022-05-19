@@ -475,8 +475,8 @@ export default class IncidentManagementSystem {
         index.add({
           number: incident.number,
           created: incident.created.toFormat("cccc L/c HH:mm"),
-          state: Incident.stateToString(incident.state),
-          priority: Incident.priorityToString(incident.priority),
+          state: Incident.stateToName(incident.state),
+          priority: Incident.priorityToName(incident.priority),
           summary: incident.summary,
           location: {
             name: location.name,

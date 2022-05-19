@@ -128,7 +128,7 @@ export const formatDateTime = (dateTime) => {
 
 export const formatState = (state) => {
   try {
-    return Incident.stateToString(state);
+    return Incident.stateToName(state);
   } catch (e) {
     return state;
   }

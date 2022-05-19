@@ -13,7 +13,7 @@ export default class Incident {
     "closed",
   ]);
 
-  static stateToString = (state) => {
+  static stateToName = (state) => {
     invariant(state != null, "state is required");
     switch (state) {
       case "new":
@@ -51,7 +51,7 @@ export default class Incident {
     return priorities;
   };
 
-  static priorityToString = (priority) => {
+  static priorityToName = (priority) => {
     switch (priority) {
       case 1:
       case 2:
