@@ -1,19 +1,20 @@
 import invariant from "invariant";
 
-import IncidentModel from "../ims/model/Incident";
+import Incident from "../ims/model/Incident";
 
 import LabeledSelect from "./LabeledSelect";
 
-const SelectState = ({ state }) => {
+const SelectState = ({ state, onChange }) => {
   invariant(state != null, "state property is required");
 
   return (
     <LabeledSelect
       id="incident_state"
       label="State"
-      values={IncidentModel.states}
-      selected={state}
-      valueToString={IncidentModel.stateToString}
+      values={Incident.states}
+      defaultValue={state}
+      valueToName={Incident.stateToString}
+      onChange={onChange}
     />
   );
 };

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import IncidentModel from "../ims/model/Incident";
+import Incident from "../ims/model/Incident";
 
 import LabeledSelect from "./LabeledSelect";
 
@@ -11,9 +11,9 @@ const SelectPriority = ({ priority }) => {
     <LabeledSelect
       id="incident_priority"
       label="Priority"
-      values={IncidentModel.nonDeprecatedPriorities(priority)}
-      selected={priority}
-      valueToString={IncidentModel.priorityToString}
+      values={Incident.nonDeprecatedPriorities(priority)}
+      defaultValue={priority}
+      valueToName={Incident.priorityToName}
     />
   );
 };
