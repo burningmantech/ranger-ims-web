@@ -5,16 +5,22 @@ import Form from "react-bootstrap/Form";
 import FormGroup from "./FormGroup";
 import Label from "./Label";
 
-const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
+const LabeledSelect = ({
+  id,
+  label,
+  values,
+  defaultValue,
+  valueToName,
+  onChange,
+}) => {
   invariant(id != null, "id property is required");
   invariant(label != null, "label property is required");
   invariant(values != null, "values property is required");
-  invariant(selected != null, "selected property is required");
-  invariant(valueToString != null, "valueToString property is required");
+  invariant(defaultValue != null, "defaultValue property is required");
 
-  const onChange = (event) => {
-    console.info(event);
-  };
+  if (valueToName == null) {
+    valueToName = (value) => value;
+  }
 
   return (
     <FormGroup>
@@ -23,12 +29,12 @@ const LabeledSelect = ({ id, label, values, selected, valueToString }) => {
         id={id}
         size="sm"
         className="w-auto"
-        defaultValue={selected}
+        defaultValue={defaultValue}
         onChange={onChange}
       >
         {values.map((value) => (
           <option key={value} value={value}>
-            {valueToString(value)}
+            {valueToName(value)}
           </option>
         ))}
       </Form.Select>

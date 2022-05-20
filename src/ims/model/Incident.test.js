@@ -4,17 +4,17 @@ import Incident from "./Incident";
 import Location from "./Location";
 
 describe("Incident", () => {
-  test("stateToString, valid", () => {
-    expect(Incident.stateToString("new")).toEqual("New");
-    expect(Incident.stateToString("on_hold")).toEqual("On Hold");
-    expect(Incident.stateToString("dispatched")).toEqual("Dispatched");
-    expect(Incident.stateToString("on_scene")).toEqual("On Scene");
-    expect(Incident.stateToString("closed")).toEqual("Closed");
+  test("stateToName, valid", () => {
+    expect(Incident.stateToName("new")).toEqual("New");
+    expect(Incident.stateToName("on_hold")).toEqual("On Hold");
+    expect(Incident.stateToName("dispatched")).toEqual("Dispatched");
+    expect(Incident.stateToName("on_scene")).toEqual("On Scene");
+    expect(Incident.stateToName("closed")).toEqual("Closed");
   });
 
-  test("stateToString, invalid", () => {
+  test("stateToName, invalid", () => {
     for (const value of [-1, "XYZZY"]) {
-      expect(() => Incident.stateToString(value)).toThrow(
+      expect(() => Incident.stateToName(value)).toThrow(
         `Invalid state: ${value}`
       );
     }
@@ -29,17 +29,17 @@ describe("Incident", () => {
     expect(Incident.nonDeprecatedPriorities(5)).toEqual([1, 3, 5]);
   });
 
-  test("priorityToString, valid", () => {
-    expect(Incident.priorityToString(1)).toEqual("High");
-    expect(Incident.priorityToString(2)).toEqual("High");
-    expect(Incident.priorityToString(3)).toEqual("Normal");
-    expect(Incident.priorityToString(4)).toEqual("Low");
-    expect(Incident.priorityToString(5)).toEqual("Low");
+  test("priorityToName, valid", () => {
+    expect(Incident.priorityToName(1)).toEqual("High");
+    expect(Incident.priorityToName(2)).toEqual("High");
+    expect(Incident.priorityToName(3)).toEqual("Normal");
+    expect(Incident.priorityToName(4)).toEqual("Low");
+    expect(Incident.priorityToName(5)).toEqual("Low");
   });
 
-  test("priorityToString, invalid", () => {
+  test("priorityToName, invalid", () => {
     for (const value of [-1, "XYZZY"]) {
-      expect(() => Incident.priorityToString(value)).toThrow(
+      expect(() => Incident.priorityToName(value)).toThrow(
         `Invalid priority: ${value}`
       );
     }

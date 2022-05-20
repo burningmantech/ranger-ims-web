@@ -2,7 +2,7 @@ import invariant from "invariant";
 
 import Form from "react-bootstrap/Form";
 
-const Select = ({ id, width, selected, options }) => {
+const Select = ({ id, width, value, options }) => {
   invariant(id != null, "id property is required");
   invariant(width != null, "width property is required");
   invariant(options != null, "options property is required");
@@ -17,7 +17,7 @@ const Select = ({ id, width, selected, options }) => {
       id={id}
       size="sm"
       style={{ flex: "initial", width: width }}
-      value={selected == null ? "" : selected}
+      value={value == null ? "" : value}
       onChange={onChange}
     >
       <option key={null} value={null} />
