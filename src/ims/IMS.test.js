@@ -440,8 +440,7 @@ describe("IMS: bag", () => {
 
 describe("IMS: authentication", () => {
   afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
+    IncidentManagementSystem.flushCaches();
   });
 
   test("login: request content type", async () => {
@@ -714,8 +713,7 @@ describe("IMS: authentication", () => {
 
 describe("IMS: events", () => {
   afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
+    IncidentManagementSystem.flushCaches();
   });
 
   test("load events, ok", async () => {
@@ -801,8 +799,7 @@ describe("IMS: events", () => {
 
 describe("IMS: incidents", () => {
   afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
+    IncidentManagementSystem.flushCaches();
   });
 
   test("allConcentricStreets, ok", async () => {
@@ -856,8 +853,7 @@ describe("IMS: incidents", () => {
 
 describe("IMS: incidents", () => {
   afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
+    IncidentManagementSystem.flushCaches();
   });
 
   test("load incidents, ok", async () => {

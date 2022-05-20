@@ -3,10 +3,10 @@ import { DateTime } from "luxon";
 export default class Store {
   static _storage = window.localStorage;
 
-  static removeAll() {
+  static removeAll = () => {
     Store._storage.clear();
     console.debug(`Removed all cached data.`);
-  }
+  };
 
   constructor(modelClass, storeID, endpointID) {
     this.modelClass = modelClass;
