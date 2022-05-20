@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
-import { act, cleanup, screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
@@ -311,45 +311,45 @@ describe("Table cell formatting functions", () => {
 });
 
 describe("DispatchQueue component: table", () => {
-  test("displayed incidents are valid up to page size", async () => {
-    // Test with 0, 10, 20, ... 200 incidents in the system
-    for (const incidentCount of [0, 10, 44, 50, 201, defaultPageSize]) {
-      const ims = testIncidentManagementSystem();
-      const event = await ims.eventWithID("empty");
+  const test_displayedValidUpToPageSize = async (incidentCount) => {
+    const ims = testIncidentManagementSystem();
+    const event = await ims.eventWithID("empty");
 
-      await ims.addMoreIncidents(event.id, incidentCount);
+    await ims.addMoreIncidents(event.id, incidentCount);
 
-      // Make sure addMoreIncidents worked
-      const incidents = await ims.incidents(event.id);
-      invariant(
-        incidents.length == incidentCount,
-        `Failed to add incidents (${incidents.length} != ${incidentCount})`
-      );
+    // Make sure addMoreIncidents worked
+    const incidents = await ims.incidents(event.id);
+    invariant(
+      incidents.length == incidentCount,
+      `Failed to add incidents (${incidents.length} != ${incidentCount})`
+    );
 
-      await act(async () => {
-        renderWithIMSContext(<DispatchQueue event={event} />, ims);
-      });
+    await act(async () => {
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    });
 
-      const numberCells = document.getElementsByClassName(
-        "queue_incident_number"
-      );
+    const numberCells = document.getElementsByClassName(
+      "queue_incident_number"
+    );
 
-      expect(numberCells.length).toEqual(
-        incidents.length > defaultPageSize ? defaultPageSize : incidents.length
-      );
+    expect(numberCells.length).toEqual(
+      incidents.length > defaultPageSize ? defaultPageSize : incidents.length
+    );
 
-      for (const numberCell of numberCells) {
-        const incidentNumber = parseInt(numberCell.innerHTML);
-        expect(() =>
-          ims.incidentWithNumber(event.id, incidentNumber)
-        ).not.toThrow();
-      }
-
-      cleanup(); // Reset React state
-
-      await IncidentManagementSystem.flushCaches(); // Reset IMS state
+    for (const numberCell of numberCells) {
+      const incidentNumber = parseInt(numberCell.innerHTML);
+      expect(() =>
+        ims.incidentWithNumber(event.id, incidentNumber)
+      ).not.toThrow();
     }
-  });
+  };
+
+  // Test with 0, 10, 20, ... 200 incidents in the system
+  for (const incidentCount of [0, 10, 44, 50, 201, defaultPageSize]) {
+    test("displayed incidents are valid up to page size (${incidentCount})", async () => {
+      await test_displayedValidUpToPageSize(incidentCount);
+    });
+  }
 
   test("click row -> open incident in new tab", async () => {
     const ims = testIncidentManagementSystem();
@@ -466,7 +466,7 @@ describe("DispatchQueue component: controls", () => {
   for (const incidentCount of [0, 10, 100, 200, defaultPageSize]) {
     for (const multiple of [0, 1, 2, 4]) {
       test(`show rows selection (${incidentCount}, ${multiple})`, async () => {
-        test_showRowsSelection(incidentCount, multiple);
+        await test_showRowsSelection(incidentCount, multiple);
       });
     }
   }
@@ -525,13 +525,10 @@ describe("DispatchQueue component: loading", () => {
   test("loading incidents", async () => {
     const ims = testIncidentManagementSystem();
 
-    for (const event of await ims.events()) {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    const event = await ims.eventWithID("1");
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-      expect(screen.queryByText("Loading...")).toBeInTheDocument();
-
-      cleanup();
-    }
+    expect(screen.queryByText("Loading...")).toBeInTheDocument();
   });
 
   test("incidents fail to load", async () => {
@@ -543,19 +540,17 @@ describe("DispatchQueue component: loading", () => {
 
     const spy = jest.spyOn(console, "error");
 
-    for (const event of await ims.events()) {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    const event = await ims.eventWithID("1");
 
-      expect(
-        await screen.findByText("Error loading incidents")
-      ).toBeInTheDocument();
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-      expect(spy).toHaveBeenCalledWith(
-        "Unable to fetch incidents: because reasons..."
-      );
+    expect(
+      await screen.findByText("Error loading incidents")
+    ).toBeInTheDocument();
 
-      cleanup();
-    }
+    expect(spy).toHaveBeenCalledWith(
+      "Unable to fetch incidents: because reasons..."
+    );
   });
 
   test("title with event name", async () => {
