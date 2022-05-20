@@ -21,7 +21,7 @@ describe("SelectState component", () => {
     });
   }
 
-  const test_newStateSelected = async (state) => {
+  const test_newStateSelected = async (startState, nextState) => {
     console.log(`${startState} -> ${nextState}`);
 
     render(<SelectState state={startState} />);
@@ -36,7 +36,7 @@ describe("SelectState component", () => {
   for (const startState of Incident.states) {
     for (const nextState of Incident.states) {
       test(`new state selected (${startState}, ${nextState})`, async () => {
-        await test_startStateSelected(startState, nextState);
+        await test_newStateSelected(startState, nextState);
       });
     }
   }
