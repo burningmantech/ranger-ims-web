@@ -422,54 +422,54 @@ describe("DispatchQueue component: controls", () => {
   //   }
   // );
 
-  test("show rows selection", async () => {
-    for (const incidentCount of [0, 10, 100, 200, defaultPageSize]) {
-      const ims = testIncidentManagementSystem();
-      const event = await ims.eventWithID("empty");
+  const test_showRowsSelection = async (incidentCount, multiple) => {
+    const ims = testIncidentManagementSystem();
+    const event = await ims.eventWithID("empty");
 
-      await ims.addMoreIncidents(event.id, incidentCount);
+    await ims.addMoreIncidents(event.id, incidentCount);
 
-      for (const multiple of [0, 1, 2, 4]) {
-        await act(async () => {
-          renderWithIMSContext(<DispatchQueue event={event} />, ims);
-        });
+    await act(async () => {
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    });
 
-        const dropdown = document.getElementById("queue_show_rows_dropdown");
-        await act(async () => {
-          userEvent.click(dropdown);
-        });
+    const dropdown = document.getElementById("queue_show_rows_dropdown");
+    await act(async () => {
+      userEvent.click(dropdown);
+    });
 
-        const selectorID = `queue_show_rows_${multiple}`;
-        const selector = document.getElementById(selectorID);
-        await act(async () => {
-          userEvent.click(selector);
-        });
+    const selectorID = `queue_show_rows_${multiple}`;
+    const selector = document.getElementById(selectorID);
+    await act(async () => {
+      userEvent.click(selector);
+    });
 
-        // Ensure the selection is displays in the dropdown
-        const numberofIncidentsToDisplay =
-          multiple === 0 ? incidentCount : multiple * defaultPageSize;
-        const selectorCount =
-          multiple === 0 || numberofIncidentsToDisplay === incidentCount
-            ? "All"
-            : `${numberofIncidentsToDisplay}`;
-        expect(dropdown.innerHTML).toEqual(`Show ${selectorCount} Rows`);
+    // Ensure the selection is displays in the dropdown
+    const numberofIncidentsToDisplay =
+      multiple === 0 ? incidentCount : multiple * defaultPageSize;
+    const selectorCount =
+      multiple === 0 || numberofIncidentsToDisplay === incidentCount
+        ? "All"
+        : `${numberofIncidentsToDisplay}`;
+    expect(dropdown.innerHTML).toEqual(`Show ${selectorCount} Rows`);
 
-        // Ensure the correct number of rows are displayed
-        const numberCells = document.getElementsByClassName(
-          "queue_incident_number"
-        );
-        expect(numberCells.length).toEqual(
-          incidentCount > numberofIncidentsToDisplay
-            ? numberofIncidentsToDisplay
-            : incidentCount
-        );
+    // Ensure the correct number of rows are displayed
+    const numberCells = document.getElementsByClassName(
+      "queue_incident_number"
+    );
+    expect(numberCells.length).toEqual(
+      incidentCount > numberofIncidentsToDisplay
+        ? numberofIncidentsToDisplay
+        : incidentCount
+    );
+  };
 
-        cleanup(); // Reset React state
-      }
-
-      await IncidentManagementSystem.flushCaches(); // Reset IMS state
+  for (const incidentCount of [0, 10, 100, 200, defaultPageSize]) {
+    for (const multiple of [0, 1, 2, 4]) {
+      test(`show rows selection (${incidentCount}, ${multiple})`, async () => {
+        test_showRowsSelection(incidentCount, multiple);
+      });
     }
-  });
+  }
 
   test("search", async () => {
     const ims = testIncidentManagementSystem();

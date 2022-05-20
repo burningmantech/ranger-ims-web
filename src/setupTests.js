@@ -13,6 +13,14 @@ if (process.env.CI != null) {
   jest.setTimeout(1 * 60 * 1000);
 }
 
+// Don't allow use of fetch()
+
+fetch = jest.fn(async () => {
+  throw new Error("Caught attempt to call fetch()");
+});
+
+// Add matchers
+
 expect.extend({
   toEqualByValue(received, other) {
     received = JSON.stringify(received);
@@ -81,6 +89,8 @@ expect.extend({
     };
   },
 });
+
+// Clean up after tests
 
 afterEach(async () => {
   console.info("Clearing local storage...");
