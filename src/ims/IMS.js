@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
+import { openDB } from "idb";
 
 import Store from "./Store";
 import User from "./User";
@@ -171,60 +172,119 @@ export default class IncidentManagementSystem {
     return url;
   };
 
+  _fetchWithCachedJSON = async (name, url, cached, deserialize) => {
+    const response = await this._fetchJSONFromServer(url, {
+      eTag: cached.eTag,
+    });
+    invariant(response != null, "no response C?");
+
+    if (response.status === 304) {
+      // Not modified from cached value
+      console.debug(
+        `Retrieved ${name} from unmodified cache (ETag: ${cached.eTag})`
+      );
+      return { value: cached.value, eTag: cached.eTag };
+    } else if (!response.ok) {
+      // The server says "poop", so say "poop" to the caller.
+      throw new Error(`Failed to retrieve ${name}.`);
+    } else {
+      // The server has a new value for us.
+      const eTag = response.headers.get("ETag");
+      const json = await response.json();
+      const value = deserialize == null ? json : deserialize(json);
+      console.debug(`Retrieved ${name} from ${url} (ETag: ${eTag})`);
+      return { value: value, eTag: eTag };
+    }
+  };
+
   _fetchAndCacheJSON = async (store, { lifespan, urlParams }) => {
-    const { value: cachedValue, tag: cachedETag, expiration } = store.load();
+    const cached = store.load();
 
     // If we have a cached value and it hasn't expired, use that.
 
     const now = DateTime.local();
-    if (cachedValue !== null && expiration > now) {
+    if (cached.value !== null && cached.expiration > now) {
       console.debug(`Retrieved ${store.storeID} from unexpired cache`);
-      return cachedValue;
+      return cached.value;
     }
-
-    // If we have no cached value, or a cached-but-expired value, check the
-    // server for a new value
 
     // The bag is special because we don't get it's URL from the bag because the
     // bag is special because...
-    let url =
-      store.endpointID === "bag"
-        ? this.bagURL
-        : (await this.bag()).urls[store.endpointID];
+    let url = (await this.bag()).urls[store.endpointID];
     invariant(url != null, `No "${store.endpointID}" URL found in bag`);
 
     // Replace URL parameters with values
     url = this._replaceURLParameters(url, urlParams);
 
-    const response = await this._fetchJSONFromServer(url, { eTag: cachedETag });
+    // Fetch a new value
+    const fetched = await this._fetchWithCachedJSON(
+      store.storeID,
+      url,
+      cached,
+      store.deserializeValue
+    );
 
-    let _value;
-    let _eTag;
-    if (response.status === 304) {
-      // NOT_MODIFIED
-      // The server says it's still the same, so keep the cached value.
-      // Don't return yet... we'll store it below to update the expiration.
-      _value = cachedValue;
-      _eTag = cachedETag;
-      console.debug(
-        `Retrieved ${store.storeID} from cache (ETag: ${cachedETag})`
+    store.store(fetched.value, fetched.eTag, lifespan);
+
+    return fetched.value;
+  };
+
+  _indexedDBOpen = async (name, version, upgrade) => {
+    // We use a wrapped to indexedDB that is sane and uses promises
+    // See https://github.com/jakearchibald/idb
+
+    const db = await openDB(name, version, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        console.info(`Upgrading IndexedDB ${name} v${version}`);
+        upgrade(db, oldVersion, newVersion, transaction);
+      },
+    });
+
+    console.info(`Opened IndexedDB ${name} v${version}`);
+
+    return db;
+  };
+
+  _indexedDBName = "IMS";
+
+  _indexedDB = async () => {
+    if (this._indexedDB_ === undefined) {
+      this._indexedDB_ = await this._indexedDBOpen(
+        this._indexedDBName,
+        1,
+        (db, oldVersion, newVersion, transaction) => {
+          db.createObjectStore("bag");
+        }
       );
-    } else if (!response.ok) {
-      // The server says "poop", so say "poop" to the caller.
-      throw new Error(`Failed to retrieve ${store.storeID}.`);
-    } else {
-      // The server has a new value for us.
-      _eTag = response.headers.get("ETag");
-      const json = await response.json();
-      _value = store.deserializeValue(json);
-      console.debug(`Retrieved ${store.storeID} from ${url}`);
     }
-    const value = _value;
-    const eTag = _eTag;
 
-    store.store(value, eTag, lifespan);
+    return this._indexedDB_;
+  };
 
-    return value;
+  _wrapValue = (value, eTag, lifespan) => {
+    return {
+      value: value,
+      eTag: eTag,
+      expiration: DateTime.local().plus(lifespan).toMillis(),
+    };
+  };
+
+  _wrappedValueIsExpired = (wrappedValue) => {
+    return DateTime.local().toMillis() >= wrappedValue.expiration;
+  };
+
+  _getFromCache = async (db, store, key) => {
+    if (db != null) {
+      const wrappedValue = await db.get("bag", "bag");
+      if (wrappedValue != null) {
+        const value = wrappedValue.value;
+        const eTag = wrappedValue.eTag;
+        const expired = this._wrappedValueIsExpired(wrappedValue);
+        return { value: value, eTag: eTag, expired: expired };
+      } else {
+        return { value: null, eTag: null, expired: true };
+      }
+    }
   };
 
   ////
@@ -234,9 +294,29 @@ export default class IncidentManagementSystem {
   bagCacheLifespan = { hours: 1 };
 
   bag = async () => {
-    return this._fetchAndCacheJSON(this._bagStore, {
-      lifespan: this.bagCacheLifespan,
-    });
+    // Check the cache
+    const db = await this._indexedDB();
+    const cached = await this._getFromCache(db, "bag", "bag");
+    if (!cached.expired) {
+      console.debug(`Retrieved bag from unexpired cache`);
+      return cached.value;
+    }
+
+    // Fetch a new value
+    const fetched = await this._fetchWithCachedJSON("bag", this.bagURL, cached);
+
+    // Store the result
+    if (db != null) {
+      const wrappedValue = this._wrapValue(
+        fetched.value,
+        fetched.eTag,
+        this.bagCacheLifespan
+      );
+      await db.put("bag", wrappedValue, "bag");
+      console.debug("Cached bag");
+    }
+
+    return fetched.value;
   };
 
   ////

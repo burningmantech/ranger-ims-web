@@ -4,6 +4,10 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
 
+import "fake-indexeddb/auto";
+import { deleteDB } from "idb";
+import FDBFactory from "fake-indexeddb/lib/FDBFactory";
+
 // Increase timeouts in CI
 if (process.env.CI != null) {
   jest.setTimeout(1 * 60 * 1000);
@@ -78,7 +82,34 @@ expect.extend({
   },
 });
 
-afterEach(() => {
-  console.log("Clearing local storage...");
+afterEach(async () => {
+  console.info("Clearing local storage...");
   window.localStorage.clear();
+
+  console.info("Clearing IndexedDB databases...");
+
+  // FIXME: deleteDB never completes because nothing ever closes the databases.
+  // See https://github.com/dumbmatter/fakeIndexedDB/issues/40
+
+  // Attempt to close any outstanding databases connections
+  // This uses a private attribute of fake-indexeddb because the IndexedDB
+  // API doesn't appear to give us anything we can use.
+  indexedDB._databases.forEach((database) => {
+    database.connections.forEach((connection) => {
+      connection.close();
+    });
+  });
+
+  // Delete all databases
+  const databases = await indexedDB.databases();
+  for (const database of databases) {
+    console.info(`Deleting database: ${database.name}`);
+    await deleteDB(database.name);
+  }
+
+  // Replacing the factory also loses references to old databases.
+  // It's unclear if this eats up more resources, so we tried to clean up above.
+  indexedDB = new FDBFactory();
+
+  console.debug("Removed all cached data.");
 });

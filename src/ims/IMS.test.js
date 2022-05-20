@@ -380,9 +380,10 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
-    bagStore.store(testBag, "1", { seconds: 60 });
+    // Write the cached value with a future expiration
+    const db = await ims._indexedDB();
+    db.put("bag", ims._wrapValue(testBag, "1", { days: 1 }), "bag");
 
     const retrievedBag = await ims.bag();
 
@@ -395,16 +396,18 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
     // Fetch the bag from the server
     await ims.bag();
 
+    const db = await ims._indexedDB();
+
     // Get the stored ETag
-    const { tag: eTag1 } = bagStore.load();
+    const wrappedValue = await db.get("bag", "bag");
+    const eTag1 = wrappedValue.eTag;
 
     // Re-write the cached value with the same ETag and stale expiration
-    bagStore.store(testBag, eTag1, { seconds: 0 });
+    db.put("bag", ims._wrapValue(testBag, eTag1, { seconds: 0 }), "bag");
 
     const bag = await ims.bag();
 
@@ -417,13 +420,13 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
     // Fetch the bag from the server
     await ims.bag();
 
     // Re-write the cached value with a new ETag and stale expiration
-    bagStore.store(testBag, "1", { seconds: 0 });
+    const db = await ims._indexedDB();
+    db.put("bag", ims._wrapValue(testBag, "XYZZY", { seconds: 0 }), "bag");
 
     const bag2 = await ims.bag();
 
@@ -439,10 +442,6 @@ describe("IMS: bag", () => {
 });
 
 describe("IMS: authentication", () => {
-  afterEach(async () => {
-    await IncidentManagementSystem.flushCaches();
-  });
-
   test("login: request content type", async () => {
     const username = "Hubcap";
     const password = username;
@@ -712,10 +711,6 @@ describe("IMS: authentication", () => {
 });
 
 describe("IMS: events", () => {
-  afterEach(async () => {
-    await IncidentManagementSystem.flushCaches();
-  });
-
   test("load events, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
@@ -798,10 +793,6 @@ describe("IMS: events", () => {
 });
 
 describe("IMS: incidents", () => {
-  afterEach(async () => {
-    await IncidentManagementSystem.flushCaches();
-  });
-
   test("allConcentricStreets, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
@@ -852,10 +843,6 @@ describe("IMS: incidents", () => {
 });
 
 describe("IMS: incidents", () => {
-  afterEach(async () => {
-    await IncidentManagementSystem.flushCaches();
-  });
-
   test("load incidents, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 

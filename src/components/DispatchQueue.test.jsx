@@ -370,8 +370,6 @@ describe("DispatchQueue component: table", () => {
         const url = URLs.incident(event.id, incidentNumber);
         const context = `${event.id}:${incidentNumber}`;
 
-        console.info(incidentNumber);
-
         window.open = jest.fn();
         await userEvent.click(cell);
 
