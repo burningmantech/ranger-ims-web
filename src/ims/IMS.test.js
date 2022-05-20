@@ -439,8 +439,8 @@ describe("IMS: bag", () => {
 });
 
 describe("IMS: authentication", () => {
-  afterEach(() => {
-    IncidentManagementSystem.flushCaches();
+  afterEach(async () => {
+    await IncidentManagementSystem.flushCaches();
   });
 
   test("login: request content type", async () => {
@@ -712,8 +712,8 @@ describe("IMS: authentication", () => {
 });
 
 describe("IMS: events", () => {
-  afterEach(() => {
-    IncidentManagementSystem.flushCaches();
+  afterEach(async () => {
+    await IncidentManagementSystem.flushCaches();
   });
 
   test("load events, ok", async () => {
@@ -798,8 +798,8 @@ describe("IMS: events", () => {
 });
 
 describe("IMS: incidents", () => {
-  afterEach(() => {
-    IncidentManagementSystem.flushCaches();
+  afterEach(async () => {
+    await IncidentManagementSystem.flushCaches();
   });
 
   test("allConcentricStreets, ok", async () => {
@@ -852,8 +852,8 @@ describe("IMS: incidents", () => {
 });
 
 describe("IMS: incidents", () => {
-  afterEach(() => {
-    IncidentManagementSystem.flushCaches();
+  afterEach(async () => {
+    await IncidentManagementSystem.flushCaches();
   });
 
   test("load incidents, ok", async () => {

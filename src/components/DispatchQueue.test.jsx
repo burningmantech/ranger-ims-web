@@ -345,9 +345,9 @@ describe("DispatchQueue component: table", () => {
         ).not.toThrow();
       }
 
-      IncidentManagementSystem.flushCaches(); // Reset IMS state
-
       cleanup(); // Reset React state
+
+      await IncidentManagementSystem.flushCaches(); // Reset IMS state
     }
   });
 
@@ -468,7 +468,8 @@ describe("DispatchQueue component: controls", () => {
 
         cleanup(); // Reset React state
       }
-      IncidentManagementSystem.flushCaches(); // Reset IMS state
+
+      await IncidentManagementSystem.flushCaches(); // Reset IMS state
     }
   });
 

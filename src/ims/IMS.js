@@ -19,7 +19,7 @@ export const jwtDecode = (token) => {
 };
 
 export default class IncidentManagementSystem {
-  static flushCaches = () => {
+  static flushCaches = async () => {
     console.info("Flushing all caches...");
     Store.removeAll();
   };
