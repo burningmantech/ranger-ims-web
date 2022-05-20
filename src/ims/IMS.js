@@ -74,6 +74,10 @@ export default class IncidentManagementSystem {
   };
 
   _fetch = async (request) => {
+    return await fetch(request);
+  };
+
+  _fetchWithAuthentication = async (request) => {
     let authenticated;
     if (this.isLoggedIn()) {
       authenticated = true;
@@ -89,7 +93,7 @@ export default class IncidentManagementSystem {
       `Issuing ${authenticated ? "authenticated" : "unauthenticated"} ` +
         `request: ${request.method} ${request.url}`
     );
-    const response = await fetch(request);
+    const response = await this._fetch(request);
 
     if (!response.ok) {
       if (response.status === 401) {
@@ -140,7 +144,7 @@ export default class IncidentManagementSystem {
     }
 
     const request = new Request(url, requestOptions);
-    const response = await this._fetch(request);
+    const response = await this._fetchWithAuthentication(request);
 
     if (response.ok) {
       const responseContentType = response.headers.get("Content-Type");

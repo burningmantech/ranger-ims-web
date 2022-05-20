@@ -256,8 +256,6 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     }
 
     this.requestsReceived = [];
-
-    fetch = jest.fn(this._mockFetch);
   }
 
   _notFoundResponse = () => {
@@ -365,7 +363,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     return this._jsonResponse(responseJSON);
   };
 
-  __mockFetch = async (request) => {
+  _fetchMockRoutes = async (request) => {
     let _path;
     try {
       const url = new URL(request.url);
@@ -483,8 +481,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     throw new Error(`Unexpected request: ${request.method} ${path}`);
   };
 
-  _mockFetch = async (request) => {
-    let response = await this.__mockFetch(request);
+  _fetchMockNotModified = async (request) => {
+    let response = await this._fetchMockRoutes(request);
 
     if (request.method === "GET") {
       const ifNoneMatch = request.headers.get("If-None-Match");
@@ -507,6 +505,10 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     this.requestsReceived.push([request, response]);
 
     return response;
+  };
+
+  _fetch = async (request) => {
+    return await this._fetchMockNotModified(request);
   };
 
   // For testing
