@@ -6,6 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { DateTime } from "luxon";
 
 import { URLs } from "../URLs";
+import IncidentManagementSystem from "../ims/IMS";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
@@ -344,7 +345,7 @@ describe("DispatchQueue component: table", () => {
         ).not.toThrow();
       }
 
-      ims.flushCaches(); // Reset IMS state
+      IncidentManagementSystem.flushCaches(); // Reset IMS state
 
       cleanup(); // Reset React state
     }
@@ -467,7 +468,7 @@ describe("DispatchQueue component: controls", () => {
 
         cleanup(); // Reset React state
       }
-      ims.flushCaches(); // Reset IMS state
+      IncidentManagementSystem.flushCaches(); // Reset IMS state
     }
   });
 

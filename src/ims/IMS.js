@@ -19,6 +19,11 @@ export const jwtDecode = (token) => {
 };
 
 export default class IncidentManagementSystem {
+  static flushCaches = () => {
+    console.info("Flushing all caches...");
+    Store.removeAll();
+  };
+
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
@@ -341,11 +346,6 @@ export default class IncidentManagementSystem {
   ////
   //  Data
   ////
-
-  flushCaches = () => {
-    console.info("Flushing all caches...");
-    Store.removeAll();
-  };
 
   // Events
 
