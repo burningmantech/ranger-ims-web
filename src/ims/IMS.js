@@ -152,6 +152,16 @@ export default class IncidentManagementSystem {
     return response;
   };
 
+  _replaceURLParameters = (url, parameters) => {
+    for (const paramName in parameters) {
+      const value = parameters[paramName];
+      invariant(value != null, `Undefined parameter: ${paramName}`);
+      url = url.replace(`{${paramName}}`, value);
+    }
+    invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
+    return url;
+  };
+
   _fetchAndCacheJSON = async (store, { lifespan, urlParams }) => {
     const { value: cachedValue, tag: cachedETag, expiration } = store.load();
 
@@ -175,12 +185,7 @@ export default class IncidentManagementSystem {
     invariant(url != null, `No "${store.endpointID}" URL found in bag`);
 
     // Replace URL parameters with values
-    for (const paramName in urlParams) {
-      const value = urlParams[paramName];
-      invariant(value != null, `Undefined parameter: ${paramName}`);
-      url = url.replace(`{${paramName}}`, value);
-    }
-    invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
+    url = this._replaceURLParameters(url, urlParams);
 
     const response = await this._fetchJSONFromServer(url, { eTag: cachedETag });
 
