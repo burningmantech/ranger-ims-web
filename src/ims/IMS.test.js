@@ -791,7 +791,7 @@ describe("IMS: events", () => {
   });
 });
 
-describe("IMS: incidents", () => {
+describe("IMS: concentric streets", () => {
   test("allConcentricStreets, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
