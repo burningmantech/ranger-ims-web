@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
 
-import Store from "./Store";
 import { jwtDecode } from "./IMS";
 import IncidentManagementSystem from "./IMS";
 import { testIncidentManagementSystem } from "./TestIMS";

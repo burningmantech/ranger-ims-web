@@ -6,7 +6,6 @@ import userEvent from "@testing-library/user-event";
 import { DateTime } from "luxon";
 
 import { URLs } from "../URLs";
-import IncidentManagementSystem from "../ims/IMS";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,

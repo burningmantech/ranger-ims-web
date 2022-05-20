@@ -15,6 +15,7 @@ if (process.env.CI != null) {
 
 // Don't allow use of fetch()
 
+/* eslint no-native-reassign: "off" */
 fetch = jest.fn(async () => {
   throw new Error("Caught attempt to call fetch()");
 });
@@ -119,7 +120,7 @@ afterEach(async () => {
 
   // Replacing the factory also loses references to old databases.
   // It's unclear if this eats up more resources, so we tried to clean up above.
-  indexedDB = new FDBFactory();
+  indexedDB = new FDBFactory(); /* eslint no-native-reassign: "off" */
 
   console.debug("Removed all cached data.");
 });
