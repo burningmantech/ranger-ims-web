@@ -14,7 +14,7 @@ export const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
-    console.error(`Unable to decode JWT ${token}: ${e}`);
+    console.warn(`Unable to decode JWT ${token}: ${e}`);
     return null;
   }
 };
@@ -110,7 +110,7 @@ export default class IncidentManagementSystem {
           console.debug(`Authentication required for resource: ${request.url}`);
         }
       } else {
-        console.error(
+        console.warn(
           "Non-OK response from server " +
             `(${response.status}: ${response.statusText})`
         );

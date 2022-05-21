@@ -39,7 +39,7 @@ describe("EventDropdown component", () => {
       throw new Error("because reasons...");
     });
 
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     await act(async () => {
       renderWithIMSContext(<EventDropdown />, ims);

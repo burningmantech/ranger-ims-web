@@ -67,7 +67,7 @@ export default class Store {
     }
 
     const error = (message) => {
-      console.error(message);
+      console.warn(message);
       this.remove();
       return { value: null };
     };

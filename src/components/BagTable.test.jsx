@@ -37,7 +37,7 @@ describe("BagTable component", () => {
       throw new Error("because reasons...");
     });
 
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     renderWithIMSContext(<BagTable />, ims);
 

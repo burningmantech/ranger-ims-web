@@ -221,7 +221,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, "*");
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 
@@ -236,7 +236,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, "{}");
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 
@@ -250,7 +250,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, '{"value": {}}');
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 

@@ -537,7 +537,7 @@ describe("DispatchQueue component: loading", () => {
       throw new Error("because reasons...");
     });
 
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const event = await ims.eventWithID("1");
 
