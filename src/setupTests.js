@@ -7,6 +7,7 @@ import "@testing-library/jest-dom";
 import "fake-indexeddb/auto";
 import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
+import flushPromises from "flush-promises";
 
 // Increase timeouts in CI
 if (process.env.CI != null) {
@@ -94,6 +95,13 @@ expect.extend({
 // Clean up after tests
 
 afterEach(async () => {
+  console.info("Flushing promises...");
+  try {
+    await flushPromises();
+  } catch (e) {
+    console.warn(e);
+  }
+
   console.info("Clearing local storage...");
   window.localStorage.clear();
 
