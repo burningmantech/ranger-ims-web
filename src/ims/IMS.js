@@ -29,7 +29,6 @@ export default class IncidentManagementSystem {
     invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store(User, "credentials", "credentials");
-    this._eventsStore = new Store(Event, "events", "events");
     this._concentricStreetsStore = new Store(
       null,
       "concentric_streets",
@@ -159,6 +158,10 @@ export default class IncidentManagementSystem {
     }
 
     return response;
+  };
+
+  _urlFromBag = async (endpointID) => {
+    return (await this.bag()).urls[endpointID];
   };
 
   _replaceURLParameters = (url, parameters) => {
@@ -449,10 +452,33 @@ export default class IncidentManagementSystem {
 
   eventsCacheLifespan = { minutes: 15 };
 
+  _eventsStoreKey = "events";
+
   events = async () => {
-    const events = await this._fetchAndCacheJSON(this._eventsStore, {
-      lifespan: this.eventsCacheLifespan,
-    });
+    // Check the cache
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._eventsStoreKey
+    );
+    if (!cached.expired) {
+      console.debug(`Retrieved events from unexpired cache`);
+      return cached.value;
+    }
+
+    // Fetch a new value
+    const url = await this._urlFromBag("events");
+    const fetched = await this._fetchWithCachedJSON("events", url, cached);
+
+    // Store the result
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._eventsStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.eventsCacheLifespan
+    );
+
+    const events = Array.from(fetched.value, (json) => Event.fromJSON(json));
     this._eventsMap = new Map(events.map((event) => [event.id, event]));
     return events;
   };
@@ -460,6 +486,7 @@ export default class IncidentManagementSystem {
   eventWithID = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
+    // Events are cached all together
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
 
