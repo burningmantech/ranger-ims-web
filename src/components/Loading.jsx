@@ -5,7 +5,7 @@ const Loading = () => {
   return (
     <Alert variant="light">
       <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">Loading…</span>
       </Spinner>
     </Alert>
   );

@@ -19,7 +19,7 @@ describe("DispatchQueuePage component", () => {
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
 
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).toBeInTheDocument();
   });
 
   test("invalid event ID", async () => {

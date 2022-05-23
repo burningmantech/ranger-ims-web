@@ -7,6 +7,6 @@ describe("Loading component", () => {
   test("render", () => {
     render(<Loading />);
 
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).toBeInTheDocument();
   });
 });

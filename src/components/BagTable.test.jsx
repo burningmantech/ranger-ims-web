@@ -26,7 +26,7 @@ describe("BagTable component", () => {
   test("loading bag", async () => {
     await act(async () => {
       renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-      expect(screen.queryByText("Loading...")).toBeInTheDocument();
+      expect(screen.queryByText("Loading…")).toBeInTheDocument();
     });
   });
 
@@ -56,7 +56,7 @@ describe("BagTable component", () => {
     for (const name in ims.testData.bag.urls) {
       expect(await screen.findByText(name)).toBeInTheDocument();
     }
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
   });
 
   test("no urls in bag", async () => {
