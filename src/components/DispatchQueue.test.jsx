@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
-import { act, screen } from "@testing-library/react";
+import { act, screen, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
@@ -29,6 +29,14 @@ import {
   UnknownPriorityIcon,
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
+
+export const waitForIncidents = async () => {
+  await waitForElementToBeRemoved(() => screen.getByText("Loading…"));
+};
+
+export const waitForEffects = async () => {
+  await waitForIncidents();
+};
 
 describe("Table cell formatting functions", () => {
   test("formatPriority, valid", () => {
@@ -323,9 +331,9 @@ describe("DispatchQueue component: table", () => {
       `Failed to add incidents (${incidents.length} != ${incidentCount})`
     );
 
-    await act(async () => {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    });
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
+
+    await waitForEffects();
 
     const numberCells = document.getElementsByClassName(
       "queue_incident_number"
@@ -357,9 +365,9 @@ describe("DispatchQueue component: table", () => {
 
     await ims.addMoreIncidents(event.id, incidentCount);
 
-    await act(async () => {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    });
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
+
+    await waitForEffects();
 
     for (const row of document.getElementsByClassName("queue_incident_row")) {
       const numberCell = row.querySelector(".queue_incident_number");
@@ -370,7 +378,9 @@ describe("DispatchQueue component: table", () => {
         const context = `${event.id}:${incidentNumber}`;
 
         window.open = jest.fn();
-        await userEvent.click(cell);
+        await act(async () => {
+          await userEvent.click(cell);
+        });
 
         expect(window.open).toHaveBeenCalledWith(url, context);
       }
@@ -528,6 +538,8 @@ describe("DispatchQueue component: loading", () => {
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
     expect(screen.queryByText("Loading…")).toBeInTheDocument();
+
+    await waitForEffects();
   });
 
   test("incidents fail to load", async () => {

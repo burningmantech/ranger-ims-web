@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 
-import { act, screen } from "@testing-library/react";
+import { act, screen, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
@@ -11,6 +11,14 @@ import {
 
 import EventDropdown from "./EventDropdown";
 
+export const waitForEffects = async () => {
+  // Let effects complete
+  await act(async () => {
+    await userEvent.click(screen.getByText("Event"));
+  });
+  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+};
+
 describe("EventDropdown component", () => {
   test("id", async () => {
     await act(async () => {
@@ -18,6 +26,8 @@ describe("EventDropdown component", () => {
     });
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
+
+    await waitForEffects();
   });
 
   test("loading events", async () => {
@@ -30,6 +40,8 @@ describe("EventDropdown component", () => {
     for (const event of await ims.events()) {
       expect(screen.queryByText(event.name)).not.toBeInTheDocument();
     }
+
+    await waitForEffects();
   });
 
   test("events fail to load", async () => {
@@ -60,8 +72,8 @@ describe("EventDropdown component", () => {
 
     await act(async () => {
       renderWithIMSContext(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
     });
+    await waitForEffects();
 
     expect(screen.queryByText("No events found")).toBeInTheDocument();
   });
@@ -71,8 +83,8 @@ describe("EventDropdown component", () => {
 
     await act(async () => {
       renderWithIMSContext(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
     });
+    await waitForEffects();
 
     const eventNames = Array.from(
       document.getElementsByClassName("nav_event_id"),
@@ -89,8 +101,8 @@ describe("EventDropdown component", () => {
 
     await act(async () => {
       renderWithIMSContext(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
     });
+    await waitForEffects();
 
     for (const event of await ims.events()) {
       const url = new URL(screen.getByText(event.name).href);
