@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act } from "@testing-library/react";
+import { act, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
 import {
@@ -7,11 +8,14 @@ import {
   testIncidentManagementSystem,
 } from "../../ims/TestIMS";
 
-import { waitForEffects as waitForEventDropdownEffects } from "./EventDropDown.test";
 import NavigationBar from "./NavigationBar";
 
 export const waitForEffects = async () => {
-  await waitForEventDropdownEffects();
+  // Let effects complete
+  await act(async () => {
+    await userEvent.click(screen.getByText("Event"));
+  });
+  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
 };
 
 describe("Navbar component", () => {
