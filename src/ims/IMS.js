@@ -29,7 +29,6 @@ export default class IncidentManagementSystem {
     invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store(User, "credentials", "credentials");
-    this._bagStore = new Store(null, "bag", "bag");
     this._eventsStore = new Store(Event, "events", "events");
     this._concentricStreetsStore = new Store(
       null,
@@ -246,6 +245,7 @@ export default class IncidentManagementSystem {
   };
 
   _indexedDBName = "IMS";
+  _keyValueStoreName = "keyValue";
 
   _indexedDB = async () => {
     if (this._indexedDB_ === undefined) {
@@ -253,7 +253,7 @@ export default class IncidentManagementSystem {
         this._indexedDBName,
         1,
         (db, oldVersion, newVersion, transaction) => {
-          db.createObjectStore("bag");
+          db.createObjectStore(this._keyValueStoreName);
         }
       );
     }
@@ -273,17 +273,29 @@ export default class IncidentManagementSystem {
     return DateTime.local().toMillis() >= wrappedValue.expiration;
   };
 
-  _getFromCache = async (db, store, key) => {
+  _getFromCache = async (store, key) => {
+    const db = await this._indexedDB();
     if (db != null) {
-      const wrappedValue = await db.get("bag", "bag");
+      const wrappedValue = await db.get(store, key);
       if (wrappedValue != null) {
         const value = wrappedValue.value;
         const eTag = wrappedValue.eTag;
         const expired = this._wrappedValueIsExpired(wrappedValue);
+        console.debug(`Read ${store}->${key} from cache`);
         return { value: value, eTag: eTag, expired: expired };
       } else {
+        console.debug(`No ${store}->${key} found in cache`);
         return { value: null, eTag: null, expired: true };
       }
+    }
+  };
+
+  _putInCache = async (store, key, value, eTag, lifeSpan) => {
+    const db = await this._indexedDB();
+    if (db != null) {
+      const wrappedValue = this._wrapValue(value, eTag, lifeSpan);
+      await db.put(store, wrappedValue, key);
+      console.debug(`Cached ${store}->${key}`);
     }
   };
 
@@ -293,10 +305,14 @@ export default class IncidentManagementSystem {
 
   bagCacheLifespan = { hours: 1 };
 
+  _bagStoreKey = "bag";
+
   bag = async () => {
     // Check the cache
-    const db = await this._indexedDB();
-    const cached = await this._getFromCache(db, "bag", "bag");
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._bagStoreKey
+    );
     if (!cached.expired) {
       console.debug(`Retrieved bag from unexpired cache`);
       return cached.value;
@@ -306,15 +322,13 @@ export default class IncidentManagementSystem {
     const fetched = await this._fetchWithCachedJSON("bag", this.bagURL, cached);
 
     // Store the result
-    if (db != null) {
-      const wrappedValue = this._wrapValue(
-        fetched.value,
-        fetched.eTag,
-        this.bagCacheLifespan
-      );
-      await db.put("bag", wrappedValue, "bag");
-      console.debug("Cached bag");
-    }
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._bagStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.bagCacheLifespan
+    );
 
     return fetched.value;
   };

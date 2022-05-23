@@ -381,8 +381,13 @@ describe("IMS: bag", () => {
     const ims = testIncidentManagementSystem();
 
     // Write the cached value with a future expiration
-    const db = await ims._indexedDB();
-    db.put("bag", ims._wrapValue(testBag, "1", { days: 1 }), "bag");
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      "1",
+      { days: 1 }
+    );
 
     const retrievedBag = await ims.bag();
 
@@ -399,14 +404,21 @@ describe("IMS: bag", () => {
     // Fetch the bag from the server
     await ims.bag();
 
-    const db = await ims._indexedDB();
-
     // Get the stored ETag
-    const wrappedValue = await db.get("bag", "bag");
+    const wrappedValue = await ims._getFromCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey
+    );
     const eTag1 = wrappedValue.eTag;
 
     // Re-write the cached value with the same ETag and stale expiration
-    db.put("bag", ims._wrapValue(testBag, eTag1, { seconds: 0 }), "bag");
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      eTag1,
+      { seconds: 0 }
+    );
 
     const bag = await ims.bag();
 
@@ -424,8 +436,13 @@ describe("IMS: bag", () => {
     await ims.bag();
 
     // Re-write the cached value with a new ETag and stale expiration
-    const db = await ims._indexedDB();
-    db.put("bag", ims._wrapValue(testBag, "XYZZY", { seconds: 0 }), "bag");
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      "XYZZY",
+      { seconds: 0 }
+    );
 
     const bag2 = await ims.bag();
 
