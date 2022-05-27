@@ -4,6 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
 
+// https://github.com/dumbmatter/fakeIndexedDB
 import "fake-indexeddb/auto";
 import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";

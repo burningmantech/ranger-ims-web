@@ -186,7 +186,7 @@ export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
     const fetchConcentricStreets = async () => {
       const concentricStreets = await tryWithFallback(
         "fetch all concentric streets",
-        null,
+        new Map(),
         ims.allConcentricStreets
       );
 

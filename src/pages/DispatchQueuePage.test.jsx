@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen } from "@testing-library/react";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -11,6 +11,14 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
+
+export const waitForIncidents = async () => {
+  await waitForElementToBeRemoved(() => screen.getByText("Loading…"));
+};
+
+export const waitForEffects = async () => {
+  await waitForIncidents();
+};
 
 describe("DispatchQueuePage component", () => {
   test("loading events", async () => {
@@ -60,6 +68,8 @@ describe("RoutedDispatchQueuePage component", () => {
       </MemoryRouter>,
       ims
     );
+
+    waitForEffects();
 
     // DispatchQueue component renders event name
     expect(
