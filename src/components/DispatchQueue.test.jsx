@@ -332,7 +332,6 @@ describe("DispatchQueue component: table", () => {
     );
 
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
-
     await waitForEffects();
 
     const numberCells = document.getElementsByClassName(
@@ -366,7 +365,6 @@ describe("DispatchQueue component: table", () => {
     await ims.addMoreIncidents(event.id, incidentCount);
 
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
-
     await waitForEffects();
 
     for (const row of document.getElementsByClassName("queue_incident_row")) {
@@ -437,20 +435,15 @@ describe("DispatchQueue component: controls", () => {
 
     await ims.addMoreIncidents(event.id, incidentCount);
 
-    await act(async () => {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    });
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    await waitForEffects();
 
     const dropdown = document.getElementById("queue_show_rows_dropdown");
-    await act(async () => {
-      userEvent.click(dropdown);
-    });
+    await userEvent.click(dropdown);
 
     const selectorID = `queue_show_rows_${multiple}`;
     const selector = document.getElementById(selectorID);
-    await act(async () => {
-      userEvent.click(selector);
-    });
+    await userEvent.click(selector);
 
     // Ensure the selection is displays in the dropdown
     const numberofIncidentsToDisplay =
@@ -500,17 +493,14 @@ describe("DispatchQueue component: controls", () => {
       { summary: "Cat in house" }
     );
 
-    await act(async () => {
-      renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    });
+    renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    await waitForEffects();
 
     const searchValue = "house";
     const searchField = document.getElementById("search_input");
-    await act(async () => {
-      // The delay here is a work-around to an issue in testing-library:
-      // https://github.com/testing-library/user-event/issues/387#issuecomment-1020522982
-      await userEvent.type(searchField, searchValue, { delay: 0.00001 });
-    });
+    // The delay here is a work-around to an issue in testing-library:
+    // https://github.com/testing-library/user-event/issues/387#issuecomment-1020522982
+    await userEvent.type(searchField, searchValue, { delay: 0.00001 });
 
     expect(searchField).toHaveValue(searchValue);
 

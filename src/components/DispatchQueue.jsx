@@ -190,13 +190,7 @@ export const formatArrayOfStrings = (strings) => {
 
 // Table hook
 
-const useDispatchQueueTable = (incidents) => {
-  // Fetch concentric street data
-
-  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
-
-  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
-
+const useDispatchQueueTable = (incidents, allConcentricStreets) => {
   invariant(allConcentricStreets != null, "allConcentricStreets is null");
 
   // See: https://react-table.tanstack.com/docs/overview
@@ -592,6 +586,12 @@ const DispatchQueue = ({ event }) => {
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
 
+  // Fetch concentric street data
+
+  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
+
+  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
+
   // Fetch incident data
 
   const [incidents, setIncidents] = useState(undefined);
@@ -602,7 +602,7 @@ const DispatchQueue = ({ event }) => {
     searchInput: searchInput,
   });
 
-  const table = useDispatchQueueTable(incidents);
+  const table = useDispatchQueueTable(incidents, allConcentricStreets);
 
   // Render
 
