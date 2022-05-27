@@ -31,7 +31,7 @@ import {
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading…"));
+  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
 };
 
 export const waitForEffects = async () => {
@@ -527,7 +527,7 @@ describe("DispatchQueue component: loading", () => {
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-    expect(screen.queryByText("Loading…")).toBeInTheDocument();
+    expect(screen.queryByText("Loading incidents…")).toBeInTheDocument();
 
     await waitForEffects();
   });
@@ -546,7 +546,7 @@ describe("DispatchQueue component: loading", () => {
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
     expect(
-      await screen.findByText("Error loading incidents")
+      await screen.findByText("Failed to load incidents.")
     ).toBeInTheDocument();
 
     expect(spy).toHaveBeenCalledWith(

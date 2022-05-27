@@ -460,8 +460,11 @@ const TopToolBar = ({
   showDays,
   setShowDays,
 }) => {
+  if (incidents == null) {
+    return "";
+  }
+
   invariant(table != null, "table argument is required");
-  invariant(incidents != null, "incidents argument is required");
   invariant(searchInput != null, "searchInput argument is required");
   invariant(setSearchInput != null, "setSearchInput argument is required");
   invariant(showState != null, "showState argument is required");
@@ -606,12 +609,12 @@ const DispatchQueue = ({ event }) => {
 
   // Render
 
-  if (incidents === undefined) {
-    return <Loading />;
-  } else if (incidents === null) {
-    return "Error loading incidents";
-  } else {
-    return (
+  return (
+    <Loading
+      condition={incidents}
+      error={incidents === null}
+      what={"incidents"}
+    >
       <div id="queue_wrapper">
         <h1>Dispatch Queue: {event.name}</h1>
 
@@ -628,8 +631,8 @@ const DispatchQueue = ({ event }) => {
         <DispatchQueueTable table={table} event={event} />
         <BottomToolBar table={table} incidents={incidents} />
       </div>
-    );
-  }
+    </Loading>
+  );
 };
 
 export default DispatchQueue;
