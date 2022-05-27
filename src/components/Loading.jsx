@@ -13,11 +13,10 @@ const Loading = ({ what, condition, error, children }) => {
   } else {
     return (
       <Alert variant="light">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">
-            {what == null ? "Loading…" : `Loading ${what}…`}
-          </span>
-        </Spinner>
+        <Spinner animation="border" role="status" />
+        <span className="sr-only">
+          {what == null ? "Loading…" : `Loading ${what}…`}
+        </span>
       </Alert>
     );
   }
