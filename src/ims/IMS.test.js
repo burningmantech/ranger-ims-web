@@ -833,7 +833,7 @@ describe("IMS: concentric streets", () => {
     ims.asHubcap();
 
     await expect(ims.allConcentricStreets()).toRejectWithMessage(
-      "Failed to retrieve concentric_streets."
+      "Failed to retrieve concentric streets."
     );
   });
 

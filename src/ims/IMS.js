@@ -1,5 +1,11 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
+
+// We use a wrapper around indexedDB that is more sane and uses promises.
+// See https://github.com/jakearchibald/idb
+//
+// Note: setuptests.js installs https://github.com/dumbmatter/fakeIndexedDB to
+// mock the browser's IndexedDB API for testing.
 import { openDB } from "idb";
 
 import Store from "./Store";
@@ -29,11 +35,6 @@ export default class IncidentManagementSystem {
     invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store(User, "credentials", "credentials");
-    this._concentricStreetsStore = new Store(
-      null,
-      "concentric_streets",
-      "streets"
-    );
     this._incidentsStoreByEvent = new Map();
     this._searchIndexByEvent = new Map();
 
@@ -232,9 +233,6 @@ export default class IncidentManagementSystem {
   };
 
   _indexedDBOpen = async (name, version, upgrade) => {
-    // We use a wrapped to indexedDB that is sane and uses promises
-    // See https://github.com/jakearchibald/idb
-
     const db = await openDB(name, version, {
       upgrade(db, oldVersion, newVersion, transaction) {
         console.info(`Upgrading IndexedDB ${name} v${version}`);
@@ -248,11 +246,11 @@ export default class IncidentManagementSystem {
   };
 
   _indexedDBName = "IMS";
-  _keyValueStoreName = "keyValue";
+  _keyValueStoreName = "key-value";
 
   _indexedDB = async () => {
-    if (this._indexedDB_ === undefined) {
-      this._indexedDB_ = await this._indexedDBOpen(
+    if (this.__indexedDB === undefined) {
+      this.__indexedDB = await this._indexedDBOpen(
         this._indexedDBName,
         1,
         (db, oldVersion, newVersion, transaction) => {
@@ -261,7 +259,7 @@ export default class IncidentManagementSystem {
       );
     }
 
-    return this._indexedDB_;
+    return this.__indexedDB;
   };
 
   _wrapValue = (value, eTag, lifespan) => {
@@ -279,7 +277,14 @@ export default class IncidentManagementSystem {
   _getFromCache = async (store, key) => {
     const db = await this._indexedDB();
     if (db != null) {
-      const wrappedValue = await db.get(store, key);
+      let wrappedValue;
+      try {
+        wrappedValue = await db.get(store, key);
+      } catch (e) {
+        console.warn(`Failed to read from indexedDB ${store}->${key}`);
+        throw e;
+      }
+
       if (wrappedValue != null) {
         const value = wrappedValue.value;
         const eTag = wrappedValue.eTag;
@@ -297,7 +302,12 @@ export default class IncidentManagementSystem {
     const db = await this._indexedDB();
     if (db != null) {
       const wrappedValue = this._wrapValue(value, eTag, lifeSpan);
-      await db.put(store, wrappedValue, key);
+      try {
+        await db.put(store, wrappedValue, key);
+      } catch (e) {
+        console.warn(`Failed to write to indexedDB ${store}->${key}`);
+        throw e;
+      }
       console.debug(`Cached ${store}->${key}`);
     }
   };
@@ -455,6 +465,12 @@ export default class IncidentManagementSystem {
   _eventsStoreKey = "events";
 
   events = async () => {
+    const deserialize = (json) => {
+      const events = Array.from(json, (eventJSON) => Event.fromJSON(eventJSON));
+      this._eventsMap = new Map(events.map((event) => [event.id, event]));
+      return events;
+    };
+
     // Check the cache
     const cached = await this._getFromCache(
       this._keyValueStoreName,
@@ -462,7 +478,7 @@ export default class IncidentManagementSystem {
     );
     if (!cached.expired) {
       console.debug(`Retrieved events from unexpired cache`);
-      return cached.value;
+      return deserialize(cached.value);
     }
 
     // Fetch a new value
@@ -478,9 +494,7 @@ export default class IncidentManagementSystem {
       this.eventsCacheLifespan
     );
 
-    const events = Array.from(fetched.value, (json) => Event.fromJSON(json));
-    this._eventsMap = new Map(events.map((event) => [event.id, event]));
-    return events;
+    return deserialize(fetched.value);
   };
 
   eventWithID = async (eventID) => {
@@ -501,27 +515,53 @@ export default class IncidentManagementSystem {
 
   concentricStreetsCacheLifespan = { minutes: 15 };
 
+  _concentricStreetsStoreKey = "concentric streets";
+
   allConcentricStreets = async () => {
-    const eventMap = await this._fetchAndCacheJSON(
-      this._concentricStreetsStore,
-      {
-        lifespan: this.concentricStreetsCacheLifespan,
-      }
+    const deserialize = (json) => {
+      return new Map(
+        // Convert [eventID, streetsJSON] to [eventID, streetsMap]
+        Object.entries(json).map(([eventID, streetsJSON]) => [
+          eventID,
+          new Map(
+            // Convert [streetID, streetName] to [streetID, street]
+            Object.entries(streetsJSON).map(([streetID, streetName]) => [
+              streetID,
+              new ConcentricStreet(streetID, streetName),
+            ])
+          ),
+        ])
+      );
+    };
+
+    // Check the cache
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._concentricStreetsStoreKey
+    );
+    if (!cached.expired) {
+      console.debug(`Retrieved concentric streets from unexpired cache`);
+      return deserialize(cached.value);
+    }
+
+    // Fetch a new value
+    const url = await this._urlFromBag("streets");
+    const fetched = await this._fetchWithCachedJSON(
+      "concentric streets",
+      url,
+      cached
     );
 
-    return new Map(
-      // Convert [eventID, streetsJSON] to [eventID, streetsMap]
-      Object.entries(eventMap).map(([eventID, streetsJSON]) => [
-        eventID,
-        new Map(
-          // Convert [streetID, streetName] to [streetID, street]
-          Object.entries(streetsJSON).map(([streetID, streetName]) => [
-            streetID,
-            new ConcentricStreet(streetID, streetName),
-          ])
-        ),
-      ])
+    // Store the result
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._concentricStreetsStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.concentricStreetsCacheLifespan
     );
+
+    return deserialize(fetched.value);
   };
 
   concentricStreets = async (eventID) => {
