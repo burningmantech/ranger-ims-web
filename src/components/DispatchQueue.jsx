@@ -191,7 +191,9 @@ export const formatArrayOfStrings = (strings) => {
 // Table hook
 
 const useDispatchQueueTable = (incidents, allConcentricStreets) => {
-  invariant(allConcentricStreets != null, "allConcentricStreets is null");
+  if (allConcentricStreets == null) {
+    allConcentricStreets = new Map();
+  }
 
   // See: https://react-table.tanstack.com/docs/overview
 
@@ -610,14 +612,14 @@ const DispatchQueue = ({ event }) => {
   // Render
 
   return (
-    <Loading
-      condition={incidents}
-      error={incidents === null}
-      what={"incidents"}
-    >
-      <div id="queue_wrapper">
-        <h1>Dispatch Queue: {event.name}</h1>
+    <div id="queue_wrapper">
+      <h1>Dispatch Queue: {event.name}</h1>
 
+      <Loading
+        condition={incidents}
+        error={incidents === null}
+        what={"incidents"}
+      >
         <TopToolBar
           table={table}
           incidents={incidents}
@@ -630,8 +632,8 @@ const DispatchQueue = ({ event }) => {
         />
         <DispatchQueueTable table={table} event={event} />
         <BottomToolBar table={table} incidents={incidents} />
-      </div>
-    </Loading>
+      </Loading>
+    </div>
   );
 };
 
