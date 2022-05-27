@@ -281,7 +281,7 @@ export default class IncidentManagementSystem {
       try {
         wrappedValue = await db.get(store, key);
       } catch (e) {
-        console.warn(`Failed to read from indexedDB ${store}->${key}`);
+        console.warn(`Failed to read from indexedDB ${store}->${key}: ${e}`);
         throw e;
       }
 
@@ -305,7 +305,7 @@ export default class IncidentManagementSystem {
       try {
         await db.put(store, wrappedValue, key);
       } catch (e) {
-        console.warn(`Failed to write to indexedDB ${store}->${key}`);
+        console.warn(`Failed to write to indexedDB ${store}->${key}: ${e}`);
         throw e;
       }
       console.debug(`Cached ${store}->${key}`);
