@@ -34,7 +34,7 @@ export default class IncidentManagementSystem {
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
-    this._credentialStore = new Store(User, "credentials", "credentials");
+    this._credentialStore = new Store(User, "credentials");
     this._searchIndexByEvent = new Map();
 
     // Control the user property so that we can use it to access and update

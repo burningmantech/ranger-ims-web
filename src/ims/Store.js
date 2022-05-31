@@ -8,10 +8,9 @@ export default class Store {
     console.debug(`Removed all cached data.`);
   };
 
-  constructor(modelClass, storeID, endpointID) {
+  constructor(modelClass, storeID) {
     this.modelClass = modelClass;
     this.storeID = storeID;
-    this.endpointID = endpointID;
     this._storage = Store._storage;
   }
 
