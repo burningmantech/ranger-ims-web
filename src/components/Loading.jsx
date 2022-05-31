@@ -14,9 +14,7 @@ const Loading = ({ what, condition, error, children }) => {
     return (
       <Alert variant="light">
         <Spinner animation="border" role="status" />
-        <span className="sr-only">
-          {what == null ? "Loading…" : `Loading ${what}…`}
-        </span>
+        {what == null ? "Loading…" : `Loading ${what}…`}
       </Alert>
     );
   }

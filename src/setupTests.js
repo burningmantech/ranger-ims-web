@@ -127,8 +127,8 @@ afterEach(async () => {
     await deleteDB(database.name);
   }
 
-  // Replacing the factory also loses references to old databases.
-  // It's unclear if this eats up more resources, so we tried to clean up above.
+  // Replacing the factory also tosses out references to old databases.
+  // It's unclear if this cleans up resources, hence we try to clean up above.
   indexedDB = new FDBFactory(); /* eslint no-native-reassign: "off" */
 
   console.debug("Removed all cached data.");

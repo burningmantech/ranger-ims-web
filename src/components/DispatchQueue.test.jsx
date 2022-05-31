@@ -30,12 +30,11 @@ import {
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
-export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
-};
-
 export const waitForEffects = async () => {
-  await waitForIncidents();
+  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementToBeRemoved(() =>
+    screen.getByText("Loading concentric street names…")
+  );
 };
 
 describe("Table cell formatting functions", () => {

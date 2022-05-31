@@ -191,9 +191,10 @@ export const formatArrayOfStrings = (strings) => {
 // Table hook
 
 const useDispatchQueueTable = (incidents, allConcentricStreets) => {
-  if (allConcentricStreets == null) {
-    allConcentricStreets = new Map();
-  }
+  allConcentricStreets = useMemo(
+    () => (allConcentricStreets == null ? new Map() : allConcentricStreets),
+    [allConcentricStreets]
+  );
 
   // See: https://react-table.tanstack.com/docs/overview
 
@@ -593,13 +594,13 @@ const DispatchQueue = ({ event }) => {
 
   // Fetch concentric street data
 
-  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
+  const [allConcentricStreets, setAllConcentricStreets] = useState();
 
   useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
 
   // Fetch incident data
 
-  const [incidents, setIncidents] = useState(undefined);
+  const [incidents, setIncidents] = useState();
 
   useIncidents({
     eventID: event.id,
@@ -614,6 +615,12 @@ const DispatchQueue = ({ event }) => {
   return (
     <div id="queue_wrapper">
       <h1>Dispatch Queue: {event.name}</h1>
+
+      <Loading
+        condition={allConcentricStreets}
+        error={allConcentricStreets === null}
+        what={"concentric street names"}
+      />
 
       <Loading
         condition={incidents}
