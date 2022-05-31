@@ -30,11 +30,19 @@ import {
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
-export const waitForEffects = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+export const waitForConcentricStreets = async () => {
   await waitForElementToBeRemoved(() =>
     screen.getByText("Loading concentric street names…")
   );
+};
+
+export const waitForIncidents = async () => {
+  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+};
+
+export const waitForEffects = async () => {
+  await waitForIncidents();
+  await waitForConcentricStreets();
 };
 
 describe("Table cell formatting functions", () => {
@@ -543,6 +551,7 @@ describe("DispatchQueue component: loading", () => {
     const event = await ims.eventWithID("1");
 
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
+    await waitForEffects();
 
     expect(
       await screen.findByText("Failed to load incidents.")
@@ -558,6 +567,8 @@ describe("DispatchQueue component: loading", () => {
 
     for (const event of await ims.events()) {
       renderWithIMSContext(<DispatchQueue event={event} />, ims);
+      // FIXME: Don't know why the concentric streets spinner never shows here.
+      await waitForIncidents();
 
       expect(
         await screen.findByText(`Dispatch Queue: ${event.name}`)
