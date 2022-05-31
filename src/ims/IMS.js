@@ -191,38 +191,6 @@ export default class IncidentManagementSystem {
     }
   };
 
-  _fetchAndCacheJSON = async (store, { lifespan, urlParams }) => {
-    const cached = store.load();
-
-    // If we have a cached value and it hasn't expired, use that.
-
-    const now = DateTime.local();
-    if (cached.value !== null && cached.expiration > now) {
-      console.debug(`Retrieved ${store.storeID} from unexpired cache`);
-      return cached.value;
-    }
-
-    // The bag is special because we don't get it's URL from the bag because the
-    // bag is special because...
-    let url = (await this.bag()).urls[store.endpointID];
-    invariant(url != null, `No "${store.endpointID}" URL found in bag`);
-
-    // Replace URL parameters with values
-    url = this._replaceURLParameters(url, urlParams);
-
-    // Fetch a new value
-    const fetched = await this._fetchWithCachedJSON(
-      store.storeID,
-      url,
-      cached,
-      store.deserializeValue
-    );
-
-    store.store(fetched.value, fetched.eTag, lifespan);
-
-    return fetched.value;
-  };
-
   _indexedDBOpen = async (name, version, upgrade) => {
     const db = await openDB(name, version, {
       upgrade(db, oldVersion, newVersion, transaction) {
