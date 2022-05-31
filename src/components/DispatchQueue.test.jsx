@@ -41,8 +41,7 @@ export const waitForIncidents = async () => {
 };
 
 export const waitForEffects = async () => {
-  await waitForIncidents();
-  await waitForConcentricStreets();
+  await Promise.all([waitForIncidents(), waitForConcentricStreets()]);
 };
 
 describe("Table cell formatting functions", () => {
@@ -359,7 +358,7 @@ describe("DispatchQueue component: table", () => {
 
   // Test with 0, 10, 20, ... 200 incidents in the system
   for (const incidentCount of [0, 10, 44, 50, 201, defaultPageSize]) {
-    test("displayed incidents are valid up to page size (${incidentCount})", async () => {
+    test(`displayed incidents are valid up to page size (${incidentCount})`, async () => {
       await test_displayedValidUpToPageSize(incidentCount);
     });
   }
@@ -383,9 +382,7 @@ describe("DispatchQueue component: table", () => {
         const context = `${event.id}:${incidentNumber}`;
 
         window.open = jest.fn();
-        await act(async () => {
-          await userEvent.click(cell);
-        });
+        await userEvent.click(cell);
 
         expect(window.open).toHaveBeenCalledWith(url, context);
       }
@@ -567,8 +564,7 @@ describe("DispatchQueue component: loading", () => {
 
     for (const event of await ims.events()) {
       renderWithIMSContext(<DispatchQueue event={event} />, ims);
-      // FIXME: Don't know why the concentric streets spinner never shows here.
-      await waitForIncidents();
+      await waitForEffects();
 
       expect(
         await screen.findByText(`Dispatch Queue: ${event.name}`)

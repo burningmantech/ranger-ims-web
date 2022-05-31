@@ -35,7 +35,6 @@ export default class IncidentManagementSystem {
     invariant(bagURL != null, "bagURL is required");
 
     this._credentialStore = new Store(User, "credentials", "credentials");
-    this._incidentsStoreByEvent = new Map();
     this._searchIndexByEvent = new Map();
 
     // Control the user property so that we can use it to access and update
@@ -69,14 +68,6 @@ export default class IncidentManagementSystem {
     this.bagURL = bagURL;
     this.delegate = null;
   }
-
-  _incidentsStore = (eventID) => {
-    if (!this._incidentsStoreByEvent.has(eventID)) {
-      const store = new Store(Incident, `incidents:${eventID}`, "incidents");
-      this._incidentsStoreByEvent.set(eventID, store);
-    }
-    return this._incidentsStoreByEvent.get(eventID);
-  };
 
   _fetch = async (request) => {
     return await fetch(request);
@@ -247,6 +238,7 @@ export default class IncidentManagementSystem {
 
   _indexedDBName = "IMS";
   _keyValueStoreName = "key-value";
+  _incidentsStoreName = "incidents";
 
   _indexedDB = async () => {
     if (this.__indexedDB === undefined) {
@@ -255,6 +247,7 @@ export default class IncidentManagementSystem {
         1,
         (db, oldVersion, newVersion, transaction) => {
           db.createObjectStore(this._keyValueStoreName);
+          db.createObjectStore(this._incidentsStoreName);
         }
       );
     }
@@ -580,18 +573,42 @@ export default class IncidentManagementSystem {
   incidents = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
-    const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore(eventID),
-      {
-        lifespan: this.incidentsCacheLifespan,
-        urlParams: { event_id: eventID },
-      }
-    );
-    this._incidentsMap = new Map(
-      incidents.map((incident) => [incident.number, incident])
+    const deserialize = (json) => {
+      const incidents = Array.from(json, (incidentJSON) =>
+        Incident.fromJSON(incidentJSON)
+      );
+      this._incidentsMap = new Map(
+        incidents.map((incident) => [incident.number, incident])
+      );
+      return incidents;
+    };
+
+    // Check the cache
+    const cached = await this._getFromCache(this._incidentsStoreName, eventID);
+    if (!cached.expired) {
+      console.debug(`Retrieved events from unexpired cache`);
+      return deserialize(cached.value);
+    }
+
+    // Fetch a new value
+    const rawURL = await this._urlFromBag("incidents");
+    const url = this._replaceURLParameters(rawURL, { event_id: eventID });
+    const fetched = await this._fetchWithCachedJSON(
+      `incidents for event ${eventID}`,
+      url,
+      cached
     );
 
-    return incidents;
+    // Store the result
+    await this._putInCache(
+      this._incidentsStoreName,
+      eventID,
+      fetched.value,
+      fetched.eTag,
+      this.incidentsCacheLifespan
+    );
+
+    return deserialize(fetched.value);
   };
 
   incidentWithNumber = async (eventID, number) => {

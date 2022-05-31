@@ -92,17 +92,6 @@ describe("IMS: init", () => {
     expect(ims.user).toBeNull();
     expect(ims._credentialStore).not.toBeNull();
   });
-
-  test("_incidentsStore", () => {
-    const url = "/ims/api/bag";
-    const ims = new IncidentManagementSystem(url);
-    const eventID = "XYZZY";
-
-    expect(ims._incidentsStoreByEvent[eventID]).toBeUndefined();
-    const store1 = ims._incidentsStore(eventID);
-    const store2 = ims._incidentsStore(eventID);
-    expect(store1).toBe(store2);
-  });
 });
 
 describe("IMS: HTTP requests", () => {
@@ -895,7 +884,7 @@ describe("IMS: incidents", () => {
     ims.asHubcap();
 
     await expect(ims.incidents("1")).toRejectWithMessage(
-      "Failed to retrieve incidents:1."
+      "Failed to retrieve incidents for event 1."
     );
   });
 
