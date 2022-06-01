@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 
 import {
   renderWithIMSContext,
