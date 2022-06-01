@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen } from "@testing-library/react";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -12,14 +12,35 @@ import {
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
 
+export const waitForEvent = async () => {
+  await waitForElementToBeRemoved(() => screen.getByText("Loading event…"));
+};
+
+export const waitForConcentricStreets = async () => {
+  await waitForElementToBeRemoved(() =>
+    screen.getByText("Loading concentric street names…")
+  );
+};
+
+export const waitForIncidents = async () => {
+  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+};
+
+export const waitForEffects = async () => {
+  await waitForEvent();
+  await Promise.all([waitForIncidents(), waitForConcentricStreets()]);
+};
+
 describe("DispatchQueuePage component", () => {
-  test("loading events", async () => {
+  test("loading event", async () => {
     const ims = testIncidentManagementSystem();
 
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
 
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    expect(screen.queryByText("Loading event…")).toBeInTheDocument();
+
+    await waitForEffects();
   });
 
   test("invalid event ID", async () => {
@@ -27,7 +48,9 @@ describe("DispatchQueuePage component", () => {
 
     renderWithIMSContext(<DispatchQueuePage eventID={eventID} />);
 
-    expect(await screen.findByText("Error loading event")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Failed to load event.")
+    ).toBeInTheDocument();
   });
 
   test("valid event ID", async () => {
@@ -35,6 +58,7 @@ describe("DispatchQueuePage component", () => {
 
     for (const event of await ims.events()) {
       renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
+      await waitForEffects();
 
       // DispatchQueue component renders event name
       expect(
@@ -60,6 +84,7 @@ describe("RoutedDispatchQueuePage component", () => {
       </MemoryRouter>,
       ims
     );
+    await waitForEffects();
 
     // DispatchQueue component renders event name
     expect(

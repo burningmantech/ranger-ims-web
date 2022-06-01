@@ -24,16 +24,12 @@ export const DispatchQueuePage = ({ eventID }) => {
 
   // Render
 
-  if (event === undefined) {
-    return <Loading />;
-  } else if (event === null) {
-    return "Error loading event";
-  }
-
   return (
-    <Page>
-      <DispatchQueue event={event} />
-    </Page>
+    <Loading condition={event} error={event === null} what="event">
+      <Page>
+        <DispatchQueue event={event} />
+      </Page>
+    </Loading>
   );
 };
 

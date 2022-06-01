@@ -2,7 +2,6 @@ import { DateTime } from "luxon";
 
 import Store from "./Store";
 
-const STUFF_STORE_ENDPOINTID = "stuff";
 const STUFF_STORE_STOREID = "Stuff 'N Things";
 const STUFF_STORE_STUFF = {
   a: 1,
@@ -36,11 +35,11 @@ export default class StuffNThings {
 }
 
 const jsonStore = () => {
-  return new Store(null, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
+  return new Store(null, STUFF_STORE_STOREID);
 };
 
 const stuffNThingsStore = () => {
-  return new Store(StuffNThings, STUFF_STORE_STOREID, STUFF_STORE_ENDPOINTID);
+  return new Store(StuffNThings, STUFF_STORE_STOREID);
 };
 
 describe("Store", () => {
@@ -57,7 +56,6 @@ describe("Store", () => {
   test("initial state", () => {
     const store = stuffNThingsStore();
 
-    expect(store.endpointID).toEqual(STUFF_STORE_ENDPOINTID);
     expect(store.storeID).toEqual(STUFF_STORE_STOREID);
     expect(store.modelClass).toEqual(StuffNThings);
   });
@@ -221,7 +219,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, "*");
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 
@@ -236,7 +234,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, "{}");
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 
@@ -250,7 +248,7 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, '{"value": {}}');
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "error");
+    const spy = jest.spyOn(console, "warn");
 
     const stuffNThings = store.load().value;
 

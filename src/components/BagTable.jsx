@@ -13,29 +13,21 @@ const BagTable = () => {
 
   useBag({ setBag: setBag });
 
+  const urls = bag ? bag.urls : null;
+
   // Render
 
-  const fullRow = (content) => {
-    return (
-      <tr>
-        <td colSpan="2" className="text-center">
-          {content}
-        </td>
-      </tr>
-    );
-  };
+  // const fullRow = (content) => {
+  //   return (
+  //     <tr>
+  //       <td colSpan="2" className="text-center">
+  //         {content}
+  //       </td>
+  //     </tr>
+  //   );
+  // };
 
   const rows = () => {
-    if (bag === undefined) {
-      return fullRow(<Loading />);
-    } else if (bag === null) {
-      return fullRow("Error loading URL bag");
-    }
-
-    if (!bag.urls) {
-      return fullRow("ERROR: no URLs in bag");
-    }
-
     const link = (url) => {
       if (url.includes("{")) {
         return url;
@@ -44,27 +36,29 @@ const BagTable = () => {
       }
     };
 
-    return Object.entries(bag.urls).map(([name, url]) => {
-      return (
-        <tr key={name}>
-          <td>{name}</td>
-          <td>{link(url)}</td>
-        </tr>
-      );
-    });
+    return urls
+      ? Object.entries(urls).map(([name, url]) => (
+          <tr key={name}>
+            <td>{name}</td>
+            <td>{link(url)}</td>
+          </tr>
+        ))
+      : null;
   };
 
   return (
-    <Table responsive striped bordered hover id="bag_table">
-      <caption>IMS Bag</caption>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>URL</th>
-        </tr>
-      </thead>
-      <tbody>{rows()}</tbody>
-    </Table>
+    <Loading condition={bag} error={bag === null} what={"URL bag"}>
+      <Table responsive striped bordered hover id="bag_table">
+        <caption>IMS Bag</caption>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>{rows()}</tbody>
+      </Table>
+    </Loading>
   );
 };
 

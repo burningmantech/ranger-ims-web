@@ -1,6 +1,13 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
 
+// We use a wrapper around indexedDB that is more sane and uses promises.
+// See https://github.com/jakearchibald/idb
+//
+// Note: setuptests.js installs https://github.com/dumbmatter/fakeIndexedDB to
+// mock the browser's IndexedDB API for testing.
+import { openDB } from "idb";
+
 import Store from "./Store";
 import User from "./User";
 import Event from "./model/Event";
@@ -13,24 +20,21 @@ export const jwtDecode = (token) => {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
-    console.error(`Unable to decode JWT ${token}: ${e}`);
+    console.warn(`Unable to decode JWT ${token}: ${e}`);
     return null;
   }
 };
 
 export default class IncidentManagementSystem {
+  static flushCaches = async () => {
+    console.info("Flushing all caches...");
+    Store.removeAll();
+  };
+
   constructor(bagURL) {
     invariant(bagURL != null, "bagURL is required");
 
-    this._credentialStore = new Store(User, "credentials", "credentials");
-    this._bagStore = new Store(null, "bag", "bag");
-    this._eventsStore = new Store(Event, "events", "events");
-    this._concentricStreetsStore = new Store(
-      null,
-      "concentric_streets",
-      "streets"
-    );
-    this._incidentsStoreByEvent = new Map();
+    this._credentialStore = new Store(User, "credentials");
     this._searchIndexByEvent = new Map();
 
     // Control the user property so that we can use it to access and update
@@ -65,14 +69,6 @@ export default class IncidentManagementSystem {
     this.delegate = null;
   }
 
-  _incidentsStore = (eventID) => {
-    if (!this._incidentsStoreByEvent.has(eventID)) {
-      const store = new Store(Incident, `incidents:${eventID}`, "incidents");
-      this._incidentsStoreByEvent.set(eventID, store);
-    }
-    return this._incidentsStoreByEvent.get(eventID);
-  };
-
   _fetch = async (request) => {
     return await fetch(request);
   };
@@ -104,7 +100,7 @@ export default class IncidentManagementSystem {
           console.debug(`Authentication required for resource: ${request.url}`);
         }
       } else {
-        console.error(
+        console.warn(
           "Non-OK response from server " +
             `(${response.status}: ${response.statusText})`
         );
@@ -156,65 +152,125 @@ export default class IncidentManagementSystem {
     return response;
   };
 
-  _fetchAndCacheJSON = async (store, { lifespan, urlParams }) => {
-    const { value: cachedValue, tag: cachedETag, expiration } = store.load();
+  _urlFromBag = async (endpointID) => {
+    return (await this.bag()).urls[endpointID];
+  };
 
-    // If we have a cached value and it hasn't expired, use that.
-
-    const now = DateTime.local();
-    if (cachedValue !== null && expiration > now) {
-      console.debug(`Retrieved ${store.storeID} from unexpired cache`);
-      return cachedValue;
-    }
-
-    // If we have no cached value, or a cached-but-expired value, check the
-    // server for a new value
-
-    // The bag is special because we don't get it's URL from the bag because the
-    // bag is special because...
-    let url =
-      store.endpointID === "bag"
-        ? this.bagURL
-        : (await this.bag()).urls[store.endpointID];
-    invariant(url != null, `No "${store.endpointID}" URL found in bag`);
-
-    // Replace URL parameters with values
-    for (const paramName in urlParams) {
-      const value = urlParams[paramName];
+  _replaceURLParameters = (url, parameters) => {
+    for (const paramName in parameters) {
+      const value = parameters[paramName];
       invariant(value != null, `Undefined parameter: ${paramName}`);
       url = url.replace(`{${paramName}}`, value);
     }
     invariant(!url.includes("{"), `Unknown parameters found in URL: ${url}`);
+    return url;
+  };
 
-    const response = await this._fetchJSONFromServer(url, { eTag: cachedETag });
+  _fetchWithCachedJSON = async (name, url, cached, deserialize) => {
+    const response = await this._fetchJSONFromServer(url, {
+      eTag: cached.eTag,
+    });
+    invariant(response != null, "no response C?");
 
-    let _value;
-    let _eTag;
     if (response.status === 304) {
-      // NOT_MODIFIED
-      // The server says it's still the same, so keep the cached value.
-      // Don't return yet... we'll store it below to update the expiration.
-      _value = cachedValue;
-      _eTag = cachedETag;
+      // Not modified from cached value
       console.debug(
-        `Retrieved ${store.storeID} from cache (ETag: ${cachedETag})`
+        `Retrieved ${name} from unmodified cache (ETag: ${cached.eTag})`
       );
+      return { value: cached.value, eTag: cached.eTag };
     } else if (!response.ok) {
       // The server says "poop", so say "poop" to the caller.
-      throw new Error(`Failed to retrieve ${store.storeID}.`);
+      throw new Error(`Failed to retrieve ${name}.`);
     } else {
       // The server has a new value for us.
-      _eTag = response.headers.get("ETag");
+      const eTag = response.headers.get("ETag");
       const json = await response.json();
-      _value = store.deserializeValue(json);
-      console.debug(`Retrieved ${store.storeID} from ${url}`);
+      const value = deserialize == null ? json : deserialize(json);
+      console.debug(`Retrieved ${name} from ${url} (ETag: ${eTag})`);
+      return { value: value, eTag: eTag };
     }
-    const value = _value;
-    const eTag = _eTag;
+  };
 
-    store.store(value, eTag, lifespan);
+  _indexedDBOpen = async (name, version, upgrade) => {
+    const db = await openDB(name, version, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        console.info(`Upgrading IndexedDB ${name} v${version}`);
+        upgrade(db, oldVersion, newVersion, transaction);
+      },
+    });
 
-    return value;
+    console.info(`Opened IndexedDB ${name} v${version}`);
+
+    return db;
+  };
+
+  _indexedDBName = "IMS";
+  _keyValueStoreName = "key-value";
+  _incidentsStoreName = "incidents";
+
+  _indexedDB = async () => {
+    if (this.__indexedDB === undefined) {
+      this.__indexedDB = await this._indexedDBOpen(
+        this._indexedDBName,
+        1,
+        (db, oldVersion, newVersion, transaction) => {
+          db.createObjectStore(this._keyValueStoreName);
+          db.createObjectStore(this._incidentsStoreName);
+        }
+      );
+    }
+
+    return this.__indexedDB;
+  };
+
+  _wrapValue = (value, eTag, lifespan) => {
+    return {
+      value: value,
+      eTag: eTag,
+      expiration: DateTime.local().plus(lifespan).toMillis(),
+    };
+  };
+
+  _wrappedValueIsExpired = (wrappedValue) => {
+    return DateTime.local().toMillis() >= wrappedValue.expiration;
+  };
+
+  _getFromCache = async (store, key) => {
+    const db = await this._indexedDB();
+    if (db != null) {
+      let wrappedValue;
+      try {
+        wrappedValue = await db.get(store, key);
+      } catch (e) {
+        console.warn(`Failed to read from indexedDB ${store}->${key}: ${e}`);
+        throw e;
+      }
+
+      if (wrappedValue != null) {
+        const value = wrappedValue.value;
+        const eTag = wrappedValue.eTag;
+        const expired = this._wrappedValueIsExpired(wrappedValue);
+        console.debug(`Read ${store}->${key} from cache`);
+        return { value: value, eTag: eTag, expired: expired };
+      } else {
+        console.debug(`No ${store}->${key} found in cache`);
+        return { value: null, eTag: null, expired: true };
+      }
+    }
+  };
+
+  _putInCache = async (store, key, value, eTag, lifeSpan) => {
+    const db = await this._indexedDB();
+    if (db != null) {
+      const wrappedValue = this._wrapValue(value, eTag, lifeSpan);
+      try {
+        await db.put(store, wrappedValue, key);
+      } catch (e) {
+        console.warn(`Failed to write to indexedDB ${store}->${key}: ${e}`);
+        throw e;
+      }
+      console.debug(`Cached ${store}->${key}`);
+    }
   };
 
   ////
@@ -223,10 +279,32 @@ export default class IncidentManagementSystem {
 
   bagCacheLifespan = { hours: 1 };
 
+  _bagStoreKey = "bag";
+
   bag = async () => {
-    return this._fetchAndCacheJSON(this._bagStore, {
-      lifespan: this.bagCacheLifespan,
-    });
+    // Check the cache
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._bagStoreKey
+    );
+    if (!cached.expired) {
+      console.debug(`Retrieved bag from unexpired cache`);
+      return cached.value;
+    }
+
+    // Fetch a new value
+    const fetched = await this._fetchWithCachedJSON("bag", this.bagURL, cached);
+
+    // Store the result
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._bagStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.bagCacheLifespan
+    );
+
+    return fetched.value;
   };
 
   ////
@@ -341,26 +419,49 @@ export default class IncidentManagementSystem {
   //  Data
   ////
 
-  flushCaches = () => {
-    console.info("Flushing all caches...");
-    Store.removeAll();
-  };
-
   // Events
 
   eventsCacheLifespan = { minutes: 15 };
 
+  _eventsStoreKey = "events";
+
   events = async () => {
-    const events = await this._fetchAndCacheJSON(this._eventsStore, {
-      lifespan: this.eventsCacheLifespan,
-    });
-    this._eventsMap = new Map(events.map((event) => [event.id, event]));
-    return events;
+    const deserialize = (json) => {
+      const events = Array.from(json, (eventJSON) => Event.fromJSON(eventJSON));
+      this._eventsMap = new Map(events.map((event) => [event.id, event]));
+      return events;
+    };
+
+    // Check the cache
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._eventsStoreKey
+    );
+    if (!cached.expired) {
+      console.debug(`Retrieved events from unexpired cache`);
+      return deserialize(cached.value);
+    }
+
+    // Fetch a new value
+    const url = await this._urlFromBag("events");
+    const fetched = await this._fetchWithCachedJSON("events", url, cached);
+
+    // Store the result
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._eventsStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.eventsCacheLifespan
+    );
+
+    return deserialize(fetched.value);
   };
 
   eventWithID = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
+    // Events are cached all together
     await this.events();
     invariant(this._eventsMap != null, "this._eventsMap did not initialize");
 
@@ -375,27 +476,53 @@ export default class IncidentManagementSystem {
 
   concentricStreetsCacheLifespan = { minutes: 15 };
 
+  _concentricStreetsStoreKey = "concentric streets";
+
   allConcentricStreets = async () => {
-    const eventMap = await this._fetchAndCacheJSON(
-      this._concentricStreetsStore,
-      {
-        lifespan: this.concentricStreetsCacheLifespan,
-      }
+    const deserialize = (json) => {
+      return new Map(
+        // Convert [eventID, streetsJSON] to [eventID, streetsMap]
+        Object.entries(json).map(([eventID, streetsJSON]) => [
+          eventID,
+          new Map(
+            // Convert [streetID, streetName] to [streetID, street]
+            Object.entries(streetsJSON).map(([streetID, streetName]) => [
+              streetID,
+              new ConcentricStreet(streetID, streetName),
+            ])
+          ),
+        ])
+      );
+    };
+
+    // Check the cache
+    const cached = await this._getFromCache(
+      this._keyValueStoreName,
+      this._concentricStreetsStoreKey
+    );
+    if (!cached.expired) {
+      console.debug(`Retrieved concentric streets from unexpired cache`);
+      return deserialize(cached.value);
+    }
+
+    // Fetch a new value
+    const url = await this._urlFromBag("streets");
+    const fetched = await this._fetchWithCachedJSON(
+      "concentric streets",
+      url,
+      cached
     );
 
-    return new Map(
-      // Convert [eventID, streetsJSON] to [eventID, streetsMap]
-      Object.entries(eventMap).map(([eventID, streetsJSON]) => [
-        eventID,
-        new Map(
-          // Convert [streetID, streetName] to [streetID, street]
-          Object.entries(streetsJSON).map(([streetID, streetName]) => [
-            streetID,
-            new ConcentricStreet(streetID, streetName),
-          ])
-        ),
-      ])
+    // Store the result
+    await this._putInCache(
+      this._keyValueStoreName,
+      this._concentricStreetsStoreKey,
+      fetched.value,
+      fetched.eTag,
+      this.concentricStreetsCacheLifespan
     );
+
+    return deserialize(fetched.value);
   };
 
   concentricStreets = async (eventID) => {
@@ -414,18 +541,42 @@ export default class IncidentManagementSystem {
   incidents = async (eventID) => {
     invariant(eventID != null, "eventID argument is required");
 
-    const incidents = await this._fetchAndCacheJSON(
-      this._incidentsStore(eventID),
-      {
-        lifespan: this.incidentsCacheLifespan,
-        urlParams: { event_id: eventID },
-      }
-    );
-    this._incidentsMap = new Map(
-      incidents.map((incident) => [incident.number, incident])
+    const deserialize = (json) => {
+      const incidents = Array.from(json, (incidentJSON) =>
+        Incident.fromJSON(incidentJSON)
+      );
+      this._incidentsMap = new Map(
+        incidents.map((incident) => [incident.number, incident])
+      );
+      return incidents;
+    };
+
+    // Check the cache
+    const cached = await this._getFromCache(this._incidentsStoreName, eventID);
+    if (!cached.expired) {
+      console.debug(`Retrieved events from unexpired cache`);
+      return deserialize(cached.value);
+    }
+
+    // Fetch a new value
+    const rawURL = await this._urlFromBag("incidents");
+    const url = this._replaceURLParameters(rawURL, { event_id: eventID });
+    const fetched = await this._fetchWithCachedJSON(
+      `incidents for event ${eventID}`,
+      url,
+      cached
     );
 
-    return incidents;
+    // Store the result
+    await this._putInCache(
+      this._incidentsStoreName,
+      eventID,
+      fetched.value,
+      fetched.eTag,
+      this.incidentsCacheLifespan
+    );
+
+    return deserialize(fetched.value);
   };
 
   incidentWithNumber = async (eventID, number) => {

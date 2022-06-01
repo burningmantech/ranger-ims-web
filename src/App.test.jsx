@@ -24,10 +24,10 @@ describe("App component", () => {
     testIncidentManagementSystem().logout();
   });
 
-  test("loading...", () => {
+  test("Loading…", () => {
     render(<App ims={testIncidentManagementSystem()} />);
 
-    expect(screen.queryByText("Loading...")).toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).toBeInTheDocument();
   });
 
   test("redirect root resource", async () => {
@@ -35,14 +35,14 @@ describe("App component", () => {
 
     // Same expectations as for /ims (see next test)
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
   });
 
   test("load app, not logged in", async () => {
     renderWithURL(URLs.ims);
 
     expect(await screen.findByText(/Log In/)).toBeInTheDocument();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
   });
 
   test("load app -> log in -> content", async () => {
@@ -124,6 +124,6 @@ describe("App component", () => {
     renderWithURL("/xyzzy", username);
 
     expect(await screen.findByText("Resource not found:")).toBeInTheDocument();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
   });
 });

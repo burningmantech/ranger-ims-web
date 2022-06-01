@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
 
-import Store from "./Store";
 import { jwtDecode } from "./IMS";
 import IncidentManagementSystem from "./IMS";
 import { testIncidentManagementSystem } from "./TestIMS";
@@ -92,17 +91,6 @@ describe("IMS: init", () => {
     expect(ims.delegate).toBeNull();
     expect(ims.user).toBeNull();
     expect(ims._credentialStore).not.toBeNull();
-  });
-
-  test("_incidentsStore", () => {
-    const url = "/ims/api/bag";
-    const ims = new IncidentManagementSystem(url);
-    const eventID = "XYZZY";
-
-    expect(ims._incidentsStoreByEvent[eventID]).toBeUndefined();
-    const store1 = ims._incidentsStore(eventID);
-    const store2 = ims._incidentsStore(eventID);
-    expect(store1).toBe(store2);
   });
 });
 
@@ -380,9 +368,15 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
-    bagStore.store(testBag, "1", { seconds: 60 });
+    // Write the cached value with a future expiration
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      "1",
+      { days: 1 }
+    );
 
     const retrievedBag = await ims.bag();
 
@@ -395,16 +389,25 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
     // Fetch the bag from the server
     await ims.bag();
 
     // Get the stored ETag
-    const { tag: eTag1 } = bagStore.load();
+    const wrappedValue = await ims._getFromCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey
+    );
+    const eTag1 = wrappedValue.eTag;
 
     // Re-write the cached value with the same ETag and stale expiration
-    bagStore.store(testBag, eTag1, { seconds: 0 });
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      eTag1,
+      { seconds: 0 }
+    );
 
     const bag = await ims.bag();
 
@@ -417,13 +420,18 @@ describe("IMS: bag", () => {
     const testBag = { urls: { x: "/x" } };
 
     const ims = testIncidentManagementSystem();
-    const bagStore = new Store(null, "bag", "bag");
 
     // Fetch the bag from the server
     await ims.bag();
 
     // Re-write the cached value with a new ETag and stale expiration
-    bagStore.store(testBag, "1", { seconds: 0 });
+    await ims._putInCache(
+      ims._keyValueStoreName,
+      ims._bagStoreKey,
+      testBag,
+      "XYZZY",
+      { seconds: 0 }
+    );
 
     const bag2 = await ims.bag();
 
@@ -439,11 +447,6 @@ describe("IMS: bag", () => {
 });
 
 describe("IMS: authentication", () => {
-  afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
-  });
-
   test("login: request content type", async () => {
     const username = "Hubcap";
     const password = username;
@@ -713,11 +716,6 @@ describe("IMS: authentication", () => {
 });
 
 describe("IMS: events", () => {
-  afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
-  });
-
   test("load events, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
@@ -799,12 +797,7 @@ describe("IMS: events", () => {
   });
 });
 
-describe("IMS: incidents", () => {
-  afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
-  });
-
+describe("IMS: concentric streets", () => {
   test("allConcentricStreets, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
@@ -829,7 +822,7 @@ describe("IMS: incidents", () => {
     ims.asHubcap();
 
     await expect(ims.allConcentricStreets()).toRejectWithMessage(
-      "Failed to retrieve concentric_streets."
+      "Failed to retrieve concentric streets."
     );
   });
 
@@ -855,11 +848,6 @@ describe("IMS: incidents", () => {
 });
 
 describe("IMS: incidents", () => {
-  afterEach(() => {
-    // Reset cached data
-    Store.removeAll();
-  });
-
   test("load incidents, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
@@ -896,7 +884,7 @@ describe("IMS: incidents", () => {
     ims.asHubcap();
 
     await expect(ims.incidents("1")).toRejectWithMessage(
-      "Failed to retrieve incidents:1."
+      "Failed to retrieve incidents for event 1."
     );
   });
 

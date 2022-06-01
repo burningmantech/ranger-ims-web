@@ -3,15 +3,14 @@ import { DateTime } from "luxon";
 export default class Store {
   static _storage = window.localStorage;
 
-  static removeAll() {
+  static removeAll = () => {
     Store._storage.clear();
     console.debug(`Removed all cached data.`);
-  }
+  };
 
-  constructor(modelClass, storeID, endpointID) {
+  constructor(modelClass, storeID) {
     this.modelClass = modelClass;
     this.storeID = storeID;
-    this.endpointID = endpointID;
     this._storage = Store._storage;
   }
 
@@ -67,7 +66,7 @@ export default class Store {
     }
 
     const error = (message) => {
-      console.error(message);
+      console.warn(message);
       this.remove();
       return { value: null };
     };

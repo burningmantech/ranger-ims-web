@@ -45,7 +45,7 @@ const Login = ({ children }) => {
         await ims.login(username, { password: password });
       } catch (e) {
         const errorMessage = e.message;
-        console.error(`Login failed: ${errorMessage}`);
+        console.warn(`Login failed: ${errorMessage}`);
         setErrorMessage(errorMessage);
         return;
       }

@@ -17,7 +17,7 @@ const tryWithFallback = async (description, fallback, f, ...args) => {
   try {
     return await f.apply(null, args);
   } catch (e) {
-    console.error(`Unable to ${description}: ${e.message}`);
+    console.warn(`Unable to ${description}: ${e.message}`);
     console.error(e);
     return fallback;
   }
@@ -217,7 +217,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
 
     const fetchConcentricStreets = async () => {
       const concentricStreets = await tryWithFallback(
-        "fetch event concentric streets",
+        `fetch concentric streets for event ${eventID}`,
         [],
         ims.concentricStreets,
         eventID

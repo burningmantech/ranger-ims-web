@@ -190,14 +190,11 @@ export const formatArrayOfStrings = (strings) => {
 
 // Table hook
 
-const useDispatchQueueTable = (incidents) => {
-  // Fetch concentric street data
-
-  const [allConcentricStreets, setAllConcentricStreets] = useState(new Map());
-
-  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
-
-  invariant(allConcentricStreets != null, "allConcentricStreets is null");
+const useDispatchQueueTable = (incidents, allConcentricStreets) => {
+  allConcentricStreets = useMemo(
+    () => (allConcentricStreets == null ? new Map() : allConcentricStreets),
+    [allConcentricStreets]
+  );
 
   // See: https://react-table.tanstack.com/docs/overview
 
@@ -466,8 +463,11 @@ const TopToolBar = ({
   showDays,
   setShowDays,
 }) => {
+  if (incidents == null) {
+    return "";
+  }
+
   invariant(table != null, "table argument is required");
-  invariant(incidents != null, "incidents argument is required");
   invariant(searchInput != null, "searchInput argument is required");
   invariant(setSearchInput != null, "setSearchInput argument is required");
   invariant(showState != null, "showState argument is required");
@@ -592,9 +592,15 @@ const DispatchQueue = ({ event }) => {
   const [showDays, setShowDays] = useState(0);
   const [searchInput, setSearchInput] = useState("");
 
+  // Fetch concentric street data
+
+  const [allConcentricStreets, setAllConcentricStreets] = useState();
+
+  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
+
   // Fetch incident data
 
-  const [incidents, setIncidents] = useState(undefined);
+  const [incidents, setIncidents] = useState();
 
   useIncidents({
     eventID: event.id,
@@ -602,19 +608,25 @@ const DispatchQueue = ({ event }) => {
     searchInput: searchInput,
   });
 
-  const table = useDispatchQueueTable(incidents);
+  const table = useDispatchQueueTable(incidents, allConcentricStreets);
 
   // Render
 
-  if (incidents === undefined) {
-    return <Loading />;
-  } else if (incidents === null) {
-    return "Error loading incidents";
-  } else {
-    return (
-      <div id="queue_wrapper">
-        <h1>Dispatch Queue: {event.name}</h1>
+  return (
+    <div id="queue_wrapper">
+      <h1>Dispatch Queue: {event.name}</h1>
 
+      <Loading
+        condition={allConcentricStreets}
+        error={allConcentricStreets === null}
+        what={"concentric street names"}
+      />
+
+      <Loading
+        condition={incidents}
+        error={incidents === null}
+        what={"incidents"}
+      >
         <TopToolBar
           table={table}
           incidents={incidents}
@@ -627,9 +639,9 @@ const DispatchQueue = ({ event }) => {
         />
         <DispatchQueueTable table={table} event={event} />
         <BottomToolBar table={table} incidents={incidents} />
-      </div>
-    );
-  }
+      </Loading>
+    </div>
+  );
 };
 
 export default DispatchQueue;
