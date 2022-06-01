@@ -17,15 +17,15 @@ const BagTable = () => {
 
   // Render
 
-  const fullRow = (content) => {
-    return (
-      <tr>
-        <td colSpan="2" className="text-center">
-          {content}
-        </td>
-      </tr>
-    );
-  };
+  // const fullRow = (content) => {
+  //   return (
+  //     <tr>
+  //       <td colSpan="2" className="text-center">
+  //         {content}
+  //       </td>
+  //     </tr>
+  //   );
+  // };
 
   const rows = () => {
     const link = (url) => {
