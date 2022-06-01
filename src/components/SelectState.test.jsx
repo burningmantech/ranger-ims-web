@@ -28,7 +28,7 @@ describe("SelectState component", () => {
 
     const select = screen.getByLabelText("State:");
 
-    userEvent.selectOptions(select, [nextState]);
+    await userEvent.selectOptions(select, [nextState]);
 
     expect(select.value).toEqual(nextState);
   };
@@ -48,7 +48,7 @@ describe("SelectState component", () => {
 
     const select = screen.getByLabelText("State:");
 
-    userEvent.selectOptions(select, [nextState]);
+    await userEvent.selectOptions(select, [nextState]);
 
     expect(onChange).toHaveBeenCalledTimes(1);
   };

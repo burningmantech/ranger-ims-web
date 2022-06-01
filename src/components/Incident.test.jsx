@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { act, cleanup, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 
 import Incident from "./Incident";
 
@@ -14,9 +14,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         expect(
           await screen.findByText(`Incident #${incident.number}`)
@@ -32,9 +30,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = screen.getByLabelText("State:");
 
@@ -50,9 +46,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = screen.getByLabelText("Priority:");
 
@@ -68,9 +62,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const textField = screen.getByLabelText("Summary:");
         const expected = incident.summary == null ? "" : incident.summary;
@@ -88,9 +80,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const textField = screen.getByLabelText("Name:");
         const location = incident.location;
@@ -111,9 +101,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = document.getElementById(
           "incident_location_address_radial_hour"
@@ -136,9 +124,7 @@ describe("Incident component: display", () => {
 
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
-        await act(async () => {
-          renderWithIMSContext(<Incident incident={incident} />, ims);
-        });
+        renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = document.getElementById(
           "incident_location_address_radial_minute"
@@ -163,9 +149,7 @@ describe("Incident component: display", () => {
   //     const concentricStreetsMap = await ims.concentricStreets(event.id);
 
   //     for (const incident of await ims.incidents(event.id)) {
-  //       await act(async () => {
-  //         renderWithIMSContext(<Incident incident={incident} />, ims);
-  //       });
+  //       renderWithIMSContext(<Incident incident={incident} />, ims);
 
   //       const select = document.getElementById(
   //         "incident_location_address_concentric"
