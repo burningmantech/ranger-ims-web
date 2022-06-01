@@ -129,17 +129,17 @@ expect.extend({
 // Clean up after tests
 
 afterEach(async () => {
-  console.info("Flushing promises...");
+  console.debug("Flushing promises...");
   try {
     await flushPromises();
   } catch (e) {
     console.warn(e);
   }
 
-  console.info("Clearing local storage...");
+  console.debug("Clearing local storage...");
   window.localStorage.clear();
 
-  console.info("Clearing IndexedDB databases...");
+  console.debug("Clearing IndexedDB databases...");
 
   // FIXME: deleteDB never completes because nothing ever closes the databases.
   // See https://github.com/dumbmatter/fakeIndexedDB/issues/40
@@ -156,7 +156,7 @@ afterEach(async () => {
   // Delete all databases
   const databases = await indexedDB.databases();
   for (const database of databases) {
-    console.info(`Deleting database: ${database.name}`);
+    console.debug(`Deleting database: ${database.name}`);
     await deleteDB(database.name);
   }
 
