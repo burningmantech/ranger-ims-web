@@ -68,6 +68,8 @@ describe("jwtDecode", () => {
   });
 
   test("decode, invalid", () => {
+    console._suppressErrors();
+
     const token = "XYZZY";
     const jwt = jwtDecode(token);
 

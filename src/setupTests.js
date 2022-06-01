@@ -10,7 +10,25 @@ import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import flushPromises from "flush-promises";
 
+// Mute logging as desired
+
+global.console = {
+  ...console,
+  // debug: jest.fn(),
+  // info: jest.fn(),
+  // log: jest.fn(),
+  // warn: jest.fn(),
+  // error: jest.fn(),
+};
+
+global.console._suppressErrors = () => {
+  console.warn = console.error = jest.fn((e) => {
+    console.info(e);
+  });
+};
+
 // Increase timeouts in CI
+
 if (process.env.CI != null) {
   jest.setTimeout(1 * 60 * 1000);
 }
@@ -67,6 +85,21 @@ expect.extend({
         pass: false,
       };
     }
+  },
+
+  async notToReject(promise) {
+    try {
+      await promise;
+    } catch (e) {
+      return {
+        message: () => `Rejected with message: ${e.message}`,
+        pass: false,
+      };
+    }
+    return {
+      message: () => "Did not reject",
+      pass: true,
+    };
   },
 
   async toRejectWithMessage(promise, message) {

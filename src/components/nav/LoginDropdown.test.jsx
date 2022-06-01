@@ -13,12 +13,20 @@ import LoginDropdown from "./LoginDropdown";
 
 describe("LoginDropdown component", () => {
   test("id", () => {
+    console.error = jest.fn((e) => {
+      console.info(e);
+    });
+
     render(<LoginDropdown />);
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });
 
   test("no IMS -> not logged in message", () => {
+    console.error = jest.fn((e) => {
+      console.info(e);
+    });
+
     render(<LoginDropdown />);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();

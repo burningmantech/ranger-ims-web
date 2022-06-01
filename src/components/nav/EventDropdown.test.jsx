@@ -46,15 +46,14 @@ describe("EventDropdown component", () => {
     ims.events = jest.fn(async () => {
       throw new Error("because reasons...");
     });
-
-    const spy = jest.spyOn(console, "warn");
+    console._suppressErrors();
 
     renderWithIMSContext(<EventDropdown />, ims);
     await userEvent.click(screen.getByText("Event"));
 
     expect(screen.queryByText("Error loading events")).toBeInTheDocument();
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(console.warn).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons..."
     );
   });
