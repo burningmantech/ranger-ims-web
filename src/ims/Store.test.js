@@ -219,12 +219,14 @@ describe("Store", () => {
     window.localStorage.setItem(STUFF_STORE_STOREID, "*");
 
     const store = stuffNThingsStore();
-    const spy = jest.spyOn(console, "warn");
+    console.warn = console.error = jest.fn((e) => {
+      console.info(e);
+    });
 
     const stuffNThings = store.load().value;
 
     expect(stuffNThings).toBeNull();
-    expect(spy).toHaveBeenCalledWith(
+    expect(console.warn).toHaveBeenCalledWith(
       "Unable to parse JSON container for Stuff 'N Things: " +
         "SyntaxError: Unexpected token * in JSON at position 0"
     );

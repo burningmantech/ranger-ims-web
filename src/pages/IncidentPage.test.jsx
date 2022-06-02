@@ -28,6 +28,8 @@ describe("IncidentPage component", () => {
   });
 
   test("invalid event ID", async () => {
+    console._suppressErrors();
+
     renderWithIMSContext(<IncidentPage eventID="XYZZY" incidentNumber="1" />);
 
     expect(
@@ -36,6 +38,8 @@ describe("IncidentPage component", () => {
   });
 
   test("invalid incident number", async () => {
+    console._suppressErrors();
+
     const ims = testIncidentManagementSystem();
 
     for (const event of await ims.events()) {

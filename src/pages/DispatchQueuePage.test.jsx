@@ -46,6 +46,8 @@ describe("DispatchQueuePage component", () => {
   test("invalid event ID", async () => {
     const eventID = "XYZZY";
 
+    console._suppressErrors();
+
     renderWithIMSContext(<DispatchQueuePage eventID={eventID} />);
 
     expect(

@@ -350,9 +350,9 @@ describe("DispatchQueue component: table", () => {
 
     for (const numberCell of numberCells) {
       const incidentNumber = parseInt(numberCell.innerHTML);
-      expect(() =>
+      await expect(() =>
         ims.incidentWithNumber(event.id, incidentNumber)
-      ).not.toThrow();
+      ).notToReject();
     }
   };
 
@@ -542,8 +542,7 @@ describe("DispatchQueue component: loading", () => {
     ims.incidents = jest.fn(async (event) => {
       throw new Error("because reasons...");
     });
-
-    const spy = jest.spyOn(console, "warn");
+    console._suppressErrors();
 
     const event = await ims.eventWithID("1");
 
@@ -554,7 +553,7 @@ describe("DispatchQueue component: loading", () => {
       await screen.findByText("Failed to load incidents.")
     ).toBeInTheDocument();
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(console.warn).toHaveBeenCalledWith(
       "Unable to fetch incidents: because reasons..."
     );
   });

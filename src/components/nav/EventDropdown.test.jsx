@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 
-import { act, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
@@ -13,17 +13,13 @@ import EventDropdown from "./EventDropdown";
 
 export const waitForEffects = async () => {
   // Let effects complete
-  await act(async () => {
-    await userEvent.click(screen.getByText("Event"));
-  });
+  await userEvent.click(screen.getByText("Event"));
   await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
 };
 
 describe("EventDropdown component", () => {
   test("id", async () => {
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, testIncidentManagementSystem());
-    });
+    renderWithIMSContext(<EventDropdown />, testIncidentManagementSystem());
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
 
@@ -33,15 +29,15 @@ describe("EventDropdown component", () => {
   test("loading events", async () => {
     const ims = testIncidentManagementSystem();
 
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, ims);
-    });
+    renderWithIMSContext(<EventDropdown />, ims);
+
+    const p = waitForEffects();
 
     for (const event of await ims.events()) {
       expect(screen.queryByText(event.name)).not.toBeInTheDocument();
     }
 
-    await waitForEffects();
+    await p;
   });
 
   test("events fail to load", async () => {
@@ -50,17 +46,14 @@ describe("EventDropdown component", () => {
     ims.events = jest.fn(async () => {
       throw new Error("because reasons...");
     });
+    console._suppressErrors();
 
-    const spy = jest.spyOn(console, "warn");
-
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, ims);
-      await userEvent.click(screen.getByText("Event"));
-    });
+    renderWithIMSContext(<EventDropdown />, ims);
+    await userEvent.click(screen.getByText("Event"));
 
     expect(screen.queryByText("Error loading events")).toBeInTheDocument();
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(console.warn).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons..."
     );
   });
@@ -70,9 +63,7 @@ describe("EventDropdown component", () => {
 
     ims.testData.events = [];
 
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, ims);
-    });
+    renderWithIMSContext(<EventDropdown />, ims);
     await waitForEffects();
 
     expect(screen.queryByText("No events found")).toBeInTheDocument();
@@ -81,9 +72,7 @@ describe("EventDropdown component", () => {
   test("event names", async () => {
     const ims = testIncidentManagementSystem();
 
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, ims);
-    });
+    renderWithIMSContext(<EventDropdown />, ims);
     await waitForEffects();
 
     const eventNames = Array.from(
@@ -99,9 +88,7 @@ describe("EventDropdown component", () => {
   test("event links", async () => {
     const ims = testIncidentManagementSystem();
 
-    await act(async () => {
-      renderWithIMSContext(<EventDropdown />, ims);
-    });
+    renderWithIMSContext(<EventDropdown />, ims);
     await waitForEffects();
 
     for (const event of await ims.events()) {

@@ -43,7 +43,7 @@ describe("LabeledSelect component", () => {
 
     const select = screen.getByLabelText("label:");
 
-    userEvent.selectOptions(select, [nextValue]);
+    await userEvent.selectOptions(select, [nextValue]);
 
     expect(select.value).toEqual(nextValue);
   };
@@ -74,7 +74,7 @@ describe("LabeledSelect component", () => {
 
     const select = screen.getByLabelText("label:");
 
-    userEvent.selectOptions(select, [nextValue]);
+    await userEvent.selectOptions(select, [nextValue]);
 
     expect(onChange).toHaveBeenCalledTimes(1);
   };

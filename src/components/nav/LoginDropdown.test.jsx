@@ -1,7 +1,6 @@
 import { DateTime } from "luxon";
 
 import "@testing-library/jest-dom/extend-expect";
-import { act } from "react-dom/test-utils";
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -14,12 +13,20 @@ import LoginDropdown from "./LoginDropdown";
 
 describe("LoginDropdown component", () => {
   test("id", () => {
+    console.error = jest.fn((e) => {
+      console.info(e);
+    });
+
     render(<LoginDropdown />);
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
   });
 
   test("no IMS -> not logged in message", () => {
+    console.error = jest.fn((e) => {
+      console.info(e);
+    });
+
     render(<LoginDropdown />);
 
     expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
@@ -78,9 +85,7 @@ describe("LoginDropdown component", () => {
       testIncidentManagementSystem(username)
     );
 
-    await act(async () => {
-      await userEvent.click(screen.getByText(username));
-    });
+    await userEvent.click(screen.getByText(username));
 
     expect(screen.queryByText("Log Out")).toBeInTheDocument();
   });
@@ -96,10 +101,8 @@ describe("LoginDropdown component", () => {
 
     renderWithIMSContext(<LoginDropdown />, ims);
 
-    await act(async () => {
-      await userEvent.click(screen.getByText(username));
-      await userEvent.click(screen.getByText("Log Out"));
-    });
+    await userEvent.click(screen.getByText(username));
+    await userEvent.click(screen.getByText("Log Out"));
 
     expect(notified).toBe(true);
   });

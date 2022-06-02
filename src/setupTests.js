@@ -10,7 +10,25 @@ import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import flushPromises from "flush-promises";
 
+// Mute logging as desired
+
+global.console = {
+  ...console,
+  debug: jest.fn(),
+  // info: jest.fn(),
+  // log: jest.fn(),
+  // warn: jest.fn(),
+  // error: jest.fn(),
+};
+
+global.console._suppressErrors = () => {
+  console.warn = console.error = jest.fn((e) => {
+    console.info(e);
+  });
+};
+
 // Increase timeouts in CI
+
 if (process.env.CI != null) {
   jest.setTimeout(1 * 60 * 1000);
 }
@@ -69,6 +87,21 @@ expect.extend({
     }
   },
 
+  async notToReject(promise) {
+    try {
+      await promise;
+    } catch (e) {
+      return {
+        message: () => `Rejected with message: ${e.message}`,
+        pass: false,
+      };
+    }
+    return {
+      message: () => "Did not reject",
+      pass: true,
+    };
+  },
+
   async toRejectWithMessage(promise, message) {
     try {
       await promise;
@@ -96,17 +129,17 @@ expect.extend({
 // Clean up after tests
 
 afterEach(async () => {
-  console.info("Flushing promises...");
+  console.debug("Flushing promises...");
   try {
     await flushPromises();
   } catch (e) {
     console.warn(e);
   }
 
-  console.info("Clearing local storage...");
+  console.debug("Clearing local storage...");
   window.localStorage.clear();
 
-  console.info("Clearing IndexedDB databases...");
+  console.debug("Clearing IndexedDB databases...");
 
   // FIXME: deleteDB never completes because nothing ever closes the databases.
   // See https://github.com/dumbmatter/fakeIndexedDB/issues/40
@@ -123,7 +156,7 @@ afterEach(async () => {
   // Delete all databases
   const databases = await indexedDB.databases();
   for (const database of databases) {
-    console.info(`Deleting database: ${database.name}`);
+    console.debug(`Deleting database: ${database.name}`);
     await deleteDB(database.name);
   }
 

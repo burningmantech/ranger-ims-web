@@ -40,7 +40,7 @@ const App = ({ ims, routerClass }) => {
 
   return (
     <Router>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<Loading what="page" />}>
         <IMSContext.Provider value={{ ims: ims }}>
           <Routes>
             {/* Redirect root to IMS */}
