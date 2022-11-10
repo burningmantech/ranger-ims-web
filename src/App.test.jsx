@@ -12,7 +12,7 @@ import { URLs } from "./URLs";
 import App from "./App";
 
 export const waitForPage = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading page…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading page…"));
 };
 
 export const waitForLogin = async () => {
@@ -22,21 +22,23 @@ export const waitForLogin = async () => {
 export const waitForNavEvents = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading events…"));
 };
 
 export const waitForEvent = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading event…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading event…"));
 };
 
 export const waitForConcentricStreets = async () => {
   await waitForElementToBeRemoved(() =>
-    screen.getByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementToBeRemoved(() =>
+    screen.queryByText("Loading incidents…")
+  );
 };
 
 export const waitForDispatchQueue = async () => {

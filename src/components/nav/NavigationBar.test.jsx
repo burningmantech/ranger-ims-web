@@ -13,7 +13,7 @@ import NavigationBar from "./NavigationBar";
 export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading events…"));
 };
 
 describe("Navbar component", () => {

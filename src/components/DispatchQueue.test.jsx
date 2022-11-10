@@ -32,12 +32,14 @@ import DispatchQueue from "./DispatchQueue";
 
 export const waitForConcentricStreets = async () => {
   await waitForElementToBeRemoved(() =>
-    screen.getByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementToBeRemoved(() =>
+    screen.queryByText("Loading incidents…")
+  );
 };
 
 export const waitForEffects = async () => {

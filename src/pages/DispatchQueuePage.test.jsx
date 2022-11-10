@@ -13,17 +13,19 @@ import {
 } from "../ims/TestIMS";
 
 export const waitForEvent = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading event…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading event…"));
 };
 
 export const waitForConcentricStreets = async () => {
   await waitForElementToBeRemoved(() =>
-    screen.getByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementToBeRemoved(() =>
+    screen.queryByText("Loading incidents…")
+  );
 };
 
 export const waitForEffects = async () => {

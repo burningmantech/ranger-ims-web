@@ -12,7 +12,7 @@ import Page from "./Page";
 export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading events…"));
 };
 
 describe("Page component", () => {

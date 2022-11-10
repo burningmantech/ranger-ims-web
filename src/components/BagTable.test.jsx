@@ -9,7 +9,7 @@ import {
 import BagTable from "./BagTable";
 
 export const waitForEffects = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading URL bag…"));
+  await waitForElementToBeRemoved(() => screen.queryByText("Loading URL bag…"));
 };
 
 describe("BagTable component", () => {
