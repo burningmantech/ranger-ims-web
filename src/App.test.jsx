@@ -22,7 +22,10 @@ export const waitForLogin = async () => {
 export const waitForNavEvents = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  const element = () => screen.getByText("Loading events…");
+  if (element) {
+    await waitForElementToBeRemoved(element);
+  }
 };
 
 export const waitForEvent = async () => {
