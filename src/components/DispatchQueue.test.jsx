@@ -531,7 +531,7 @@ describe("DispatchQueue component: loading", () => {
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-    expect(screen.queryByText("Loading incidents…")).toBeInTheDocument();
+    expect(screen.getByText("Loading incidents…")).toBeInTheDocument();
 
     await waitForEffects();
   });

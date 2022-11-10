@@ -51,7 +51,7 @@ describe("EventDropdown component", () => {
     renderWithIMSContext(<EventDropdown />, ims);
     await userEvent.click(screen.getByText("Event"));
 
-    expect(screen.queryByText("Error loading events")).toBeInTheDocument();
+    expect(screen.getByText("Error loading events")).toBeInTheDocument();
 
     expect(console.warn).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons..."
@@ -66,7 +66,7 @@ describe("EventDropdown component", () => {
     renderWithIMSContext(<EventDropdown />, ims);
     await waitForEffects();
 
-    expect(screen.queryByText("No events found")).toBeInTheDocument();
+    expect(screen.getByText("No events found")).toBeInTheDocument();
   });
 
   test("event names", async () => {

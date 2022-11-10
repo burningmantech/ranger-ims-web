@@ -37,7 +37,7 @@ describe("Page component", () => {
       <Page>{content}</Page>,
       testIncidentManagementSystem()
     );
-    expect(screen.queryByText(content)).toBeInTheDocument();
+    expect(screen.getByText(content)).toBeInTheDocument();
 
     await waitForEffects();
   });

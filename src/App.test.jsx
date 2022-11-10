@@ -63,7 +63,7 @@ describe("App component", () => {
   test("Loading page…", async () => {
     render(<App ims={testIncidentManagementSystem()} />);
 
-    expect(screen.queryByText("Loading page…")).toBeInTheDocument();
+    expect(screen.getByText("Loading page…")).toBeInTheDocument();
 
     await waitForPage();
   });
@@ -125,7 +125,7 @@ describe("App component", () => {
       expect(e.name).toEqual("TestingLibraryElementError");
     }
 
-    expect(screen.queryByText("Log In")).toBeInTheDocument();
+    expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 
   test("load app, logged in", async () => {

@@ -29,13 +29,13 @@ describe("LoginDropdown component", () => {
 
     render(<LoginDropdown />);
 
-    expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
+    expect(screen.getByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("no user -> not logged in message", () => {
     renderWithIMSContext(<LoginDropdown />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
+    expect(screen.getByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> not logged in message", () => {
@@ -46,7 +46,7 @@ describe("LoginDropdown component", () => {
 
     renderWithIMSContext(<LoginDropdown />, ims);
 
-    expect(screen.queryByText("Not Logged In")).toBeInTheDocument();
+    expect(screen.getByText("Not Logged In")).toBeInTheDocument();
   });
 
   test("expired user -> console message", () => {
@@ -74,7 +74,7 @@ describe("LoginDropdown component", () => {
       testIncidentManagementSystem(username)
     );
 
-    expect(screen.queryByText(username)).toBeInTheDocument();
+    expect(screen.getByText(username)).toBeInTheDocument();
   });
 
   test("activate user menu -> log out item", async () => {
@@ -87,7 +87,7 @@ describe("LoginDropdown component", () => {
 
     await userEvent.click(screen.getByText(username));
 
-    expect(screen.queryByText("Log Out")).toBeInTheDocument();
+    expect(screen.getByText("Log Out")).toBeInTheDocument();
   });
 
   test("log out item -> log out", async () => {

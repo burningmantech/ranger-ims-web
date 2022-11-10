@@ -29,7 +29,7 @@ describe("BagTable component", () => {
 
   test("loading bag", async () => {
     renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-    expect(screen.queryByText("Loading URL bag…")).toBeInTheDocument();
+    expect(screen.getByText("Loading URL bag…")).toBeInTheDocument();
     await waitForEffects();
   });
 
