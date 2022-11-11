@@ -18,7 +18,7 @@ describe("Login component", () => {
   test("no user -> login button", () => {
     renderWithIMSContext(<Login />, testIncidentManagementSystem());
 
-    expect(screen.queryByText("Log In")).toBeInTheDocument();
+    expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 
   test("expired user -> login button", () => {
@@ -28,7 +28,7 @@ describe("Login component", () => {
 
     renderWithIMSContext(<Login />, ims);
 
-    expect(screen.queryByText("Log In")).toBeInTheDocument();
+    expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 
   test("user -> no login button", () => {
@@ -47,7 +47,7 @@ describe("Login component", () => {
 
     renderWithIMSContext(<Login>{content}</Login>, ims);
 
-    expect(screen.queryByText(content)).toBeInTheDocument();
+    expect(screen.getByText(content)).toBeInTheDocument();
   });
 
   test("no user -> log in -> content", async () => {
@@ -86,7 +86,7 @@ describe("Login component", () => {
       expect(e.name).toEqual("TestingLibraryElementError");
     }
 
-    expect(screen.queryByText("Log In")).toBeInTheDocument();
+    expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 
   test("no user -> log in exception -> error message", async () => {

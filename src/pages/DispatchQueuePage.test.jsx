@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -13,17 +13,21 @@ import {
 } from "../ims/TestIMS";
 
 export const waitForEvent = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading event…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading event…")
+  );
 };
 
 export const waitForConcentricStreets = async () => {
-  await waitForElementToBeRemoved(() =>
-    screen.getByText("Loading concentric street names…")
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading incidents…")
+  );
 };
 
 export const waitForEffects = async () => {
@@ -38,7 +42,7 @@ describe("DispatchQueuePage component", () => {
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueuePage eventID={event.id} />, ims);
 
-    expect(screen.queryByText("Loading event…")).toBeInTheDocument();
+    expect(screen.getByText("Loading event…")).toBeInTheDocument();
 
     await waitForEffects();
   });

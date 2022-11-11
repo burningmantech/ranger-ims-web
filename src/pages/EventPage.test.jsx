@@ -29,6 +29,6 @@ describe("EventPage component", () => {
     );
 
     // Same expectations as for /ims (see next test)
-    expect(screen.queryByText(eventID)).toBeInTheDocument();
+    expect(screen.getByText(eventID)).toBeInTheDocument();
   });
 });
