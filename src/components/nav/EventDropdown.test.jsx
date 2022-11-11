@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/extend-expect";
 
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
@@ -14,7 +14,9 @@ import EventDropdown from "./EventDropdown";
 export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading events…")
+  );
 };
 
 describe("EventDropdown component", () => {
@@ -51,7 +53,7 @@ describe("EventDropdown component", () => {
     renderWithIMSContext(<EventDropdown />, ims);
     await userEvent.click(screen.getByText("Event"));
 
-    expect(screen.queryByText("Error loading events")).toBeInTheDocument();
+    expect(screen.getByText("Error loading events")).toBeInTheDocument();
 
     expect(console.warn).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons..."
@@ -66,7 +68,7 @@ describe("EventDropdown component", () => {
     renderWithIMSContext(<EventDropdown />, ims);
     await waitForEffects();
 
-    expect(screen.queryByText("No events found")).toBeInTheDocument();
+    expect(screen.getByText("No events found")).toBeInTheDocument();
   });
 
   test("event names", async () => {
