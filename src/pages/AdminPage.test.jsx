@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import AdminPage from "./AdminPage";
@@ -12,7 +12,9 @@ import {
 export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading events…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading events…")
+  );
 };
 
 describe("AdminPage component", () => {

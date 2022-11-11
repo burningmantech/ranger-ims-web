@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import {
   renderWithIMSContext,
@@ -9,7 +9,9 @@ import {
 import BagTable from "./BagTable";
 
 export const waitForEffects = async () => {
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading URL bag…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading URL bag…")
+  );
 };
 
 describe("BagTable component", () => {

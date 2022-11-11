@@ -1,9 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -12,7 +8,7 @@ import { URLs } from "./URLs";
 import App from "./App";
 
 export const waitForPage = async () => {
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading page…"));
+  await waitForElementNotToBePresent(() => screen.queryByText("Loading page…"));
 };
 
 export const waitForLogin = async () => {
@@ -22,21 +18,25 @@ export const waitForLogin = async () => {
 export const waitForNavEvents = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading events…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading events…")
+  );
 };
 
 export const waitForEvent = async () => {
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading event…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading event…")
+  );
 };
 
 export const waitForConcentricStreets = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading incidents…")
   );
 };

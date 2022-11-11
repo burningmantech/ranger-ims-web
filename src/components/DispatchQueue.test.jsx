@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
@@ -31,13 +31,13 @@ import {
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForConcentricStreets = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading incidents…")
   );
 };

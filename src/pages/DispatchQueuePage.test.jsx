@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -13,17 +13,19 @@ import {
 } from "../ims/TestIMS";
 
 export const waitForEvent = async () => {
-  await waitForElementToBeRemoved(() => screen.queryByText("Loading event…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading event…")
+  );
 };
 
 export const waitForConcentricStreets = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() =>
+  await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading incidents…")
   );
 };
