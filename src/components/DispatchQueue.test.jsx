@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
@@ -31,13 +31,15 @@ import {
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForConcentricStreets = async () => {
-  await waitForElementToBeRemoved(() =>
-    screen.getByText("Loading concentric street names…")
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading concentric street names…")
   );
 };
 
 export const waitForIncidents = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading incidents…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading incidents…")
+  );
 };
 
 export const waitForEffects = async () => {
@@ -531,7 +533,7 @@ describe("DispatchQueue component: loading", () => {
     const event = await ims.eventWithID("1");
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
 
-    expect(screen.queryByText("Loading incidents…")).toBeInTheDocument();
+    expect(screen.getByText("Loading incidents…")).toBeInTheDocument();
 
     await waitForEffects();
   });
