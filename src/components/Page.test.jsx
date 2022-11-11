@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import {
@@ -12,7 +12,9 @@ import Page from "./Page";
 export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
-  await waitForElementToBeRemoved(() => screen.getByText("Loading events…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading events…")
+  );
 };
 
 describe("Page component", () => {
@@ -37,7 +39,7 @@ describe("Page component", () => {
       <Page>{content}</Page>,
       testIncidentManagementSystem()
     );
-    expect(screen.queryByText(content)).toBeInTheDocument();
+    expect(screen.getByText(content)).toBeInTheDocument();
 
     await waitForEffects();
   });

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import {
   renderWithIMSContext,
@@ -9,7 +9,9 @@ import {
 import BagTable from "./BagTable";
 
 export const waitForEffects = async () => {
-  await waitForElementToBeRemoved(() => screen.getByText("Loading URL bag…"));
+  await waitForElementNotToBePresent(() =>
+    screen.queryByText("Loading URL bag…")
+  );
 };
 
 describe("BagTable component", () => {
@@ -29,7 +31,7 @@ describe("BagTable component", () => {
 
   test("loading bag", async () => {
     renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-    expect(screen.queryByText("Loading URL bag…")).toBeInTheDocument();
+    expect(screen.getByText("Loading URL bag…")).toBeInTheDocument();
     await waitForEffects();
   });
 
