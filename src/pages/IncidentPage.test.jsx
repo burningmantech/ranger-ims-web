@@ -20,7 +20,7 @@ describe("IncidentPage component", () => {
           ims
         );
 
-        expect(screen.queryByText("Loading…")).toBeInTheDocument();
+        expect(screen.getByText("Loading…")).toBeInTheDocument();
 
         cleanup();
       }

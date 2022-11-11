@@ -7,13 +7,13 @@ describe("Loading component", () => {
   test("no args", () => {
     render(<Loading />);
 
-    expect(screen.queryByText("Loading…")).toBeInTheDocument();
+    expect(screen.getByText("Loading…")).toBeInTheDocument();
   });
 
   test("condition false", () => {
     render(<Loading condition={false}>Hello</Loading>);
 
-    expect(screen.queryByText("Loading…")).toBeInTheDocument();
+    expect(screen.getByText("Loading…")).toBeInTheDocument();
     expect(screen.queryByText("Hello")).not.toBeInTheDocument();
   });
 
@@ -21,7 +21,7 @@ describe("Loading component", () => {
     render(<Loading condition={true}>Hello</Loading>);
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
-    expect(screen.queryByText("Hello")).toBeInTheDocument();
+    expect(screen.getByText("Hello")).toBeInTheDocument();
   });
 
   test("condition true with what", () => {
@@ -32,7 +32,7 @@ describe("Loading component", () => {
     );
 
     expect(screen.queryByText("Loading fluff…")).not.toBeInTheDocument();
-    expect(screen.queryByText("Hello")).toBeInTheDocument();
+    expect(screen.getByText("Hello")).toBeInTheDocument();
   });
 
   test("condition true, error true", () => {
@@ -43,7 +43,7 @@ describe("Loading component", () => {
     );
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
-    expect(screen.queryByText("Hello")).toBeInTheDocument();
+    expect(screen.getByText("Hello")).toBeInTheDocument();
     expect(screen.queryByText("Failed to load.")).not.toBeInTheDocument();
   });
 
@@ -56,7 +56,7 @@ describe("Loading component", () => {
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
     expect(screen.queryByText("Hello")).not.toBeInTheDocument();
-    expect(screen.queryByText("Failed to load.")).toBeInTheDocument();
+    expect(screen.getByText("Failed to load.")).toBeInTheDocument();
   });
 
   test("condition false, error true with what", () => {
@@ -68,6 +68,6 @@ describe("Loading component", () => {
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
     expect(screen.queryByText("Hello")).not.toBeInTheDocument();
-    expect(screen.queryByText("Failed to load fluff.")).toBeInTheDocument();
+    expect(screen.getByText("Failed to load fluff.")).toBeInTheDocument();
   });
 });
