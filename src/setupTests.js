@@ -3,7 +3,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { waitFor, waitForElementToBeRemoved } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
 
 // https://github.com/dumbmatter/fakeIndexedDB
 import "fake-indexeddb/auto";
