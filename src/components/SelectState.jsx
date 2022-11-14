@@ -11,9 +11,9 @@ const SelectState = ({ state, onChange }) => {
     <LabeledSelect
       id="incident_state"
       label="State"
-      values={Incident.states}
+      values={Incident.states.map((s) => [s, s])}
       defaultValue={state}
-      valueToName={Incident.stateToString}
+      valueToName={Incident.stateToName}
       onChange={onChange}
     />
   );
