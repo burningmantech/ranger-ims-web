@@ -11,7 +11,7 @@ const Select = ({ id, width, values, defaultValue, valueToName, onChange }) => {
   // console.error(valueToName);
 
   if (valueToName == null) {
-    valueToName = (value) => value + " ***";
+    valueToName = (value) => value;
   }
 
   if (onChange == null) {
