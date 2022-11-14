@@ -40,32 +40,23 @@ const LocationCard = ({
           <InputGroup id="incident_location_address">
             <Select
               id="incident_location_address_radial_hour"
-              width="5em"
-              value={locationRadialHour}
-              options={RodGarettAddress.radialHours.map((value) => [
-                value,
-                value,
-              ])}
+              width="auto"
+              values={RodGarettAddress.radialHours.map((h) => [h, h])}
+              defaultValue={locationRadialHour}
             />
             <InputGroup.Text>:</InputGroup.Text>
             <Select
               id="incident_location_address_radial_minute"
               width="5em"
-              value={locationRadialMinute}
-              options={RodGarettAddress.radialMinutes.map((value) => [
-                value,
-                value,
-              ])}
+              values={RodGarettAddress.radialMinutes.map((m) => [m, m])}
+              defaultValue={locationRadialMinute}
             />
             <InputGroup.Text>@</InputGroup.Text>
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              value={locationConcentric}
-              options={Array.from(concentricStreets, ([id, street]) => [
-                street.id,
-                street.name,
-              ])}
+              values={Array.from(concentricStreets, ([id, s]) => [id, s.name])}
+              defaultValue={locationConcentric}
             />
           </InputGroup>
         </Col>

@@ -2,17 +2,22 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import LabeledSelect from "./LabeledSelect";
+import FormGroup from "./FormGroup";
+import Label from "./Label";
+import Select from "./Select";
 
-describe("LabeledSelect component", () => {
+describe("Select component", () => {
   const test_defaultValueSelected = async (values, defaultValue) => {
     render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        values={values.map((v) => [v, v])}
-        defaultValue={defaultValue}
-      />
+      <FormGroup>
+        <Label id="select_id" label="label" />
+        <Select
+          id="select_id"
+          width="auto"
+          values={values.map((v) => [v, v])}
+          defaultValue={defaultValue}
+        />
+      </FormGroup>
     );
 
     const select = screen.getByLabelText("label:");
@@ -33,12 +38,15 @@ describe("LabeledSelect component", () => {
     console.log(`${defaultValue} -> ${nextValue}`);
 
     render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        values={values.map((v) => [v, v])}
-        defaultValue={defaultValue}
-      />
+      <FormGroup>
+        <Label id="select_id" label="label" />
+        <Select
+          id="select_id"
+          width="auto"
+          values={values.map((v) => [v, v])}
+          defaultValue={defaultValue}
+        />
+      </FormGroup>
     );
 
     const select = screen.getByLabelText("label:");
@@ -70,12 +78,15 @@ describe("LabeledSelect component", () => {
     };
 
     render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        values={values.map((v) => [v, v])}
-        valueToName={valueToName}
-      />
+      <FormGroup>
+        <Label id="select_id" label="label" />
+        <Select
+          id="select_id"
+          width="auto"
+          values={values.map((v) => [v, v])}
+          valueToName={valueToName}
+        />
+      </FormGroup>
     );
 
     const select = screen.getByLabelText("label:");
@@ -89,13 +100,16 @@ describe("LabeledSelect component", () => {
     const onChange = jest.fn();
 
     render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        values={values.map((v) => [v, v])}
-        defaultValue={defaultValue}
-        onChange={onChange}
-      />
+      <FormGroup>
+        <Label id="select_id" label="label" />
+        <Select
+          id="select_id"
+          width="auto"
+          values={values.map((v) => [v, v])}
+          defaultValue={defaultValue}
+          onChange={onChange}
+        />
+      </FormGroup>
     );
 
     const select = screen.getByLabelText("label:");

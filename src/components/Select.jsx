@@ -2,14 +2,23 @@ import invariant from "invariant";
 
 import Form from "react-bootstrap/Form";
 
-const Select = ({ id, width, value, options }) => {
+const Select = ({ id, width, values, defaultValue, valueToName, onChange }) => {
   invariant(id != null, "id property is required");
   invariant(width != null, "width property is required");
-  invariant(options != null, "options property is required");
+  invariant(values != null, "values property is required");
+  // invariant(defaultValue != null, "defaultValue property is required");
 
-  const onChange = (event) => {
-    console.info(event);
-  };
+  // console.error(valueToName);
+
+  if (valueToName == null) {
+    valueToName = (value) => value;
+  }
+
+  if (onChange == null) {
+    onChange = (event) => {
+      console.warn("Unhandled onChange event");
+    };
+  }
 
   // FIXME: Can we set width via Bootstrap instead of style?
   return (
@@ -17,13 +26,19 @@ const Select = ({ id, width, value, options }) => {
       id={id}
       size="sm"
       style={{ flex: "initial", width: width }}
-      value={value == null ? "" : value}
+      defaultValue={defaultValue}
       onChange={onChange}
     >
-      <option key={null} value={null} />
-      {Array.from(options, ([key, value]) => (
+      {defaultValue == null ? (
+        <option key={null} value={null}>
+          {valueToName(defaultValue)}
+        </option>
+      ) : (
+        ""
+      )}
+      {Array.from(values, ([key, value]) => (
         <option key={key} value={key}>
-          {value}
+          {valueToName(value)}
         </option>
       ))}
     </Form.Select>
