@@ -15,7 +15,6 @@ const LabeledSelect = ({
   invariant(id != null, "id property is required");
   invariant(label != null, "label property is required");
   invariant(values != null, "values property is required");
-  invariant(defaultValue != null, "defaultValue property is required");
 
   return (
     <FormGroup>

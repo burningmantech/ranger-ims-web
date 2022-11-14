@@ -10,7 +10,7 @@ describe("LabeledSelect component", () => {
       <LabeledSelect
         id="id"
         label="label"
-        values={values}
+        values={values.map((v) => [v, v])}
         defaultValue={value}
       />
     );
@@ -36,7 +36,7 @@ describe("LabeledSelect component", () => {
       <LabeledSelect
         id="id"
         label="label"
-        values={values}
+        values={values.map((v) => [v, v])}
         defaultValue={startValue}
       />
     );
@@ -59,6 +59,32 @@ describe("LabeledSelect component", () => {
     }
   }
 
+  test("valueToName", async () => {
+    const values = ["1", "2", "3", "4"];
+    const valueToName = (value) => {
+      if (value === undefined || value == "----") {
+        return "----";
+      } else {
+        return "***" + value + "***";
+      }
+    };
+
+    render(
+      <LabeledSelect
+        id="id"
+        label="label"
+        values={values.map((v) => [v, v])}
+        valueToName={valueToName}
+      />
+    );
+
+    const select = screen.getByLabelText("label:");
+
+    for (const option of select.options) {
+      expect(option.textContent).toEqual(valueToName(option.value));
+    }
+  });
+
   const test_onChangeCallback = async (values, startValue, nextValue) => {
     const onChange = jest.fn();
 
@@ -66,7 +92,7 @@ describe("LabeledSelect component", () => {
       <LabeledSelect
         id="id"
         label="label"
-        values={values}
+        values={values.map((v) => [v, v])}
         defaultValue={startValue}
         onChange={onChange}
       />

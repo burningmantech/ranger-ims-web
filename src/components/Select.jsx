@@ -29,7 +29,13 @@ const Select = ({ id, width, values, defaultValue, valueToName, onChange }) => {
       defaultValue={defaultValue}
       onChange={onChange}
     >
-      {defaultValue == null ? <option key={null} value={null} /> : ""}
+      {defaultValue == null ? (
+        <option key={null} value={null}>
+          {valueToName(defaultValue)}
+        </option>
+      ) : (
+        ""
+      )}
       {Array.from(values, ([key, value]) => (
         <option key={key} value={key}>
           {valueToName(value)}
