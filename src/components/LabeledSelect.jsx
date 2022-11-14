@@ -1,7 +1,5 @@
 import invariant from "invariant";
 
-import Form from "react-bootstrap/Form";
-
 import FormGroup from "./FormGroup";
 import Label from "./Label";
 import Select from "./Select";
