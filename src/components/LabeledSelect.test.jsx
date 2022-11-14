@@ -5,39 +5,39 @@ import userEvent from "@testing-library/user-event";
 import LabeledSelect from "./LabeledSelect";
 
 describe("LabeledSelect component", () => {
-  const test_startValueSelected = async (values, value) => {
+  const test_defaultValueSelected = async (values, defaultValue) => {
     render(
       <LabeledSelect
         id="id"
         label="label"
         values={values.map((v) => [v, v])}
-        defaultValue={value}
+        defaultValue={defaultValue}
       />
     );
 
     const select = screen.getByLabelText("label:");
 
-    expect(select.value).toEqual(value);
+    expect(select.value).toEqual(defaultValue);
   };
 
   {
     const values = ["1", "2", "3", "4"];
-    for (const value of values) {
-      test(`start value selected (${value})`, async () => {
-        await test_startValueSelected(values, value);
+    for (const defaultValue of values) {
+      test(`start value selected (${defaultValue})`, async () => {
+        await test_defaultValueSelected(values, defaultValue);
       });
     }
   }
 
-  const test_newValueSelected = async (values, startValue, nextValue) => {
-    console.log(`${startValue} -> ${nextValue}`);
+  const test_newValueSelected = async (values, defaultValue, nextValue) => {
+    console.log(`${defaultValue} -> ${nextValue}`);
 
     render(
       <LabeledSelect
         id="id"
         label="label"
         values={values.map((v) => [v, v])}
-        defaultValue={startValue}
+        defaultValue={defaultValue}
       />
     );
 
@@ -50,10 +50,10 @@ describe("LabeledSelect component", () => {
 
   {
     const values = ["1", "2", "3", "4"];
-    for (const startValue of values) {
+    for (const defaultValue of values) {
       for (const nextValue of values) {
-        test(`new value selected (${startValue}, ${nextValue})`, async () => {
-          await test_newValueSelected(values, startValue, nextValue);
+        test(`new value selected (${defaultValue}, ${nextValue})`, async () => {
+          await test_newValueSelected(values, defaultValue, nextValue);
         });
       }
     }
@@ -85,7 +85,7 @@ describe("LabeledSelect component", () => {
     }
   });
 
-  const test_onChangeCallback = async (values, startValue, nextValue) => {
+  const test_onChangeCallback = async (values, defaultValue, nextValue) => {
     const onChange = jest.fn();
 
     render(
@@ -93,7 +93,7 @@ describe("LabeledSelect component", () => {
         id="id"
         label="label"
         values={values.map((v) => [v, v])}
-        defaultValue={startValue}
+        defaultValue={defaultValue}
         onChange={onChange}
       />
     );
@@ -107,10 +107,10 @@ describe("LabeledSelect component", () => {
 
   {
     const values = ["1", "2", "3", "4"];
-    for (const startValue of values) {
+    for (const defaultValue of values) {
       for (const nextValue of values) {
-        test(`onChange callback (${startValue}, ${nextValue})`, async () => {
-          await test_onChangeCallback(values, startValue, nextValue);
+        test(`onChange callback (${defaultValue}, ${nextValue})`, async () => {
+          await test_onChangeCallback(values, defaultValue, nextValue);
         });
       }
     }
