@@ -11,4 +11,27 @@ module.exports = function (app) {
       changeOrigin: true,
     })
   );
+
+  // Remove after removing the built-in web client from the server
+  app.use(
+    "/ims/auth",
+    createProxyMiddleware({
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    })
+  );
+  app.use(
+    "/ims/ext",
+    createProxyMiddleware({
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    })
+  );
+  app.use(
+    "/ims/static",
+    createProxyMiddleware({
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    })
+  );
 };
