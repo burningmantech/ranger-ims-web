@@ -69,7 +69,9 @@ const LocationCard = ({
               width="auto"
               value={locationRadialHour == null ? "" : locationRadialHour}
               setValue={setLocationRadialHour}
-              values={RodGarettAddress.radialHours.map((h) => [h, h])}
+              values={[""]
+                .concat(RodGarettAddress.radialHours)
+                .map((h) => [h, h])}
             />
             <InputGroup.Text>:</InputGroup.Text>
             <Select
@@ -77,7 +79,9 @@ const LocationCard = ({
               width="5em"
               value={locationRadialMinute == null ? "" : locationRadialMinute}
               setValue={setLocationRadialMinute}
-              values={RodGarettAddress.radialMinutes.map((m) => [m, m])}
+              values={[""]
+                .concat(RodGarettAddress.radialMinutes)
+                .map((m) => [m, m])}
             />
             <InputGroup.Text>@</InputGroup.Text>
             <Select
@@ -85,7 +89,9 @@ const LocationCard = ({
               width="20em"
               value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
-              values={Array.from(concentricStreets, ([id, s]) => [id, s.name])}
+              values={["", ""].concat(
+                Array.from(concentricStreets, ([id, s]) => [id, s.name])
+              )}
             />
           </InputGroup>
         </Col>
