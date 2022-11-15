@@ -1,3 +1,5 @@
+import invariant from "invariant";
+
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
@@ -17,7 +19,30 @@ const LocationCard = ({
   locationRadialHour,
   locationRadialMinute,
   concentricStreets,
+  setLocationName,
+  setLocationDescription,
+  setLocationConcentric,
+  setLocationRadialHour,
+  setLocationRadialMinute,
 }) => {
+  invariant(setLocationName != null, "setLocationName property is required");
+  invariant(
+    setLocationDescription != null,
+    "setLocationDescription property is required"
+  );
+  invariant(
+    setLocationConcentric != null,
+    "setLocationConcentric property is required"
+  );
+  invariant(
+    setLocationRadialHour != null,
+    "setLocationRadialHour property is required"
+  );
+  invariant(
+    setLocationRadialMinute != null,
+    "setLocationRadialMinute property is required"
+  );
+
   return (
     <Well id="incident_location_card" title="Location">
       <FormGroup as={Row}>
@@ -28,6 +53,7 @@ const LocationCard = ({
           <LabeledTextField
             id="incident_location_name"
             value={locationName}
+            setValue={setLocationName}
             placeholder="Name of location (camp, art project, …)"
           />
         </Col>
@@ -41,22 +67,25 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_hour"
               width="auto"
+              value={locationRadialHour}
+              setValue={setLocationRadialHour}
               values={RodGarettAddress.radialHours.map((h) => [h, h])}
-              defaultValue={locationRadialHour}
             />
             <InputGroup.Text>:</InputGroup.Text>
             <Select
               id="incident_location_address_radial_minute"
               width="5em"
+              value={locationRadialMinute}
+              setValue={setLocationRadialMinute}
               values={RodGarettAddress.radialMinutes.map((m) => [m, m])}
-              defaultValue={locationRadialMinute}
             />
             <InputGroup.Text>@</InputGroup.Text>
             <Select
               id="incident_location_address_concentric"
               width="20em"
+              value={locationConcentric}
+              setValue={setLocationConcentric}
               values={Array.from(concentricStreets, ([id, s]) => [id, s.name])}
-              defaultValue={locationConcentric}
             />
           </InputGroup>
         </Col>
@@ -69,6 +98,7 @@ const LocationCard = ({
           <LabeledTextField
             id="incident_location_description"
             value={locationDescription}
+            setValue={setLocationDescription}
             placeholder="Description of location"
           />
         </Col>

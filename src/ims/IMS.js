@@ -599,18 +599,16 @@ export default class IncidentManagementSystem {
   };
 
   setIncidentState = async (eventID, number, state) => {
-    console.info(`Updating incident (eventID}#${number}) state to ${state}...`);
+    console.info(`Updating incident ${eventID}#${number} state to ${state}...`);
 
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
-    console.error("unimplemented");
-
-    throw new Error("barf");
+    throw new Error("setIncidentState is unimplemented");
   };
 
   setIncidentPriority = async (eventID, number, priority) => {
     console.info(
-      `Updating incident (eventID}#${number}) priority to ${priority}...`
+      `Updating incident ${eventID}#${number} priority to ${priority}...`
     );
 
     await new Promise((resolve) => setTimeout(resolve, 4000));
