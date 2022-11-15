@@ -34,6 +34,60 @@ const Incident = ({ incident }) => {
     setConcentricStreets: setConcentricStreets,
   });
 
+  // Incident State
+
+  const [incidentState, setIncidentState] = useState(incident.state);
+
+  const controlClearStatus = (control) => {
+    control.classList.remove("bg-warning");
+    control.classList.remove("bg-success");
+    control.classList.remove("bg-danger");
+  };
+
+  const controlIsBusy = (control) => {
+    console.debug("Control is busy", control);
+    controlClearStatus(control);
+    control.classList.add("bg-warning");
+  };
+
+  const controlHadSuccess = (control) => {
+    console.debug("Control had success", control);
+    controlClearStatus(control);
+    control.classList.add("bg-success");
+
+    setTimeout(() => controlClearStatus(control), 1000);
+  };
+
+  const controlHadError = (control, timeout) => {
+    console.debug("Control had error", control);
+    control.classList.add("bg-danger");
+    setTimeout(() => controlClearStatus(control), 1000);
+  };
+
+  const editIncident = async (event, edit) => {
+    console.debug(event);
+    const control = event.target;
+
+    controlIsBusy(control);
+    let updateControl = controlHadSuccess;
+    try {
+      await edit(control.value);
+    } catch (e) {
+      updateControl = controlHadError;
+    }
+    updateControl(control);
+  };
+
+  const changeState = async (event) => {
+    await editIncident(event, ims.setIncidentState);
+  };
+
+  const changePriority = async (event) => {
+    await editIncident(event, ims.setIncidentPriority);
+  };
+
+  // Component
+
   return (
     <div id="incident_wrapper">
       <h1>Incident #{incident.number}</h1>
@@ -41,10 +95,13 @@ const Incident = ({ incident }) => {
       <Row>
         <Col className="text-start" />
         <Col className="text-center">
-          <SelectState state={incident.state} />
+          <SelectState state={incidentState} onChange={changeState} />
         </Col>
         <Col className="text-end">
-          <SelectPriority priority={incident.priority} />
+          <SelectPriority
+            priority={incident.priority}
+            onChange={changePriority}
+          />
         </Col>
       </Row>
 
