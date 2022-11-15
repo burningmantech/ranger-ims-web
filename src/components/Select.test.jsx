@@ -85,6 +85,7 @@ describe("Select component", () => {
         <Select
           id="select_id"
           width="auto"
+          value="1"
           setValue={() => {}}
           values={values.map((v) => [v, v])}
           valueToName={valueToName}

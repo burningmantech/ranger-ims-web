@@ -46,6 +46,7 @@ const controlDidChange = async (event, callback) => {
 const Select = ({ id, width, value, setValue, values, valueToName }) => {
   invariant(id != null, "id property is required");
   invariant(width != null, "width property is required");
+  invariant(value != null, "setValue property is required");
   invariant(setValue != null, "setValue property is required");
   invariant(values != null, "values property is required");
 

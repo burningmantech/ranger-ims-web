@@ -52,7 +52,7 @@ const LocationCard = ({
         <Col sm={10}>
           <LabeledTextField
             id="incident_location_name"
-            value={locationName}
+            value={locationName == null ? "" : locationName}
             setValue={setLocationName}
             placeholder="Name of location (camp, art project, …)"
           />
@@ -67,7 +67,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_hour"
               width="auto"
-              value={locationRadialHour}
+              value={locationRadialHour == null ? "" : locationRadialHour}
               setValue={setLocationRadialHour}
               values={RodGarettAddress.radialHours.map((h) => [h, h])}
             />
@@ -75,7 +75,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_minute"
               width="5em"
-              value={locationRadialMinute}
+              value={locationRadialMinute == null ? "" : locationRadialMinute}
               setValue={setLocationRadialMinute}
               values={RodGarettAddress.radialMinutes.map((m) => [m, m])}
             />
@@ -83,7 +83,7 @@ const LocationCard = ({
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              value={locationConcentric}
+              value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
               values={Array.from(concentricStreets, ([id, s]) => [id, s.name])}
             />
@@ -97,7 +97,7 @@ const LocationCard = ({
         <Col sm={10}>
           <LabeledTextField
             id="incident_location_description"
-            value={locationDescription}
+            value={locationDescription == null ? "" : locationDescription}
             setValue={setLocationDescription}
             placeholder="Description of location"
           />
