@@ -87,11 +87,11 @@ const LocationCard = ({
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              value={locationConcentric == null ? "" : locationConcentric.id}
+              value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
-              values={[["", ""]].concat(
-                Array.from(concentricStreets, (c) => [c.id, c.name])
-              )}
+              values={[""]
+                .concat(RodGarettAddress.concentricStreets)
+                .map((c) => [c, c])}
             />
           </InputGroup>
         </Col>
