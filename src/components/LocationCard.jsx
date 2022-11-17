@@ -14,16 +14,16 @@ import Well from "./Well";
 
 const LocationCard = ({
   locationName,
-  locationDescription,
-  locationConcentric,
-  locationRadialHour,
-  locationRadialMinute,
-  concentricStreets,
   setLocationName,
+  locationDescription,
   setLocationDescription,
+  locationConcentric,
   setLocationConcentric,
+  locationRadialHour,
   setLocationRadialHour,
+  locationRadialMinute,
   setLocationRadialMinute,
+  concentricStreets,
 }) => {
   invariant(setLocationName != null, "setLocationName property is required");
   invariant(
@@ -68,7 +68,7 @@ const LocationCard = ({
               id="incident_location_address_radial_hour"
               width="auto"
               value={locationRadialHour == null ? "" : locationRadialHour}
-              setValue={setLocationRadialHour}
+              setValue={(s) => setLocationRadialHour(parseInt(s))}
               values={[""]
                 .concat(RodGarettAddress.radialHours)
                 .map((h) => [h, h])}
@@ -78,7 +78,7 @@ const LocationCard = ({
               id="incident_location_address_radial_minute"
               width="5em"
               value={locationRadialMinute == null ? "" : locationRadialMinute}
-              setValue={setLocationRadialMinute}
+              setValue={(s) => setLocationRadialMinute(parseInt(s))}
               values={[""]
                 .concat(RodGarettAddress.radialMinutes)
                 .map((m) => [m, m])}
@@ -87,10 +87,10 @@ const LocationCard = ({
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              value={locationConcentric == null ? "" : locationConcentric}
+              value={locationConcentric == null ? "" : locationConcentric.id}
               setValue={setLocationConcentric}
-              values={["", ""].concat(
-                Array.from(concentricStreets, ([id, s]) => [id, s.name])
+              values={[["", ""]].concat(
+                Array.from(concentricStreets, (c) => [c.id, c.name])
               )}
             />
           </InputGroup>

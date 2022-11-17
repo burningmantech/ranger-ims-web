@@ -13,7 +13,7 @@ const SelectPriority = ({ priority, setPriority }) => {
       id="incident_priority"
       label="Priority"
       value={priority}
-      setValue={(v) => setPriority(parseInt(v))}
+      setValue={(s) => setPriority(parseInt(s))}
       values={Incident.nonDeprecatedPriorities(priority).map((p) => [p, p])}
       valueToName={Incident.priorityToName}
     />
