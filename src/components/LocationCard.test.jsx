@@ -8,22 +8,24 @@ import RodGarettAddress from "../ims/model/RodGarettAddress";
 
 import LocationCard from "./LocationCard";
 
-const _concentricStreets = function* () {
-  yield new ConcentricStreet("1", "1st Street");
-  yield new ConcentricStreet("2", "2nd Street");
-  yield new ConcentricStreet("3", "3rd Street");
-};
-
-const concentricStreets = Array.from(_concentricStreets());
+const names = [null, "", "Camp Whosit"];
+const descriptions = [null, "", "that one"];
+const hours = [null, 1, 12];
+const minutes = [null, 0, 55];
+const concentricStreets = [
+  new ConcentricStreet("1", "1st Street"),
+  new ConcentricStreet("2", "2nd Street"),
+];
+const concentricStreetIDs = Array.from([null] + concentricStreets, (c) =>
+  c == null ? null : c.id
+);
 
 const _locations = function* () {
-  for (const name of [null, "", "Camp Whosit"]) {
-    for (const description of [null, "", "that one"]) {
-      for (const concentric of [null].concat(
-        Array.from(concentricStreets, (c) => c.id)
-      )) {
-        for (const hour of [null, 1, 12]) {
-          for (const minute of [null, 0, 55]) {
+  for (const name of names) {
+    for (const description of descriptions) {
+      for (const concentric of concentricStreetIDs) {
+        for (const hour of hours) {
+          for (const minute of minutes) {
             yield new Location({
               name: name,
               address: new RodGarettAddress({
