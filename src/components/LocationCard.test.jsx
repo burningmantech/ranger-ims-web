@@ -8,43 +8,43 @@ import RodGarettAddress from "../ims/model/RodGarettAddress";
 
 import LocationCard from "./LocationCard";
 
-const names = [null, "", "Camp Whosit"];
-const descriptions = [null, "", "that one"];
-const hours = [null, 1, 12];
-const minutes = [null, 0, 55];
-const concentricStreets = [
-  new ConcentricStreet("1", "1st Street"),
-  new ConcentricStreet("2", "2nd Street"),
-];
-const concentricStreetIDs = Array.from([null] + concentricStreets, (c) =>
-  c == null ? null : c.id
-);
+describe("LocationCard component", () => {
+  const names = [null, "", "Camp Whosit"];
+  const descriptions = [null, "", "that one"];
+  const hours = [null, 1, 12];
+  const minutes = [null, 0, 55];
+  const concentricStreets = [
+    new ConcentricStreet("1", "1st Street"),
+    new ConcentricStreet("2", "2nd Street"),
+  ];
+  const concentricStreetIDs = Array.from([null] + concentricStreets, (c) =>
+    c == null ? null : c.id
+  );
 
-const _locations = function* () {
-  for (const name of names) {
-    for (const description of descriptions) {
-      for (const concentric of concentricStreetIDs) {
-        for (const hour of hours) {
-          for (const minute of minutes) {
-            yield new Location({
-              name: name,
-              address: new RodGarettAddress({
-                description: description,
-                concentric: concentric,
-                radialHour: hour,
-                radialMinute: minute,
-              }),
-            });
+  const _locations = function* () {
+    for (const name of names) {
+      for (const description of descriptions) {
+        for (const concentric of concentricStreetIDs) {
+          for (const hour of hours) {
+            for (const minute of minutes) {
+              yield new Location({
+                name: name,
+                address: new RodGarettAddress({
+                  description: description,
+                  concentric: concentric,
+                  radialHour: hour,
+                  radialMinute: minute,
+                }),
+              });
+            }
           }
         }
       }
     }
-  }
-};
+  };
 
-const locations = Array.from(_locations());
+  const locations = Array.from(_locations());
 
-describe("LocationCard component", () => {
   test.each(locations)("selected values: %s", async (location) => {
     render(
       <LocationCard
