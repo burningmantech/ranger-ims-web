@@ -16,14 +16,14 @@ const _concentricStreets = function* () {
 
 const concentricStreets = Array.from(_concentricStreets());
 
-const locations = function* () {
-  for (const name of [null, "", "Camp Whosit", "Fortress of Solitude"]) {
-    for (const description of [null, "", "here", "that one"]) {
+const _locations = function* () {
+  for (const name of [null, "", "Camp Whosit"]) {
+    for (const description of [null, "", "that one"]) {
       for (const concentric of [null].concat(
         Array.from(concentricStreets, (c) => c.id)
       )) {
-        for (const hour of [null, 1, 5, 9, 12]) {
-          for (const minute of [null, 0, 10, 15, 30, 55]) {
+        for (const hour of [null, 1, 12]) {
+          for (const minute of [null, 0, 55]) {
             yield new Location({
               name: name,
               address: new RodGarettAddress({
@@ -40,51 +40,49 @@ const locations = function* () {
   }
 };
 
+const locations = Array.from(_locations());
+
 describe("LocationCard component", () => {
-  test("selected values", async () => {
-    for (const location of locations()) {
-      render(
-        <LocationCard
-          locationName={location.name}
-          locationDescription={location.address.description}
-          locationConcentric={location.address.concentric}
-          locationRadialHour={location.address.radialHour}
-          locationRadialMinute={location.address.radialMinute}
-          concentricStreets={concentricStreets}
-          setLocationName={(v) => {}}
-          setLocationDescription={(v) => {}}
-          setLocationConcentric={(v) => {}}
-          setLocationRadialHour={(v) => {}}
-          setLocationRadialMinute={(v) => {}}
-        />
+  test.each(locations)("selected values: %s", async (location) => {
+    render(
+      <LocationCard
+        locationName={location.name}
+        locationDescription={location.address.description}
+        locationConcentric={location.address.concentric}
+        locationRadialHour={location.address.radialHour}
+        locationRadialMinute={location.address.radialMinute}
+        concentricStreets={concentricStreets}
+        setLocationName={(v) => {}}
+        setLocationDescription={(v) => {}}
+        setLocationConcentric={(v) => {}}
+        setLocationRadialHour={(v) => {}}
+        setLocationRadialMinute={(v) => {}}
+      />
+    );
+
+    const toString = (value) => (value == null ? "" : value.toString());
+    const valueForLabel = (label) => screen.getByLabelText(label + ":").value;
+    const valueForID = (id) => document.getElementById(id).value;
+
+    try {
+      expect(valueForLabel("Name")).toEqual(toString(location.name));
+      expect(valueForLabel("Description")).toEqual(
+        toString(location.address.description)
       );
 
-      const toString = (value) => (value == null ? "" : value.toString());
-      const valueForLabel = (label) => screen.getByLabelText(label + ":").value;
-      const valueForID = (id) => document.getElementById(id).value;
-
-      try {
-        expect(valueForLabel("Name")).toEqual(toString(location.name));
-        expect(valueForLabel("Description")).toEqual(
-          toString(location.address.description)
-        );
-
-        expect(valueForID("incident_location_address_radial_hour")).toEqual(
-          toString(location.address.radialHour)
-        );
-        expect(valueForID("incident_location_address_radial_minute")).toEqual(
-          toString(location.address.radialMinute)
-        );
-        expect(valueForID("incident_location_address_concentric")).toEqual(
-          toString(location.address.concentric)
-        );
-      } catch (e) {
-        screen.debug();
-        console.info(location);
-        throw e;
-      }
-
-      cleanup();
+      expect(valueForID("incident_location_address_radial_hour")).toEqual(
+        toString(location.address.radialHour)
+      );
+      expect(valueForID("incident_location_address_radial_minute")).toEqual(
+        toString(location.address.radialMinute)
+      );
+      expect(valueForID("incident_location_address_concentric")).toEqual(
+        toString(location.address.concentric)
+      );
+    } catch (e) {
+      screen.debug();
+      console.info(location);
+      throw e;
     }
   });
 
