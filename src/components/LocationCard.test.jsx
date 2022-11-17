@@ -45,81 +45,76 @@ describe("LocationCard component", () => {
 
   const locations = Array.from(_locations());
 
-  test.each(randomSample(locations, 500))(
-    "selected values: %s",
-    async (location) => {
-      render(
-        <LocationCard
-          locationName={location.name}
-          locationDescription={location.address.description}
-          locationConcentric={location.address.concentric}
-          locationRadialHour={location.address.radialHour}
-          locationRadialMinute={location.address.radialMinute}
-          concentricStreets={concentricStreets}
-          setLocationName={(v) => {}}
-          setLocationDescription={(v) => {}}
-          setLocationConcentric={(v) => {}}
-          setLocationRadialHour={(v) => {}}
-          setLocationRadialMinute={(v) => {}}
-        />
+  test.each(randomSample(locations, 500))("selected values: %s", (location) => {
+    render(
+      <LocationCard
+        locationName={location.name}
+        locationDescription={location.address.description}
+        locationConcentric={location.address.concentric}
+        locationRadialHour={location.address.radialHour}
+        locationRadialMinute={location.address.radialMinute}
+        concentricStreets={concentricStreets}
+        setLocationName={throwError}
+        setLocationDescription={throwError}
+        setLocationConcentric={throwError}
+        setLocationRadialHour={throwError}
+        setLocationRadialMinute={throwError}
+      />
+    );
+
+    const toString = (value) => (value == null ? "" : value.toString());
+    const valueForLabel = (label) => screen.getByLabelText(label + ":").value;
+    const valueForID = (id) => document.getElementById(id).value;
+
+    try {
+      expect(valueForLabel("Name")).toEqual(toString(location.name));
+      expect(valueForLabel("Description")).toEqual(
+        toString(location.address.description)
       );
 
-      const toString = (value) => (value == null ? "" : value.toString());
-      const valueForLabel = (label) => screen.getByLabelText(label + ":").value;
-      const valueForID = (id) => document.getElementById(id).value;
-
-      try {
-        expect(valueForLabel("Name")).toEqual(toString(location.name));
-        expect(valueForLabel("Description")).toEqual(
-          toString(location.address.description)
-        );
-
-        expect(valueForID("incident_location_address_radial_hour")).toEqual(
-          toString(location.address.radialHour)
-        );
-        expect(valueForID("incident_location_address_radial_minute")).toEqual(
-          toString(location.address.radialMinute)
-        );
-        expect(valueForID("incident_location_address_concentric")).toEqual(
-          toString(location.address.concentric)
-        );
-      } catch (e) {
-        screen.debug();
-        console.info(location);
-        throw e;
-      }
+      expect(valueForID("incident_location_address_radial_hour")).toEqual(
+        toString(location.address.radialHour)
+      );
+      expect(valueForID("incident_location_address_radial_minute")).toEqual(
+        toString(location.address.radialMinute)
+      );
+      expect(valueForID("incident_location_address_concentric")).toEqual(
+        toString(location.address.concentric)
+      );
+    } catch (e) {
+      screen.debug();
+      console.info(location);
+      throw e;
     }
-  );
+  });
 
-  // const test_setValue = async (value, values, nextValue) => {
-  //   const setValue = jest.fn();
+  // test.only.each(cartesian(randomSample(locations, 1), names))(
+  //   "change name: %s -> %s",
+  //   async (location, name) => {
+  //     const setName = jest.fn();
 
-  //   render(
-  //     <LocationCard
-  //       id="id"
-  //       label="label"
-  //       value={value}
-  //       setValue={setValue}
-  //       values={values.map((v) => [v, v])}
-  //     />
-  //   );
+  //     render(
+  //       <LocationCard
+  //         locationName={location.name}
+  //         locationDescription={location.address.description}
+  //         locationConcentric={location.address.concentric}
+  //         locationRadialHour={location.address.radialHour}
+  //         locationRadialMinute={location.address.radialMinute}
+  //         concentricStreets={concentricStreets}
+  //         setLocationName={setName}
+  //         setLocationDescription={throwError}
+  //         setLocationConcentric={throwError}
+  //         setLocationRadialHour={throwError}
+  //         setLocationRadialMinute={throwError}
+  //       />
+  //     );
 
-  //   const select = screen.getByLabelText("label:");
+  //     const textField = screen.getByLabelText("Name:");
 
-  //   await userEvent.selectOptions(select, [nextValue]);
+  //     await userEvent.type(textField, name);
 
-  //   expect(setValue).toHaveBeenCalledTimes(1);
-  //   expect(setValue).toHaveBeenCalledWith(nextValue);
-  // };
-
-  // {
-  //   const values = ["1", "2", "3", "4"];
-  //   for (const value of values) {
-  //     for (const nextValue of values) {
-  //       test(`onChange callback (${value}, ${nextValue})`, async () => {
-  //         await test_setValue(value, values, nextValue);
-  //       });
-  //     }
+  //     expect(setName).toHaveBeenCalledTimes(1);
+  //     expect(setName).toHaveBeenCalledWith(name);
   //   }
-  // }
+  // );
 });

@@ -13,7 +13,7 @@ describe("LabeledSelect component", () => {
         id="id"
         label="label"
         value={value}
-        setValue={(v) => {}}
+        setValue={throwError}
         values={values.map((v) => [v, v])}
       />
     );
@@ -37,7 +37,7 @@ describe("LabeledSelect component", () => {
         id="id"
         label="label"
         value="1"
-        setValue={(v) => {}}
+        setValue={throwError}
         values={values.map((v) => [v, v])}
         valueToName={valueToName}
       />

@@ -44,6 +44,10 @@ global.randomSample = (array, size) => {
   return shuffled.slice(minimum);
 };
 
+global.throwError = () => {
+  throw Error("This should not happen.");
+};
+
 // Mute logging as desired
 
 global.console = {
