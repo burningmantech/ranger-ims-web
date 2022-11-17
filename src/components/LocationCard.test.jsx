@@ -17,7 +17,9 @@ const concentricStreets = function* () {
 const locations = function* () {
   for (const name of [null, "", "Camp Whosit", "Fortress of Solitude"]) {
     for (const description of [null, "", "here", "that one"]) {
-      for (const concentric of [null].concat(Array.from(concentricStreets()))) {
+      for (const concentric of [null].concat(
+        Array.from(concentricStreets(), (c) => c.id)
+      )) {
         for (const hour of [null, 1, 5, 9, 12]) {
           for (const minute of [null, 0, 10, 15, 30, 55]) {
             yield new Location({
@@ -38,6 +40,8 @@ const locations = function* () {
 
 describe("LocationCard component", () => {
   test("selected values", async () => {
+    const _concentricStreets = Array.from(concentricStreets());
+
     for (const location of locations()) {
       render(
         <LocationCard
@@ -46,7 +50,7 @@ describe("LocationCard component", () => {
           locationConcentric={location.address.concentric}
           locationRadialHour={location.address.radialHour}
           locationRadialMinute={location.address.radialMinute}
-          concentricStreets={Array.from(concentricStreets())}
+          concentricStreets={_concentricStreets}
           setLocationName={(v) => {}}
           setLocationDescription={(v) => {}}
           setLocationConcentric={(v) => {}}
@@ -59,26 +63,33 @@ describe("LocationCard component", () => {
       const valueForLabel = (label) => screen.getByLabelText(label + ":").value;
       const valueForID = (id) => document.getElementById(id).value;
 
-      expect(valueForLabel("Name")).toEqual(toString(location.name));
-      expect(valueForLabel("Description")).toEqual(
-        toString(location.address.description)
-      );
+      try {
+        expect(valueForLabel("Name")).toEqual(toString(location.name));
+        expect(valueForLabel("Description")).toEqual(
+          toString(location.address.description)
+        );
 
-      expect(valueForID("incident_location_address_radial_hour")).toEqual(
-        toString(location.address.radialHour)
-      );
-      expect(valueForID("incident_location_address_radial_minute")).toEqual(
-        toString(location.address.radialMinute)
-      );
-      expect(valueForID("incident_location_address_concentric")).toEqual(
-        toString(
-          location.address.concentric == null
-            ? null
-            : location.address.concentric.id
-        )
-      );
+        expect(valueForID("incident_location_address_radial_hour")).toEqual(
+          toString(location.address.radialHour)
+        );
+        expect(valueForID("incident_location_address_radial_minute")).toEqual(
+          toString(location.address.radialMinute)
+        );
+        expect(valueForID("incident_location_address_concentric")).toEqual(
+          toString(
+            location.address.concentric == null
+              ? null
+              : location.address.concentric.id
+          )
+        );
+      } catch (e) {
+        screen.debug();
+        console.info(location);
+        throw e;
+      }
 
       cleanup();
+      break;
     }
   });
 

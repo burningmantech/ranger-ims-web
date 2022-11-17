@@ -89,9 +89,9 @@ const LocationCard = ({
               width="20em"
               value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
-              values={[""]
-                .concat(RodGarettAddress.concentricStreets)
-                .map((c) => [c, c])}
+              values={[["", ""]].concat(
+                concentricStreets.map((c) => [c.id, c.name])
+              )}
             />
           </InputGroup>
         </Col>
