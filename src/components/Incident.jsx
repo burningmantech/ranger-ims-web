@@ -65,7 +65,10 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <SummaryCard summary={incident.summary} />
+          <SummaryCard
+            summary={incident.summary}
+            setSummary={editIncident(ims.setIncidentSummary)}
+          />
         </Col>
       </Row>
 
@@ -78,11 +81,19 @@ const Incident = ({ incident }) => {
             locationRadialHour={incident.location.address.radialHour}
             locationRadialMinute={incident.location.address.radialMinute}
             concentricStreets={concentricStreets}
-            setLocationName
-            setLocationDescription
-            setLocationConcentric
-            setLocationRadialHour
-            setLocationRadialMinute
+            setLocationName={editIncident(ims.setIncidentLocationName)}
+            setLocationDescription={editIncident(
+              ims.setIncidentLocationDescription
+            )}
+            setLocationConcentric={editIncident(
+              ims.setIncidentLocationConcentric
+            )}
+            setLocationRadialHour={editIncident(
+              ims.setIncidentLocationRadialHour
+            )}
+            setLocationRadialMinute={editIncident(
+              ims.setIncidentLocationRadialMinute
+            )}
           />
         </Col>
       </Row>

@@ -613,7 +613,67 @@ export default class IncidentManagementSystem {
 
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
-    console.error("unimplemented");
+    throw new Error("setIncidentState is unimplemented");
+  };
+
+  setIncidentSummary = async (eventID, number, summary) => {
+    console.info(
+      `Updating incident ${eventID}#${number} summary to ${summary}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentSummary is unimplemented");
+  };
+
+  setIncidentLocationName = async (eventID, number, name) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location name to ${name}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationName is unimplemented");
+  };
+
+  setIncidentLocationDescription = async (eventID, number, description) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location description to ${description}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationDescription is unimplemented");
+  };
+
+  setIncidentLocationConcentric = async (eventID, number, concentricStreet) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location concentric street to ${concentricStreet}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationConcentric is unimplemented");
+  };
+
+  setIncidentLocationRadialHour = async (eventID, number, radialHour) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location radial hour to ${radialHour}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationRadialHour is unimplemented");
+  };
+
+  setIncidentLocationRadialMinute = async (eventID, number, radialMinute) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location radial minute to ${radialMinute}...`
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationRadialMinute is unimplemented");
   };
 
   // Search
