@@ -8,17 +8,19 @@ import RodGarettAddress from "../ims/model/RodGarettAddress";
 
 import LocationCard from "./LocationCard";
 
-const concentricStreets = function* () {
+const _concentricStreets = function* () {
   yield new ConcentricStreet("1", "1st Street");
   yield new ConcentricStreet("2", "2nd Street");
   yield new ConcentricStreet("3", "3rd Street");
 };
 
+const concentricStreets = Array.from(_concentricStreets());
+
 const locations = function* () {
   for (const name of [null, "", "Camp Whosit", "Fortress of Solitude"]) {
     for (const description of [null, "", "here", "that one"]) {
       for (const concentric of [null].concat(
-        Array.from(concentricStreets(), (c) => c.id)
+        Array.from(concentricStreets, (c) => c.id)
       )) {
         for (const hour of [null, 1, 5, 9, 12]) {
           for (const minute of [null, 0, 10, 15, 30, 55]) {
@@ -40,8 +42,6 @@ const locations = function* () {
 
 describe("LocationCard component", () => {
   test("selected values", async () => {
-    const _concentricStreets = Array.from(concentricStreets());
-
     for (const location of locations()) {
       render(
         <LocationCard
@@ -50,7 +50,7 @@ describe("LocationCard component", () => {
           locationConcentric={location.address.concentric}
           locationRadialHour={location.address.radialHour}
           locationRadialMinute={location.address.radialMinute}
-          concentricStreets={_concentricStreets}
+          concentricStreets={concentricStreets}
           setLocationName={(v) => {}}
           setLocationDescription={(v) => {}}
           setLocationConcentric={(v) => {}}
@@ -76,11 +76,7 @@ describe("LocationCard component", () => {
           toString(location.address.radialMinute)
         );
         expect(valueForID("incident_location_address_concentric")).toEqual(
-          toString(
-            location.address.concentric == null
-              ? null
-              : location.address.concentric.id
-          )
+          toString(location.address.concentric)
         );
       } catch (e) {
         screen.debug();
@@ -89,7 +85,6 @@ describe("LocationCard component", () => {
       }
 
       cleanup();
-      break;
     }
   });
 
