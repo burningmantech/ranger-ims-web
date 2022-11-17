@@ -5,7 +5,9 @@ import userEvent from "@testing-library/user-event";
 import LabeledSelect from "./LabeledSelect";
 
 describe("LabeledSelect component", () => {
-  const test_valueSelected = async (value, values) => {
+  const values = ["1", "2", "3", "4"];
+
+  test.each(values)("start value selected (%s)", async (value) => {
     render(
       <LabeledSelect
         id="id"
@@ -19,16 +21,7 @@ describe("LabeledSelect component", () => {
     const select = screen.getByLabelText("label:");
 
     expect(select.value).toEqual(value);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const value of values) {
-      test(`start value selected (${value})`, async () => {
-        await test_valueSelected(value, values);
-      });
-    }
-  }
+  });
 
   // const test_newValueSelected = async (value, values, nextValue) => {
   //   console.log(`${value} -> ${nextValue}`);
@@ -89,35 +82,27 @@ describe("LabeledSelect component", () => {
   //   }
   // });
 
-  const test_setValue = async (value, values, nextValue) => {
-    const setValue = jest.fn();
+  test.each(cartesian(values, values))(
+    "onChange callback (%s, %d)",
+    async (value, nextValue) => {
+      const setValue = jest.fn();
 
-    render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        value={value}
-        setValue={setValue}
-        values={values.map((v) => [v, v])}
-      />
-    );
+      render(
+        <LabeledSelect
+          id="id"
+          label="label"
+          value={value}
+          setValue={setValue}
+          values={values.map((v) => [v, v])}
+        />
+      );
 
-    const select = screen.getByLabelText("label:");
+      const select = screen.getByLabelText("label:");
 
-    await userEvent.selectOptions(select, [nextValue]);
+      await userEvent.selectOptions(select, [nextValue]);
 
-    expect(setValue).toHaveBeenCalledTimes(1);
-    expect(setValue).toHaveBeenCalledWith(nextValue);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const value of values) {
-      for (const nextValue of values) {
-        test(`onChange callback (${value}, ${nextValue})`, async () => {
-          await test_setValue(value, values, nextValue);
-        });
-      }
+      expect(setValue).toHaveBeenCalledTimes(1);
+      expect(setValue).toHaveBeenCalledWith(nextValue);
     }
-  }
+  );
 });

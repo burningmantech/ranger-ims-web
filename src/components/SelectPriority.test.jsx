@@ -7,19 +7,16 @@ import Incident from "../ims/model/Incident";
 import SelectPriority from "./SelectPriority";
 
 describe("SelectPriority component", () => {
-  const test_startPrioritySelected = async (priority) => {
-    render(<SelectPriority priority={priority} setPriority={() => {}} />);
+  test.each(Incident.priorities)(
+    "start priority selected (%s)",
+    async (priority) => {
+      render(<SelectPriority priority={priority} setPriority={() => {}} />);
 
-    const select = screen.getByLabelText("Priority:");
+      const select = screen.getByLabelText("Priority:");
 
-    expect(parseInt(select.value)).toEqual(priority);
-  };
-
-  for (const priority of Incident.priorities) {
-    test(`start priority selected (${priority})`, async () => {
-      await test_startPrioritySelected(priority);
-    });
-  }
+      expect(parseInt(select.value)).toEqual(priority);
+    }
+  );
 
   // const test_newPrioritySelected = async (startPriority, nextPriority) => {
   //   console.log(`${startPriority} -> ${nextPriority}`);
@@ -41,7 +38,14 @@ describe("SelectPriority component", () => {
   //   }
   // }
 
-  const test_setPriorityCallback = async (startPriority, nextPriority) => {
+  test.each(
+    Array.from(Incident.priorities, (start) =>
+      Array.from(Incident.nonDeprecatedPriorities(start), (next) => [
+        start,
+        next,
+      ])
+    ).flat()
+  )("setPriority callback (%s, %s)", async (startPriority, nextPriority) => {
     const setPriority = jest.fn();
 
     render(
@@ -54,15 +58,13 @@ describe("SelectPriority component", () => {
 
     expect(setPriority).toHaveBeenCalledTimes(1);
     expect(setPriority).toHaveBeenCalledWith(nextPriority); // expect integer here
-  };
+  });
 
-  for (const startPriority of Incident.priorities) {
-    const nonDeprecatedPriorities =
-      Incident.nonDeprecatedPriorities(startPriority);
-    for (const nextPriority of nonDeprecatedPriorities) {
-      test(`setPriority callback (${startPriority}, ${nextPriority})`, async () => {
-        await test_setPriorityCallback(startPriority, nextPriority);
-      });
-    }
-  }
+  // for (const startPriority of Incident.priorities) {
+  //   const nonDeprecatedPriorities =
+  //     Incident.nonDeprecatedPriorities(startPriority);
+  //   for (const nextPriority of nonDeprecatedPriorities) {
+  //     ...
+  //   }
+  // }
 });

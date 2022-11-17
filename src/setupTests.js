@@ -23,6 +23,12 @@ global.waitForElementNotToBePresent = async (elementGetter) => {
   });
 };
 
+// Useful for generating test data
+
+global.cartesian = (...a) => {
+  return a.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+};
+
 // Mute logging as desired
 
 global.console = {

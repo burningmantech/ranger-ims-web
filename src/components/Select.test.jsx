@@ -7,7 +7,9 @@ import Label from "./Label";
 import Select from "./Select";
 
 describe("Select component", () => {
-  const test_valueSelected = async (value, values) => {
+  const values = ["1", "2", "3", "4"];
+
+  test.each(values)("start value selected (%s)", async (value) => {
     render(
       <FormGroup>
         <Label id="select_id" label="label" />
@@ -24,16 +26,7 @@ describe("Select component", () => {
     const select = screen.getByLabelText("label:");
 
     expect(select.value).toEqual(value);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const value of values) {
-      test(`start value selected (${value})`, async () => {
-        await test_valueSelected(value, values);
-      });
-    }
-  }
+  });
 
   // const test_newValueSelected = async (value, values, nextValue) => {
   //   console.log(`${value} -> ${nextValue}`);
@@ -100,38 +93,30 @@ describe("Select component", () => {
     }
   });
 
-  const test_onChangeCallback = async (value, values, nextValue) => {
-    const setValue = jest.fn();
+  test.each(cartesian(values, values))(
+    "onChange callback (%s, %s)",
+    async (value, nextValue) => {
+      const setValue = jest.fn();
 
-    render(
-      <FormGroup>
-        <Label id="select_id" label="label" />
-        <Select
-          id="select_id"
-          width="auto"
-          value={value}
-          setValue={setValue}
-          values={values.map((v) => [v, v])}
-        />
-      </FormGroup>
-    );
+      render(
+        <FormGroup>
+          <Label id="select_id" label="label" />
+          <Select
+            id="select_id"
+            width="auto"
+            value={value}
+            setValue={setValue}
+            values={values.map((v) => [v, v])}
+          />
+        </FormGroup>
+      );
 
-    const select = screen.getByLabelText("label:");
+      const select = screen.getByLabelText("label:");
 
-    await userEvent.selectOptions(select, [nextValue]);
+      await userEvent.selectOptions(select, [nextValue]);
 
-    expect(setValue).toHaveBeenCalledTimes(1);
-    expect(setValue).toHaveBeenCalledWith(nextValue);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const value of values) {
-      for (const nextValue of values) {
-        test(`onChange callback (${value}, ${nextValue})`, async () => {
-          await test_onChangeCallback(value, values, nextValue);
-        });
-      }
+      expect(setValue).toHaveBeenCalledTimes(1);
+      expect(setValue).toHaveBeenCalledWith(nextValue);
     }
-  }
+  );
 });

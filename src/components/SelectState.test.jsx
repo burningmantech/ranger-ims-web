@@ -7,19 +7,13 @@ import Incident from "../ims/model/Incident";
 import SelectState from "./SelectState";
 
 describe("SelectState component", () => {
-  const test_startStateSelected = async (state) => {
+  test.each(Incident.states)("start state selected (%s)", async (state) => {
     render(<SelectState state={state} setState={() => {}} />);
 
     const select = screen.getByLabelText("State:");
 
     expect(select.value).toEqual(state);
-  };
-
-  for (const state of Incident.states) {
-    test(`start state selected (${state})`, async () => {
-      await test_startStateSelected(state);
-    });
-  }
+  });
 
   // const test_newStateSelected = async (startState, nextState) => {
   //   console.log(`${startState} -> ${nextState}`);
@@ -41,24 +35,19 @@ describe("SelectState component", () => {
   //   }
   // }
 
-  const test_onChangeCallback = async (startState, nextState) => {
-    const setState = jest.fn();
+  test.each(cartesian(Incident.states, Incident.states))(
+    "onChange callback (%s, %s)",
+    async (startState, nextState) => {
+      const setState = jest.fn();
 
-    render(<SelectState state={startState} setState={setState} />);
+      render(<SelectState state={startState} setState={setState} />);
 
-    const select = screen.getByLabelText("State:");
+      const select = screen.getByLabelText("State:");
 
-    await userEvent.selectOptions(select, [nextState]);
+      await userEvent.selectOptions(select, [nextState]);
 
-    expect(setState).toHaveBeenCalledTimes(1);
-    expect(setState).toHaveBeenCalledWith(nextState);
-  };
-
-  for (const startState of Incident.states) {
-    for (const nextState of Incident.states) {
-      test(`onChange callback (${startState}, ${nextState})`, async () => {
-        await test_onChangeCallback(startState, nextState);
-      });
+      expect(setState).toHaveBeenCalledTimes(1);
+      expect(setState).toHaveBeenCalledWith(nextState);
     }
-  }
+  );
 });
