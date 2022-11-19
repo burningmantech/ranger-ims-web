@@ -88,7 +88,7 @@ describe("LocationCard component", () => {
     }
   });
 
-  // test.only.each(cartesian(randomSample(locations, 1), names))(
+  // test.only.each(cartesian(randomSample(locations, 1), names.filter((v,i) => v != null)))(
   //   "change name: %s -> %s",
   //   async (location, name) => {
   //     const setName = jest.fn();
@@ -111,7 +111,17 @@ describe("LocationCard component", () => {
 
   //     const textField = screen.getByLabelText("Name:");
 
-  //     await userEvent.type(textField, name);
+  //     console.info(location);
+  //     console.info(name);
+  //     console.info(textField);
+  //     screen.debug();
+
+  //     expect(textField).toBeInTheDocument();
+
+  //     await userEvent.clear(textField);
+  //     if (name) {
+  //       await userEvent.type(textField, name);
+  //     }
 
   //     expect(setName).toHaveBeenCalledTimes(1);
   //     expect(setName).toHaveBeenCalledWith(name);

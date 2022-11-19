@@ -800,10 +800,10 @@ describe("IMS: events", () => {
 });
 
 describe("IMS: concentric streets", () => {
-  test("allConcentricStreets, ok", async () => {
+  test("concentricStreetsByEvent, ok", async () => {
     const ims = await testIncidentManagementSystem().asHubcap();
 
-    const eventMap = await ims.allConcentricStreets();
+    const eventMap = await ims.concentricStreetsByEvent();
 
     expect(Array.from(eventMap.keys()).sort()).toEqual(
       Array.from(Object.keys(ims.testData.streets)).sort()
@@ -818,12 +818,12 @@ describe("IMS: concentric streets", () => {
     }
   });
 
-  test("allConcentricStreets, failed", async () => {
+  test("concentricStreetsByEvent, failed", async () => {
     const ims = await testIncidentManagementSystem();
     ims.testData.bag.urls.streets = "/forbidden";
     ims.asHubcap();
 
-    await expect(ims.allConcentricStreets()).toRejectWithMessage(
+    await expect(ims.concentricStreetsByEvent()).toRejectWithMessage(
       "Failed to retrieve concentric streets."
     );
   });

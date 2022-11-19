@@ -478,7 +478,7 @@ export default class IncidentManagementSystem {
 
   _concentricStreetsStoreKey = "concentric streets";
 
-  allConcentricStreets = async () => {
+  concentricStreetsByEvent = async () => {
     const deserialize = (json) => {
       return new Map(
         // Convert [eventID, streetsJSON] to [eventID, streetsMap]
@@ -526,8 +526,8 @@ export default class IncidentManagementSystem {
   };
 
   concentricStreets = async (eventID) => {
-    const allConcentricStreetsMap = await this.allConcentricStreets();
-    const concentricStreets = allConcentricStreetsMap.get(eventID);
+    const concentricStreetsByEvent = await this.concentricStreetsByEvent();
+    const concentricStreets = concentricStreetsByEvent.get(eventID);
     if (concentricStreets === undefined) {
       throw new Error(`No streets found for event with ID: ${eventID}`);
     }

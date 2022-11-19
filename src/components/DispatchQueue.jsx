@@ -13,7 +13,7 @@ import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import { URLs } from "../URLs";
-import { useAllConcentricStreets, useIncidents } from "../ims/effects";
+import { useConcentricStreetsByEvent, useIncidents } from "../ims/effects";
 import Incident from "../ims/model/Incident";
 
 import Loading from "../components/Loading";
@@ -190,10 +190,11 @@ export const formatArrayOfStrings = (strings) => {
 
 // Table hook
 
-const useDispatchQueueTable = (incidents, allConcentricStreets) => {
-  allConcentricStreets = useMemo(
-    () => (allConcentricStreets == null ? new Map() : allConcentricStreets),
-    [allConcentricStreets]
+const useDispatchQueueTable = (incidents, concentricStreetsByEvent) => {
+  concentricStreetsByEvent = useMemo(
+    () =>
+      concentricStreetsByEvent == null ? new Map() : concentricStreetsByEvent,
+    [concentricStreetsByEvent]
   );
 
   // See: https://react-table.tanstack.com/docs/overview
@@ -232,7 +233,7 @@ const useDispatchQueueTable = (incidents, allConcentricStreets) => {
         accessor: (incident) =>
           formatLocation(
             incident.location,
-            allConcentricStreets.get(incident.eventID)
+            concentricStreetsByEvent.get(incident.eventID)
           ),
         Header: "Location",
       },
@@ -247,7 +248,7 @@ const useDispatchQueueTable = (incidents, allConcentricStreets) => {
         Header: "Summary",
       },
     ],
-    [allConcentricStreets]
+    [concentricStreetsByEvent]
   );
 
   return useTable(
@@ -595,9 +596,11 @@ const DispatchQueue = ({ event }) => {
 
   // Fetch concentric street data
 
-  const [allConcentricStreets, setAllConcentricStreets] = useState();
+  const [concentricStreetsByEvent, setConcentricStreetsByEvent] = useState();
 
-  useAllConcentricStreets({ setAllConcentricStreets: setAllConcentricStreets });
+  useConcentricStreetsByEvent({
+    setConcentricStreetsByEvent: setConcentricStreetsByEvent,
+  });
 
   // Fetch incident data
 
@@ -609,7 +612,7 @@ const DispatchQueue = ({ event }) => {
     searchInput: searchInput,
   });
 
-  const table = useDispatchQueueTable(incidents, allConcentricStreets);
+  const table = useDispatchQueueTable(incidents, concentricStreetsByEvent);
 
   // Render
 
@@ -618,8 +621,8 @@ const DispatchQueue = ({ event }) => {
       <h1>Dispatch Queue: {event.name}</h1>
 
       <Loading
-        condition={allConcentricStreets}
-        error={allConcentricStreets === null}
+        condition={concentricStreetsByEvent}
+        error={concentricStreetsByEvent === null}
         what={"concentric street names"}
       />
 
