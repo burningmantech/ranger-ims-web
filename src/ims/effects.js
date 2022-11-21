@@ -220,7 +220,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
     const fetchConcentricStreets = async () => {
       const concentricStreets = await tryWithFallback(
         `fetch concentric streets for event ${eventID}`,
-        [],
+        new Map(),
         ims.concentricStreets,
         eventID
       );
