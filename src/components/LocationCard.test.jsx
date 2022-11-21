@@ -45,7 +45,7 @@ describe("LocationCard component", () => {
 
   const locations = Array.from(_locations());
 
-  test.each(randomSample(locations, 500))("selected values: %s", (location) => {
+  test.each(randomSample(locations, 100))("selected values: %s", (location) => {
     render(
       <LocationCard
         locationName={location.name}
@@ -88,7 +88,7 @@ describe("LocationCard component", () => {
     }
   });
 
-  test.each(cartesian(randomSample(locations, 100), names))(
+  test.each(cartesian(randomSample(locations, 100), randomSample(names, 4)))(
     "change name: %s -> %s",
     async (location, name) => {
       const setName = jest.fn();
@@ -118,6 +118,120 @@ describe("LocationCard component", () => {
 
       if ((name || location.name) && name != location.name) {
         expect(setName).toHaveBeenCalledWith(name == null ? "" : name);
+      }
+    }
+  );
+
+  test.each(
+    cartesian(randomSample(locations, 100), randomSample(descriptions, 4))
+  )("change description: %s -> %s", async (location, description) => {
+    const setDescription = jest.fn();
+
+    render(
+      <LocationCard
+        locationName={location.name}
+        locationDescription={location.address.description}
+        locationConcentric={location.address.concentric}
+        locationRadialHour={location.address.radialHour}
+        locationRadialMinute={location.address.radialMinute}
+        concentricStreets={concentricStreets}
+        setLocationName={throwError}
+        setLocationDescription={setDescription}
+        setLocationConcentric={throwError}
+        setLocationRadialHour={throwError}
+        setLocationRadialMinute={throwError}
+      />
+    );
+
+    const textField = screen.getByLabelText("Description:");
+
+    await userEvent.clear(textField);
+    if (description) {
+      await userEvent.type(textField, description);
+    }
+
+    if (
+      (description || location.description) &&
+      description != location.description
+    ) {
+      expect(setDescription).toHaveBeenCalledWith(
+        description == null ? "" : description
+      );
+    }
+  });
+
+  test.each(cartesian(randomSample(locations, 100), randomSample(hours, 14)))(
+    "change hour: %s -> %s",
+    async (location, hour) => {
+      const setHour = jest.fn();
+
+      render(
+        <LocationCard
+          locationName={location.name}
+          locationDescription={location.address.description}
+          locationConcentric={location.address.concentric}
+          locationRadialHour={location.address.radialHour}
+          locationRadialMinute={location.address.radialMinute}
+          concentricStreets={concentricStreets}
+          setLocationName={throwError}
+          setLocationDescription={throwError}
+          setLocationConcentric={throwError}
+          setLocationRadialHour={setHour}
+          setLocationRadialMinute={throwError}
+        />
+      );
+
+      const select = document.getElementById(
+        "incident_location_address_radial_hour"
+      );
+
+      await userEvent.selectOptions(select, [
+        hour == null ? "" : hour.toString(),
+      ]);
+
+      if (
+        (hour || location.address.radialHour) &&
+        hour != location.address.radialHour
+      ) {
+        expect(setHour).toHaveBeenCalledWith(hour == null ? "" : hour);
+      }
+    }
+  );
+
+  test.each(cartesian(randomSample(locations, 100), randomSample(minutes, 14)))(
+    "change minute: %s -> %s",
+    async (location, minute) => {
+      const setMinute = jest.fn();
+
+      render(
+        <LocationCard
+          locationName={location.name}
+          locationDescription={location.address.description}
+          locationConcentric={location.address.concentric}
+          locationRadialHour={location.address.radialHour}
+          locationRadialMinute={location.address.radialMinute}
+          concentricStreets={concentricStreets}
+          setLocationName={throwError}
+          setLocationDescription={throwError}
+          setLocationConcentric={throwError}
+          setLocationRadialHour={throwError}
+          setLocationRadialMinute={setMinute}
+        />
+      );
+
+      const select = document.getElementById(
+        "incident_location_address_radial_minute"
+      );
+
+      await userEvent.selectOptions(select, [
+        minute == null ? "" : minute.toString(),
+      ]);
+
+      if (
+        (minute || location.address.radialMinute) &&
+        minute != location.address.radialMinute
+      ) {
+        expect(setMinute).toHaveBeenCalledWith(minute == null ? "" : minute);
       }
     }
   );

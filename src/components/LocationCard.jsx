@@ -68,7 +68,7 @@ const LocationCard = ({
               id="incident_location_address_radial_hour"
               width="auto"
               value={locationRadialHour == null ? "" : locationRadialHour}
-              setValue={(s) => setLocationRadialHour(parseInt(s))}
+              setValue={(s) => setLocationRadialHour(s ? parseInt(s) : "")}
               values={[""]
                 .concat(RodGarettAddress.radialHours)
                 .map((h) => [h, h])}
@@ -78,7 +78,7 @@ const LocationCard = ({
               id="incident_location_address_radial_minute"
               width="5em"
               value={locationRadialMinute == null ? "" : locationRadialMinute}
-              setValue={(s) => setLocationRadialMinute(parseInt(s))}
+              setValue={(s) => setLocationRadialMinute(s ? parseInt(s) : "")}
               values={[""]
                 .concat(RodGarettAddress.radialMinutes)
                 .map((m) => [m, m])}
