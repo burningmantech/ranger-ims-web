@@ -88,43 +88,37 @@ describe("LocationCard component", () => {
     }
   });
 
-  // test.only.each(cartesian(randomSample(locations, 1), names.filter((v,i) => v != null)))(
-  //   "change name: %s -> %s",
-  //   async (location, name) => {
-  //     const setName = jest.fn();
+  test.each(cartesian(randomSample(locations, 100), names))(
+    "change name: %s -> %s",
+    async (location, name) => {
+      const setName = jest.fn();
 
-  //     render(
-  //       <LocationCard
-  //         locationName={location.name}
-  //         locationDescription={location.address.description}
-  //         locationConcentric={location.address.concentric}
-  //         locationRadialHour={location.address.radialHour}
-  //         locationRadialMinute={location.address.radialMinute}
-  //         concentricStreets={concentricStreets}
-  //         setLocationName={setName}
-  //         setLocationDescription={throwError}
-  //         setLocationConcentric={throwError}
-  //         setLocationRadialHour={throwError}
-  //         setLocationRadialMinute={throwError}
-  //       />
-  //     );
+      render(
+        <LocationCard
+          locationName={location.name}
+          locationDescription={location.address.description}
+          locationConcentric={location.address.concentric}
+          locationRadialHour={location.address.radialHour}
+          locationRadialMinute={location.address.radialMinute}
+          concentricStreets={concentricStreets}
+          setLocationName={setName}
+          setLocationDescription={throwError}
+          setLocationConcentric={throwError}
+          setLocationRadialHour={throwError}
+          setLocationRadialMinute={throwError}
+        />
+      );
 
-  //     const textField = screen.getByLabelText("Name:");
+      const textField = screen.getByLabelText("Name:");
 
-  //     console.info(location);
-  //     console.info(name);
-  //     console.info(textField);
-  //     screen.debug();
+      await userEvent.clear(textField);
+      if (name) {
+        await userEvent.type(textField, name);
+      }
 
-  //     expect(textField).toBeInTheDocument();
-
-  //     await userEvent.clear(textField);
-  //     if (name) {
-  //       await userEvent.type(textField, name);
-  //     }
-
-  //     expect(setName).toHaveBeenCalledTimes(1);
-  //     expect(setName).toHaveBeenCalledWith(name);
-  //   }
-  // );
+      if ((name || location.name) && name != location.name) {
+        expect(setName).toHaveBeenCalledWith(name == null ? "" : name);
+      }
+    }
+  );
 });

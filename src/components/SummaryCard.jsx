@@ -1,9 +1,13 @@
+import invariant from "invariant";
+
 import FormGroup from "./FormGroup";
 import Label from "./Label";
 import LabeledTextField from "./LabeledTextField";
 import Well from "./Well";
 
-const SummaryCard = ({ summary }) => {
+const SummaryCard = ({ summary, setSummary }) => {
+  invariant(setSummary != null, "setSummary property is required");
+
   return (
     <Well id="incident_summary_card">
       <FormGroup>
@@ -11,6 +15,7 @@ const SummaryCard = ({ summary }) => {
         <LabeledTextField
           id="incident_summary"
           value={summary}
+          setValue={setSummary}
           placeholder="One-line summary of incident"
         />
       </FormGroup>
