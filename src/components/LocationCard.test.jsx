@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import ConcentricStreet from "../ims/model/ConcentricStreet";
 import Location from "../ims/model/Location";
 import RodGarettAddress from "../ims/model/RodGarettAddress";
-
+import { cartesian, randomSample } from "../test/data";
 import LocationCard from "./LocationCard";
 
 describe("LocationCard component", () => {

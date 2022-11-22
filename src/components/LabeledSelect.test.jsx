@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { cartesian } from "../test/data";
 import LabeledSelect from "./LabeledSelect";
 
 describe("LabeledSelect component", () => {
