@@ -13,12 +13,12 @@ describe("LocationCard component", () => {
   const descriptions = [null, "", "that one"];
   const hours = [null, 1, 12];
   const minutes = [null, 0, 55];
-  const concentricStreets = [
-    new ConcentricStreet("1", "1st Street"),
-    new ConcentricStreet("2", "2nd Street"),
-  ];
-  const concentricStreetIDs = Array.from([null] + concentricStreets, (c) =>
-    c == null ? null : c.id
+  const concentricStreets = new Map([
+    ["1", new ConcentricStreet("1", "1st Street")],
+    ["2", new ConcentricStreet("2", "2nd Street")],
+  ]);
+  const concentricStreetIDs = [null].concat(
+    Array.from(concentricStreets.keys())
   );
 
   const _locations = function* () {
@@ -160,7 +160,52 @@ describe("LocationCard component", () => {
     }
   });
 
-  test.each(cartesian(randomSample(locations, 100), randomSample(hours, 14)))(
+  test.each(
+    cartesian(
+      randomSample(locations, 100),
+      randomSample(concentricStreetIDs, 4)
+    )
+  )(
+    "change concentric street: %s -> %s",
+    async (location, concentricStreetID) => {
+      const setConcentricStreet = jest.fn();
+
+      render(
+        <LocationCard
+          locationName={location.name}
+          locationDescription={location.address.description}
+          locationConcentric={location.address.concentric}
+          locationRadialHour={location.address.radialHour}
+          locationRadialMinute={location.address.radialMinute}
+          concentricStreets={concentricStreets}
+          setLocationName={throwError}
+          setLocationDescription={throwError}
+          setLocationConcentric={setConcentricStreet}
+          setLocationRadialHour={throwError}
+          setLocationRadialMinute={throwError}
+        />
+      );
+
+      const select = document.getElementById(
+        "incident_location_address_concentric"
+      );
+
+      await userEvent.selectOptions(select, [
+        concentricStreetID == null ? "" : concentricStreetID,
+      ]);
+
+      if (
+        (concentricStreetID || location.address.concentric) &&
+        concentricStreetID != location.address.concentric
+      ) {
+        expect(setConcentricStreet).toHaveBeenCalledWith(
+          concentricStreetID == null ? "" : concentricStreetID
+        );
+      }
+    }
+  );
+
+  test.each(cartesian(randomSample(locations, 100), randomSample(hours, 4)))(
     "change hour: %s -> %s",
     async (location, hour) => {
       const setHour = jest.fn();
@@ -198,7 +243,7 @@ describe("LocationCard component", () => {
     }
   );
 
-  test.each(cartesian(randomSample(locations, 100), randomSample(minutes, 14)))(
+  test.each(cartesian(randomSample(locations, 100), randomSample(minutes, 4)))(
     "change minute: %s -> %s",
     async (location, minute) => {
       const setMinute = jest.fn();

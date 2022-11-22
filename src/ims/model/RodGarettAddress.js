@@ -34,7 +34,7 @@ export default class RodGarettAddress {
     radialMinute = null,
   }) {
     this.description = description; // text description
-    this.concentric = concentric; // text ID for road
+    this.concentric = concentric; // text ID for concentric street
     this.radialHour = radialHour; // integer 1-12
     this.radialMinute = radialMinute; // integer 0-59
   }

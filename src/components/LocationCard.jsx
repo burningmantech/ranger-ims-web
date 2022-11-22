@@ -90,7 +90,7 @@ const LocationCard = ({
               value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
               values={[["", ""]].concat(
-                Array.from(concentricStreets.entries, (id, c) => [c.id, c.name])
+                Array.from(concentricStreets.values(), (c) => [c.id, c.name])
               )}
             />
           </InputGroup>
