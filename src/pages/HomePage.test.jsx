@@ -9,16 +9,9 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
+import { waitForNavBar } from "../test/wait";
 
 import HomePage from "./HomePage";
-
-export const waitForEffects = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
-  );
-};
 
 describe("HomePage component", () => {
   test("heading", async () => {
@@ -31,7 +24,7 @@ describe("HomePage component", () => {
       <HomePage user={user} />,
       testIncidentManagementSystem()
     );
-    await waitForEffects();
+    await waitForNavBar();
 
     expect(
       await screen.findByText("Ranger Incident Management System")

@@ -8,16 +8,9 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../../ims/TestIMS";
+import { waitForNavEvents } from "../../test/wait";
 
 import EventDropdown from "./EventDropdown";
-
-export const waitForEffects = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
-  );
-};
 
 describe("EventDropdown component", () => {
   test("id", async () => {
@@ -25,7 +18,7 @@ describe("EventDropdown component", () => {
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 
   test("loading events", async () => {
@@ -33,7 +26,7 @@ describe("EventDropdown component", () => {
 
     renderWithIMSContext(<EventDropdown />, ims);
 
-    const p = waitForEffects();
+    const p = waitForNavEvents();
 
     for (const event of await ims.events()) {
       expect(screen.queryByText(event.name)).not.toBeInTheDocument();
@@ -66,7 +59,7 @@ describe("EventDropdown component", () => {
     ims.testData.events = [];
 
     renderWithIMSContext(<EventDropdown />, ims);
-    await waitForEffects();
+    await waitForNavEvents();
 
     expect(screen.getByText("No events found")).toBeInTheDocument();
   });
@@ -75,7 +68,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     renderWithIMSContext(<EventDropdown />, ims);
-    await waitForEffects();
+    await waitForNavEvents();
 
     const eventNames = Array.from(
       document.getElementsByClassName("nav_event_id"),
@@ -91,7 +84,7 @@ describe("EventDropdown component", () => {
     const ims = testIncidentManagementSystem();
 
     renderWithIMSContext(<EventDropdown />, ims);
-    await waitForEffects();
+    await waitForNavEvents();
 
     for (const event of await ims.events()) {
       const url = new URL(screen.getByText(event.name).href);

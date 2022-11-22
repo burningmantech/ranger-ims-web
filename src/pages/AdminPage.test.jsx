@@ -8,19 +8,12 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
-
-export const waitForEffects = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
-  );
-};
+import { waitForNavBar } from "../test/wait";
 
 describe("AdminPage component", () => {
   test("heading", async () => {
     renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
-    await waitForEffects();
+    await waitForNavBar();
 
     expect(await screen.findByText("Admin Console")).toBeInTheDocument();
   });

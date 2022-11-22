@@ -11,18 +11,6 @@ import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import flushPromises from "flush-promises";
 
-// waitForElementToBeRemoved errors out if the element isn't there at least
-// once, and that's causing grief.
-// Possible issue:
-//   https://github.com/testing-library/react-testing-library/issues/865
-// We see the same flakiness, but it's not clear that it's the same root cause.
-
-global.waitForElementNotToBePresent = async (elementGetter) => {
-  await waitFor(() => {
-    expect(elementGetter()).not.toBeInTheDocument();
-  });
-};
-
 // Useful for generating test data
 
 global.cartesian = (...a) => {

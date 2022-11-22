@@ -12,6 +12,7 @@ import {
 } from "../ims/TestIMS";
 import Location from "../ims/model/Location";
 import RodGarettAddress from "../ims/model/RodGarettAddress";
+import { waitForConcentricStreets, waitForIncidents } from "../test/wait";
 
 import {
   defaultPageSize,
@@ -29,18 +30,6 @@ import {
   UnknownPriorityIcon,
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
-
-export const waitForConcentricStreets = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
-  );
-};
-
-export const waitForIncidents = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
-  );
-};
 
 export const waitForEffects = async () => {
   await Promise.all([waitForIncidents(), waitForConcentricStreets()]);

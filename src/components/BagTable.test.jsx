@@ -5,10 +5,10 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
-
+import { waitForElementNotToBePresent } from "../test/wait";
 import BagTable from "./BagTable";
 
-export const waitForEffects = async () => {
+export const waitForURLBag = async () => {
   await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading URL bag…")
   );
@@ -17,14 +17,14 @@ export const waitForEffects = async () => {
 describe("BagTable component", () => {
   test("id", async () => {
     renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-    await waitForEffects();
+    await waitForURLBag();
 
     expect(document.getElementById("bag_table")).toBeInTheDocument();
   });
 
   test("caption", async () => {
     renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
-    await waitForEffects();
+    await waitForURLBag();
 
     expect(await screen.findByText("IMS Bag")).toBeInTheDocument();
   });
@@ -32,7 +32,7 @@ describe("BagTable component", () => {
   test("loading bag", async () => {
     renderWithIMSContext(<BagTable />, testIncidentManagementSystem());
     expect(screen.getByText("Loading URL bag…")).toBeInTheDocument();
-    await waitForEffects();
+    await waitForURLBag();
   });
 
   test("bag fails to load", async () => {
@@ -46,7 +46,7 @@ describe("BagTable component", () => {
     const spy = jest.spyOn(console, "warn");
 
     renderWithIMSContext(<BagTable />, ims);
-    await waitForEffects();
+    await waitForURLBag();
 
     expect(
       await screen.findByText("Failed to load URL bag.")

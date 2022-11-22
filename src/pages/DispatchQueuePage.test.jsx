@@ -6,29 +6,15 @@ import {
   DispatchQueuePage,
   RoutedDispatchQueuePage,
 } from "./DispatchQueuePage";
-
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
-
-export const waitForEvent = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…")
-  );
-};
-
-export const waitForConcentricStreets = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
-  );
-};
-
-export const waitForIncidents = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
-  );
-};
+import {
+  waitForConcentricStreets,
+  waitForEvent,
+  waitForIncidents,
+} from "../test/wait";
 
 export const waitForEffects = async () => {
   await waitForEvent();

@@ -4,6 +4,13 @@ import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 import { testIncidentManagementSystem } from "./ims/TestIMS";
+import {
+  waitForConcentricStreets,
+  waitForElementNotToBePresent,
+  waitForEvent,
+  waitForIncidents,
+  waitForNavBar,
+} from "./test/wait";
 import { URLs } from "./URLs";
 import App from "./App";
 
@@ -13,32 +20,6 @@ export const waitForPage = async () => {
 
 export const waitForLogin = async () => {
   return await screen.findByText("Log In");
-};
-
-export const waitForNavEvents = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
-  );
-};
-
-export const waitForEvent = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…")
-  );
-};
-
-export const waitForConcentricStreets = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
-  );
-};
-
-export const waitForIncidents = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
-  );
 };
 
 export const waitForDispatchQueue = async () => {
@@ -101,7 +82,7 @@ describe("App component", () => {
       await screen.findByText("Ranger Incident Management System")
     ).toBeInTheDocument();
 
-    await waitForNavEvents();
+    await waitForNavBar();
   });
 
   test("load app -> invalid log in -> no content", async () => {
@@ -139,7 +120,7 @@ describe("App component", () => {
       await screen.findByText("Ranger Incident Management System")
     ).toBeInTheDocument();
 
-    await waitForNavEvents();
+    await waitForNavBar();
   });
 
   test.each(["1", "2", "3", "4", "empty"])(
@@ -167,7 +148,7 @@ describe("App component", () => {
 
     expect(await screen.findByText("Admin Console")).toBeInTheDocument();
 
-    await waitForNavEvents();
+    await waitForNavBar();
   });
 
   test("not found", async () => {
@@ -178,6 +159,6 @@ describe("App component", () => {
     expect(await screen.findByText("Resource not found:")).toBeInTheDocument();
     expect(screen.queryByText("Loading page…")).not.toBeInTheDocument();
 
-    await waitForNavEvents();
+    await waitForNavBar();
   });
 });
