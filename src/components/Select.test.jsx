@@ -29,40 +29,6 @@ describe("Select component", () => {
     expect(select.value).toEqual(value);
   });
 
-  // const test_newValueSelected = async (value, values, nextValue) => {
-  //   console.log(`${value} -> ${nextValue}`);
-
-  //   render(
-  //     <FormGroup>
-  //       <Label id="select_id" label="label" />
-  //       <Select
-  //         id="select_id"
-  //         width="auto"
-  //         value={value}
-  //         setValue={() => {}}
-  //         values={values.map((v) => [v, v])}
-  //       />
-  //     </FormGroup>
-  //   );
-
-  //   const select = screen.getByLabelText("label:");
-
-  //   await userEvent.selectOptions(select, [nextValue]);
-
-  //   expect(select.value).toEqual(nextValue);
-  // };
-
-  // {
-  //   const values = ["1", "2", "3", "4"];
-  //   for (const value of values) {
-  //     for (const nextValue of values) {
-  //       test(`new value selected (${value}, ${nextValue})`, async () => {
-  //         await test_newValueSelected(value, values, nextValue);
-  //       });
-  //     }
-  //   }
-  // }
-
   test("valueToName", async () => {
     const values = ["1", "2", "3", "4"];
     const valueToName = (value) => {

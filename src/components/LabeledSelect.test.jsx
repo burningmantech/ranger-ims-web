@@ -2,29 +2,56 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { cartesian } from "../test/data";
+import {
+  alphabet_alphanumeric,
+  arrayOf,
+  cartesian,
+  draw,
+  randomSample,
+  text,
+} from "../test/data";
 import LabeledSelect from "./LabeledSelect";
 
 describe("LabeledSelect component", () => {
-  const values = ["1", "2", "3", "4"];
-
-  test.each(values)("start value selected (%s)", async (value) => {
-    render(
-      <LabeledSelect
-        id="id"
-        label="label"
-        value={value}
-        setValue={throwError}
-        values={values.map((v) => [v, v])}
-      />
+  const testData = () => {
+    return Array.from(
+      draw(
+        4,
+        arrayOf(
+          text({ alphabet: alphabet_alphanumeric, minLength: 1, maxLength: 8 }),
+          { minLength: 1 }
+        )
+      ),
+      (values) => {
+        return {
+          values: values,
+          value: randomSample(values, 1)[0],
+          nextValue: randomSample(values, 1)[0],
+        };
+      }
     );
+  };
 
-    const select = screen.getByLabelText("label:");
+  test.each(testData())(
+    "start value selected ($values.length, $value)",
+    ({ values, value }) => {
+      render(
+        <LabeledSelect
+          id="id"
+          label="label"
+          value={value}
+          setValue={throwError}
+          values={values.map((v) => [v, v])}
+        />
+      );
 
-    expect(select.value).toEqual(value);
-  });
+      const select = screen.getByLabelText("label:");
 
-  test("valueToName", async () => {
+      expect(select.value).toEqual(value);
+    }
+  );
+
+  test.each(testData())("valueToName ($values.length)", ({ values }) => {
     const valueToName = (value) => {
       if (value === undefined || value == "----") {
         return "----";
@@ -51,9 +78,9 @@ describe("LabeledSelect component", () => {
     }
   });
 
-  test.each(cartesian(values, values))(
-    "setValue callback (%s, %d)",
-    async (value, nextValue) => {
+  test.each(testData())(
+    "setValue callback ($values.length, $value -> $nextValue)",
+    async ({ values, value, nextValue }) => {
       const setValue = jest.fn();
 
       render(
