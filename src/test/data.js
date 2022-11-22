@@ -32,6 +32,8 @@ export const draw = function* (count, source) {
   }
 };
 
+// Array of items from a source
+
 export const arrayOf = function* (source, { minLength, maxLength } = {}) {
   invariant(source != null, "source argument is required");
 
@@ -101,4 +103,28 @@ export const text = function* ({ alphabet, minLength, maxLength } = {}) {
 
     yield result;
   }
+};
+
+// Select component
+
+// Returns an array of objects { values, value, nextValue }, where values is
+// an array of text strings, and value and nextValue are members of the values
+// array.
+export const selectOptionValues = () => {
+  return Array.from(
+    draw(
+      16,
+      arrayOf(
+        text({ alphabet: alphabet_alphanumeric, minLength: 1, maxLength: 8 }),
+        { minLength: 1 }
+      )
+    ),
+    (values) => {
+      return {
+        values: values,
+        value: randomSample(values, 1)[0],
+        nextValue: randomSample(values, 1)[0],
+      };
+    }
+  );
 };
