@@ -11,12 +11,6 @@ import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import flushPromises from "flush-promises";
 
-// Useful for generating test data
-
-global.throwError = () => {
-  throw Error("This should not happen.");
-};
-
 // Mute logging as desired
 
 global.console = {
