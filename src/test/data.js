@@ -22,19 +22,35 @@ export const randomSample = (array, size) => {
   return shuffled.slice(minimum);
 };
 
-export const draw = function* (count, source) {
+export const draw = function* (count, source, { unique } = {}) {
   invariant(count != null, "count argument is required");
   invariant(source != null, "source argument is required");
 
+  if (unique === undefined) {
+    unique = false;
+  }
+
+  const seen = unique ? new Set() : null;
+
   const iterator = source[Symbol.iterator]();
   while (count-- > 0) {
-    yield iterator.next().value;
+    const value = iterator.next().value;
+    if (unique) {
+      if (seen.has(value)) {
+        continue;
+      }
+      seen.add(value);
+    }
+    yield value;
   }
 };
 
 // Array of items from a source
 
-export const arrayOf = function* (source, { minLength, maxLength } = {}) {
+export const arrayOf = function* (
+  source,
+  { minLength, maxLength, unique } = {}
+) {
   invariant(source != null, "source argument is required");
 
   if (minLength === undefined) {
@@ -54,7 +70,7 @@ export const arrayOf = function* (source, { minLength, maxLength } = {}) {
   while (true) {
     let length =
       Math.floor(Math.random() * (maxLength - minLength)) + minLength;
-    yield Array.from(draw(length, source));
+    yield Array.from(draw(length, source, { unique: unique }));
   }
 };
 
@@ -116,7 +132,7 @@ export const selectOptionValues = () => {
       16,
       arrayOf(
         text({ alphabet: alphabet_alphanumeric, minLength: 1, maxLength: 8 }),
-        { minLength: 1 }
+        { minLength: 1, unique: true }
       )
     ),
     (values) => {
