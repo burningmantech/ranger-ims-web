@@ -1,5 +1,3 @@
-/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^_" }]*/
-
 import invariant from "invariant";
 import { useContext, useReducer, useState } from "react";
 

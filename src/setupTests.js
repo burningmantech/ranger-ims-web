@@ -3,7 +3,6 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { waitFor } from "@testing-library/react";
 
 // https://github.com/dumbmatter/fakeIndexedDB
 import "fake-indexeddb/auto";
@@ -36,7 +35,7 @@ if (process.env.CI != null) {
 
 // Don't allow use of fetch()
 
-/* eslint no-native-reassign: "off" */
+// eslint-disable-next-line no-global-assign
 fetch = jest.fn(async () => {
   throw new Error("Caught attempt to call fetch()");
 });
@@ -163,7 +162,7 @@ afterEach(async () => {
 
   // Replacing the factory also tosses out references to old databases.
   // It's unclear if this cleans up resources, hence we try to clean up above.
-  indexedDB = new FDBFactory(); /* eslint no-native-reassign: "off" */
+  indexedDB = new FDBFactory(); // eslint-disable-line no-global-assign
 
   console.debug("Removed all cached data.");
 });
