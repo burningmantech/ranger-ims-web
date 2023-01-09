@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
 import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 import AdminPage from "./AdminPage";
 

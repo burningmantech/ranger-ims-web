@@ -7,7 +7,6 @@ import { testIncidentManagementSystem } from "./ims/TestIMS";
 import {
   waitForConcentricStreets,
   waitForElementNotToBePresent,
-  waitForEvent,
   waitForIncidents,
   waitForNavBar,
 } from "./test/wait";

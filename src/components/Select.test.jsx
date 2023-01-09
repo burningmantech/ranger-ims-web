@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { selectOptionValues } from "../test/data";
-import { cartesian } from "../test/data";
 import FormGroup from "./FormGroup";
 import Label from "./Label";
 import Select from "./Select";
