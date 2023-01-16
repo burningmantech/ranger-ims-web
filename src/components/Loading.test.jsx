@@ -28,7 +28,7 @@ describe("Loading component", () => {
     render(
       <Loading condition={true} what={"fluff"}>
         Hello
-      </Loading>
+      </Loading>,
     );
 
     expect(screen.queryByText("Loading fluff…")).not.toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("Loading component", () => {
     render(
       <Loading condition={true} error={true}>
         Hello
-      </Loading>
+      </Loading>,
     );
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("Loading component", () => {
     render(
       <Loading condition={false} error={true}>
         Hello
-      </Loading>
+      </Loading>,
     );
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
@@ -63,7 +63,7 @@ describe("Loading component", () => {
     render(
       <Loading condition={false} error={true} what={"fluff"}>
         Hello
-      </Loading>
+      </Loading>,
     );
 
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();

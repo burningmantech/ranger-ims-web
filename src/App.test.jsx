@@ -19,25 +19,25 @@ export const waitForNavEvents = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
+    screen.queryByText("Loading events…"),
   );
 };
 
 export const waitForEvent = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…")
+    screen.queryByText("Loading event…"),
   );
 };
 
 export const waitForConcentricStreets = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…"),
   );
 };
 
 export const waitForIncidents = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
+    screen.queryByText("Loading incidents…"),
   );
 };
 
@@ -98,7 +98,7 @@ describe("App component", () => {
     await userEvent.click(screen.getByText(/Log In/));
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
 
     await waitForNavEvents();
@@ -120,7 +120,7 @@ describe("App component", () => {
 
     try {
       const title = await screen.findByText(
-        "Ranger Incident Management System"
+        "Ranger Incident Management System",
       );
       expect(title).not.toBeInTheDocument();
     } catch (e) {
@@ -136,7 +136,7 @@ describe("App component", () => {
     renderWithURL(URLs.ims, username);
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
 
     await waitForNavEvents();
@@ -150,7 +150,7 @@ describe("App component", () => {
     renderWithURL(URLs.event(event.id), username, ims);
 
     expect(
-      await screen.findByText(`Dispatch Queue: ${event.name}`)
+      await screen.findByText(`Dispatch Queue: ${event.name}`),
     ).toBeInTheDocument();
 
     await waitForDispatchQueue();

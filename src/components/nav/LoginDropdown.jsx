@@ -28,7 +28,7 @@ const LoginDropdown = () => {
       const expiration = oldUser.credentials.expiration;
       console.debug(
         `Previously authenticated as ${oldUser}, ` +
-          `expired ${expiration} (${expiration.toRelative()})`
+          `expired ${expiration} (${expiration.toRelative()})`,
       );
     }
     return <Nav.Item id="nav_user_dropdown">Not Logged In</Nav.Item>;

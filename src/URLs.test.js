@@ -11,7 +11,7 @@ describe("URLs", () => {
     const eventID = "TTITD";
 
     expect(URLs.incidents(eventID)).toEqual(
-      `${URLs.events}${eventID}/incidents/`
+      `${URLs.events}${eventID}/incidents/`,
     );
   });
 
@@ -20,7 +20,7 @@ describe("URLs", () => {
     const incidentNumber = 765;
 
     expect(URLs.incident(eventID, incidentNumber)).toEqual(
-      `${URLs.events}${eventID}/incidents/${incidentNumber}`
+      `${URLs.events}${eventID}/incidents/${incidentNumber}`,
     );
   });
 });

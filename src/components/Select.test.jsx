@@ -17,7 +17,7 @@ describe("Select component", () => {
           values={values.map((v) => [v, v])}
           defaultValue={defaultValue}
         />
-      </FormGroup>
+      </FormGroup>,
     );
 
     const select = screen.getByLabelText("label:");
@@ -46,7 +46,7 @@ describe("Select component", () => {
           values={values.map((v) => [v, v])}
           defaultValue={defaultValue}
         />
-      </FormGroup>
+      </FormGroup>,
     );
 
     const select = screen.getByLabelText("label:");
@@ -86,7 +86,7 @@ describe("Select component", () => {
           values={values.map((v) => [v, v])}
           valueToName={valueToName}
         />
-      </FormGroup>
+      </FormGroup>,
     );
 
     const select = screen.getByLabelText("label:");
@@ -109,7 +109,7 @@ describe("Select component", () => {
           defaultValue={defaultValue}
           onChange={onChange}
         />
-      </FormGroup>
+      </FormGroup>,
     );
 
     const select = screen.getByLabelText("label:");

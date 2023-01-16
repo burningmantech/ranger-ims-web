@@ -74,7 +74,7 @@ describe("Store", () => {
     const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(
       STUFF_STORE_STUFF,
-      STUFF_STORE_THINGS
+      STUFF_STORE_THINGS,
     );
 
     store.store(stuffNThings);
@@ -110,12 +110,12 @@ describe("Store", () => {
     // will be somewhere in between.
     expect(expiration).toBeAfterDateTime(nowPlusLifespan);
     expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
-      expiration
+      expiration,
     );
 
     // Test the entire container content for completeness
     expect(jsonText).toEqual(
-      JSON.stringify({ value: value, expiration: json.expiration })
+      JSON.stringify({ value: value, expiration: json.expiration }),
     );
   });
 
@@ -151,7 +151,7 @@ describe("Store", () => {
     const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(
       STUFF_STORE_STUFF,
-      STUFF_STORE_THINGS
+      STUFF_STORE_THINGS,
     );
 
     store.store(stuffNThings);
@@ -159,7 +159,7 @@ describe("Store", () => {
     const stuffNThingsFromStore = store.load().value;
 
     expect(stuffNThingsFromStore.toJSON()).toEqualByValue(
-      stuffNThings.toJSON()
+      stuffNThings.toJSON(),
     );
   });
 
@@ -205,7 +205,7 @@ describe("Store", () => {
     // will be somewhere in between.
     expect(expiration).toBeAfterDateTime(nowPlusLifespan);
     expect(DateTime.local().plus({ seconds: 61 })).toBeAfterDateTime(
-      expiration
+      expiration,
     );
 
     // Test the entire container content for completeness
@@ -228,7 +228,7 @@ describe("Store", () => {
     expect(stuffNThings).toBeNull();
     expect(console.warn).toHaveBeenCalledWith(
       "Unable to parse JSON container for Stuff 'N Things: " +
-        "SyntaxError: Unexpected token * in JSON at position 0"
+        "SyntaxError: Unexpected token * in JSON at position 0",
     );
   });
 
@@ -242,7 +242,7 @@ describe("Store", () => {
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
-      "Stuff 'N Things found in cache, but has no value."
+      "Stuff 'N Things found in cache, but has no value.",
     );
   });
 
@@ -256,7 +256,7 @@ describe("Store", () => {
 
     expect(stuffNThings).toBeNull();
     expect(spy).toHaveBeenCalledWith(
-      "Invalid JSON for cached Stuff 'N Things: Error: stuff is required"
+      "Invalid JSON for cached Stuff 'N Things: Error: stuff is required",
     );
   });
 
@@ -264,7 +264,7 @@ describe("Store", () => {
     const store = stuffNThingsStore();
     const stuffNThings = new StuffNThings(
       STUFF_STORE_STUFF,
-      STUFF_STORE_THINGS
+      STUFF_STORE_THINGS,
     );
 
     store.store(stuffNThings);
@@ -277,7 +277,7 @@ describe("Store", () => {
     const store1 = stuffNThingsStore();
     const stuffNThings = new StuffNThings(
       STUFF_STORE_STUFF,
-      STUFF_STORE_THINGS
+      STUFF_STORE_THINGS,
     );
 
     store1.store(stuffNThings);

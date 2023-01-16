@@ -14,19 +14,19 @@ import {
 
 export const waitForEvent = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…")
+    screen.queryByText("Loading event…"),
   );
 };
 
 export const waitForConcentricStreets = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…"),
   );
 };
 
 export const waitForIncidents = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
+    screen.queryByText("Loading incidents…"),
   );
 };
 
@@ -55,7 +55,7 @@ describe("DispatchQueuePage component", () => {
     renderWithIMSContext(<DispatchQueuePage eventID={eventID} />);
 
     expect(
-      await screen.findByText("Failed to load event.")
+      await screen.findByText("Failed to load event."),
     ).toBeInTheDocument();
   });
 
@@ -68,7 +68,7 @@ describe("DispatchQueuePage component", () => {
 
       // DispatchQueue component renders event name
       expect(
-        await screen.findByText(`Dispatch Queue: ${event.name}`)
+        await screen.findByText(`Dispatch Queue: ${event.name}`),
       ).toBeInTheDocument();
     }
   });
@@ -88,13 +88,13 @@ describe("RoutedDispatchQueuePage component", () => {
           />
         </Routes>
       </MemoryRouter>,
-      ims
+      ims,
     );
     await waitForEffects();
 
     // DispatchQueue component renders event name
     expect(
-      await screen.findByText(`Dispatch Queue: ${event.name}`)
+      await screen.findByText(`Dispatch Queue: ${event.name}`),
     ).toBeInTheDocument();
   });
 });

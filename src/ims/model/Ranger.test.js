@@ -11,7 +11,7 @@ describe("Ranger", () => {
   test("statusToString, invalid", () => {
     for (const value of [-1, "XYZZY"]) {
       expect(() => Ranger.statusToString(value)).toThrow(
-        `Invalid status: ${value}`
+        `Invalid status: ${value}`,
       );
     }
   });
@@ -34,7 +34,7 @@ describe("Ranger", () => {
     const result = ranger.toString();
 
     expect(result).toEqual(
-      `${Ranger.statusToString(status)} ${handle} (${name})`
+      `${Ranger.statusToString(status)} ${handle} (${name})`,
     );
   });
 });

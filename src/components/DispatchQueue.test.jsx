@@ -32,13 +32,13 @@ import DispatchQueue from "./DispatchQueue";
 
 export const waitForConcentricStreets = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…"),
   );
 };
 
 export const waitForIncidents = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
+    screen.queryByText("Loading incidents…"),
   );
 };
 
@@ -68,7 +68,7 @@ describe("Table cell formatting functions", () => {
     const dateTime = DateTime.fromISO("2021-08-17T17:12:46.720000Z");
 
     expect(formatDateTime(dateTime)).toEqual(
-      dateTime.toFormat("ccc L/c HH:mm")
+      dateTime.toFormat("ccc L/c HH:mm"),
     );
   });
 
@@ -110,7 +110,7 @@ describe("Table cell formatting functions", () => {
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@` +
         `${concentricStreetName} ` +
-        `(${address.description})`
+        `(${address.description})`,
     );
   });
 
@@ -128,7 +128,7 @@ describe("Table cell formatting functions", () => {
     const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@` +
-        `${concentricStreets.get(address.concentric)}`
+        `${concentricStreets.get(address.concentric)}`,
     );
   });
 
@@ -146,7 +146,7 @@ describe("Table cell formatting functions", () => {
     const text = formatAddress(address, concentricStreets);
     expect(text).toEqual(
       `${address.radialHour}:${address.radialMinute}@- ` +
-        `(${address.description})`
+        `(${address.description})`,
     );
   });
 
@@ -165,7 +165,7 @@ describe("Table cell formatting functions", () => {
     expect(text).toEqual(
       `-:${address.radialMinute}@` +
         `${concentricStreetName} ` +
-        `(${address.description})`
+        `(${address.description})`,
     );
   });
 
@@ -185,7 +185,7 @@ describe("Table cell formatting functions", () => {
     expect(text).toEqual(
       `${address.radialHour}:0${address.radialMinute}@` +
         `${concentricStreetName} ` +
-        `(${address.description})`
+        `(${address.description})`,
     );
   });
 
@@ -204,7 +204,7 @@ describe("Table cell formatting functions", () => {
     expect(text).toEqual(
       `${address.radialHour}:-@` +
         `${concentricStreetName} ` +
-        `(${address.description})`
+        `(${address.description})`,
     );
   });
 
@@ -252,7 +252,7 @@ describe("Table cell formatting functions", () => {
     });
     const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(
-      `${location.name} @ ${formatAddress(address, concentricStreets)}`
+      `${location.name} @ ${formatAddress(address, concentricStreets)}`,
     );
   });
 
@@ -336,24 +336,24 @@ describe("DispatchQueue component: table", () => {
     const incidents = await ims.incidents(event.id);
     invariant(
       incidents.length == incidentCount,
-      `Failed to add incidents (${incidents.length} != ${incidentCount})`
+      `Failed to add incidents (${incidents.length} != ${incidentCount})`,
     );
 
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
     await waitForEffects();
 
     const numberCells = document.getElementsByClassName(
-      "queue_incident_number"
+      "queue_incident_number",
     );
 
     expect(numberCells.length).toEqual(
-      incidents.length > defaultPageSize ? defaultPageSize : incidents.length
+      incidents.length > defaultPageSize ? defaultPageSize : incidents.length,
     );
 
     for (const numberCell of numberCells) {
       const incidentNumber = parseInt(numberCell.innerHTML);
       await expect(() =>
-        ims.incidentWithNumber(event.id, incidentNumber)
+        ims.incidentWithNumber(event.id, incidentNumber),
       ).notToReject();
     }
   };
@@ -402,7 +402,7 @@ describe("DispatchQueue component: controls", () => {
   test("formatShowState, invalid", () => {
     expect(() => formatShowState(-1)).toThrow("Invalid show state: -1");
     expect(() => formatShowState("XYZZY")).toThrow(
-      'Invalid show state: "XYZZY"'
+      'Invalid show state: "XYZZY"',
     );
   });
 
@@ -462,12 +462,12 @@ describe("DispatchQueue component: controls", () => {
 
     // Ensure the correct number of rows are displayed
     const numberCells = document.getElementsByClassName(
-      "queue_incident_number"
+      "queue_incident_number",
     );
     expect(numberCells.length).toEqual(
       incidentCount > numberofIncidentsToDisplay
         ? numberofIncidentsToDisplay
-        : incidentCount
+        : incidentCount,
     );
   };
 
@@ -486,17 +486,17 @@ describe("DispatchQueue component: controls", () => {
     await ims.addIncidentWithFields(
       // 1
       event.id,
-      { summary: "Cat in tree" }
+      { summary: "Cat in tree" },
     );
     await ims.addIncidentWithFields(
       // 2
       event.id,
-      { summary: "Dog in house" }
+      { summary: "Dog in house" },
     );
     await ims.addIncidentWithFields(
       // 3
       event.id,
-      { summary: "Cat in house" }
+      { summary: "Cat in house" },
     );
 
     renderWithIMSContext(<DispatchQueue event={event} />, ims);
@@ -512,7 +512,7 @@ describe("DispatchQueue component: controls", () => {
 
     const numbers = Array.from(
       document.getElementsByClassName("queue_incident_number"),
-      (cell) => parseInt(cell.innerHTML)
+      (cell) => parseInt(cell.innerHTML),
     );
 
     expect(new Set(numbers)).toEqual(new Set([2, 3]));
@@ -552,11 +552,11 @@ describe("DispatchQueue component: loading", () => {
     await waitForEffects();
 
     expect(
-      await screen.findByText("Failed to load incidents.")
+      await screen.findByText("Failed to load incidents."),
     ).toBeInTheDocument();
 
     expect(console.warn).toHaveBeenCalledWith(
-      "Unable to fetch incidents: because reasons..."
+      "Unable to fetch incidents: because reasons...",
     );
   });
 
@@ -568,7 +568,7 @@ describe("DispatchQueue component: loading", () => {
       await waitForEffects();
 
       expect(
-        await screen.findByText(`Dispatch Queue: ${event.name}`)
+        await screen.findByText(`Dispatch Queue: ${event.name}`),
       ).toBeInTheDocument();
     }
   });

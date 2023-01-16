@@ -79,7 +79,7 @@ export default class IncidentManagementSystem {
       authenticated = true;
       request.headers.set(
         "Authorization",
-        `Bearer ${this.user.credentials.token}`
+        `Bearer ${this.user.credentials.token}`,
       );
     } else {
       authenticated = false;
@@ -87,7 +87,7 @@ export default class IncidentManagementSystem {
 
     console.debug(
       `Issuing ${authenticated ? "authenticated" : "unauthenticated"} ` +
-        `request: ${request.method} ${request.url}`
+        `request: ${request.method} ${request.url}`,
     );
     const response = await this._fetch(request);
 
@@ -102,7 +102,7 @@ export default class IncidentManagementSystem {
       } else {
         console.warn(
           "Non-OK response from server " +
-            `(${response.status}: ${response.statusText})`
+            `(${response.status}: ${response.statusText})`,
         );
       }
     }
@@ -175,7 +175,7 @@ export default class IncidentManagementSystem {
     if (response.status === 304) {
       // Not modified from cached value
       console.debug(
-        `Retrieved ${name} from unmodified cache (ETag: ${cached.eTag})`
+        `Retrieved ${name} from unmodified cache (ETag: ${cached.eTag})`,
       );
       return { value: cached.value, eTag: cached.eTag };
     } else if (!response.ok) {
@@ -216,7 +216,7 @@ export default class IncidentManagementSystem {
         (db, oldVersion, newVersion, transaction) => {
           db.createObjectStore(this._keyValueStoreName);
           db.createObjectStore(this._incidentsStoreName);
-        }
+        },
       );
     }
 
@@ -285,7 +285,7 @@ export default class IncidentManagementSystem {
     // Check the cache
     const cached = await this._getFromCache(
       this._keyValueStoreName,
-      this._bagStoreKey
+      this._bagStoreKey,
     );
     if (!cached.expired) {
       console.debug(`Retrieved bag from unexpired cache`);
@@ -301,7 +301,7 @@ export default class IncidentManagementSystem {
       this._bagStoreKey,
       fetched.value,
       fetched.eTag,
-      this.bagCacheLifespan
+      this.bagCacheLifespan,
     );
 
     return fetched.value;
@@ -376,7 +376,7 @@ export default class IncidentManagementSystem {
       console.debug(
         "Using preferred username in retrieved credentials " +
           `(${preferredUsername}), ` +
-          `which differs from submitted username (${username})`
+          `which differs from submitted username (${username})`,
       );
       username = preferredUsername;
     }
@@ -435,7 +435,7 @@ export default class IncidentManagementSystem {
     // Check the cache
     const cached = await this._getFromCache(
       this._keyValueStoreName,
-      this._eventsStoreKey
+      this._eventsStoreKey,
     );
     if (!cached.expired) {
       console.debug(`Retrieved events from unexpired cache`);
@@ -452,7 +452,7 @@ export default class IncidentManagementSystem {
       this._eventsStoreKey,
       fetched.value,
       fetched.eTag,
-      this.eventsCacheLifespan
+      this.eventsCacheLifespan,
     );
 
     return deserialize(fetched.value);
@@ -489,16 +489,16 @@ export default class IncidentManagementSystem {
             Object.entries(streetsJSON).map(([streetID, streetName]) => [
               streetID,
               new ConcentricStreet(streetID, streetName),
-            ])
+            ]),
           ),
-        ])
+        ]),
       );
     };
 
     // Check the cache
     const cached = await this._getFromCache(
       this._keyValueStoreName,
-      this._concentricStreetsStoreKey
+      this._concentricStreetsStoreKey,
     );
     if (!cached.expired) {
       console.debug(`Retrieved concentric streets from unexpired cache`);
@@ -510,7 +510,7 @@ export default class IncidentManagementSystem {
     const fetched = await this._fetchWithCachedJSON(
       "concentric streets",
       url,
-      cached
+      cached,
     );
 
     // Store the result
@@ -519,7 +519,7 @@ export default class IncidentManagementSystem {
       this._concentricStreetsStoreKey,
       fetched.value,
       fetched.eTag,
-      this.concentricStreetsCacheLifespan
+      this.concentricStreetsCacheLifespan,
     );
 
     return deserialize(fetched.value);
@@ -543,10 +543,10 @@ export default class IncidentManagementSystem {
 
     const deserialize = (json) => {
       const incidents = Array.from(json, (incidentJSON) =>
-        Incident.fromJSON(incidentJSON)
+        Incident.fromJSON(incidentJSON),
       );
       this._incidentsMap = new Map(
-        incidents.map((incident) => [incident.number, incident])
+        incidents.map((incident) => [incident.number, incident]),
       );
       return incidents;
     };
@@ -564,7 +564,7 @@ export default class IncidentManagementSystem {
     const fetched = await this._fetchWithCachedJSON(
       `incidents for event ${eventID}`,
       url,
-      cached
+      cached,
     );
 
     // Store the result
@@ -573,7 +573,7 @@ export default class IncidentManagementSystem {
       eventID,
       fetched.value,
       fetched.eTag,
-      this.incidentsCacheLifespan
+      this.incidentsCacheLifespan,
     );
 
     return deserialize(fetched.value);
@@ -586,14 +586,14 @@ export default class IncidentManagementSystem {
     await this.incidents(eventID);
     invariant(
       this._incidentsMap != null,
-      "this._incidentsMap did not initialize"
+      "this._incidentsMap did not initialize",
     );
 
     if (this._incidentsMap.has(number)) {
       return this._incidentsMap.get(number);
     } else {
       throw new Error(
-        `No incident found with event:number: ${eventID}:${number}`
+        `No incident found with event:number: ${eventID}:${number}`,
       );
     }
   };
@@ -654,7 +654,7 @@ export default class IncidentManagementSystem {
     // index.search() returns an iterable of result objects.
     // result.result is the incident number.
     const numbers = new Set(
-      Array.from(await index.search(query), (result) => result.result).flat()
+      Array.from(await index.search(query), (result) => result.result).flat(),
     );
     return Array.from(numbers, (number) => this._incidentsMap.get(number));
   };

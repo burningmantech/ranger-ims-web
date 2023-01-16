@@ -10,7 +10,7 @@ import BagTable from "./BagTable";
 
 export const waitForEffects = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading URL bag…")
+    screen.queryByText("Loading URL bag…"),
   );
 };
 
@@ -49,11 +49,11 @@ describe("BagTable component", () => {
     await waitForEffects();
 
     expect(
-      await screen.findByText("Failed to load URL bag.")
+      await screen.findByText("Failed to load URL bag."),
     ).toBeInTheDocument();
 
     expect(console.warn).toHaveBeenCalledWith(
-      "Unable to fetch bag: because reasons..."
+      "Unable to fetch bag: because reasons...",
     );
   });
 

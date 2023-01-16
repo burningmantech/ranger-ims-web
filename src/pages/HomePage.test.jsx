@@ -16,7 +16,7 @@ export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
+    screen.queryByText("Loading events…"),
   );
 };
 
@@ -29,12 +29,12 @@ describe("HomePage component", () => {
 
     renderWithIMSContext(
       <HomePage user={user} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
     await waitForEffects();
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
   });
 });
