@@ -38,7 +38,7 @@ export const RoutedDispatchQueuePage = () => {
 
   invariant(
     params.eventID != null,
-    "eventID parameter is required: " + JSON.stringify(params)
+    "eventID parameter is required: " + JSON.stringify(params),
   );
 
   return <DispatchQueuePage eventID={params.eventID} />;

@@ -17,7 +17,7 @@ describe("IncidentPage component", () => {
       for (const incident of await ims.incidents(event.id)) {
         renderWithIMSContext(
           <IncidentPage eventID={event.id} incidentNumber={incident.number} />,
-          ims
+          ims,
         );
 
         expect(screen.getByText("Loading…")).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe("IncidentPage component", () => {
     renderWithIMSContext(<IncidentPage eventID="XYZZY" incidentNumber="1" />);
 
     expect(
-      await screen.findByText("Error loading incident")
+      await screen.findByText("Error loading incident"),
     ).toBeInTheDocument();
   });
 
@@ -45,11 +45,11 @@ describe("IncidentPage component", () => {
     for (const event of await ims.events()) {
       renderWithIMSContext(
         <IncidentPage eventID={event.id} incidentNumber="XYZZY" />,
-        ims
+        ims,
       );
 
       expect(
-        await screen.findByText("Error loading incident")
+        await screen.findByText("Error loading incident"),
       ).toBeInTheDocument();
 
       cleanup();
@@ -63,12 +63,12 @@ describe("IncidentPage component", () => {
       for (const incident of await ims.incidents(event.id)) {
         renderWithIMSContext(
           <IncidentPage eventID={event.id} incidentNumber={incident.number} />,
-          ims
+          ims,
         );
 
         // Incident component renders event name
         expect(
-          await screen.findByText(`Incident #${incident.number}`)
+          await screen.findByText(`Incident #${incident.number}`),
         ).toBeInTheDocument();
 
         cleanup();
@@ -96,12 +96,12 @@ describe("RoutedIncidentPage component", () => {
               />
             </Routes>
           </MemoryRouter>,
-          ims
+          ims,
         );
 
         // Incident component renders event name
         expect(
-          await screen.findByText(`Incident #${incident.number}`)
+          await screen.findByText(`Incident #${incident.number}`),
         ).toBeInTheDocument();
 
         cleanup();

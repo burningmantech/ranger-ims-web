@@ -49,11 +49,11 @@ export const RoutedIncidentPage = () => {
 
   invariant(
     params.eventID != null,
-    "eventID parameter is required: " + JSON.stringify(params)
+    "eventID parameter is required: " + JSON.stringify(params),
   );
   invariant(
     params.incidentNumber != null,
-    "incidentNumber parameter is required: " + JSON.stringify(params)
+    "incidentNumber parameter is required: " + JSON.stringify(params),
   );
 
   return (

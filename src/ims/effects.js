@@ -85,7 +85,7 @@ export const useEvent = ({ eventID, setEvent }) => {
         "fetch event",
         null,
         ims.eventWithID,
-        eventID
+        eventID,
       );
 
       if (!ignore) {
@@ -118,13 +118,13 @@ export const useIncidents = ({ eventID, searchInput, setIncidents }) => {
             null,
             ims.search,
             eventID,
-            searchInput
+            searchInput,
           )
         : await tryWithFallback(
             "fetch incidents",
             null,
             ims.incidents,
-            eventID
+            eventID,
           );
 
       if (!ignore) {
@@ -156,7 +156,7 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
         null,
         ims.incidentWithNumber,
         eventID,
-        incidentNumber
+        incidentNumber,
       );
 
       if (!ignore) {
@@ -175,7 +175,7 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
 export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
   invariant(
     setAllConcentricStreets != null,
-    "setAllConcentricStreets property is required"
+    "setAllConcentricStreets property is required",
   );
 
   const ims = useIMS();
@@ -187,7 +187,7 @@ export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
       const concentricStreets = await tryWithFallback(
         "fetch all concentric streets",
         null,
-        ims.allConcentricStreets
+        ims.allConcentricStreets,
       );
 
       if (!ignore) {
@@ -207,7 +207,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
   invariant(eventID != null, "eventID property is required");
   invariant(
     setConcentricStreets != null,
-    "setConcentricStreets property is required"
+    "setConcentricStreets property is required",
   );
 
   const ims = useIMS();
@@ -220,7 +220,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
         `fetch concentric streets for event ${eventID}`,
         [],
         ims.concentricStreets,
-        eventID
+        eventID,
       );
 
       if (!ignore) {

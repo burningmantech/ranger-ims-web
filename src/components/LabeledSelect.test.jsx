@@ -12,7 +12,7 @@ describe("LabeledSelect component", () => {
         label="label"
         values={values.map((v) => [v, v])}
         defaultValue={defaultValue}
-      />
+      />,
     );
 
     const select = screen.getByLabelText("label:");
@@ -38,7 +38,7 @@ describe("LabeledSelect component", () => {
         label="label"
         values={values.map((v) => [v, v])}
         defaultValue={defaultValue}
-      />
+      />,
     );
 
     const select = screen.getByLabelText("label:");
@@ -75,7 +75,7 @@ describe("LabeledSelect component", () => {
         label="label"
         values={values.map((v) => [v, v])}
         valueToName={valueToName}
-      />
+      />,
     );
 
     const select = screen.getByLabelText("label:");
@@ -95,7 +95,7 @@ describe("LabeledSelect component", () => {
         values={values.map((v) => [v, v])}
         defaultValue={defaultValue}
         onChange={onChange}
-      />
+      />,
     );
 
     const select = screen.getByLabelText("label:");

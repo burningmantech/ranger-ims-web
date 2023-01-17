@@ -33,7 +33,7 @@ describe("ConcentricStreet", () => {
 
   test("fromJSON, invalid", () => {
     expect(() => ConcentricStreet.fromJSON({})).toThrow(
-      `Invalid concentric street JSON: {}`
+      `Invalid concentric street JSON: {}`,
     );
   });
 

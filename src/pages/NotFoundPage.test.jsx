@@ -11,7 +11,7 @@ export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
+    screen.queryByText("Loading events…"),
   );
 };
 
@@ -24,7 +24,7 @@ describe("NotFoundPage component", () => {
         <Routes>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     await waitForEffects();
 

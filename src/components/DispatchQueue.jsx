@@ -193,7 +193,7 @@ export const formatArrayOfStrings = (strings) => {
 const useDispatchQueueTable = (incidents, allConcentricStreets) => {
   allConcentricStreets = useMemo(
     () => (allConcentricStreets == null ? new Map() : allConcentricStreets),
-    [allConcentricStreets]
+    [allConcentricStreets],
   );
 
   // See: https://react-table.tanstack.com/docs/overview
@@ -232,7 +232,7 @@ const useDispatchQueueTable = (incidents, allConcentricStreets) => {
         accessor: (incident) =>
           formatLocation(
             incident.location,
-            allConcentricStreets.get(incident.eventID)
+            allConcentricStreets.get(incident.eventID),
           ),
         Header: "Location",
       },
@@ -247,12 +247,12 @@ const useDispatchQueueTable = (incidents, allConcentricStreets) => {
         Header: "Summary",
       },
     ],
-    [allConcentricStreets]
+    [allConcentricStreets],
   );
 
   return useTable(
     { columns, data, initialState: { pageSize: defaultPageSize } },
-    usePagination
+    usePagination,
   );
 };
 
@@ -416,7 +416,7 @@ const ShowRowsControl = ({ table, incidents }) => {
           key={multiple}
           onClick={() =>
             table.setPageSize(
-              multiple === 0 ? incidents.length : multiple * defaultPageSize
+              multiple === 0 ? incidents.length : multiple * defaultPageSize,
             )
           }
         >

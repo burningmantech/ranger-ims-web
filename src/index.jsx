@@ -18,7 +18,7 @@ const root = createRoot(container);
 root.render(
   <StrictMode>
     <App ims={ims} />
-  </StrictMode>
+  </StrictMode>,
 );
 
 reportWebVitals();

@@ -14,7 +14,7 @@ export const waitForEffects = async () => {
   // Let effects complete
   await userEvent.click(screen.getByText("Event"));
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
+    screen.queryByText("Loading events…"),
   );
 };
 
@@ -24,7 +24,7 @@ describe("Navbar component", () => {
 
     renderWithIMSContext(
       <NavigationBar id={navID} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
 
     expect(document.getElementById(navID)).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("Navbar component", () => {
 
     renderWithIMSContext(
       <NavigationBar id={navID} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
 
     expect(document.getElementById(navID)).toBeInTheDocument();

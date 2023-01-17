@@ -89,7 +89,7 @@ describe("Location", () => {
   test("fromJSON, invalid", () => {
     const json = { type: "XYZZY" };
     expect(() => Location.fromJSON(json)).toThrow(
-      `Invalid location JSON: ${JSON.stringify(json)}`
+      `Invalid location JSON: ${JSON.stringify(json)}`,
     );
   });
 
