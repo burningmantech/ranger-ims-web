@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import { screen } from "@testing-library/react";
 
-import { waitForNavBar } from "../test/wait";
+import { waitForNavEvents } from "../test/wait";
 
 import {
   renderWithIMSContext,
@@ -15,14 +15,14 @@ describe("Page component", () => {
     renderWithIMSContext(<Page />, testIncidentManagementSystem());
     expect(document.getElementById("page")).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes navigation", async () => {
     renderWithIMSContext(<Page />, testIncidentManagementSystem());
     expect(document.getElementById("page_navigation")).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes children", async () => {
@@ -30,10 +30,10 @@ describe("Page component", () => {
 
     renderWithIMSContext(
       <Page>{content}</Page>,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
     expect(screen.getByText(content)).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 });

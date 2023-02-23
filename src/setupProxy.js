@@ -9,7 +9,7 @@ module.exports = function (app) {
     createProxyMiddleware({
       target: "http://localhost:8080",
       changeOrigin: true,
-    })
+    }),
   );
 
   // Remove after removing the built-in web client from the server
@@ -18,20 +18,20 @@ module.exports = function (app) {
     createProxyMiddleware({
       target: "http://localhost:8080",
       changeOrigin: true,
-    })
+    }),
   );
   app.use(
     "/ims/ext",
     createProxyMiddleware({
       target: "http://localhost:8080",
       changeOrigin: true,
-    })
+    }),
   );
   app.use(
     "/ims/static",
     createProxyMiddleware({
       target: "http://localhost:8080",
       changeOrigin: true,
-    })
+    }),
   );
 };

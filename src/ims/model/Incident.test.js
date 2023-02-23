@@ -15,7 +15,7 @@ describe("Incident", () => {
   test("stateToName, invalid", () => {
     for (const value of [-1, "XYZZY"]) {
       expect(() => Incident.stateToName(value)).toThrow(
-        `Invalid state: ${value}`
+        `Invalid state: ${value}`,
       );
     }
   });
@@ -40,7 +40,7 @@ describe("Incident", () => {
   test("priorityToName, invalid", () => {
     for (const value of [-1, "XYZZY"]) {
       expect(() => Incident.priorityToName(value)).toThrow(
-        `Invalid priority: ${value}`
+        `Invalid priority: ${value}`,
       );
     }
   });
@@ -156,7 +156,7 @@ describe("Incident", () => {
         location: location,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
-      })
+      }),
     );
   });
 
@@ -192,7 +192,7 @@ describe("Incident", () => {
         location: null,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
-      })
+      }),
     );
   });
 

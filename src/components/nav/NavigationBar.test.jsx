@@ -5,7 +5,7 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../../ims/TestIMS";
-import { waitForNavBar } from "../../test/wait";
+import { waitForNavEvents } from "../../test/wait";
 
 import NavigationBar from "./NavigationBar";
 
@@ -15,12 +15,12 @@ describe("Navbar component", () => {
 
     renderWithIMSContext(
       <NavigationBar id={navID} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
 
     expect(document.getElementById(navID)).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes logo", async () => {
@@ -28,12 +28,12 @@ describe("Navbar component", () => {
 
     renderWithIMSContext(
       <NavigationBar id={navID} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
 
     expect(document.getElementById(navID)).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes link to home", async () => {
@@ -44,7 +44,7 @@ describe("Navbar component", () => {
     expect(link).toBeInTheDocument();
     expect(link.href).toEqual(`http://localhost${URLs.ims}`);
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes events dropdown", async () => {
@@ -52,7 +52,7 @@ describe("Navbar component", () => {
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("includes user dropdown", async () => {
@@ -60,6 +60,6 @@ describe("Navbar component", () => {
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 });

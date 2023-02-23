@@ -8,7 +8,7 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
-import { waitForNavBar } from "../test/wait";
+import { waitForNavEvents } from "../test/wait";
 
 import HomePage from "./HomePage";
 
@@ -21,12 +21,12 @@ describe("HomePage component", () => {
 
     renderWithIMSContext(
       <HomePage user={user} />,
-      testIncidentManagementSystem()
+      testIncidentManagementSystem(),
     );
-    await waitForNavBar();
+    await waitForNavEvents();
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
   });
 });

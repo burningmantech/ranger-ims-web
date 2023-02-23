@@ -14,16 +14,16 @@ describe("LabeledSelect component", () => {
         <LabeledSelect
           id="id"
           label="label"
+          values={values.map((v) => [v, v])}
           value={value}
           setValue={throwError}
-          values={values.map((v) => [v, v])}
-        />
+        />,
       );
 
       const select = screen.getByLabelText("label:");
 
       expect(select.value).toEqual(value);
-    }
+    },
   );
 
   test.each(selectOptionValues())(
@@ -41,11 +41,11 @@ describe("LabeledSelect component", () => {
         <LabeledSelect
           id="id"
           label="label"
+          values={values.map((v) => [v, v])}
           value="1"
           setValue={throwError}
-          values={values.map((v) => [v, v])}
           valueToName={valueToName}
-        />
+        />,
       );
 
       const select = screen.getByLabelText("label:");
@@ -53,7 +53,7 @@ describe("LabeledSelect component", () => {
       for (const option of select.options) {
         expect(option.textContent).toEqual(valueToName(option.value));
       }
-    }
+    },
   );
 
   test.each(selectOptionValues())(
@@ -65,10 +65,10 @@ describe("LabeledSelect component", () => {
         <LabeledSelect
           id="id"
           label="label"
+          values={values.map((v) => [v, v])}
           value={value}
           setValue={setValue}
-          values={values.map((v) => [v, v])}
-        />
+        />,
       );
 
       const select = screen.getByLabelText("label:");
@@ -77,6 +77,6 @@ describe("LabeledSelect component", () => {
 
       expect(setValue).toHaveBeenCalledTimes(1);
       expect(setValue).toHaveBeenCalledWith(nextValue);
-    }
+    },
   );
 });

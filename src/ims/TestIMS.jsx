@@ -24,7 +24,7 @@ const hashText = (text) => {
 const assertFrom = (name, value, array) => {
   invariant(
     array.indexOf(value) != -1,
-    `${name} must be one of [${array}], not ${value}`
+    `${name} must be one of [${array}], not ${value}`,
   );
 };
 
@@ -211,36 +211,36 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     invariant(
       eventIDs == streetEventIDs,
       "Events and streets index keys mismatched: " +
-        `${eventIDs} != ${streetEventIDs}`
+        `${eventIDs} != ${streetEventIDs}`,
     );
     // Incidents are indexed by event ID
     const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
       eventIDs == incidentEventIDs,
       "Events and incidents index keys mismatched: " +
-        `${eventIDs} != ${incidentEventIDs}`
+        `${eventIDs} != ${incidentEventIDs}`,
     );
     for (const [eventID, incidents] of Object.entries(
-      this.testData.incidents
+      this.testData.incidents,
     )) {
       // Check incident values
       for (const incident of incidents) {
         invariant(
           eventID == incident.event,
-          `${incident} has mismatched event ID: ${incident.event}`
+          `${incident} has mismatched event ID: ${incident.event}`,
         );
         assertFrom(`${incident} state`, incident.state, Incident.states);
         assertFrom(
           `${incident} priority`,
           incident.priority,
-          Incident.priorities
+          Incident.priorities,
         );
         if (incident.location != null) {
           if (incident.location.concentric != null) {
             assertFrom(
               `${incident} concentric street`,
               incident.location.concentric,
-              Object.keys(this.testData.streets[incident.event])
+              Object.keys(this.testData.streets[incident.event]),
             );
           }
         }
@@ -251,7 +251,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       invariant(
         cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
         `Incident numbers in event ID ${eventID} contain duplicates: ` +
-          `${incidentNumbers}`
+          `${incidentNumbers}`,
       );
     }
 
@@ -544,7 +544,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       location = null,
       incidentTypes = [],
       rangerHandles = [],
-    }
+    },
   ) => {
     const incidents = this.testData.incidents[eventID];
     const nextIncidentNumber = await this.nextIncidentNumber(eventID);
@@ -595,6 +595,6 @@ export const renderWithIMSContext = (content, ims, ...renderOptions) => {
 
   return render(
     <IMSContext.Provider value={{ ims: ims }}>{content}</IMSContext.Provider>,
-    ...renderOptions
+    ...renderOptions,
   );
 };

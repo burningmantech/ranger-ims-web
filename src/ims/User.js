@@ -5,7 +5,7 @@ export default class User {
   static fromJSON = (json) => {
     if (json.credentials != null) {
       json.credentials.expiration = DateTime.fromISO(
-        json.credentials.expiration
+        json.credentials.expiration,
       );
     }
     return new User(json.username, json.credentials);
@@ -16,7 +16,7 @@ export default class User {
     invariant(credentials != null, "credentials is required");
     invariant(
       credentials.expiration != null,
-      "credentials.expiration is required"
+      "credentials.expiration is required",
     );
 
     this.username = username;

@@ -17,7 +17,7 @@ describe("Incident component: display", () => {
         renderWithIMSContext(<Incident incident={incident} />, ims);
 
         expect(
-          await screen.findByText(`Incident #${incident.number}`)
+          await screen.findByText(`Incident #${incident.number}`),
         ).toBeInTheDocument();
 
         cleanup();
@@ -88,7 +88,7 @@ describe("Incident component: display", () => {
 
         expect(textField.value).toEqual(name == null ? "" : name);
         expect(textField.placeholder).toEqual(
-          "Name of location (camp, art project, …)"
+          "Name of location (camp, art project, …)",
         );
 
         cleanup();
@@ -104,14 +104,14 @@ describe("Incident component: display", () => {
         renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = document.getElementById(
-          "incident_location_address_radial_hour"
+          "incident_location_address_radial_hour",
         );
         const location = incident.location;
         const address = location == null ? null : location.address;
         const radialHour = address == null ? null : address.radialHour;
 
         expect(select.value).toEqual(
-          radialHour == null ? "" : radialHour.toString()
+          radialHour == null ? "" : radialHour.toString(),
         );
 
         cleanup();
@@ -127,14 +127,14 @@ describe("Incident component: display", () => {
         renderWithIMSContext(<Incident incident={incident} />, ims);
 
         const select = document.getElementById(
-          "incident_location_address_radial_minute"
+          "incident_location_address_radial_minute",
         );
         const location = incident.location;
         const address = location == null ? null : location.address;
         const radialMinute = address == null ? null : address.radialMinute;
 
         expect(select.value).toEqual(
-          radialMinute == null ? "" : radialMinute.toString()
+          radialMinute == null ? "" : radialMinute.toString(),
         );
 
         cleanup();

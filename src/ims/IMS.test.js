@@ -141,7 +141,7 @@ describe("IMS: HTTP requests", () => {
     await expect(
       ims._fetchJSONFromServer(ims.bagURL, {
         headers: { "Content-Type": "text/plain" },
-      })
+      }),
     ).toRejectWithMessage("Not JSON content-type: text/plain");
   });
 
@@ -199,7 +199,7 @@ describe("IMS: HTTP requests", () => {
     const ims = testIncidentManagementSystem();
 
     await expect(ims._fetchJSONFromServer("/text_hello")).toRejectWithMessage(
-      "Response type is not JSON: text/plain"
+      "Response type is not JSON: text/plain",
     );
   });
 
@@ -377,7 +377,7 @@ describe("IMS: bag", () => {
       ims._bagStoreKey,
       testBag,
       "1",
-      { days: 1 }
+      { days: 1 },
     );
 
     const retrievedBag = await ims.bag();
@@ -398,7 +398,7 @@ describe("IMS: bag", () => {
     // Get the stored ETag
     const wrappedValue = await ims._getFromCache(
       ims._keyValueStoreName,
-      ims._bagStoreKey
+      ims._bagStoreKey,
     );
     const eTag1 = wrappedValue.eTag;
 
@@ -408,7 +408,7 @@ describe("IMS: bag", () => {
       ims._bagStoreKey,
       testBag,
       eTag1,
-      { seconds: 0 }
+      { seconds: 0 },
     );
 
     const bag = await ims.bag();
@@ -432,7 +432,7 @@ describe("IMS: bag", () => {
       ims._bagStoreKey,
       testBag,
       "XYZZY",
-      { seconds: 0 }
+      { seconds: 0 },
     );
 
     const bag2 = await ims.bag();
@@ -512,9 +512,9 @@ describe("IMS: authentication", () => {
     ims.testData.bag.urls.auth = "/forbidden";
 
     await expect(
-      ims.login(username, { password: password })
+      ims.login(username, { password: password }),
     ).toRejectWithMessage(
-      "Failed to authenticate: HTTP error status 403 Forbidden"
+      "Failed to authenticate: HTTP error status 403 Forbidden",
     );
     expect(ims.user).toBeNull();
   });
@@ -528,9 +528,9 @@ describe("IMS: authentication", () => {
     ims.testData.bag.urls.auth = "/auth_fail_text";
 
     await expect(
-      ims.login(username, { password: password })
+      ims.login(username, { password: password }),
     ).toRejectWithMessage(
-      "Failed to authenticate: non-JSON response for login"
+      "Failed to authenticate: non-JSON response for login",
     );
     expect(ims.user).toBeNull();
   });
@@ -544,9 +544,9 @@ describe("IMS: authentication", () => {
     ims.testData.bag.urls.auth = "/auth_fail_json_no_status";
 
     await expect(
-      ims.login(username, { password: password })
+      ims.login(username, { password: password }),
     ).toRejectWithMessage(
-      "Failed to authenticate: unknown JSON error status: undefined"
+      "Failed to authenticate: unknown JSON error status: undefined",
     );
     expect(ims.user).toBeNull();
   });
@@ -593,7 +593,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     await expect(
-      ims.login(username, { password: password })
+      ims.login(username, { password: password }),
     ).toRejectWithMessage("No token in retrieved credentials");
   });
 
@@ -603,7 +603,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
 
     await expect(
-      ims.login(username, { password: password })
+      ims.login(username, { password: password }),
     ).toRejectWithMessage("No expiration in retrieved credentials");
   });
 
@@ -732,7 +732,7 @@ describe("IMS: events", () => {
     ims.asHubcap();
 
     await expect(ims.events()).toRejectWithMessage(
-      "Failed to retrieve events."
+      "Failed to retrieve events.",
     );
   });
 
@@ -794,7 +794,7 @@ describe("IMS: events", () => {
     const id = "XYZZY";
 
     await expect(ims.eventWithID(id)).toRejectWithMessage(
-      `No event found with ID: ${id}`
+      `No event found with ID: ${id}`,
     );
   });
 });
@@ -806,11 +806,11 @@ describe("IMS: concentric streets", () => {
     const eventMap = await ims.concentricStreetsByEvent();
 
     expect(Array.from(eventMap.keys()).sort()).toEqual(
-      Array.from(Object.keys(ims.testData.streets)).sort()
+      Array.from(Object.keys(ims.testData.streets)).sort(),
     );
     for (const [eventID, streetMap] of Object.entries(eventMap)) {
       expect(streetMap.keys().sort()).toEqual(
-        Array.from(Object.keys(ims.testData.streets[eventID])).sort()
+        Array.from(Object.keys(ims.testData.streets[eventID])).sort(),
       );
       for (const [streetID, street] of Object.entries(streetMap)) {
         expect(street.name).toEqual(ims.testData.streets[eventID][streetID]);
@@ -824,7 +824,7 @@ describe("IMS: concentric streets", () => {
     ims.asHubcap();
 
     await expect(ims.concentricStreetsByEvent()).toRejectWithMessage(
-      "Failed to retrieve concentric streets."
+      "Failed to retrieve concentric streets.",
     );
   });
 
@@ -834,7 +834,7 @@ describe("IMS: concentric streets", () => {
     for (const event of await ims.events()) {
       const concentricStreets = await ims.concentricStreets(event.id);
       expect(Array.from(concentricStreets.keys()).sort()).toEqual(
-        Array.from(Object.keys(ims.testData.streets[event.id]).sort())
+        Array.from(Object.keys(ims.testData.streets[event.id]).sort()),
       );
     }
   });
@@ -844,7 +844,7 @@ describe("IMS: concentric streets", () => {
     const id = "XYZZY";
 
     await expect(ims.concentricStreets(id)).toRejectWithMessage(
-      `No streets found for event with ID: ${id}`
+      `No streets found for event with ID: ${id}`,
     );
   });
 });
@@ -862,12 +862,12 @@ describe("IMS: incidents", () => {
       const retrievedIncidentsByNumber =
         mapIncidentsByNumber(retrievedIncidents);
       const expectedIncidentsByNumber = mapIncidentsByNumber(
-        ims.testData.incidents[event.id]
+        ims.testData.incidents[event.id],
       );
 
       // Incident numbers should be the same
       expect(Array.from(retrievedIncidentsByNumber.keys()).sort()).toEqual(
-        Array.from(expectedIncidentsByNumber.keys()).sort()
+        Array.from(expectedIncidentsByNumber.keys()).sort(),
       );
 
       // FIXME: need a good way to compare incidents
@@ -886,7 +886,7 @@ describe("IMS: incidents", () => {
     ims.asHubcap();
 
     await expect(ims.incidents("1")).toRejectWithMessage(
-      "Failed to retrieve incidents for event 1."
+      "Failed to retrieve incidents for event 1.",
     );
   });
 
@@ -923,7 +923,7 @@ describe("IMS: incidents", () => {
     for (const event of await ims.events()) {
       for (const incident of await ims.incidents(event.id)) {
         expect(
-          await ims.incidentWithNumber(event.id, incident.number)
+          await ims.incidentWithNumber(event.id, incident.number),
         ).toEqualByValue(incident);
       }
     }
@@ -935,9 +935,9 @@ describe("IMS: incidents", () => {
 
     for (const event of await ims.events()) {
       await expect(
-        ims.incidentWithNumber(event.id, number)
+        ims.incidentWithNumber(event.id, number),
       ).toRejectWithMessage(
-        `No incident found with event:number: ${event.id}:${number}`
+        `No incident found with event:number: ${event.id}:${number}`,
       );
     }
   });
@@ -1183,7 +1183,7 @@ describe("IMS: search", () => {
 
     // Full words
     expect(await search(ims, event, "Housebound Dogs")).toEqual(
-      new Set([2, 4])
+      new Set([2, 4]),
     );
     expect(await search(ims, event, "Housebound")).toEqual(new Set([2, 4]));
     expect(await search(ims, event, "Treebound Cats")).toEqual(new Set([3, 4]));

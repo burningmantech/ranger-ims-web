@@ -8,7 +8,7 @@ import {
   waitForConcentricStreets,
   waitForElementNotToBePresent,
   waitForIncidents,
-  waitForNavBar,
+  waitForNavEvents,
 } from "./test/wait";
 import { URLs } from "./URLs";
 import App from "./App";
@@ -78,10 +78,10 @@ describe("App component", () => {
     await userEvent.click(screen.getByText(/Log In/));
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("load app -> invalid log in -> no content", async () => {
@@ -100,7 +100,7 @@ describe("App component", () => {
 
     try {
       const title = await screen.findByText(
-        "Ranger Incident Management System"
+        "Ranger Incident Management System",
       );
       expect(title).not.toBeInTheDocument();
     } catch (e) {
@@ -116,10 +116,10 @@ describe("App component", () => {
     renderWithURL(URLs.ims, username);
 
     expect(
-      await screen.findByText("Ranger Incident Management System")
+      await screen.findByText("Ranger Incident Management System"),
     ).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test.each(["1", "2", "3", "4", "empty"])(
@@ -132,11 +132,11 @@ describe("App component", () => {
       renderWithURL(URLs.event(event.id), username, ims);
 
       expect(
-        await screen.findByText(`Dispatch Queue: ${event.name}`)
+        await screen.findByText(`Dispatch Queue: ${event.name}`),
       ).toBeInTheDocument();
 
       await waitForDispatchQueue();
-    }
+    },
   );
 
   test("load admin page, logged in", async () => {
@@ -147,7 +147,7 @@ describe("App component", () => {
 
     expect(await screen.findByText("Admin Console")).toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 
   test("not found", async () => {
@@ -158,6 +158,6 @@ describe("App component", () => {
     expect(await screen.findByText("Resource not found:")).toBeInTheDocument();
     expect(screen.queryByText("Loading page…")).not.toBeInTheDocument();
 
-    await waitForNavBar();
+    await waitForNavEvents();
   });
 });

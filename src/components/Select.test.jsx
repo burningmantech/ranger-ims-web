@@ -19,17 +19,17 @@ describe("Select component", () => {
           <Select
             id="select_id"
             width="auto"
+            values={values.map((v) => [v, v])}
             value={value}
             setValue={() => {}}
-            values={values.map((v) => [v, v])}
           />
-        </FormGroup>
+        </FormGroup>,
       );
 
       const select = screen.getByLabelText("label:");
 
       expect(select.value).toEqual(value);
-    }
+    },
   );
 
   test.each(selectOptionValues())(
@@ -49,12 +49,12 @@ describe("Select component", () => {
           <Select
             id="select_id"
             width="auto"
+            values={values.map((v) => [v, v])}
             value={value}
             setValue={() => {}}
-            values={values.map((v) => [v, v])}
             valueToName={valueToName}
           />
-        </FormGroup>
+        </FormGroup>,
       );
 
       const select = screen.getByLabelText("label:");
@@ -62,11 +62,11 @@ describe("Select component", () => {
       for (const option of select.options) {
         expect(option.textContent).toEqual(valueToName(option.value));
       }
-    }
+    },
   );
 
   test.each(selectOptionValues())(
-    "onChange callback ($values.length, $value -> $nextValue)",
+    "setValue callback ($values.length, $value -> $nextValue)",
     async ({ values, value, nextValue }) => {
       const setValue = jest.fn();
 
@@ -76,11 +76,11 @@ describe("Select component", () => {
           <Select
             id="select_id"
             width="auto"
+            values={values.map((v) => [v, v])}
             value={value}
             setValue={setValue}
-            values={values.map((v) => [v, v])}
           />
-        </FormGroup>
+        </FormGroup>,
       );
 
       const select = screen.getByLabelText("label:");
@@ -89,6 +89,6 @@ describe("Select component", () => {
 
       expect(setValue).toHaveBeenCalledTimes(1);
       expect(setValue).toHaveBeenCalledWith(nextValue);
-    }
+    },
   );
 });

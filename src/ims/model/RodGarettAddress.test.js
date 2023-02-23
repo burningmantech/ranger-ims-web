@@ -30,7 +30,7 @@ describe("RodGarettAddress", () => {
     const result = address.toString();
 
     expect(result).toEqual(
-      `${radialHour}:${radialMinute}@${concentric} (${description})`
+      `${radialHour}:${radialMinute}@${concentric} (${description})`,
     );
   });
 
@@ -110,7 +110,7 @@ describe("RodGarettAddress", () => {
 
   test("fromJSON, invalid", () => {
     expect(() => RodGarettAddress.fromJSON({})).toThrow(
-      `Invalid address JSON: {}`
+      `Invalid address JSON: {}`,
     );
   });
 

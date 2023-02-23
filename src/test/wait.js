@@ -17,26 +17,24 @@ export const waitForElementNotToBePresent = async (elementGetter) => {
 export const waitForNavEvents = async () => {
   await userEvent.click(screen.getByText("Event"));
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…")
+    screen.queryByText("Loading events…"),
   );
 };
 
-export const waitForNavBar = waitForNavEvents;
-
 export const waitForEvent = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…")
+    screen.queryByText("Loading event…"),
   );
 };
 
 export const waitForConcentricStreets = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…")
+    screen.queryByText("Loading concentric street names…"),
   );
 };
 
 export const waitForIncidents = async () => {
   await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…")
+    screen.queryByText("Loading incidents…"),
   );
 };

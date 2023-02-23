@@ -25,7 +25,7 @@ describe("EventPage component", () => {
             element={<DispatchQueuePage />}
           />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Same expectations as for /ims (see next test)

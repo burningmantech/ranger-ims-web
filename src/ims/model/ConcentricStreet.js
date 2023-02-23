@@ -6,7 +6,7 @@ export default class ConcentricStreet {
       return new ConcentricStreet(json.id, json.name);
     } catch (e) {
       throw new Error(
-        `Invalid concentric street JSON: ${JSON.stringify(json)}`
+        `Invalid concentric street JSON: ${JSON.stringify(json)}`,
       );
     }
   };

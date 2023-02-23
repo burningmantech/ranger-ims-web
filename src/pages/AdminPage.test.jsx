@@ -7,12 +7,12 @@ import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../ims/TestIMS";
-import { waitForNavBar } from "../test/wait";
+import { waitForNavEvents } from "../test/wait";
 
 describe("AdminPage component", () => {
   test("heading", async () => {
     renderWithIMSContext(<AdminPage />, testIncidentManagementSystem());
-    await waitForNavBar();
+    await waitForNavEvents();
 
     expect(await screen.findByText("Admin Console")).toBeInTheDocument();
   });

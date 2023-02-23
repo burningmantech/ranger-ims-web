@@ -49,7 +49,7 @@ describe("EventDropdown component", () => {
     expect(screen.getByText("Error loading events")).toBeInTheDocument();
 
     expect(console.warn).toHaveBeenCalledWith(
-      "Unable to fetch events: because reasons..."
+      "Unable to fetch events: because reasons...",
     );
   });
 
@@ -72,7 +72,7 @@ describe("EventDropdown component", () => {
 
     const eventNames = Array.from(
       document.getElementsByClassName("nav_event_id"),
-      (item) => item.innerHTML
+      (item) => item.innerHTML,
     );
     const events = await ims.events();
     const expectedEventNames = events.map((event) => event.name);

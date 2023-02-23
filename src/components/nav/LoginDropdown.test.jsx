@@ -62,7 +62,7 @@ describe("LoginDropdown component", () => {
 
     expect(spy).toHaveBeenCalledWith(
       `Previously authenticated as ${username}, ` +
-        `expired ${expiration} (${expiration.toRelative()})`
+        `expired ${expiration} (${expiration.toRelative()})`,
     );
   });
 
@@ -71,7 +71,7 @@ describe("LoginDropdown component", () => {
 
     renderWithIMSContext(
       <LoginDropdown />,
-      testIncidentManagementSystem(username)
+      testIncidentManagementSystem(username),
     );
 
     expect(screen.getByText(username)).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe("LoginDropdown component", () => {
 
     renderWithIMSContext(
       <LoginDropdown />,
-      testIncidentManagementSystem(username)
+      testIncidentManagementSystem(username),
     );
 
     await userEvent.click(screen.getByText(username));
