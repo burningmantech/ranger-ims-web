@@ -48,6 +48,6 @@ describe("SelectState component", () => {
 
       expect(setState).toHaveBeenCalledTimes(1);
       expect(setState).toHaveBeenCalledWith(nextState);
-    }
+    },
   );
 });

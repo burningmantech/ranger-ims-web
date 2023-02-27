@@ -83,16 +83,16 @@ const Incident = ({ incident }) => {
             concentricStreets={concentricStreets}
             setLocationName={editIncident(ims.setIncidentLocationName)}
             setLocationDescription={editIncident(
-              ims.setIncidentLocationDescription
+              ims.setIncidentLocationDescription,
             )}
             setLocationConcentric={editIncident(
-              ims.setIncidentLocationConcentric
+              ims.setIncidentLocationConcentric,
             )}
             setLocationRadialHour={editIncident(
-              ims.setIncidentLocationRadialHour
+              ims.setIncidentLocationRadialHour,
             )}
             setLocationRadialMinute={editIncident(
-              ims.setIncidentLocationRadialMinute
+              ims.setIncidentLocationRadialMinute,
             )}
           />
         </Col>

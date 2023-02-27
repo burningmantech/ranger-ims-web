@@ -28,19 +28,19 @@ const LocationCard = ({
   invariant(setLocationName != null, "setLocationName property is required");
   invariant(
     setLocationDescription != null,
-    "setLocationDescription property is required"
+    "setLocationDescription property is required",
   );
   invariant(
     setLocationConcentric != null,
-    "setLocationConcentric property is required"
+    "setLocationConcentric property is required",
   );
   invariant(
     setLocationRadialHour != null,
-    "setLocationRadialHour property is required"
+    "setLocationRadialHour property is required",
   );
   invariant(
     setLocationRadialMinute != null,
-    "setLocationRadialMinute property is required"
+    "setLocationRadialMinute property is required",
   );
 
   return (
@@ -90,7 +90,7 @@ const LocationCard = ({
               value={locationConcentric == null ? "" : locationConcentric}
               setValue={setLocationConcentric}
               values={[["", ""]].concat(
-                Array.from(concentricStreets.values(), (c) => [c.id, c.name])
+                Array.from(concentricStreets.values(), (c) => [c.id, c.name]),
               )}
             />
           </InputGroup>

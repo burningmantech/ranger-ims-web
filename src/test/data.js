@@ -49,7 +49,7 @@ export const draw = function* (count, source, { unique } = {}) {
 
 export const arrayOf = function* (
   source,
-  { minLength, maxLength, unique } = {}
+  { minLength, maxLength, unique } = {},
 ) {
   invariant(source != null, "source argument is required");
 
@@ -64,7 +64,7 @@ export const arrayOf = function* (
   invariant(maxLength >= 0, "maxLength may not be less than 0");
   invariant(
     minLength <= maxLength,
-    "minLength may not be greater than maxLength"
+    "minLength may not be greater than maxLength",
   );
 
   while (true) {
@@ -105,7 +105,7 @@ export const text = function* ({ alphabet, minLength, maxLength } = {}) {
   invariant(maxLength >= 0, "maxLength may not be less than 0");
   invariant(
     minLength <= maxLength,
-    "minLength may not be greater than maxLength"
+    "minLength may not be greater than maxLength",
   );
 
   while (true) {
@@ -132,8 +132,8 @@ export const selectOptionValues = () => {
       16,
       arrayOf(
         text({ alphabet: alphabet_alphanumeric, minLength: 1, maxLength: 8 }),
-        { minLength: 1, unique: true }
-      )
+        { minLength: 1, unique: true },
+      ),
     ),
     (values) => {
       return {
@@ -141,6 +141,6 @@ export const selectOptionValues = () => {
         value: randomSample(values, 1)[0],
         nextValue: randomSample(values, 1)[0],
       };
-    }
+    },
   );
 };

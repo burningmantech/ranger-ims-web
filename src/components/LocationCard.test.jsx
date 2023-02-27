@@ -19,7 +19,7 @@ describe("LocationCard component", () => {
     ["2", new ConcentricStreet("2", "2nd Street")],
   ]);
   const concentricStreetIDs = [null].concat(
-    Array.from(concentricStreets.keys())
+    Array.from(concentricStreets.keys()),
   );
 
   const _locations = function* () {
@@ -60,7 +60,7 @@ describe("LocationCard component", () => {
         setLocationConcentric={throwError}
         setLocationRadialHour={throwError}
         setLocationRadialMinute={throwError}
-      />
+      />,
     );
 
     const toString = (value) => (value == null ? "" : value.toString());
@@ -70,17 +70,17 @@ describe("LocationCard component", () => {
     try {
       expect(valueForLabel("Name")).toEqual(toString(location.name));
       expect(valueForLabel("Description")).toEqual(
-        toString(location.address.description)
+        toString(location.address.description),
       );
 
       expect(valueForID("incident_location_address_radial_hour")).toEqual(
-        toString(location.address.radialHour)
+        toString(location.address.radialHour),
       );
       expect(valueForID("incident_location_address_radial_minute")).toEqual(
-        toString(location.address.radialMinute)
+        toString(location.address.radialMinute),
       );
       expect(valueForID("incident_location_address_concentric")).toEqual(
-        toString(location.address.concentric)
+        toString(location.address.concentric),
       );
     } catch (e) {
       screen.debug();
@@ -107,7 +107,7 @@ describe("LocationCard component", () => {
           setLocationConcentric={throwError}
           setLocationRadialHour={throwError}
           setLocationRadialMinute={throwError}
-        />
+        />,
       );
 
       const textField = screen.getByLabelText("Name:");
@@ -120,11 +120,11 @@ describe("LocationCard component", () => {
       if ((name || location.name) && name != location.name) {
         expect(setName).toHaveBeenCalledWith(name == null ? "" : name);
       }
-    }
+    },
   );
 
   test.each(
-    cartesian(randomSample(locations, 100), randomSample(descriptions, 4))
+    cartesian(randomSample(locations, 100), randomSample(descriptions, 4)),
   )("change description: %s -> %s", async (location, description) => {
     const setDescription = jest.fn();
 
@@ -141,7 +141,7 @@ describe("LocationCard component", () => {
         setLocationConcentric={throwError}
         setLocationRadialHour={throwError}
         setLocationRadialMinute={throwError}
-      />
+      />,
     );
 
     const textField = screen.getByLabelText("Description:");
@@ -156,7 +156,7 @@ describe("LocationCard component", () => {
       description != location.description
     ) {
       expect(setDescription).toHaveBeenCalledWith(
-        description == null ? "" : description
+        description == null ? "" : description,
       );
     }
   });
@@ -164,8 +164,8 @@ describe("LocationCard component", () => {
   test.each(
     cartesian(
       randomSample(locations, 100),
-      randomSample(concentricStreetIDs, 4)
-    )
+      randomSample(concentricStreetIDs, 4),
+    ),
   )(
     "change concentric street: %s -> %s",
     async (location, concentricStreetID) => {
@@ -184,11 +184,11 @@ describe("LocationCard component", () => {
           setLocationConcentric={setConcentricStreet}
           setLocationRadialHour={throwError}
           setLocationRadialMinute={throwError}
-        />
+        />,
       );
 
       const select = document.getElementById(
-        "incident_location_address_concentric"
+        "incident_location_address_concentric",
       );
 
       await userEvent.selectOptions(select, [
@@ -200,10 +200,10 @@ describe("LocationCard component", () => {
         concentricStreetID != location.address.concentric
       ) {
         expect(setConcentricStreet).toHaveBeenCalledWith(
-          concentricStreetID == null ? "" : concentricStreetID
+          concentricStreetID == null ? "" : concentricStreetID,
         );
       }
-    }
+    },
   );
 
   test.each(cartesian(randomSample(locations, 100), randomSample(hours, 4)))(
@@ -224,11 +224,11 @@ describe("LocationCard component", () => {
           setLocationConcentric={throwError}
           setLocationRadialHour={setHour}
           setLocationRadialMinute={throwError}
-        />
+        />,
       );
 
       const select = document.getElementById(
-        "incident_location_address_radial_hour"
+        "incident_location_address_radial_hour",
       );
 
       await userEvent.selectOptions(select, [
@@ -241,7 +241,7 @@ describe("LocationCard component", () => {
       ) {
         expect(setHour).toHaveBeenCalledWith(hour == null ? "" : hour);
       }
-    }
+    },
   );
 
   test.each(cartesian(randomSample(locations, 100), randomSample(minutes, 4)))(
@@ -262,11 +262,11 @@ describe("LocationCard component", () => {
           setLocationConcentric={throwError}
           setLocationRadialHour={throwError}
           setLocationRadialMinute={setMinute}
-        />
+        />,
       );
 
       const select = document.getElementById(
-        "incident_location_address_radial_minute"
+        "incident_location_address_radial_minute",
       );
 
       await userEvent.selectOptions(select, [
@@ -279,6 +279,6 @@ describe("LocationCard component", () => {
       ) {
         expect(setMinute).toHaveBeenCalledWith(minute == null ? "" : minute);
       }
-    }
+    },
   );
 });

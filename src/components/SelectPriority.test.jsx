@@ -15,7 +15,7 @@ describe("SelectPriority component", () => {
       const select = screen.getByLabelText("Priority:");
 
       expect(parseInt(select.value)).toEqual(priority);
-    }
+    },
   );
 
   // const test_newPrioritySelected = async (startPriority, nextPriority) => {
@@ -43,13 +43,13 @@ describe("SelectPriority component", () => {
       Array.from(Incident.nonDeprecatedPriorities(start), (next) => [
         start,
         next,
-      ])
-    ).flat()
+      ]),
+    ).flat(),
   )("setPriority callback (%s, %s)", async (startPriority, nextPriority) => {
     const setPriority = jest.fn();
 
     render(
-      <SelectPriority priority={startPriority} setPriority={setPriority} />
+      <SelectPriority priority={startPriority} setPriority={setPriority} />,
     );
 
     const select = screen.getByLabelText("Priority:");
