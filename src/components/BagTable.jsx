@@ -4,7 +4,7 @@ import Table from "react-bootstrap/Table";
 
 import { useBag } from "../ims/effects";
 
-import Loading from "../components/Loading";
+import Loading from "../components/base/Loading";
 
 const BagTable = () => {
   // Fetch data

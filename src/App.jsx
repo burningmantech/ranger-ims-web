@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { URLs } from "./URLs";
 import { IMSContext } from "./ims/context";
 
-import Loading from "./components/Loading";
+import Loading from "./components/base/Loading";
 
 import "./App.css";
 
