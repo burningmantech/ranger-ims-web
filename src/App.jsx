@@ -58,7 +58,7 @@ const App = ({ ims, routerClass }) => {
 
             {/* Event Page */}
             <Route
-              path={`${URLs.events}:eventID/`}
+              path={URLs.event(":eventID")}
               element={
                 <Login>
                   <EventPage />
@@ -68,7 +68,7 @@ const App = ({ ims, routerClass }) => {
 
             {/* Dispatch Queue Page */}
             <Route
-              path={`${URLs.events}:eventID/queue`}
+              path={URLs.event(":eventID") + "queue"}
               element={
                 <Login>
                   <DispatchQueuePage />
@@ -78,7 +78,7 @@ const App = ({ ims, routerClass }) => {
 
             {/* Incident Page */}
             <Route
-              path={`${URLs.events}:eventID/incidents/:incidentNumber`}
+              path={URLs.incident(":eventID", ":incidentNumber")}
               element={
                 <Login>
                   <IncidentPage />
