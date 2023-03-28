@@ -1,4 +1,4 @@
-import Well from "./Well";
+import Well from "../base/Well";
 
 const NarrativeCard = () => {
   return (

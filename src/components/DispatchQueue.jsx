@@ -16,7 +16,7 @@ import { URLs } from "../URLs";
 import { useAllConcentricStreets, useIncidents } from "../ims/effects";
 import Incident from "../ims/model/Incident";
 
-import Loading from "../components/Loading";
+import Loading from "../components/base/Loading";
 
 export const defaultPageSize = 25;
 

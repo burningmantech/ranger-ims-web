@@ -2,13 +2,13 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 
-import RodGarettAddress from "../ims/model/RodGarettAddress";
+import RodGarettAddress from "../../ims/model/RodGarettAddress";
 
-import FormGroup from "./FormGroup";
-import Label from "./Label";
-import LabeledTextField from "./LabeledTextField";
-import Select from "./Select";
-import Well from "./Well";
+import FormGroup from "../base/FormGroup";
+import Label from "../base/Label";
+import LabeledTextField from "../base/LabeledTextField";
+import Select from "../base/Select";
+import Well from "../base/Well";
 
 const LocationCard = ({
   locationName,

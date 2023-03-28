@@ -1,6 +1,6 @@
 import Container from "react-bootstrap/Container";
 
-import NavigationBar from "../components/nav/NavigationBar";
+import NavigationBar from "./nav/NavigationBar";
 
 const Home = ({ children }) => {
   return (

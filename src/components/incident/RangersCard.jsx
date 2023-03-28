@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import Well from "./Well";
+import Well from "../base/Well";
 
 const RangersCard = ({ rangers }) => {
   invariant(rangers != null, "rangers property is required");
