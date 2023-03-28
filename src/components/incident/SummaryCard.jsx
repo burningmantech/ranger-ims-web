@@ -1,7 +1,7 @@
-import FormGroup from "./FormGroup";
-import Label from "./Label";
-import LabeledTextField from "./LabeledTextField";
-import Well from "./Well";
+import FormGroup from "../FormGroup";
+import Label from "../Label";
+import LabeledTextField from "../LabeledTextField";
+import Well from "../Well";
 
 const SummaryCard = ({ summary }) => {
   return (
