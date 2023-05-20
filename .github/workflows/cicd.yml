@@ -57,6 +57,7 @@ jobs:
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v3.1.1
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
           env_vars: GITHUB_REF,GITHUB_COMMIT,GITHUB_USER,GITHUB_WORKFLOW
           fail_ci_if_error: true
