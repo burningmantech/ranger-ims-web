@@ -5,9 +5,9 @@ import { useParams } from "react-router-dom";
 import { IMSContext } from "../ims/context";
 import { useEvent } from "../ims/effects";
 
-import Loading from "../components/Loading";
-import Page from "../components/Page";
+import Loading from "../components/base/Loading";
 import DispatchQueue from "../components/DispatchQueue";
+import Page from "../components/Page";
 
 export const DispatchQueuePage = ({ eventID }) => {
   const imsContext = useContext(IMSContext);

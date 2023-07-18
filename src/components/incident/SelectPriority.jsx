@@ -1,8 +1,8 @@
 import invariant from "invariant";
 
-import Incident from "../ims/model/Incident";
+import Incident from "../../ims/model/Incident";
 
-import LabeledSelect from "./LabeledSelect";
+import LabeledSelect from "../base/LabeledSelect";
 
 const SelectPriority = ({ priority, setPriority }) => {
   invariant(priority != null, "priority property is required");

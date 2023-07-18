@@ -1,8 +1,8 @@
 import invariant from "invariant";
 
-import FormGroup from "./FormGroup";
-import Label from "./Label";
-import Select from "./Select";
+import FormGroup from "../base/FormGroup";
+import Label from "../base/Label";
+import Select from "../base/Select";
 
 const LabeledSelect = ({ id, label, value, setValue, values, valueToName }) => {
   invariant(id != null, "id property is required");

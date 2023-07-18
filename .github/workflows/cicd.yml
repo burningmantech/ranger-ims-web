@@ -3,7 +3,13 @@
 
 name: CI/CD
 
-on: [push]
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   unit:
@@ -14,7 +20,7 @@ jobs:
 
     steps:
       - name: Harden CI
-        uses: step-security/harden-runner@v2.2.0
+        uses: step-security/harden-runner@v2.4.1
         with:
           disable-sudo: true
           disable-file-monitoring: true
@@ -49,8 +55,9 @@ jobs:
         run: npm test -- --ci --watchAll=false --coverage
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3.1.1
+        uses: codecov/codecov-action@v3.1.4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
           env_vars: GITHUB_REF,GITHUB_COMMIT,GITHUB_USER,GITHUB_WORKFLOW
           fail_ci_if_error: true
@@ -69,11 +76,12 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.2.0
+        uses: step-security/harden-runner@v2.4.1
         with:
           disable-sudo: true
           egress-policy: block
           allowed-endpoints: >
+            api.github.com:443
             auth.docker.io:443
             github.com:443
             production.cloudflare.docker.com:443
@@ -107,11 +115,12 @@ jobs:
 
     steps:
       - name: Harden CI
-        uses: step-security/harden-runner@v2.2.0
+        uses: step-security/harden-runner@v2.4.1
         with:
           disable-sudo: true
           egress-policy: block
           allowed-endpoints: >
+            api.github.com:443
             github.com:443
 
       - name: Checkout source code

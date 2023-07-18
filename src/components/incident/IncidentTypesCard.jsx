@@ -2,7 +2,7 @@ import invariant from "invariant";
 
 import ListGroup from "react-bootstrap/ListGroup";
 
-import Well from "./Well";
+import Well from "../base/Well";
 
 const IncidentTypesCard = ({ incidentTypes }) => {
   invariant(incidentTypes != null, "incidentTypes property is required");

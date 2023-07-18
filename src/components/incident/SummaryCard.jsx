@@ -1,9 +1,9 @@
 import invariant from "invariant";
 
-import FormGroup from "./FormGroup";
-import Label from "./Label";
-import LabeledTextField from "./LabeledTextField";
-import Well from "./Well";
+import FormGroup from "../base/FormGroup";
+import Label from "../base/Label";
+import LabeledTextField from "../base/LabeledTextField";
+import Well from "../base/Well";
 
 const SummaryCard = ({ summary, setSummary }) => {
   invariant(setSummary != null, "setSummary property is required");

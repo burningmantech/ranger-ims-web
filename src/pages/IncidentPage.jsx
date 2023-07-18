@@ -5,9 +5,9 @@ import { useParams } from "react-router-dom";
 import { IMSContext } from "../ims/context";
 import { useIncident } from "../ims/effects";
 
-import Loading from "../components/Loading";
-import Page from "../components/Page";
+import Loading from "../components/base/Loading";
 import Incident from "../components/Incident";
+import Page from "../components/Page";
 
 export const IncidentPage = ({ eventID, incidentNumber }) => {
   invariant(eventID != null, "eventID property is required");

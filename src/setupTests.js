@@ -15,7 +15,7 @@ import flushPromises from "flush-promises";
 global.console = {
   ...console,
   debug: jest.fn(),
-  // info: jest.fn(),
+  info: jest.fn(),
   // log: jest.fn(),
   // warn: jest.fn(),
   // error: jest.fn(),
