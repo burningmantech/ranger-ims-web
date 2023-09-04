@@ -35,7 +35,7 @@ jobs:
             uploader.codecov.io:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -89,7 +89,7 @@ jobs:
             registry.npmjs.org:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: ./bin/build;
@@ -124,7 +124,7 @@ jobs:
             github.com:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Docker image artifact
         uses: actions/download-artifact@v3
