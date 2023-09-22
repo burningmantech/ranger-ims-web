@@ -2,11 +2,13 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import ConcentricStreet from "../ims/model/ConcentricStreet";
-import Location from "../ims/model/Location";
-import RodGarettAddress from "../ims/model/RodGarettAddress";
-import { cartesian, randomSample } from "../test/data";
-import { throwError } from "../test/throw";
+import ConcentricStreet from "../../ims/model/ConcentricStreet";
+import Location from "../../ims/model/Location";
+import RodGarettAddress from "../../ims/model/RodGarettAddress";
+
+import { cartesian, randomSample } from "../../test/data";
+import { throwError } from "../../test/throw";
+
 import LocationCard from "./LocationCard";
 
 describe("LocationCard component", () => {

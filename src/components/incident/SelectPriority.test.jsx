@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import Incident from "../ims/model/Incident";
+import Incident from "../../ims/model/Incident";
 
 import SelectPriority from "./SelectPriority";
 
