@@ -47,7 +47,7 @@ describe("User", () => {
   test("fromJSON, no credentials", () => {
     const username = "Hubcap";
     const userJSON = { username: username };
-    expect(() => User.fromJSON(userJSON)).toThrow("credentials is required");
+    expect(() => User.fromJSON(userJSON)).toThrow("Invalid user JSON");
   });
 
   test("JSON round-trip through text", () => {
