@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Harden CI
-        uses: step-security/harden-runner@v2.4.1
+        uses: step-security/harden-runner@v2.5.1
         with:
           disable-sudo: true
           disable-file-monitoring: true
@@ -35,7 +35,7 @@ jobs:
             uploader.codecov.io:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -76,7 +76,7 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.4.1
+        uses: step-security/harden-runner@v2.5.1
         with:
           disable-sudo: true
           egress-policy: block
@@ -89,7 +89,7 @@ jobs:
             registry.npmjs.org:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: ./bin/build;
@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Harden CI
-        uses: step-security/harden-runner@v2.4.1
+        uses: step-security/harden-runner@v2.5.1
         with:
           disable-sudo: true
           egress-policy: block
@@ -124,7 +124,7 @@ jobs:
             github.com:443
 
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Docker image artifact
         uses: actions/download-artifact@v3
