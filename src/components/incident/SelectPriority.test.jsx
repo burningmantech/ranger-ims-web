@@ -18,26 +18,6 @@ describe("SelectPriority component", () => {
     },
   );
 
-  // const test_newPrioritySelected = async (startPriority, nextPriority) => {
-  //   console.log(`${startPriority} -> ${nextPriority}`);
-
-  //   render(<SelectPriority priority={startPriority} setPriority={() => {}} />);
-
-  //   const select = screen.getByLabelText("Priority:");
-
-  //   await userEvent.selectOptions(select, [nextPriority]);
-
-  //   expect(select.value).toEqual(nextPriority);
-  // };
-
-  // for (const startPriority of Incident.priorities) {
-  //   for (const nextPriority of Incident.priorities) {
-  //     test(`new priority selected (${startPriority}, ${nextPriority})`, async () => {
-  //       await test_newPrioritySelected(startPriority, nextPriority);
-  //     });
-  //   }
-  // }
-
   test.each(
     Array.from(Incident.priorities, (start) =>
       Array.from(Incident.nonDeprecatedPriorities(start), (next) => [
@@ -59,12 +39,4 @@ describe("SelectPriority component", () => {
     expect(setPriority).toHaveBeenCalledTimes(1);
     expect(setPriority).toHaveBeenCalledWith(nextPriority); // expect integer here
   });
-
-  // for (const startPriority of Incident.priorities) {
-  //   const nonDeprecatedPriorities =
-  //     Incident.nonDeprecatedPriorities(startPriority);
-  //   for (const nextPriority of nonDeprecatedPriorities) {
-  //     ...
-  //   }
-  // }
 });

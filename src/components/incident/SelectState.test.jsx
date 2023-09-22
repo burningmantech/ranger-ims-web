@@ -16,28 +16,8 @@ describe("SelectState component", () => {
     expect(select.value).toEqual(state);
   });
 
-  // const test_newStateSelected = async (startState, nextState) => {
-  //   console.log(`${startState} -> ${nextState}`);
-
-  //   render(<SelectState state={startState} setState={() => {}} />);
-
-  //   const select = screen.getByLabelText("State:");
-
-  //   await userEvent.selectOptions(select, [nextState]);
-
-  //   expect(select.value).toEqual(nextState);
-  // };
-
-  // for (const startState of Incident.states) {
-  //   for (const nextState of Incident.states) {
-  //     test(`new state selected (${startState}, ${nextState})`, async () => {
-  //       await test_newStateSelected(startState, nextState);
-  //     });
-  //   }
-  // }
-
   test.each(cartesian(Incident.states, Incident.states))(
-    "onChange callback (%s, %s)",
+    "setState callback (%s -> %s)",
     async (startState, nextState) => {
       const setState = jest.fn();
 
