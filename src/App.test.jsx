@@ -4,6 +4,12 @@ import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 import { testIncidentManagementSystem } from "./ims/TestIMS";
+import {
+  waitForConcentricStreets,
+  waitForElementNotToBePresent,
+  waitForIncidents,
+  waitForNavEvents,
+} from "./test/wait";
 import { URLs } from "./URLs";
 import App from "./App";
 
@@ -13,32 +19,6 @@ export const waitForPage = async () => {
 
 export const waitForLogin = async () => {
   return await screen.findByText("Log In");
-};
-
-export const waitForNavEvents = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…"),
-  );
-};
-
-export const waitForEvent = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading event…"),
-  );
-};
-
-export const waitForConcentricStreets = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…"),
-  );
-};
-
-export const waitForIncidents = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…"),
-  );
 };
 
 export const waitForDispatchQueue = async () => {
@@ -142,25 +122,22 @@ describe("App component", () => {
     await waitForNavEvents();
   });
 
-  const test_loadEventPageLoggedIn = async (eventID) => {
-    const username = "Hubcap";
-    const ims = testIncidentManagementSystem(username);
-    const event = await ims.eventWithID(eventID);
+  test.each(["1", "2", "3", "4", "empty"])(
+    "load event page, logged in (%s)",
+    async (eventID) => {
+      const username = "Hubcap";
+      const ims = testIncidentManagementSystem(username);
+      const event = await ims.eventWithID(eventID);
 
-    renderWithURL(URLs.event(event.id), username, ims);
+      renderWithURL(URLs.event(event.id), username, ims);
 
-    expect(
-      await screen.findByText(`Dispatch Queue: ${event.name}`),
-    ).toBeInTheDocument();
+      expect(
+        await screen.findByText(`Dispatch Queue: ${event.name}`),
+      ).toBeInTheDocument();
 
-    await waitForDispatchQueue();
-  };
-
-  for (const eventID of ["1", "2", "3", "4", "empty"]) {
-    test(`load event page, logged in (${eventID})`, async () => {
-      await test_loadEventPageLoggedIn(eventID);
-    });
-  }
+      await waitForDispatchQueue();
+    },
+  );
 
   test("load admin page, logged in", async () => {
     const username = "Hubcap";

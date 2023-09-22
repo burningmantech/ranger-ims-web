@@ -4,17 +4,11 @@ import FormGroup from "../base/FormGroup";
 import Label from "../base/Label";
 import Select from "../base/Select";
 
-const LabeledSelect = ({
-  id,
-  label,
-  values,
-  defaultValue,
-  valueToName,
-  onChange,
-}) => {
+const LabeledSelect = ({ id, label, value, setValue, values, valueToName }) => {
   invariant(id != null, "id property is required");
   invariant(label != null, "label property is required");
   invariant(values != null, "values property is required");
+  invariant(setValue != null, "setValue property is required");
 
   return (
     <FormGroup>
@@ -23,10 +17,10 @@ const LabeledSelect = ({
         id={id}
         size="sm"
         width="auto"
+        value={value}
+        setValue={setValue}
         values={values}
-        defaultValue={defaultValue}
         valueToName={valueToName}
-        onChange={onChange}
       />
     </FormGroup>
   );

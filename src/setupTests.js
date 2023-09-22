@@ -3,25 +3,12 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { waitFor } from "@testing-library/react";
 
 // https://github.com/dumbmatter/fakeIndexedDB
 import "fake-indexeddb/auto";
 import { deleteDB } from "idb";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import flushPromises from "flush-promises";
-
-// waitForElementToBeRemoved errors out if the element isn't there at least
-// once, and that's causing grief.
-// Possible issue:
-//   https://github.com/testing-library/react-testing-library/issues/865
-// We see the same flakiness, but it's not clear that it's the same root cause.
-
-global.waitForElementNotToBePresent = async (elementGetter) => {
-  await waitFor(() => {
-    expect(elementGetter()).not.toBeInTheDocument();
-  });
-};
 
 // Mute logging as desired
 
@@ -48,7 +35,7 @@ if (process.env.CI != null) {
 
 // Don't allow use of fetch()
 
-/* eslint no-native-reassign: "off" */
+// eslint-disable-next-line no-native-reassign
 fetch = jest.fn(async () => {
   throw new Error("Caught attempt to call fetch()");
 });
@@ -175,7 +162,7 @@ afterEach(async () => {
 
   // Replacing the factory also tosses out references to old databases.
   // It's unclear if this cleans up resources, hence we try to clean up above.
-  indexedDB = new FDBFactory(); /* eslint no-native-reassign: "off" */
+  indexedDB = new FDBFactory(); // eslint-disable-line no-native-reassign
 
   console.debug("Removed all cached data.");
 });

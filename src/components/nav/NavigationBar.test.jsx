@@ -1,22 +1,13 @@
 import "@testing-library/jest-dom/extend-expect";
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
 } from "../../ims/TestIMS";
+import { waitForNavEvents } from "../../test/wait";
 
 import NavigationBar from "./NavigationBar";
-
-export const waitForEffects = async () => {
-  // Let effects complete
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…"),
-  );
-};
 
 describe("Navbar component", () => {
   test("id", async () => {
@@ -29,7 +20,7 @@ describe("Navbar component", () => {
 
     expect(document.getElementById(navID)).toBeInTheDocument();
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 
   test("includes logo", async () => {
@@ -42,7 +33,7 @@ describe("Navbar component", () => {
 
     expect(document.getElementById(navID)).toBeInTheDocument();
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 
   test("includes link to home", async () => {
@@ -53,7 +44,7 @@ describe("Navbar component", () => {
     expect(link).toBeInTheDocument();
     expect(link.href).toEqual(`http://localhost${URLs.ims}`);
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 
   test("includes events dropdown", async () => {
@@ -61,7 +52,7 @@ describe("Navbar component", () => {
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 
   test("includes user dropdown", async () => {
@@ -69,6 +60,6 @@ describe("Navbar component", () => {
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
 
-    await waitForEffects();
+    await waitForNavEvents();
   });
 });

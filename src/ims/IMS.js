@@ -478,7 +478,7 @@ export default class IncidentManagementSystem {
 
   _concentricStreetsStoreKey = "concentric streets";
 
-  allConcentricStreets = async () => {
+  concentricStreetsByEvent = async () => {
     const deserialize = (json) => {
       return new Map(
         // Convert [eventID, streetsJSON] to [eventID, streetsMap]
@@ -526,8 +526,8 @@ export default class IncidentManagementSystem {
   };
 
   concentricStreets = async (eventID) => {
-    const allConcentricStreetsMap = await this.allConcentricStreets();
-    const concentricStreets = allConcentricStreetsMap.get(eventID);
+    const concentricStreetsByEvent = await this.concentricStreetsByEvent();
+    const concentricStreets = concentricStreetsByEvent.get(eventID);
     if (concentricStreets === undefined) {
       throw new Error(`No streets found for event with ID: ${eventID}`);
     }
@@ -596,6 +596,84 @@ export default class IncidentManagementSystem {
         `No incident found with event:number: ${eventID}:${number}`,
       );
     }
+  };
+
+  setIncidentState = async (eventID, number, state) => {
+    console.info(`Updating incident ${eventID}#${number} state to ${state}...`);
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentState is unimplemented");
+  };
+
+  setIncidentPriority = async (eventID, number, priority) => {
+    console.info(
+      `Updating incident ${eventID}#${number} priority to ${priority}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentState is unimplemented");
+  };
+
+  setIncidentSummary = async (eventID, number, summary) => {
+    console.info(
+      `Updating incident ${eventID}#${number} summary to ${summary}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentSummary is unimplemented");
+  };
+
+  setIncidentLocationName = async (eventID, number, name) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location name to ${name}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationName is unimplemented");
+  };
+
+  setIncidentLocationDescription = async (eventID, number, description) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location description to ${description}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationDescription is unimplemented");
+  };
+
+  setIncidentLocationConcentric = async (eventID, number, concentricStreet) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location concentric street to ${concentricStreet}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationConcentric is unimplemented");
+  };
+
+  setIncidentLocationRadialHour = async (eventID, number, radialHour) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location radial hour to ${radialHour}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationRadialHour is unimplemented");
+  };
+
+  setIncidentLocationRadialMinute = async (eventID, number, radialMinute) => {
+    console.info(
+      `Updating incident ${eventID}#${number} location radial minute to ${radialMinute}...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    throw new Error("setIncidentLocationRadialMinute is unimplemented");
   };
 
   // Search

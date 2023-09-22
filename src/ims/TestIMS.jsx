@@ -508,6 +508,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
   };
 
   _fetch = async (request) => {
+    await new Promise((resolve) => setTimeout(resolve, 25)); // Add a delay
     return await this._fetchMockNotModified(request);
   };
 

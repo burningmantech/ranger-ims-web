@@ -3,12 +3,16 @@ import { DateTime } from "luxon";
 
 export default class User {
   static fromJSON = (json) => {
-    if (json.credentials != null) {
-      json.credentials.expiration = DateTime.fromISO(
-        json.credentials.expiration,
-      );
+    try {
+      if (json.credentials != null) {
+        json.credentials.expiration = DateTime.fromISO(
+          json.credentials.expiration,
+        );
+      }
+      return new User(json.username, json.credentials);
+    } catch (e) {
+      throw new Error(`Invalid user JSON: ${JSON.stringify(json)}`);
     }
-    return new User(json.username, json.credentials);
   };
 
   constructor(username, credentials) {

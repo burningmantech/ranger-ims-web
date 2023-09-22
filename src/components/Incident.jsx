@@ -34,6 +34,15 @@ const Incident = ({ incident }) => {
     setConcentricStreets: setConcentricStreets,
   });
 
+  // Incident State
+
+  const [incidentState, setIncidentState] = useState(incident.state);
+
+  const editIncident = (imsSetValue) => (value) =>
+    imsSetValue(incident.eventID, incident.number, value);
+
+  // Component
+
   return (
     <div id="incident_wrapper">
       <h1>Incident #{incident.number}</h1>
@@ -41,16 +50,25 @@ const Incident = ({ incident }) => {
       <Row>
         <Col className="text-start" />
         <Col className="text-center">
-          <SelectState state={incident.state} />
+          <SelectState
+            state={incidentState}
+            setState={editIncident(ims.setIncidentState)}
+          />
         </Col>
         <Col className="text-end">
-          <SelectPriority priority={incident.priority} />
+          <SelectPriority
+            priority={incident.priority}
+            setPriority={editIncident(ims.setIncidentPriority)}
+          />
         </Col>
       </Row>
 
       <Row>
         <Col>
-          <SummaryCard summary={incident.summary} />
+          <SummaryCard
+            summary={incident.summary}
+            setSummary={editIncident(ims.setIncidentSummary)}
+          />
         </Col>
       </Row>
 
@@ -63,6 +81,19 @@ const Incident = ({ incident }) => {
             locationRadialHour={incident.location.address.radialHour}
             locationRadialMinute={incident.location.address.radialMinute}
             concentricStreets={concentricStreets}
+            setLocationName={editIncident(ims.setIncidentLocationName)}
+            setLocationDescription={editIncident(
+              ims.setIncidentLocationDescription,
+            )}
+            setLocationConcentric={editIncident(
+              ims.setIncidentLocationConcentric,
+            )}
+            setLocationRadialHour={editIncident(
+              ims.setIncidentLocationRadialHour,
+            )}
+            setLocationRadialMinute={editIncident(
+              ims.setIncidentLocationRadialMinute,
+            )}
           />
         </Col>
       </Row>

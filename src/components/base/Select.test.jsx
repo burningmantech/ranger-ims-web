@@ -2,131 +2,93 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { selectOptionValues } from "../../test/data";
 import FormGroup from "./FormGroup";
 import Label from "./Label";
 import Select from "./Select";
 
 describe("Select component", () => {
-  const test_defaultValueSelected = async (values, defaultValue) => {
-    render(
-      <FormGroup>
-        <Label id="select_id" label="label" />
-        <Select
-          id="select_id"
-          width="auto"
-          values={values.map((v) => [v, v])}
-          defaultValue={defaultValue}
-        />
-      </FormGroup>,
-    );
+  const values = ["1", "2", "3", "4"];
 
-    const select = screen.getByLabelText("label:");
+  test.each(selectOptionValues())(
+    "start value selected ($values.length, $value)",
+    ({ values, value }) => {
+      render(
+        <FormGroup>
+          <Label id="select_id" label="label" />
+          <Select
+            id="select_id"
+            width="auto"
+            values={values.map((v) => [v, v])}
+            value={value}
+            setValue={() => {}}
+          />
+        </FormGroup>,
+      );
 
-    expect(select.value).toEqual(defaultValue);
-  };
+      const select = screen.getByLabelText("label:");
 
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const defaultValue of values) {
-      test(`start value selected (${defaultValue})`, async () => {
-        await test_defaultValueSelected(values, defaultValue);
-      });
-    }
-  }
+      expect(select.value).toEqual(value);
+    },
+  );
 
-  const test_newValueSelected = async (values, defaultValue, nextValue) => {
-    console.log(`${defaultValue} -> ${nextValue}`);
+  test.each(selectOptionValues())(
+    "valueToName ($values.length, $value)",
+    ({ values, value }) => {
+      const valueToName = (value) => {
+        if (value === undefined || value == "----") {
+          return "----";
+        } else {
+          return "***" + value + "***";
+        }
+      };
 
-    render(
-      <FormGroup>
-        <Label id="select_id" label="label" />
-        <Select
-          id="select_id"
-          width="auto"
-          values={values.map((v) => [v, v])}
-          defaultValue={defaultValue}
-        />
-      </FormGroup>,
-    );
+      render(
+        <FormGroup>
+          <Label id="select_id" label="label" />
+          <Select
+            id="select_id"
+            width="auto"
+            values={values.map((v) => [v, v])}
+            value={value}
+            setValue={() => {}}
+            valueToName={valueToName}
+          />
+        </FormGroup>,
+      );
 
-    const select = screen.getByLabelText("label:");
+      const select = screen.getByLabelText("label:");
 
-    await userEvent.selectOptions(select, [nextValue]);
-
-    expect(select.value).toEqual(nextValue);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const defaultValue of values) {
-      for (const nextValue of values) {
-        test(`new value selected (${defaultValue}, ${nextValue})`, async () => {
-          await test_newValueSelected(values, defaultValue, nextValue);
-        });
+      for (const option of select.options) {
+        expect(option.textContent).toEqual(valueToName(option.value));
       }
-    }
-  }
+    },
+  );
 
-  test("valueToName", async () => {
-    const values = ["1", "2", "3", "4"];
-    const valueToName = (value) => {
-      if (value === undefined || value == "----") {
-        return "----";
-      } else {
-        return "***" + value + "***";
-      }
-    };
+  test.each(selectOptionValues())(
+    "setValue callback ($values.length, $value -> $nextValue)",
+    async ({ values, value, nextValue }) => {
+      const setValue = jest.fn();
 
-    render(
-      <FormGroup>
-        <Label id="select_id" label="label" />
-        <Select
-          id="select_id"
-          width="auto"
-          values={values.map((v) => [v, v])}
-          valueToName={valueToName}
-        />
-      </FormGroup>,
-    );
+      render(
+        <FormGroup>
+          <Label id="select_id" label="label" />
+          <Select
+            id="select_id"
+            width="auto"
+            values={values.map((v) => [v, v])}
+            value={value}
+            setValue={setValue}
+          />
+        </FormGroup>,
+      );
 
-    const select = screen.getByLabelText("label:");
+      const select = screen.getByLabelText("label:");
 
-    for (const option of select.options) {
-      expect(option.textContent).toEqual(valueToName(option.value));
-    }
-  });
+      await userEvent.selectOptions(select, [nextValue]);
 
-  const test_onChangeCallback = async (values, defaultValue, nextValue) => {
-    const onChange = jest.fn();
-
-    render(
-      <FormGroup>
-        <Label id="select_id" label="label" />
-        <Select
-          id="select_id"
-          width="auto"
-          values={values.map((v) => [v, v])}
-          defaultValue={defaultValue}
-          onChange={onChange}
-        />
-      </FormGroup>,
-    );
-
-    const select = screen.getByLabelText("label:");
-
-    await userEvent.selectOptions(select, [nextValue]);
-
-    expect(onChange).toHaveBeenCalledTimes(1);
-  };
-
-  {
-    const values = ["1", "2", "3", "4"];
-    for (const defaultValue of values) {
-      for (const nextValue of values) {
-        test(`onChange callback (${defaultValue}, ${nextValue})`, async () => {
-          await test_onChangeCallback(values, defaultValue, nextValue);
-        });
-      }
-    }
-  }
+      expect(setValue).toHaveBeenCalledTimes(1);
+      expect(setValue).toHaveBeenCalledWith(nextValue);
+    },
+  );
 });

@@ -146,7 +146,7 @@ describe("Incident component: display", () => {
   //   const ims = testIncidentManagementSystem();
 
   //   for (const event of await ims.events()) {
-  //     const concentricStreetsMap = await ims.concentricStreets(event.id);
+  //     const concentricStreets = await ims.concentricStreets(event.id);
 
   //     for (const incident of await ims.incidents(event.id)) {
   //       renderWithIMSContext(<Incident incident={incident} />, ims);
@@ -158,7 +158,7 @@ describe("Incident component: display", () => {
   //       const address = location == null ? null : location.address;
   //       const concentric = address == null ? null : address.concentric;
   //       const concentricStreet =
-  //         concentric == null ? "" : concentricStreetsMap.get(concentric);
+  //         concentric == null ? "" : concentricStreets.get(concentric);
 
   //       console.info(concentricStreet);
   //       expect(select.value).toEqual(concentricStreet == null ? "" : concentricStreet.id);

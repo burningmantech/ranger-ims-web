@@ -172,10 +172,12 @@ export const useIncident = ({ eventID, incidentNumber, setIncident }) => {
   }, [ims, eventID, incidentNumber, setIncident]);
 };
 
-export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
+export const useConcentricStreetsByEvent = ({
+  setConcentricStreetsByEvent,
+}) => {
   invariant(
-    setAllConcentricStreets != null,
-    "setAllConcentricStreets property is required",
+    setConcentricStreetsByEvent != null,
+    "setConcentricStreetsByEvent property is required",
   );
 
   const ims = useIMS();
@@ -187,11 +189,11 @@ export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
       const concentricStreets = await tryWithFallback(
         "fetch all concentric streets",
         null,
-        ims.allConcentricStreets,
+        ims.concentricStreetsByEvent,
       );
 
       if (!ignore) {
-        setAllConcentricStreets(concentricStreets);
+        setConcentricStreetsByEvent(concentricStreets);
       }
     };
 
@@ -200,7 +202,7 @@ export const useAllConcentricStreets = ({ setAllConcentricStreets }) => {
     return () => {
       ignore = true;
     };
-  }, [ims, setAllConcentricStreets]);
+  }, [ims, setConcentricStreetsByEvent]);
 };
 
 export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
@@ -218,7 +220,7 @@ export const useConcentricStreets = ({ eventID, setConcentricStreets }) => {
     const fetchConcentricStreets = async () => {
       const concentricStreets = await tryWithFallback(
         `fetch concentric streets for event ${eventID}`,
-        [],
+        new Map(),
         ims.concentricStreets,
         eventID,
       );

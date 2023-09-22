@@ -1,5 +1,3 @@
-/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^_" }]*/
-
 import invariant from "invariant";
 import { Suspense, lazy, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";

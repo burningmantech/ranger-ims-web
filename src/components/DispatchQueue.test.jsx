@@ -12,6 +12,8 @@ import {
 } from "../ims/TestIMS";
 import Location from "../ims/model/Location";
 import RodGarettAddress from "../ims/model/RodGarettAddress";
+import { cartesian } from "../test/data";
+import { waitForConcentricStreets, waitForIncidents } from "../test/wait";
 
 import {
   defaultPageSize,
@@ -29,18 +31,6 @@ import {
   UnknownPriorityIcon,
 } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
-
-export const waitForConcentricStreets = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading concentric street names…"),
-  );
-};
-
-export const waitForIncidents = async () => {
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading incidents…"),
-  );
-};
 
 export const waitForEffects = async () => {
   await Promise.all([waitForIncidents(), waitForConcentricStreets()]);
@@ -326,44 +316,41 @@ describe("Table cell formatting functions", () => {
 });
 
 describe("DispatchQueue component: table", () => {
-  const test_displayedValidUpToPageSize = async (incidentCount) => {
-    const ims = testIncidentManagementSystem();
-    const event = await ims.eventWithID("empty");
-
-    await ims.addMoreIncidents(event.id, incidentCount);
-
-    // Make sure addMoreIncidents worked
-    const incidents = await ims.incidents(event.id);
-    invariant(
-      incidents.length == incidentCount,
-      `Failed to add incidents (${incidents.length} != ${incidentCount})`,
-    );
-
-    renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    await waitForEffects();
-
-    const numberCells = document.getElementsByClassName(
-      "queue_incident_number",
-    );
-
-    expect(numberCells.length).toEqual(
-      incidents.length > defaultPageSize ? defaultPageSize : incidents.length,
-    );
-
-    for (const numberCell of numberCells) {
-      const incidentNumber = parseInt(numberCell.innerHTML);
-      await expect(() =>
-        ims.incidentWithNumber(event.id, incidentNumber),
-      ).notToReject();
-    }
-  };
-
   // Test with 0, 10, 20, ... 200 incidents in the system
-  for (const incidentCount of [0, 10, 44, 50, 201, defaultPageSize]) {
-    test(`displayed incidents are valid up to page size (${incidentCount})`, async () => {
-      await test_displayedValidUpToPageSize(incidentCount);
-    });
-  }
+  test.each([0, 10, 44, 50, 201, defaultPageSize])(
+    "displayed incidents are valid up to page size (%d)",
+    async (incidentCount) => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
+
+      await ims.addMoreIncidents(event.id, incidentCount);
+
+      // Make sure addMoreIncidents worked
+      const incidents = await ims.incidents(event.id);
+      invariant(
+        incidents.length == incidentCount,
+        `Failed to add incidents (${incidents.length} != ${incidentCount})`,
+      );
+
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+      await waitForEffects();
+
+      const numberCells = document.getElementsByClassName(
+        "queue_incident_number",
+      );
+
+      expect(numberCells.length).toEqual(
+        incidents.length > defaultPageSize ? defaultPageSize : incidents.length,
+      );
+
+      for (const numberCell of numberCells) {
+        const incidentNumber = parseInt(numberCell.innerHTML);
+        await expect(() =>
+          ims.incidentWithNumber(event.id, incidentNumber),
+        ).notToReject();
+      }
+    },
+  );
 
   test("click row -> open incident in new tab", async () => {
     const ims = testIncidentManagementSystem();
@@ -435,49 +422,44 @@ describe("DispatchQueue component: controls", () => {
   //   }
   // );
 
-  const test_showRowsSelection = async (incidentCount, multiple) => {
-    const ims = testIncidentManagementSystem();
-    const event = await ims.eventWithID("empty");
+  test.each(cartesian([0, 10, 100, 200, defaultPageSize], [0, 1, 2, 4]))(
+    "show rows selection (%d, %d)",
+    async (incidentCount, multiple) => {
+      const ims = testIncidentManagementSystem();
+      const event = await ims.eventWithID("empty");
 
-    await ims.addMoreIncidents(event.id, incidentCount);
+      await ims.addMoreIncidents(event.id, incidentCount);
 
-    renderWithIMSContext(<DispatchQueue event={event} />, ims);
-    await waitForEffects();
+      renderWithIMSContext(<DispatchQueue event={event} />, ims);
+      await waitForEffects();
 
-    const dropdown = document.getElementById("queue_show_rows_dropdown");
-    await userEvent.click(dropdown);
+      const dropdown = document.getElementById("queue_show_rows_dropdown");
+      await userEvent.click(dropdown);
 
-    const selectorID = `queue_show_rows_${multiple}`;
-    const selector = document.getElementById(selectorID);
-    await userEvent.click(selector);
+      const selectorID = `queue_show_rows_${multiple}`;
+      const selector = document.getElementById(selectorID);
+      await userEvent.click(selector);
 
-    // Ensure the selection is displays in the dropdown
-    const numberofIncidentsToDisplay =
-      multiple === 0 ? incidentCount : multiple * defaultPageSize;
-    const selectorCount =
-      multiple === 0 || numberofIncidentsToDisplay === incidentCount
-        ? "All"
-        : `${numberofIncidentsToDisplay}`;
-    expect(dropdown.innerHTML).toEqual(`Show ${selectorCount} Rows`);
+      // Ensure the selection is displays in the dropdown
+      const numberofIncidentsToDisplay =
+        multiple === 0 ? incidentCount : multiple * defaultPageSize;
+      const selectorCount =
+        multiple === 0 || numberofIncidentsToDisplay === incidentCount
+          ? "All"
+          : `${numberofIncidentsToDisplay}`;
+      expect(dropdown.innerHTML).toEqual(`Show ${selectorCount} Rows`);
 
-    // Ensure the correct number of rows are displayed
-    const numberCells = document.getElementsByClassName(
-      "queue_incident_number",
-    );
-    expect(numberCells.length).toEqual(
-      incidentCount > numberofIncidentsToDisplay
-        ? numberofIncidentsToDisplay
-        : incidentCount,
-    );
-  };
-
-  for (const incidentCount of [0, 10, 100, 200, defaultPageSize]) {
-    for (const multiple of [0, 1, 2, 4]) {
-      test(`show rows selection (${incidentCount}, ${multiple})`, async () => {
-        await test_showRowsSelection(incidentCount, multiple);
-      });
-    }
-  }
+      // Ensure the correct number of rows are displayed
+      const numberCells = document.getElementsByClassName(
+        "queue_incident_number",
+      );
+      expect(numberCells.length).toEqual(
+        incidentCount > numberofIncidentsToDisplay
+          ? numberofIncidentsToDisplay
+          : incidentCount,
+      );
+    },
+  );
 
   test("search", async () => {
     const ims = testIncidentManagementSystem();

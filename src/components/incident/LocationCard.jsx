@@ -1,3 +1,5 @@
+import invariant from "invariant";
+
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
@@ -12,12 +14,35 @@ import Well from "../base/Well";
 
 const LocationCard = ({
   locationName,
+  setLocationName,
   locationDescription,
+  setLocationDescription,
   locationConcentric,
+  setLocationConcentric,
   locationRadialHour,
+  setLocationRadialHour,
   locationRadialMinute,
+  setLocationRadialMinute,
   concentricStreets,
 }) => {
+  invariant(setLocationName != null, "setLocationName property is required");
+  invariant(
+    setLocationDescription != null,
+    "setLocationDescription property is required",
+  );
+  invariant(
+    setLocationConcentric != null,
+    "setLocationConcentric property is required",
+  );
+  invariant(
+    setLocationRadialHour != null,
+    "setLocationRadialHour property is required",
+  );
+  invariant(
+    setLocationRadialMinute != null,
+    "setLocationRadialMinute property is required",
+  );
+
   return (
     <Well id="incident_location_card" title="Location">
       <FormGroup as={Row}>
@@ -27,7 +52,8 @@ const LocationCard = ({
         <Col sm={10}>
           <LabeledTextField
             id="incident_location_name"
-            value={locationName}
+            value={locationName == null ? "" : locationName}
+            setValue={setLocationName}
             placeholder="Name of location (camp, art project, …)"
           />
         </Col>
@@ -41,22 +67,31 @@ const LocationCard = ({
             <Select
               id="incident_location_address_radial_hour"
               width="auto"
-              values={RodGarettAddress.radialHours.map((h) => [h, h])}
-              defaultValue={locationRadialHour}
+              value={locationRadialHour == null ? "" : locationRadialHour}
+              setValue={(s) => setLocationRadialHour(s ? parseInt(s) : "")}
+              values={[""]
+                .concat(RodGarettAddress.radialHours)
+                .map((h) => [h, h])}
             />
             <InputGroup.Text>:</InputGroup.Text>
             <Select
               id="incident_location_address_radial_minute"
               width="5em"
-              values={RodGarettAddress.radialMinutes.map((m) => [m, m])}
-              defaultValue={locationRadialMinute}
+              value={locationRadialMinute == null ? "" : locationRadialMinute}
+              setValue={(s) => setLocationRadialMinute(s ? parseInt(s) : "")}
+              values={[""]
+                .concat(RodGarettAddress.radialMinutes)
+                .map((m) => [m, m])}
             />
             <InputGroup.Text>@</InputGroup.Text>
             <Select
               id="incident_location_address_concentric"
               width="20em"
-              values={Array.from(concentricStreets, ([id, s]) => [id, s.name])}
-              defaultValue={locationConcentric}
+              value={locationConcentric == null ? "" : locationConcentric}
+              setValue={setLocationConcentric}
+              values={[["", ""]].concat(
+                Array.from(concentricStreets.values(), (c) => [c.id, c.name]),
+              )}
             />
           </InputGroup>
         </Col>
@@ -68,7 +103,8 @@ const LocationCard = ({
         <Col sm={10}>
           <LabeledTextField
             id="incident_location_description"
-            value={locationDescription}
+            value={locationDescription == null ? "" : locationDescription}
+            setValue={setLocationDescription}
             placeholder="Description of location"
           />
         </Col>
