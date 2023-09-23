@@ -4,10 +4,10 @@ import userEvent from "@testing-library/user-event";
 
 import { arrayOf, draw, randomSample, text } from "../../test/data";
 
-import IncidentTypesCard from "./IncidentTypesCard";
+import ItemListCard from "./ItemListCard";
 
-describe("IncidentTypesCard component", () => {
-  const _incidentTypeArrays = () => {
+describe("ItemListCard component", () => {
+  const _itemArrays = () => {
     return Array.from(
       draw(
         16,
@@ -19,20 +19,20 @@ describe("IncidentTypesCard component", () => {
     );
   };
 
-  const incidentTypeArrays = Array.from(_incidentTypeArrays());
+  const itemArrays = Array.from(_itemArrays());
 
-  test.each(randomSample(incidentTypeArrays, 100))(
+  test.each(randomSample(itemArrays, 100))(
     "incident types displayed",
-    (incidentTypes) => {
-      if (incidentTypes != null) {
-        render(<IncidentTypesCard incidentTypes={incidentTypes} />);
+    (items) => {
+      if (items != null) {
+        render(<ItemListCard id="list" title="List of Items" items={items} />);
 
-        const displayedIncidentTypes = Array.from(
+        const displayedItems = Array.from(
           document.getElementsByClassName("list-group-item"),
           (item) => item.textContent,
         );
 
-        expect(displayedIncidentTypes).toEqual(incidentTypes.sort());
+        expect(displayedItems).toEqual(items.sort());
       }
     },
   );
