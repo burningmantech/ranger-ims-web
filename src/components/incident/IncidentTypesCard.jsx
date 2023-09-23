@@ -1,7 +1,5 @@
 import invariant from "invariant";
 
-import ListGroup from "react-bootstrap/ListGroup";
-
 import ItemListCard from "../base/ItemListCard";
 
 const IncidentTypesCard = ({ incidentTypes }) => {

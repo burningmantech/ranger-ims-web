@@ -100,7 +100,7 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <RangersCard rangers={[]} />
+          <RangersCard rangerHandles={incident.rangerHandles} />
         </Col>
         <Col>
           <IncidentTypesCard incidentTypes={incident.incidentTypes} />
@@ -109,7 +109,9 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <AttachedIncidentReportsCard />
+          <AttachedIncidentReportsCard
+            incidentReportNumbers={incident.incidentReportNumbers}
+          />
         </Col>
       </Row>
 
