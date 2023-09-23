@@ -1,6 +1,6 @@
 import invariant from "invariant";
 
-import Well from "../base/Well";
+import ItemListCard from "../base/ItemListCard";
 
 const AttachedIncidentReportsCard = ({ incidentReportNumbers }) => {
   invariant(
@@ -9,9 +9,11 @@ const AttachedIncidentReportsCard = ({ incidentReportNumbers }) => {
   );
 
   return (
-    <Well id="incident_reports_card" title="Attached Incident Reports">
-      ...incident reports card...
-    </Well>
+    <ItemListCard
+      id="incident_reports_card"
+      title="Attached Incident Reports"
+      items={incidentReportNumbers}
+    />
   );
 };
 
