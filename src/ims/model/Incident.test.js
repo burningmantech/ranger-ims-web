@@ -63,7 +63,7 @@ describe("Incident", () => {
         radial_minute: 45,
         concentric: "B",
       },
-      // incident_reports: [],
+      incident_reports: [1, 5, 8],
       // report_entries: [
       //   {
       //     system_entry: true,
@@ -106,6 +106,7 @@ describe("Incident", () => {
     const summary = "Snake in someone's boots";
     const rangerHandles = ["Bucket", "Hubcap"];
     const incidentTypes = ["Medical", "Theme Camp"];
+    const incidentReportNumbers = [23, 57, 104];
     const incident = new Incident({
       eventID: eventID,
       number: number,
@@ -116,6 +117,7 @@ describe("Incident", () => {
       location: location,
       rangerHandles: rangerHandles,
       incidentTypes: incidentTypes,
+      incidentReportNumbers: incidentReportNumbers,
     });
     const result = incident.toString();
 
@@ -132,6 +134,7 @@ describe("Incident", () => {
     const summary = "Snake in someone's boots";
     const rangerHandles = ["Bucket", "Hubcap"];
     const incidentTypes = ["Medical", "Theme Camp"];
+    const incidentReportNumbers = [23, 57, 104];
     const incident = new Incident({
       eventID: eventID,
       number: number,
@@ -142,6 +145,7 @@ describe("Incident", () => {
       location: location,
       rangerHandles: rangerHandles,
       incidentTypes: incidentTypes,
+      incidentReportNumbers: incidentReportNumbers,
     });
     const result = incident.toJSON();
 
@@ -156,6 +160,7 @@ describe("Incident", () => {
         location: location,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
+        incident_reports: incidentReportNumbers,
       }),
     );
   });
@@ -169,6 +174,7 @@ describe("Incident", () => {
     const summary = "Snake in someone's boots";
     const rangerHandles = ["Bucket", "Hubcap"];
     const incidentTypes = ["Medical", "Theme Camp"];
+    const incidentReportNumbers = [23, 57, 104];
     const incident = new Incident({
       eventID: eventID,
       number: number,
@@ -178,6 +184,7 @@ describe("Incident", () => {
       summary: summary,
       rangerHandles: rangerHandles,
       incidentTypes: incidentTypes,
+      incidentReportNumbers: incidentReportNumbers,
     });
     const result = incident.toJSON();
 
@@ -192,6 +199,7 @@ describe("Incident", () => {
         location: null,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
+        incident_reports: incidentReportNumbers,
       }),
     );
   });
@@ -206,6 +214,7 @@ describe("Incident", () => {
     const summary = "Snake in someone's boots";
     const rangerHandles = [];
     const incidentTypes = [];
+    const incidentReportNumbers = [23, 57, 104];
     const incident = new Incident({
       eventID: eventID,
       number: number,
@@ -216,6 +225,7 @@ describe("Incident", () => {
       location: location,
       rangerHandles: rangerHandles,
       incidentTypes: incidentTypes,
+      incidentReportNumbers: incidentReportNumbers,
     });
 
     expect(incident.summarize()).toEqual(summary);
@@ -231,6 +241,7 @@ describe("Incident", () => {
     const summary = null;
     const rangerHandles = [];
     const incidentTypes = [];
+    const incidentReportNumbers = [23, 57, 104];
     const incident = new Incident({
       eventID: eventID,
       number: number,
@@ -241,6 +252,7 @@ describe("Incident", () => {
       location: location,
       rangerHandles: rangerHandles,
       incidentTypes: incidentTypes,
+      incidentReportNumbers: incidentReportNumbers,
     });
 
     expect(incident.summarize()).toEqual("<summary goes here>");

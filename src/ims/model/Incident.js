@@ -80,8 +80,8 @@ export default class Incident {
         location: location,
         rangerHandles: json.ranger_handles,
         incidentTypes: json.incident_types,
-        // "reportEntries": json.report_entries,
-        // "incidentReportNumbers": json.incident_reports,
+        // reportEntries: json.report_entries,
+        incidentReportNumbers: json.incident_reports,
       });
     } catch (e) {
       throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
@@ -109,9 +109,10 @@ export default class Incident {
     invariant(rangerHandles != null, "rangerHandles is required");
     invariant(incidentTypes != null, "incidentTypes is required");
     // invariant(reportEntries != null, "reportEntries is required");
-    // invariant(
-    //   incidentReportNumbers != null, "incidentReportNumbers is required"
-    // );
+    invariant(
+      incidentReportNumbers != null,
+      "incidentReportNumbers is required",
+    );
 
     this.eventID = eventID;
     this.number = number;
@@ -143,7 +144,7 @@ export default class Incident {
       ranger_handles: this.rangerHandles,
       incident_types: this.incidentTypes,
       // "report_entries": this.reportEntries,
-      // "incident_reports": this.incidentReportNumbers,
+      incident_reports: this.incidentReportNumbers,
     };
   };
 
