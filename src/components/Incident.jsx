@@ -117,7 +117,7 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <NarrativeCard />
+          <NarrativeCard reportEntries={incident.reportEntries} />
         </Col>
       </Row>
     </div>
