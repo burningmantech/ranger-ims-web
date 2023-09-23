@@ -23,7 +23,7 @@ export default class RodGarettAddress {
         throw new Error("Unknown address type");
       }
     } catch (e) {
-      throw new Error(`Invalid address JSON: ${JSON.stringify(json)}`);
+      throw new Error(`Invalid address JSON (${e}): ${JSON.stringify(json)}`);
     }
   };
 

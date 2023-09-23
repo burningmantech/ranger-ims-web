@@ -5,7 +5,7 @@ export default class Event {
     try {
       return new Event(json.id, json.name);
     } catch (e) {
-      throw new Error(`Invalid event JSON: ${JSON.stringify(json)}`);
+      throw new Error(`Invalid event JSON (${e}): ${JSON.stringify(json)}`);
     }
   };
 

@@ -32,7 +32,7 @@ describe("Event", () => {
   });
 
   test("fromJSON, invalid", () => {
-    expect(() => Event.fromJSON({})).toThrow(`Invalid event JSON: {}`);
+    expect(() => Event.fromJSON({})).toThrow("Invalid event JSON (");
   });
 
   test("JSON round-trip through text", () => {

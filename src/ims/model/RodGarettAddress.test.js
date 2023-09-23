@@ -110,7 +110,7 @@ describe("RodGarettAddress", () => {
 
   test("fromJSON, invalid", () => {
     expect(() => RodGarettAddress.fromJSON({})).toThrow(
-      `Invalid address JSON: {}`,
+      "Invalid address JSON (",
     );
   });
 

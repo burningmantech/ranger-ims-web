@@ -11,7 +11,7 @@ const AttachedIncidentReportsCard = ({ incidentReportNumbers }) => {
   return (
     <ItemListCard
       id="incident_reports_card"
-      title="Attached Incident Reports"
+      title="Attached Field Incident Reports"
       items={incidentReportNumbers}
     />
   );

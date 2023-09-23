@@ -88,9 +88,7 @@ describe("Location", () => {
 
   test("fromJSON, invalid", () => {
     const json = { type: "XYZZY" };
-    expect(() => Location.fromJSON(json)).toThrow(
-      `Invalid location JSON: ${JSON.stringify(json)}`,
-    );
+    expect(() => Location.fromJSON(json)).toThrow("Invalid location JSON (");
   });
 
   test("JSON round-trip through text", () => {
