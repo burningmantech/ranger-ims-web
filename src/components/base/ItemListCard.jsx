@@ -14,7 +14,9 @@ const ItemListCard = ({ id, title, items }) => {
       <ListGroup>
         {items
           .sort()
-          .map((item) => [<ListGroup.Item key={item}>{item}</ListGroup.Item>])}
+          .map((item, index) => [
+            <ListGroup.Item key={index}>{item}</ListGroup.Item>,
+          ])}
       </ListGroup>
     </Well>
   );

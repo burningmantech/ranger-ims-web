@@ -10,11 +10,9 @@ const NarrativeCard = ({ reportEntries }) => {
 
   return (
     <Well id="incident_narrative_card" title="Incident Narrative">
-      <ListGroup>
-        {reportEntries.map((reportEntry) => [
-          <ReportEntry reportEntry={reportEntry} />,
-        ])}
-      </ListGroup>
+      {reportEntries.map((reportEntry, index) => [
+        <ReportEntry reportEntry={reportEntry} />,
+      ])}
     </Well>
   );
 };
