@@ -10,7 +10,7 @@ const ItemListCard = ({ id, title, items }) => {
   invariant(items != null, "items property is required");
 
   return (
-    <Well id={id} title={title}>
+    <Well id={id} title={title} size="sm">
       <ListGroup>
         {items
           .sort()

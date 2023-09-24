@@ -16,7 +16,6 @@ const LabeledTextField = ({ id, value, setValue, placeholder }) => {
       type="text"
       inputMode="latin-prose"
       id={id}
-      size="sm"
       defaultValue={value}
       placeholder={placeholder}
       onChange={onChange}
