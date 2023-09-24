@@ -1,8 +1,6 @@
 import invariant from "invariant";
 import { DateTime } from "luxon";
 
-import ListGroup from "react-bootstrap/ListGroup";
-
 const ReportEntry = ({ reportEntry }) => {
   invariant(reportEntry != null, "reportEntry property is required");
 

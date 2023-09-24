@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { useState } from "react";
 
 import Form from "react-bootstrap/Form";
-import ListGroup from "react-bootstrap/ListGroup";
 
 import Well from "../base/Well";
 import ReportEntry from "./ReportEntry";
