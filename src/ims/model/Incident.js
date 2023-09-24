@@ -126,7 +126,7 @@ export default class Incident {
     this.location = location;
     this.rangerHandles = rangerHandles;
     this.incidentTypes = incidentTypes;
-    this.reportEntries = reportEntries;
+    this.reportEntries = ReportEntry.sort(reportEntries);
     this.incidentReportNumbers = incidentReportNumbers;
   }
 

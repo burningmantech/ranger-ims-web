@@ -17,6 +17,10 @@ export default class ReportEntry {
     }
   };
 
+  static sort = (reportEntries) => {
+    return reportEntries.sort((a, b) => a.created - b.created);
+  };
+
   constructor({ created, author, systemEntry, text }) {
     invariant(created != null, "created is required");
     invariant(author != null, "author is required");
