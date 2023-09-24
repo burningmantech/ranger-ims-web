@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render } from "@testing-library/react";
 
 import { arrayOf, draw, randomSample, text } from "../../test/data";
 
@@ -24,16 +23,18 @@ describe("ItemListCard component", () => {
   test.each(randomSample(itemArrays, 100))(
     "incident types displayed",
     (items) => {
-      if (items != null) {
-        render(<ItemListCard id="list" title="List of Items" items={items} />);
-
-        const displayedItems = Array.from(
-          document.getElementsByClassName("list-group-item"),
-          (item) => item.textContent,
-        );
-
-        expect(displayedItems).toEqual(items.sort());
+      if (items == null) {
+        return;
       }
+
+      render(<ItemListCard id="list" title="List of Items" items={items} />);
+
+      const displayedItems = Array.from(
+        document.getElementsByClassName("list-group-item"),
+        (item) => item.textContent,
+      );
+
+      expect(displayedItems).toEqual(items.sort());
     },
   );
 });
