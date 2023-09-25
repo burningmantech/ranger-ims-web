@@ -67,19 +67,19 @@ describe("Incident", () => {
       report_entries: [
         {
           system_entry: true,
-          created: "2020-08-17T17:12:46.000-07:00",
+          created: "2020-08-18T00:12:46.000Z",
           author: "Operator",
           text: "Changed description name to: On B road",
         },
         {
           system_entry: false,
-          created: "2021-08-17T17:23:00.000-07:00",
+          created: "2021-08-17T17:23:00.000Z",
           author: "Operator",
           text: "White pickup stopped on road, eventually moved",
         },
         {
           system_entry: true,
-          created: "2021-08-28T00:37:37.000-07:00",
+          created: "2021-08-28T00:37:37.000Z",
           author: "Operator",
           text: "Changed state to: closed",
         },

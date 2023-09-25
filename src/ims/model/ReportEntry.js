@@ -27,7 +27,7 @@ export default class ReportEntry {
     invariant(systemEntry != null, "systemEntry is required");
     invariant(text != null, "text is required");
 
-    this.created = created;
+    this.created = created.toUTC();
     this.author = author;
     this.systemEntry = systemEntry;
     this.text = text;
