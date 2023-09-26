@@ -3,7 +3,6 @@ import { useContext, useReducer, useState } from "react";
 
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import ModalBody from "react-bootstrap/ModalBody";
 import ModalDialog from "react-bootstrap/ModalDialog";
@@ -12,6 +11,7 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
 import { IMSContext } from "../ims/context";
+import Page from "./Page";
 
 const Login = ({ children }) => {
   const imsContext = useContext(IMSContext);
@@ -64,7 +64,7 @@ const Login = ({ children }) => {
     }
 
     return (
-      <Container>
+      <Page>
         <Form onSubmit={onLogin}>
           <ModalDialog>
             <ModalHeader>
@@ -113,7 +113,7 @@ const Login = ({ children }) => {
             </ModalFooter>
           </ModalDialog>
         </Form>
-      </Container>
+      </Page>
     );
   }
 };
