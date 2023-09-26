@@ -74,21 +74,23 @@ const Login = ({ children }) => {
             <ModalBody>
               {Error}
 
+              <Form.Text muted>
+                Email and password must match your Ranger Secret Clubhouse
+                profile.
+              </Form.Text>
+
               <Form.Group controlId="username_field">
-                <Form.Label>Ranger Handle or Email</Form.Label>
+                <Form.Label>Registered Email</Form.Label>
                 <Form.Control
                   autoComplete="username email"
                   inputMode="latin-name"
                   minLength="1"
                   onChange={onUsernameChange}
-                  placeholder="Bucket"
+                  placeholder="hubcap@example.com"
                   required={true}
                   type="text"
                   value={username}
                 />
-                <Form.Text muted>
-                  Must match your Ranger Secret Clubhouse profile.
-                </Form.Text>
               </Form.Group>
 
               <Form.Group controlId="password_field">
