@@ -48,7 +48,7 @@ describe("EventDropdown component", () => {
 
     expect(screen.getByText("Error loading events")).toBeInTheDocument();
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.info).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons...",
     );
   });
