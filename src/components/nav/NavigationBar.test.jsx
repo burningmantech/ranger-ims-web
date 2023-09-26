@@ -47,16 +47,42 @@ describe("Navbar component", () => {
     await waitForNavEvents();
   });
 
-  test("includes events dropdown", async () => {
+  test("not logged in, doesn't include events dropdown", async () => {
     renderWithIMSContext(<NavigationBar />, testIncidentManagementSystem());
+
+    expect(
+      document.getElementById("nav_events_dropdown"),
+    ).not.toBeInTheDocument();
+
+    await waitForNavEvents();
+  });
+
+  test("logged in, includes events dropdown", async () => {
+    const username = "Hubcap";
+    const ims = testIncidentManagementSystem(username);
+
+    renderWithIMSContext(<NavigationBar />, ims);
 
     expect(document.getElementById("nav_events_dropdown")).toBeInTheDocument();
 
     await waitForNavEvents();
   });
 
-  test("includes user dropdown", async () => {
+  test("not logged in, doesn't include user dropdown", async () => {
     renderWithIMSContext(<NavigationBar />, testIncidentManagementSystem());
+
+    expect(
+      document.getElementById("nav_user_dropdown"),
+    ).not.toBeInTheDocument();
+
+    await waitForNavEvents();
+  });
+
+  test("logged in, includes user dropdown", async () => {
+    const username = "Hubcap";
+    const ims = testIncidentManagementSystem(username);
+
+    renderWithIMSContext(<NavigationBar />, ims);
 
     expect(document.getElementById("nav_user_dropdown")).toBeInTheDocument();
 

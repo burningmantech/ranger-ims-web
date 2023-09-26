@@ -15,12 +15,17 @@ export const waitForElementNotToBePresent = async (elementGetter) => {
 };
 
 export const waitForNavEvents = async () => {
-  console.debug("Waiting on events to load…");
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…"),
-  );
-  console.debug("Events loaded");
+  const eventDropDown = screen.queryByText("Event");
+  if (eventDropDown === null) {
+    console.debug("No event dropdown…");
+  } else {
+    console.debug("Waiting on events to load…");
+    await userEvent.click(screen.getByText("Event"));
+    await waitForElementNotToBePresent(() =>
+      screen.queryByText("Loading events…"),
+    );
+    console.debug("Events loaded");
+  }
 };
 
 export const waitForEvent = async () => {
