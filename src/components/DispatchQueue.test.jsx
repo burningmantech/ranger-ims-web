@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import "@testing-library/jest-dom/extend-expect";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
