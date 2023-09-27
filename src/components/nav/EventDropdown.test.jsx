@@ -1,5 +1,3 @@
-import "@testing-library/jest-dom/extend-expect";
-
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
@@ -48,7 +46,7 @@ describe("EventDropdown component", () => {
 
     expect(screen.getByText("Error loading events")).toBeInTheDocument();
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.info).toHaveBeenCalledWith(
       "Unable to fetch events: because reasons...",
     );
   });

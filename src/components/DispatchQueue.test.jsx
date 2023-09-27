@@ -1,6 +1,5 @@
 import invariant from "invariant";
-import "@testing-library/jest-dom/extend-expect";
-import { screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { DateTime } from "luxon";
@@ -33,7 +32,8 @@ import {
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForEffects = async () => {
-  await Promise.all([waitForIncidents(), waitForConcentricStreets()]);
+  await waitForIncidents();
+  await waitForConcentricStreets();
 };
 
 describe("Table cell formatting functions", () => {
@@ -537,7 +537,7 @@ describe("DispatchQueue component: loading", () => {
       await screen.findByText("Failed to load incidents."),
     ).toBeInTheDocument();
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.info).toHaveBeenCalledWith(
       "Unable to fetch incidents: because reasons...",
     );
   });

@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -73,7 +72,7 @@ describe("App component", () => {
 
     expect(await waitForLogin()).toBeInTheDocument();
 
-    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Registered Email/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 
@@ -94,7 +93,7 @@ describe("App component", () => {
 
     console._suppressErrors();
 
-    await userEvent.type(screen.getByLabelText(/Ranger Handle/), username);
+    await userEvent.type(screen.getByLabelText(/Registered Email/), username);
     await userEvent.type(screen.getByLabelText(/Password/), password);
     await userEvent.click(screen.getByText(/Log In/));
 

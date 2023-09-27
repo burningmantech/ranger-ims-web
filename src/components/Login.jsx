@@ -3,7 +3,6 @@ import { useContext, useReducer, useState } from "react";
 
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import ModalBody from "react-bootstrap/ModalBody";
 import ModalDialog from "react-bootstrap/ModalDialog";
@@ -12,6 +11,7 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
 import { IMSContext } from "../ims/context";
+import Page from "./Page";
 
 const Login = ({ children }) => {
   const imsContext = useContext(IMSContext);
@@ -64,7 +64,7 @@ const Login = ({ children }) => {
     }
 
     return (
-      <Container>
+      <Page>
         <Form onSubmit={onLogin}>
           <ModalDialog>
             <ModalHeader>
@@ -74,21 +74,23 @@ const Login = ({ children }) => {
             <ModalBody>
               {Error}
 
+              <Form.Text muted>
+                Email and password must match your Ranger Secret Clubhouse
+                profile.
+              </Form.Text>
+
               <Form.Group controlId="username_field">
-                <Form.Label>Ranger Handle or Email</Form.Label>
+                <Form.Label>Registered Email</Form.Label>
                 <Form.Control
                   autoComplete="username email"
                   inputMode="latin-name"
                   minLength="1"
                   onChange={onUsernameChange}
-                  placeholder="Bucket"
+                  placeholder="hubcap@example.com"
                   required={true}
                   type="text"
                   value={username}
                 />
-                <Form.Text muted>
-                  Must match your Ranger Secret Clubhouse profile.
-                </Form.Text>
               </Form.Group>
 
               <Form.Group controlId="password_field">
@@ -111,7 +113,7 @@ const Login = ({ children }) => {
             </ModalFooter>
           </ModalDialog>
         </Form>
-      </Container>
+      </Page>
     );
   }
 };

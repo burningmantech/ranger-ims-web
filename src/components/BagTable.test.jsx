@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/extend-expect";
 import { screen } from "@testing-library/react";
 
 import {
@@ -52,7 +51,7 @@ describe("BagTable component", () => {
       await screen.findByText("Failed to load URL bag."),
     ).toBeInTheDocument();
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.info).toHaveBeenCalledWith(
       "Unable to fetch bag: because reasons...",
     );
   });

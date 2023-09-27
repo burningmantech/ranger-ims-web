@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom/extend-expect";
 import { screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 

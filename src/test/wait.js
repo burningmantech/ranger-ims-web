@@ -15,26 +15,39 @@ export const waitForElementNotToBePresent = async (elementGetter) => {
 };
 
 export const waitForNavEvents = async () => {
-  await userEvent.click(screen.getByText("Event"));
-  await waitForElementNotToBePresent(() =>
-    screen.queryByText("Loading events…"),
-  );
+  const eventDropDown = screen.queryByText("Event");
+  if (eventDropDown === null) {
+    console.debug("No event dropdown…");
+  } else {
+    console.debug("Waiting on events to load…");
+    await userEvent.click(screen.getByText("Event"));
+    await waitForElementNotToBePresent(() =>
+      screen.queryByText("Loading events…"),
+    );
+    console.debug("Events loaded");
+  }
 };
 
 export const waitForEvent = async () => {
+  console.debug("Waiting on event to load…");
   await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading event…"),
   );
+  console.debug("Event loaded");
 };
 
 export const waitForConcentricStreets = async () => {
+  console.debug("Waiting on concentric streets to load…");
   await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading concentric street names…"),
   );
+  console.debug("Concentric streets loaded");
 };
 
 export const waitForIncidents = async () => {
+  console.debug("Waiting on incidents to load…");
   await waitForElementNotToBePresent(() =>
     screen.queryByText("Loading incidents…"),
   );
+  console.debug("Incidents loaded");
 };
