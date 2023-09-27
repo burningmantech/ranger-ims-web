@@ -537,7 +537,7 @@ describe("DispatchQueue component: loading", () => {
       await screen.findByText("Failed to load incidents."),
     ).toBeInTheDocument();
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.info).toHaveBeenCalledWith(
       "Unable to fetch incidents: because reasons...",
     );
   });

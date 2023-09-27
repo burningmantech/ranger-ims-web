@@ -12,11 +12,11 @@ import Loading from "./components/base/Loading";
 import "./App.css";
 
 const Login = lazy(() => import("./components/Login"));
-const HomePage = lazy(() => import("./pages/HomePage"));
-const EventPage = lazy(() => import("./pages/EventPage"));
-const DispatchQueuePage = lazy(() => import("./pages/DispatchQueuePage"));
-const IncidentPage = lazy(() => import("./pages/IncidentPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
+const DispatchQueuePage = lazy(() => import("./pages/DispatchQueuePage"));
+const EventPage = lazy(() => import("./pages/EventPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const IncidentPage = lazy(() => import("./pages/IncidentPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App = ({ ims, routerClass }) => {

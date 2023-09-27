@@ -17,8 +17,10 @@ const tryWithFallback = async (description, fallback, f, ...args) => {
   try {
     return await f.apply(null, args);
   } catch (e) {
-    console.warn(`Unable to ${description}: ${e.message}`);
-    console.error(e);
+    if (e.name !== "AbortError") {
+      console.info(`Unable to ${description}: ${e.message}`);
+      console.error(e);
+    }
     return fallback;
   }
 };
