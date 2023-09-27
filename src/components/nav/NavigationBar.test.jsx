@@ -1,5 +1,3 @@
-import "@testing-library/jest-dom/extend-expect";
-
 import { URLs } from "../../URLs";
 import {
   renderWithIMSContext,
