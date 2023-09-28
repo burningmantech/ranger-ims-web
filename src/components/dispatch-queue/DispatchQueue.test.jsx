@@ -10,7 +10,8 @@ import {
 import { cartesian } from "../../test/data";
 import { waitForConcentricStreets, waitForIncidents } from "../../test/wait";
 
-import { defaultPageSize, formatShowDays } from "./DispatchQueue";
+import { defaultPageSize } from "./format";
+import { formatShowDays } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForEffects = async () => {

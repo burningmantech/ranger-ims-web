@@ -8,6 +8,8 @@ import {
   UnknownPriorityIcon,
 } from "../icons";
 
+export const defaultPageSize = 25;
+
 export const formatPriority = (priority) => {
   switch (priority) {
     case 1:
