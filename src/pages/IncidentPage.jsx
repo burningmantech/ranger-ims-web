@@ -6,7 +6,7 @@ import { IMSContext } from "../ims/context";
 import { useIncident } from "../ims/effects";
 
 import Loading from "../components/base/Loading";
-import Incident from "../components/Incident";
+import Incident from "../components/incident/Incident";
 import Page from "../components/Page";
 
 export const IncidentPage = ({ eventID, incidentNumber }) => {

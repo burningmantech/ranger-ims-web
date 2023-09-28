@@ -5,7 +5,7 @@ import Incident from "./Incident";
 import {
   renderWithIMSContext,
   testIncidentManagementSystem,
-} from "../ims/TestIMS";
+} from "../../ims/TestIMS";
 
 describe("Incident component: display", () => {
   test("incident number", async () => {
