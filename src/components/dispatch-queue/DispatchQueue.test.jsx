@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { act, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { URLs } from "../../URLs";
@@ -11,7 +11,6 @@ import { cartesian } from "../../test/data";
 import { waitForConcentricStreets, waitForIncidents } from "../../test/wait";
 
 import { defaultPageSize } from "./format";
-import { formatShowDays } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForEffects = async () => {
@@ -32,7 +31,7 @@ describe("DispatchQueue component: table", () => {
       // Make sure addMoreIncidents worked
       const incidents = await ims.incidents(event.id);
       invariant(
-        incidents.length == incidentCount,
+        incidents.length === incidentCount,
         `Failed to add incidents (${incidents.length} != ${incidentCount})`,
       );
 
