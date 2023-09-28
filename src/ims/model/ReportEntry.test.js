@@ -57,4 +57,23 @@ describe("ReportEntry", () => {
       }),
     );
   });
+
+  test("fromJSON, valid", () => {
+    const reportEntryJSON = {
+      created: "2021-08-17T17:12:46.000Z",
+      author: "bucket",
+      system_entry: false,
+      text: "This one time at Burning Man…",
+    };
+    const result = ReportEntry.fromJSON(reportEntryJSON);
+    const resultJSON = result.toJSON();
+
+    expect(resultJSON).toEqual(reportEntryJSON);
+  });
+
+  test("fromJSON, invalid", () => {
+    expect(() => ReportEntry.fromJSON({})).toThrow(
+      "Invalid report entry JSON (",
+    );
+  });
 });

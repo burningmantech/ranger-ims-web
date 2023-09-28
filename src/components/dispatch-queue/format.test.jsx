@@ -188,6 +188,22 @@ describe("Table cell formatting functions", () => {
     expect(text).toEqual(`(${address.description})`);
   });
 
+  test("formatAddress, no concentricStreets map", () => {
+    const concentricStreetID = "0";
+    const concentricStreets = null;
+    const address = new RodGarettAddress({
+      description: "Here, by this stream...",
+      concentric: concentricStreetID,
+      radialHour: 8,
+      radialMinute: 37,
+    });
+    const text = formatAddress(address, concentricStreets);
+    expect(text).toEqual(
+      `${address.radialHour}:${address.radialMinute}@- ` +
+        `(${address.description})`,
+    );
+  });
+
   test("formatAddress, no fields", () => {
     const address = new RodGarettAddress({});
     expect(formatAddress(address, new Map())).toBeNull();
