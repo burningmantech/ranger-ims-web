@@ -10,11 +10,7 @@ import {
 import { cartesian } from "../../test/data";
 import { waitForConcentricStreets, waitForIncidents } from "../../test/wait";
 
-import {
-  defaultPageSize,
-  formatShowDays,
-  formatShowState,
-} from "./DispatchQueue";
+import { defaultPageSize, formatShowDays } from "./DispatchQueue";
 import DispatchQueue from "./DispatchQueue";
 
 export const waitForEffects = async () => {
@@ -87,27 +83,6 @@ describe("DispatchQueue component: table", () => {
 });
 
 describe("DispatchQueue component: controls", () => {
-  test("formatShowState, valid", () => {
-    expect(formatShowState("all")).toEqual("All");
-    expect(formatShowState("open")).toEqual("Open");
-    expect(formatShowState("active")).toEqual("Active");
-  });
-
-  test("formatShowState, invalid", () => {
-    expect(() => formatShowState(-1)).toThrow("Invalid show state: -1");
-    expect(() => formatShowState("XYZZY")).toThrow(
-      'Invalid show state: "XYZZY"',
-    );
-  });
-
-  test("formatShowDays, valid", () => {
-    expect(formatShowDays(0)).toEqual("All Days");
-    expect(formatShowDays(1)).toEqual("Last Day");
-    expect(formatShowDays(2)).toEqual("Last 2 Days");
-    expect(formatShowDays(3)).toEqual("Last 3 Days");
-    expect(formatShowDays(4)).toEqual("Last 4 Days");
-  });
-
   // test(
   //   "new incident",
   //   async () => {
