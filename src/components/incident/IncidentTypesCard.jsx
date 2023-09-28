@@ -1,22 +1,16 @@
 import invariant from "invariant";
 
-import ListGroup from "react-bootstrap/ListGroup";
-
-import Well from "../base/Well";
+import ItemListCard from "../base/ItemListCard";
 
 const IncidentTypesCard = ({ incidentTypes }) => {
   invariant(incidentTypes != null, "incidentTypes property is required");
 
   return (
-    <Well id="incident_types_card" title="Incident Types">
-      <ListGroup>
-        {incidentTypes
-          .sort()
-          .map((incidentType) => [
-            <ListGroup.Item key={incidentType}>{incidentType}</ListGroup.Item>,
-          ])}
-      </ListGroup>
-    </Well>
+    <ItemListCard
+      id="incident_types_card"
+      title="Incident Types"
+      items={incidentTypes}
+    />
   );
 };
 

@@ -5,17 +5,17 @@ import { useContext, useState } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
-import { IMSContext } from "../ims/context";
-import { useConcentricStreets } from "../ims/effects";
+import { IMSContext } from "../../ims/context";
+import { useConcentricStreets } from "../../ims/effects";
 
-import AttachedIncidentReportsCard from "./incident/AttachedIncidentReportsCard";
-import IncidentTypesCard from "./incident/IncidentTypesCard";
-import LocationCard from "./incident/LocationCard";
-import NarrativeCard from "./incident/NarrativeCard";
-import RangersCard from "./incident/RangersCard";
-import SelectPriority from "./incident/SelectPriority";
-import SelectState from "./incident/SelectState";
-import SummaryCard from "./incident/SummaryCard";
+import AttachedIncidentReportsCard from "./AttachedIncidentReportsCard";
+import IncidentTypesCard from "./IncidentTypesCard";
+import LocationCard from "./LocationCard";
+import NarrativeCard from "./NarrativeCard";
+import RangersCard from "./RangersCard";
+import SelectPriority from "./SelectPriority";
+import SelectState from "./SelectState";
+import SummaryCard from "./SummaryCard";
 
 const Incident = ({ incident }) => {
   invariant(incident != null, "incident property is required");
@@ -100,7 +100,7 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <RangersCard rangers={[]} />
+          <RangersCard rangerHandles={incident.rangerHandles} />
         </Col>
         <Col>
           <IncidentTypesCard incidentTypes={incident.incidentTypes} />
@@ -109,13 +109,15 @@ const Incident = ({ incident }) => {
 
       <Row>
         <Col>
-          <AttachedIncidentReportsCard />
+          <AttachedIncidentReportsCard
+            incidentReportNumbers={incident.incidentReportNumbers}
+          />
         </Col>
       </Row>
 
       <Row>
         <Col>
-          <NarrativeCard />
+          <NarrativeCard reportEntries={incident.reportEntries} />
         </Col>
       </Row>
     </div>

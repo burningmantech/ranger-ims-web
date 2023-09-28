@@ -1,10 +1,19 @@
-import Well from "../base/Well";
+import invariant from "invariant";
 
-const AttachedIncidentReportsCard = () => {
+import ItemListCard from "../base/ItemListCard";
+
+const AttachedIncidentReportsCard = ({ incidentReportNumbers }) => {
+  invariant(
+    incidentReportNumbers != null,
+    "incidentReportNumbers property is required",
+  );
+
   return (
-    <Well id="incident_reports_card" title="Attached Incident Reports">
-      ...incident reports card...
-    </Well>
+    <ItemListCard
+      id="incident_reports_card"
+      title="Attached Field Incident Reports"
+      items={incidentReportNumbers}
+    />
   );
 };
 

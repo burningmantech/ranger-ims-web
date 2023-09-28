@@ -2,6 +2,7 @@ import invariant from "invariant";
 import { DateTime } from "luxon";
 
 import Location from "./Location";
+import ReportEntry from "./ReportEntry";
 
 export default class Incident {
   static states = Object.freeze([
@@ -80,11 +81,13 @@ export default class Incident {
         location: location,
         rangerHandles: json.ranger_handles,
         incidentTypes: json.incident_types,
-        // "reportEntries": json.report_entries,
-        // "incidentReportNumbers": json.incident_reports,
+        reportEntries: Array.from(json.report_entries, (json) =>
+          ReportEntry.fromJSON(json),
+        ),
+        incidentReportNumbers: json.incident_reports,
       });
     } catch (e) {
-      throw new Error(`Invalid incident JSON: ${JSON.stringify(json)}`);
+      throw new Error(`Invalid incident JSON (${e}): ${JSON.stringify(json)}`);
     }
   };
 
@@ -108,10 +111,11 @@ export default class Incident {
     invariant(priority != null, "priority is required");
     invariant(rangerHandles != null, "rangerHandles is required");
     invariant(incidentTypes != null, "incidentTypes is required");
-    // invariant(reportEntries != null, "reportEntries is required");
-    // invariant(
-    //   incidentReportNumbers != null, "incidentReportNumbers is required"
-    // );
+    invariant(reportEntries != null, "reportEntries is required");
+    invariant(
+      incidentReportNumbers != null,
+      "incidentReportNumbers is required",
+    );
 
     this.eventID = eventID;
     this.number = number;
@@ -122,8 +126,8 @@ export default class Incident {
     this.location = location;
     this.rangerHandles = rangerHandles;
     this.incidentTypes = incidentTypes;
-    // this.reportEntries = reportEntries;
-    // this.incidentReportNumbers = incidentReportNumbers;
+    this.reportEntries = ReportEntry.sort(reportEntries);
+    this.incidentReportNumbers = incidentReportNumbers;
   }
 
   toString = () => {
@@ -142,8 +146,10 @@ export default class Incident {
       location: locationJSON,
       ranger_handles: this.rangerHandles,
       incident_types: this.incidentTypes,
-      // "report_entries": this.reportEntries,
-      // "incident_reports": this.incidentReportNumbers,
+      incident_reports: this.incidentReportNumbers,
+      report_entries: Array.from(this.reportEntries, (reportEntry) =>
+        reportEntry.toJSON(),
+      ),
     };
   };
 

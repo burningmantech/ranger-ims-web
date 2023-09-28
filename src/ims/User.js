@@ -11,7 +11,7 @@ export default class User {
       }
       return new User(json.username, json.credentials);
     } catch (e) {
-      throw new Error(`Invalid user JSON: ${JSON.stringify(json)}`);
+      throw new Error(`Invalid user JSON (${e}): ${JSON.stringify(json)}`);
     }
   };
 

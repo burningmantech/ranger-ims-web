@@ -1,11 +1,21 @@
+/* Global */
+
+html {
+  font-size: 10pt;
+}
+
 label {
   font-weight: bold;
 }
+
+/* Nav bar */
 
 a.navbar-brand > img {
   width: 30px;
   height: 30px;
 }
+
+/* Dispatch Queue */
 
 #queue_table {
   font-size: 10pt;
@@ -34,4 +44,24 @@ a.navbar-brand > img {
 #queue_table > thead > tr > td,
 #queue_table > thead > tr > th {
   padding: 6px;
+}
+
+/* Incident */
+
+.report_entry_metadata {
+  font-size: 75%;
+  text-decoration: underline;
+  filter: opacity(60%);
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+.report_entry_system {
+  font-size: 0.8rem;
+  text-align: center;
+  filter: opacity(75%);
+}
+
+.report_entry_author {
+  font-weight: bold;
 }
