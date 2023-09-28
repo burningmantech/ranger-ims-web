@@ -4,7 +4,6 @@ import {
   HighPriorityIcon,
   LowPriorityIcon,
   NormalPriorityIcon,
-  SearchIcon,
   UnknownPriorityIcon,
 } from "../icons";
 

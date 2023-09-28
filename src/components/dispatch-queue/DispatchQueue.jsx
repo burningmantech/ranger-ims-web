@@ -1,13 +1,11 @@
 import invariant from "invariant";
 
-import { useMemo, useState } from "react";
-import { usePagination, useTable } from "react-table";
+import { useState } from "react";
 
 import { useConcentricStreetsByEvent, useIncidents } from "../../ims/effects";
-import Incident from "../../ims/model/Incident";
+import { useDispatchQueueTable } from "./hooks";
 
 import Loading from "../base/Loading";
-import { useDispatchQueueTable } from "./hooks";
 import BottomToolBar from "./BottomToolBar";
 import DispatchQueueTable from "./DispatchQueueTable";
 import TopToolBar from "./TopToolBar";

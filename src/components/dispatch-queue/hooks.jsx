@@ -3,7 +3,6 @@ import { usePagination, useTable } from "react-table";
 
 import {
   defaultPageSize,
-  formatAddress,
   formatArrayOfStrings,
   formatDateTime,
   formatLocation,
