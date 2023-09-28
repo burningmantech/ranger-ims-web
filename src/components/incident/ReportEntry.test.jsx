@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import ReportEntryModel from "../../ims/model/ReportEntry";
 import ReportEntry from "./ReportEntry";
 
-describe("Incident component: display", () => {
+describe("ReportEntry component: display", () => {
   test.each([false, true])(
     "rendered data, systemEntry=%s",
     async (systemEntry) => {
