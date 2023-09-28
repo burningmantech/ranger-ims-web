@@ -12,11 +12,11 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
-import { URLs } from "../URLs";
-import { useConcentricStreetsByEvent, useIncidents } from "../ims/effects";
-import Incident from "../ims/model/Incident";
+import { URLs } from "../../URLs";
+import { useConcentricStreetsByEvent, useIncidents } from "../../ims/effects";
+import Incident from "../../ims/model/Incident";
 
-import Loading from "../components/base/Loading";
+import Loading from "../base/Loading";
 
 export const defaultPageSize = 25;
 
