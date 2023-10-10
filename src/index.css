@@ -8,6 +8,12 @@ label {
   font-weight: bold;
 }
 
+/* keep? */
+caption {
+  caption-side: top;
+  text-align: center;
+}
+
 /* Nav bar */
 
 a.navbar-brand > img {
