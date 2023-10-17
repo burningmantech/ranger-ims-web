@@ -5,6 +5,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import IncidentManagementSystem from "./ims/IMS";
 import reportWebVitals from "./reportWebVitals";
 
@@ -20,5 +21,8 @@ root.render(
     <App ims={ims} />
   </StrictMode>,
 );
+
+// Call unregister() or register() to turn service workers off/on.
+serviceWorkerRegistration.register();
 
 reportWebVitals();
