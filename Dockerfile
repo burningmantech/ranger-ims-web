@@ -2,7 +2,7 @@
 # This stage builds the build container.
 # -----------------------------------------------------------------------------
 
-FROM node:16.13.1-alpine3.14 as build
+FROM node:18.18.2-alpine3.17 as build
 
 # Paths
 ARG IMS_SOURCE_DIR="/src/ims"
