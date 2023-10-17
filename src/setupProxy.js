@@ -7,7 +7,7 @@ module.exports = function (app) {
   app.use(
     "/ims/api",
     createProxyMiddleware({
-      target: "http://localhost:8080",
+      target: "http://127.0.0.1:8080",
       changeOrigin: true,
     }),
   );
@@ -16,21 +16,21 @@ module.exports = function (app) {
   app.use(
     "/ims/auth",
     createProxyMiddleware({
-      target: "http://localhost:8080",
+      target: "http://127.0.0.1:8080",
       changeOrigin: true,
     }),
   );
   app.use(
     "/ims/ext",
     createProxyMiddleware({
-      target: "http://localhost:8080",
+      target: "http://127.0.0.1:8080",
       changeOrigin: true,
     }),
   );
   app.use(
     "/ims/static",
     createProxyMiddleware({
-      target: "http://localhost:8080",
+      target: "http://127.0.0.1:8080",
       changeOrigin: true,
     }),
   );
