@@ -23,6 +23,6 @@ root.render(
 );
 
 // Call unregister() or register() to turn service workers off/on.
-serviceWorkerRegistration.unregister();
+serviceWorkerRegistration.register();
 
 reportWebVitals();
