@@ -5,7 +5,7 @@ name: CI/CD
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "gh-readonly-queue/{base_branch}/*"]
   pull_request:
     branches: ["master"]
   merge_group:
