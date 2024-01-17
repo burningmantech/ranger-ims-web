@@ -98,7 +98,7 @@ jobs:
           docker image save ranger-ims-web:dev | gzip -6 > images/web.tgz;
 
       - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: images
           path: images
@@ -125,7 +125,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: images
           path: images
