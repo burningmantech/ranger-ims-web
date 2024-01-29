@@ -53,7 +53,7 @@ jobs:
         run: npm test -- --ci --watchAll=false --coverage
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v3.1.5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
