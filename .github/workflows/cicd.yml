@@ -24,6 +24,7 @@ jobs:
           disable-file-monitoring: true
           egress-policy: block
           allowed-endpoints: >
+            api.codecov.io:443
             api.github.com:443
             cli.codecov.io:443
             codecov.io:443
@@ -54,7 +55,7 @@ jobs:
         run: npm test -- --ci --watchAll=false --coverage
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3.1.5
+        uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
