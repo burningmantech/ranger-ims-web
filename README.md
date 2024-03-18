@@ -28,11 +28,7 @@ npm install
 
 ### Docker
 
-#### Create required docker network
-
-```console
-docker network create rangers
-```
+First [start your backend server](https://github.com/burningmantech/ranger-ims-server#development) with `docker-compose`, then start your frontend server. This will create the required docker network.
 
 #### Install dependencies
 
@@ -44,11 +40,17 @@ docker compose run --rm app npm install
 
 #### Start the frontend server
 
-First [start your backend server](https://github.com/burningmantech/ranger-ims-server#development) with `docker-compose`, then start your frontend server.
-
 ```console
 docker compose up app -d
 ```
+
+#### Troubleshooting
+
+##### Network error with all docker commands
+
+`Error response from daemon: network rangers not found`
+
+If you see this error you did not start the backend server in docker first.
 
 ### Running the Test Suite
 
