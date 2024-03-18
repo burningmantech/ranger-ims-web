@@ -16,12 +16,38 @@ The application is implemented using [React](https://reactjs.org/).
 
 ## Development
 
-### Install dependencies
+### Without Docker
+
+#### Install dependencies
 
 You'll need to install the project's dependencies before you can run the server:
 
 ```console
 npm install
+```
+
+### Docker
+
+#### Create required docker network
+
+```console
+docker network create rangers
+```
+
+#### Install dependencies
+
+You'll need to install the project's dependencies before you can run the server:
+
+```console
+docker compose run --rm app npm install
+```
+
+#### Start the frontend server
+
+First [start your backend server](https://github.com/burningmantech/ranger-ims-server#development) with `docker-compose`, then start your frontend server.
+
+```console
+docker compose up app -d
 ```
 
 ### Running the Test Suite
