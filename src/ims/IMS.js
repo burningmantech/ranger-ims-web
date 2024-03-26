@@ -683,7 +683,7 @@ export default class IncidentManagementSystem {
 
     if (!this._searchIndexByEvent.has(eventID)) {
       // Create index
-      var index = new Document({
+      const index = new Document({
         id: "number",
         index: [
           { field: "number", tokenize: "strict" },

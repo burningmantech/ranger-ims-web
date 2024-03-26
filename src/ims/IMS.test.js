@@ -1,7 +1,6 @@
 import { DateTime } from "luxon";
 
-import { jwtDecode } from "./IMS";
-import IncidentManagementSystem from "./IMS";
+import IncidentManagementSystem, { jwtDecode } from "./IMS";
 import { testIncidentManagementSystem } from "./TestIMS";
 import Location from "./model/Location";
 import RodGarettAddress from "./model/RodGarettAddress";

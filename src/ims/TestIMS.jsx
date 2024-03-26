@@ -10,9 +10,9 @@ import { IMSContext } from "./context";
 
 /* https://stackoverflow.com/a/7616484 */
 const hashText = (text) => {
-  var hash = 0,
-    i,
-    chr;
+  let hash = 0;
+  let i;
+  let chr;
   for (i = 0; i < text.length; i++) {
     chr = text.charCodeAt(i);
     hash = (hash << 5) - hash + chr;
@@ -377,27 +377,27 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const bag = this.testData.bag;
 
     switch (true) {
-      case path == "/not_found":
+      case path == "/not_found": {
         console.debug("Issuing not found response.");
         return this._notFoundResponse();
-
-      case path == "/auth_fail_text":
+      }
+      case path == "/auth_fail_text": {
         console.debug("Issuing authentication required text response.");
         return this._authTextResponse();
-
-      case path == "/auth_fail_json_no_status":
+      }
+      case path == "/auth_fail_json_no_status": {
         console.debug("Issuing authentication required JSON response.");
         return this._authJSONResponse();
-
-      case path == "/auth_fail_json":
+      }
+      case path == "/auth_fail_json": {
         console.debug("Issuing authentication failed JSON response.");
         return this._authFailedResponse();
-
-      case path == "/forbidden":
+      }
+      case path == "/forbidden": {
         console.debug("Issuing forbidden response.");
         return this._forbiddenResponse();
-
-      case path == "/json_echo":
+      }
+      case path == "/json_echo": {
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -407,12 +407,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == "/text_hello":
+      }
+      case path == "/text_hello": {
         console.debug("Issuing hello text response.");
         return this._textResponse();
-
-      case path == "/ims/api/bag":
+      }
+      case path == "/ims/api/bag": {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing bag response.");
@@ -420,8 +420,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.auth:
+      }
+      case path == bag.urls.auth: {
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -431,8 +431,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.events:
+      }
+      case path == bag.urls.events: {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing events response.");
@@ -440,8 +440,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path.startsWith(bag.urls.events):
+      }
+      case path.startsWith(bag.urls.events): {
         let rest = path.substring(bag.urls.events.length);
         const eventID = rest.split("/", 1)[0];
 
@@ -466,8 +466,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.streets:
+      }
+      case path == bag.urls.streets: {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing streets response.");
@@ -475,6 +475,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
+      }
     }
 
     /* istanbul ignore next */

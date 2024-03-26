@@ -8,8 +8,6 @@ import Label from "./Label";
 import Select from "./Select";
 
 describe("Select component", () => {
-  const values = ["1", "2", "3", "4"];
-
   test.each(selectOptionValues())(
     "start value selected ($values.length, $value)",
     ({ values, value }) => {
