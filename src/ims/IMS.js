@@ -10,8 +10,8 @@ import { openDB } from "idb";
 
 import Store from "./Store";
 import User from "./User";
+import ConcentricStreet from "./model/ConcentricStreet";
 import Event from "./model/Event";
-import ConcentricStreet from "./model/Event";
 import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
@@ -273,9 +273,9 @@ export default class IncidentManagementSystem {
     }
   };
 
-  ////
+  ///
   //  Configuration
-  ////
+  ///
 
   bagCacheLifespan = { hours: 1 };
 
@@ -288,7 +288,7 @@ export default class IncidentManagementSystem {
       this._bagStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved bag from unexpired cache`);
+      console.debug("Retrieved bag from unexpired cache");
       return cached.value;
     }
 
@@ -307,9 +307,9 @@ export default class IncidentManagementSystem {
     return fetched.value;
   };
 
-  ////
+  ///
   //  Authentication
-  ////
+  ///
 
   login = async (username, credentials) => {
     invariant(username != null, "username is required");
@@ -415,9 +415,9 @@ export default class IncidentManagementSystem {
     return DateTime.local() < user.credentials.expiration;
   };
 
-  ////
+  ///
   //  Data
-  ////
+  ///
 
   // Events
 
@@ -438,7 +438,7 @@ export default class IncidentManagementSystem {
       this._eventsStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved events from unexpired cache`);
+      console.debug("Retrieved events from unexpired cache");
       return deserialize(cached.value);
     }
 
@@ -501,7 +501,7 @@ export default class IncidentManagementSystem {
       this._concentricStreetsStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved concentric streets from unexpired cache`);
+      console.debug("Retrieved concentric streets from unexpired cache");
       return deserialize(cached.value);
     }
 
@@ -554,7 +554,7 @@ export default class IncidentManagementSystem {
     // Check the cache
     const cached = await this._getFromCache(this._incidentsStoreName, eventID);
     if (!cached.expired) {
-      console.debug(`Retrieved events from unexpired cache`);
+      console.debug("Retrieved events from unexpired cache");
       return deserialize(cached.value);
     }
 

@@ -1,4 +1,4 @@
-const imsURL = `/ims/`;
+const imsURL = "/ims/";
 const eventsURL = `${imsURL}events/`;
 const adminURL = `${imsURL}admin/`;
 

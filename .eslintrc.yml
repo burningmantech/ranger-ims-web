@@ -9,4 +9,23 @@ parserOptions:
   sourceType: module
 plugins:
   - react
-rules: {}
+rules:
+  comma-dangle:
+    - error
+    - always-multiline
+  indent: off
+  multiline-ternary: off
+  no-unused-vars:
+    - error
+    - varsIgnorePattern: "^_"
+      args: none
+  quotes:
+    - error
+    - double
+  react/display-name: off
+  react/prop-types: off
+  react/react-in-jsx-scope: off
+  space-before-function-paren: off
+  semi:
+    - error
+    - always

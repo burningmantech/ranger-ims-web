@@ -34,7 +34,7 @@ export const DispatchQueueTable = ({ table, event }) => {
             ))}
           </thead>
           <tbody {...table.getTableBodyProps()}>
-            {table.page.map((row, i) => {
+            {table.page.map((row, _i) => {
               table.prepareRow(row);
               return (
                 <tr

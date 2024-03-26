@@ -5,7 +5,7 @@ export default class Store {
 
   static removeAll = () => {
     Store._storage.clear();
-    console.debug(`Removed all cached data.`);
+    console.debug("Removed all cached data.");
   };
 
   constructor(modelClass, storeID) {
