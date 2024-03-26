@@ -36,7 +36,7 @@ const Incident = ({ incident }) => {
 
   // Incident State
 
-  const [incidentState, setIncidentState] = useState(incident.state);
+  // const [incidentState, setIncidentState] = useState(incident.state);
 
   const editIncident = (imsSetValue) => (value) =>
     imsSetValue(incident.eventID, incident.number, value);
@@ -51,7 +51,7 @@ const Incident = ({ incident }) => {
         <Col className="text-start" />
         <Col className="text-center">
           <SelectState
-            state={incidentState}
+            state={ims.incidentState}
             setState={editIncident(ims.setIncidentState)}
           />
         </Col>
