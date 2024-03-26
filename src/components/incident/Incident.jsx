@@ -51,7 +51,7 @@ const Incident = ({ incident }) => {
         <Col className="text-start" />
         <Col className="text-center">
           <SelectState
-            state={ims.incidentState}
+            state={incident.state}
             setState={editIncident(ims.setIncidentState)}
           />
         </Col>
