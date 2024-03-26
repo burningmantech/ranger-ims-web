@@ -6,7 +6,7 @@ describe("Location", () => {
     const location = new Location({});
     const result = location.toString();
 
-    expect(result).toEqual(`(no name) (no address)`);
+    expect(result).toEqual("(no name) (no address)");
   });
 
   test("toString, with address", () => {

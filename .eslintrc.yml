@@ -34,9 +34,10 @@ rules:
     - error
     - varsIgnorePattern: "^_"
       args: none
-  # quotes:
-  #   - error
-  #   - double
+  quotes:
+    - error
+    - double
+    - avoidEscape: true
   react/display-name: off
   react/prop-types: off
   react/react-in-jsx-scope: off
@@ -45,5 +46,3 @@ rules:
     - error
     - always
   no-var: error
-
-  quotes: off

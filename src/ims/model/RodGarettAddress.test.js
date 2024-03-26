@@ -5,7 +5,7 @@ describe("RodGarettAddress", () => {
     const address = new RodGarettAddress({});
     const result = address.toString();
 
-    expect(result).toEqual(`?:?@? ()`);
+    expect(result).toEqual("?:?@? ()");
   });
 
   test("toString, text", () => {
