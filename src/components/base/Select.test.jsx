@@ -34,7 +34,7 @@ describe("Select component", () => {
     "valueToName ($values.length, $value)",
     ({ values, value }) => {
       const valueToName = (value) => {
-        if (value === undefined || value == "----") {
+        if (value === undefined || value === "----") {
           return "----";
         } else {
           return "***" + value + "***";

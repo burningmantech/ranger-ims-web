@@ -118,7 +118,7 @@ describe("LocationCard component", () => {
         await userEvent.type(textField, name);
       }
 
-      if ((name || location.name) && name != location.name) {
+      if ((name || location.name) && name !== location.name) {
         expect(setName).toHaveBeenCalledWith(name == null ? "" : name);
       }
     },
@@ -154,7 +154,7 @@ describe("LocationCard component", () => {
 
     if (
       (description || location.description) &&
-      description != location.description
+      description !== location.description
     ) {
       expect(setDescription).toHaveBeenCalledWith(
         description == null ? "" : description,
@@ -198,7 +198,7 @@ describe("LocationCard component", () => {
 
       if (
         (concentricStreetID || location.address.concentric) &&
-        concentricStreetID != location.address.concentric
+        concentricStreetID !== location.address.concentric
       ) {
         expect(setConcentricStreet).toHaveBeenCalledWith(
           concentricStreetID == null ? "" : concentricStreetID,
@@ -238,7 +238,7 @@ describe("LocationCard component", () => {
 
       if (
         (hour || location.address.radialHour) &&
-        hour != location.address.radialHour
+        hour !== location.address.radialHour
       ) {
         expect(setHour).toHaveBeenCalledWith(hour == null ? "" : hour);
       }
@@ -276,7 +276,7 @@ describe("LocationCard component", () => {
 
       if (
         (minute || location.address.radialMinute) &&
-        minute != location.address.radialMinute
+        minute !== location.address.radialMinute
       ) {
         expect(setMinute).toHaveBeenCalledWith(minute == null ? "" : minute);
       }
