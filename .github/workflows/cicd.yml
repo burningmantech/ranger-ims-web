@@ -1,5 +1,4 @@
-# Docs:
-# https://help.github.com/en/actions/automating-your-workflow-with-github-actions
+# Docs: https://docs.github.com/en/actions
 
 name: CI/CD
 
@@ -47,9 +46,6 @@ jobs:
 
       - name: Build application
         run: npm run build
-        env:
-          # Disable warnings due to https://github.com/twbs/bootstrap/pull/36258
-          CI: "false"
 
       - name: Run unit tests
         run: npm test -- --ci --watchAll=false --coverage
@@ -99,7 +95,7 @@ jobs:
           mkdir images;
           docker image save ranger-ims-web:dev | gzip -6 > images/web.tgz;
 
-      - name: Upload Docker image artifact
+      - name: Upload Docker image artifacts
         uses: actions/upload-artifact@v4
         with:
           name: images
@@ -126,7 +122,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Download Docker image artifact
+      - name: Download Docker image artifacts
         uses: actions/download-artifact@v4
         with:
           name: images
