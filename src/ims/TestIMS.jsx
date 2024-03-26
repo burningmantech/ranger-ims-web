@@ -327,7 +327,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     }
 
     const responseJSON = {
-      username: username,
+      username,
     };
 
     if (username != "No Token") {
@@ -518,7 +518,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const username = "Hubcap";
     const password = username;
 
-    await this.login(username, { password: password });
+    await this.login(username, { password });
 
     return this;
   };
@@ -554,9 +554,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
-      state: state,
-      priority: priority,
-      summary: summary,
+      state,
+      priority,
+      summary,
       location: location == null ? null : location.toJSON(),
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
@@ -595,7 +595,7 @@ export const renderWithIMSContext = (content, ims, ...renderOptions) => {
   }
 
   return render(
-    <IMSContext.Provider value={{ ims: ims }}>{content}</IMSContext.Provider>,
+    <IMSContext.Provider value={{ ims }}>{content}</IMSContext.Provider>,
     ...renderOptions,
   );
 };

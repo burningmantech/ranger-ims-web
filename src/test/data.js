@@ -70,7 +70,7 @@ export const arrayOf = function* (
   while (true) {
     const length =
       Math.floor(Math.random() * (maxLength - minLength)) + minLength;
-    yield Array.from(draw(length, source, { unique: unique }));
+    yield Array.from(draw(length, source, { unique }));
   }
 };
 
@@ -137,7 +137,7 @@ export const selectOptionValues = () => {
     ),
     (values) => {
       return {
-        values: values,
+        values,
         value: randomSample(values, 1)[0],
         nextValue: randomSample(values, 1)[0],
       };

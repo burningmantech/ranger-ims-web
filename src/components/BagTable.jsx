@@ -11,7 +11,7 @@ const BagTable = () => {
 
   const [bag, setBag] = useState(undefined);
 
-  useBag({ setBag: setBag });
+  useBag({ setBag });
 
   const urls = bag ? bag.urls : null;
 

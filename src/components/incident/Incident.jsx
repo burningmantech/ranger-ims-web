@@ -31,7 +31,7 @@ const Incident = ({ incident }) => {
 
   useConcentricStreets({
     eventID: incident.eventID,
-    setConcentricStreets: setConcentricStreets,
+    setConcentricStreets,
   });
 
   // Incident State

@@ -10,7 +10,7 @@ describe("RodGarettAddress", () => {
 
   test("toString, text", () => {
     const description = "the deep dark wood";
-    const address = new RodGarettAddress({ description: description });
+    const address = new RodGarettAddress({ description });
     const result = address.toString();
 
     expect(result).toEqual(`?:?@? (${description})`);
@@ -22,10 +22,10 @@ describe("RodGarettAddress", () => {
     const radialHour = 9;
     const radialMinute = 0;
     const address = new RodGarettAddress({
-      description: description,
-      concentric: concentric,
-      radialHour: radialHour,
-      radialMinute: radialMinute,
+      description,
+      concentric,
+      radialHour,
+      radialMinute,
     });
     const result = address.toString();
 
@@ -54,15 +54,15 @@ describe("RodGarettAddress", () => {
     const radialHour = 8;
     const radialMinute = 37;
     const address = new RodGarettAddress({
-      description: description,
-      concentric: concentric,
-      radialHour: radialHour,
-      radialMinute: radialMinute,
+      description,
+      concentric,
+      radialHour,
+      radialMinute,
     });
     const addressJSON = {
       type: "garett",
-      description: description,
-      concentric: concentric,
+      description,
+      concentric,
       radial_hour: radialHour,
       radial_minute: radialMinute,
     };
@@ -75,11 +75,11 @@ describe("RodGarettAddress", () => {
     const description = "Here, by this lake...";
     const addressJSONText = {
       type: "text",
-      description: description,
+      description,
     };
     const addressJSONGarett = {
       type: "garett",
-      description: description,
+      description,
       concentric: null,
       radial_hour: null,
       radial_minute: null,
@@ -97,8 +97,8 @@ describe("RodGarettAddress", () => {
     const radialMinute = 1;
     const addressJSON = {
       type: "garett",
-      description: description,
-      concentric: concentric,
+      description,
+      concentric,
       radial_hour: radialHour,
       radial_minute: radialMinute,
     };
@@ -120,10 +120,10 @@ describe("RodGarettAddress", () => {
     const radialHour = 7;
     const radialMinute = 7;
     const address = new RodGarettAddress({
-      description: description,
-      concentric: concentric,
-      radialHour: radialHour,
-      radialMinute: radialMinute,
+      description,
+      concentric,
+      radialHour,
+      radialMinute,
     });
     const addressJSON = address.toJSON();
     const addressJSONText = JSON.stringify(addressJSON);

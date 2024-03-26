@@ -46,6 +46,5 @@ rules:
     - always
   no-var: error
 
-  object-shorthand: off
   eqeqeq: off
   quotes: off

@@ -26,7 +26,7 @@ const DispatchQueue = ({ event }) => {
   const [concentricStreetsByEvent, setConcentricStreetsByEvent] = useState();
 
   useConcentricStreetsByEvent({
-    setConcentricStreetsByEvent: setConcentricStreetsByEvent,
+    setConcentricStreetsByEvent,
   });
 
   // Fetch incident data
@@ -35,8 +35,8 @@ const DispatchQueue = ({ event }) => {
 
   useIncidents({
     eventID: event.id,
-    setIncidents: setIncidents,
-    searchInput: searchInput,
+    setIncidents,
+    searchInput,
   });
 
   const table = useDispatchQueueTable(incidents, concentricStreetsByEvent);

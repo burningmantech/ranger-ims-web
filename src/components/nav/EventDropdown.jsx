@@ -10,7 +10,7 @@ const EventDropdown = () => {
 
   const [events, setEvents] = useState(undefined);
 
-  useEvents({ setEvents: setEvents });
+  useEvents({ setEvents });
 
   // Render
 

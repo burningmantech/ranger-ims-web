@@ -65,7 +65,7 @@ const Select = ({ id, width, value, setValue, values, valueToName }) => {
     <Form.Select
       id={id}
       size="sm"
-      style={{ flex: "initial", width: width }}
+      style={{ flex: "initial", width }}
       value={value}
       onChange={onChange}
     >

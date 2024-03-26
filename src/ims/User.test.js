@@ -21,7 +21,7 @@ describe("User", () => {
       expiration: DateTime.local(),
     };
     const user = new User(username, credentials);
-    const userJSON = { username: username, credentials: credentials };
+    const userJSON = { username, credentials };
     const result = user.toJSON();
 
     expect(result).toEqual(userJSON);
@@ -46,7 +46,7 @@ describe("User", () => {
 
   test("fromJSON, no credentials", () => {
     const username = "Hubcap";
-    const userJSON = { username: username };
+    const userJSON = { username };
     expect(() => User.fromJSON(userJSON)).toThrow("Invalid user JSON");
   });
 

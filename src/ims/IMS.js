@@ -187,7 +187,7 @@ export default class IncidentManagementSystem {
       const json = await response.json();
       const value = deserialize == null ? json : deserialize(json);
       console.debug(`Retrieved ${name} from ${url} (ETag: ${eTag})`);
-      return { value: value, eTag: eTag };
+      return { value, eTag };
     }
   };
 
@@ -225,8 +225,8 @@ export default class IncidentManagementSystem {
 
   _wrapValue = (value, eTag, lifespan) => {
     return {
-      value: value,
-      eTag: eTag,
+      value,
+      eTag,
       expiration: DateTime.local().plus(lifespan).toMillis(),
     };
   };
@@ -251,7 +251,7 @@ export default class IncidentManagementSystem {
         const eTag = wrappedValue.eTag;
         const expired = this._wrappedValueIsExpired(wrappedValue);
         console.debug(`Read ${store}->${key} from cache`);
-        return { value: value, eTag: eTag, expired: expired };
+        return { value, eTag, expired };
       } else {
         console.debug(`No ${store}->${key} found in cache`);
         return { value: null, eTag: null, expired: true };
@@ -386,7 +386,7 @@ export default class IncidentManagementSystem {
     }
     const expiration = DateTime.fromSeconds(jwt.exp);
 
-    const imsCredentials = { token: token, expiration: expiration };
+    const imsCredentials = { token, expiration };
 
     this.user = new User(username, imsCredentials);
 

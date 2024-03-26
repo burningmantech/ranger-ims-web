@@ -30,10 +30,10 @@ describe("LocationCard component", () => {
           for (const hour of hours) {
             for (const minute of minutes) {
               yield new Location({
-                name: name,
+                name,
                 address: new RodGarettAddress({
-                  description: description,
-                  concentric: concentric,
+                  description,
+                  concentric,
                   radialHour: hour,
                   radialMinute: minute,
                 }),

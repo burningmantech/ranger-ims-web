@@ -14,7 +14,7 @@ describe("ConcentricStreet", () => {
     const id = "1";
     const name = "One";
     const concentricStreet = new ConcentricStreet(id, name);
-    const concentricStreetJSON = { id: id, name: name };
+    const concentricStreetJSON = { id, name };
     const result = concentricStreet.toJSON();
 
     expect(result).toEqual(concentricStreetJSON);

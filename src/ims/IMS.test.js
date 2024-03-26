@@ -214,7 +214,7 @@ describe("IMS: HTTP requests", () => {
     const eTag = "test-ETag";
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSONFromServer(ims.bagURL, { eTag: eTag });
+    await ims._fetchJSONFromServer(ims.bagURL, { eTag });
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -227,7 +227,7 @@ describe("IMS: HTTP requests", () => {
     const eTag = "test-ETag";
     const ims = testIncidentManagementSystem();
 
-    await ims._fetchJSONFromServer("/json_echo", { json: {}, eTag: eTag });
+    await ims._fetchJSONFromServer("/json_echo", { json: {}, eTag });
 
     expect(ims.requestsReceived).toHaveLength(1);
 
@@ -254,7 +254,7 @@ describe("IMS: HTTP requests", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
@@ -281,7 +281,7 @@ describe("IMS: HTTP requests", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
     // Clear out request tracking from login
     ims.requestsReceived = [];
 
@@ -453,7 +453,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     expect(ims.requestsReceived).toHaveLength(2);
 
@@ -467,7 +467,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     expect(ims.requestsReceived).toHaveLength(2);
 
@@ -485,7 +485,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    const result = await ims.login(username, { password: password });
+    const result = await ims.login(username, { password });
 
     expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
@@ -496,7 +496,7 @@ describe("IMS: authentication", () => {
     const password = "Not My Password";
     const ims = testIncidentManagementSystem();
 
-    const result = await ims.login(username, { password: password });
+    const result = await ims.login(username, { password });
 
     expect(result).toBe(false);
     expect(ims.user).toBeNull();
@@ -510,9 +510,7 @@ describe("IMS: authentication", () => {
     // Need a non-401 error status
     ims.testData.bag.urls.auth = "/forbidden";
 
-    await expect(
-      ims.login(username, { password: password }),
-    ).toRejectWithMessage(
+    await expect(ims.login(username, { password })).toRejectWithMessage(
       "Failed to authenticate: HTTP error status 403 Forbidden",
     );
     expect(ims.user).toBeNull();
@@ -526,9 +524,7 @@ describe("IMS: authentication", () => {
     // Need a non-401 error status
     ims.testData.bag.urls.auth = "/auth_fail_text";
 
-    await expect(
-      ims.login(username, { password: password }),
-    ).toRejectWithMessage(
+    await expect(ims.login(username, { password })).toRejectWithMessage(
       "Failed to authenticate: non-JSON response for login",
     );
     expect(ims.user).toBeNull();
@@ -542,9 +538,7 @@ describe("IMS: authentication", () => {
     // Need a non-401 error status
     ims.testData.bag.urls.auth = "/auth_fail_json_no_status";
 
-    await expect(
-      ims.login(username, { password: password }),
-    ).toRejectWithMessage(
+    await expect(ims.login(username, { password })).toRejectWithMessage(
       "Failed to authenticate: unknown JSON error status: undefined",
     );
     expect(ims.user).toBeNull();
@@ -555,7 +549,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    const result = await ims.login(username, { password: password });
+    const result = await ims.login(username, { password });
 
     expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
@@ -568,7 +562,7 @@ describe("IMS: authentication", () => {
     const ims = testIncidentManagementSystem();
     const now = DateTime.local();
 
-    const result = await ims.login(username, { password: password });
+    const result = await ims.login(username, { password });
 
     expect(result).toBe(true);
     expect(ims.user).not.toBeNull();
@@ -580,7 +574,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    const result = await ims.login(username, { password: password });
+    const result = await ims.login(username, { password });
 
     expect(result).toBe(true);
     expect(ims.user.username).toEqual("Cretin");
@@ -591,9 +585,9 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await expect(
-      ims.login(username, { password: password }),
-    ).toRejectWithMessage("No token in retrieved credentials");
+    await expect(ims.login(username, { password })).toRejectWithMessage(
+      "No token in retrieved credentials",
+    );
   });
 
   test("login: response with no expiration", async () => {
@@ -601,9 +595,9 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await expect(
-      ims.login(username, { password: password }),
-    ).toRejectWithMessage("No expiration in retrieved credentials");
+    await expect(ims.login(username, { password })).toRejectWithMessage(
+      "No expiration in retrieved credentials",
+    );
   });
 
   test("login -> user -> logout", async () => {
@@ -611,7 +605,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     const result = await ims.logout();
 
@@ -629,7 +623,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     expect(ims.isLoggedIn()).toBe(true);
   });
@@ -639,7 +633,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     delete ims.user.credentials.expiration;
 
@@ -651,7 +645,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     ims.user.credentials.expiration = DateTime.local().minus({ seconds: 1 });
 
@@ -668,7 +662,7 @@ describe("IMS: authentication", () => {
       notified = true;
     };
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     expect(notified).toBe(true);
   });
@@ -678,7 +672,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
 
     let notified = false;
     ims.delegate = () => {
@@ -695,7 +689,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims1 = testIncidentManagementSystem();
 
-    await ims1.login(username, { password: password });
+    await ims1.login(username, { password });
 
     const ims2 = testIncidentManagementSystem();
 
@@ -707,7 +701,7 @@ describe("IMS: authentication", () => {
     const password = username;
     const ims = testIncidentManagementSystem();
 
-    await ims.login(username, { password: password });
+    await ims.login(username, { password });
     await ims.logout();
 
     const ims2 = testIncidentManagementSystem();
