@@ -5,7 +5,7 @@ export default class Store {
 
   static removeAll = () => {
     Store._storage.clear();
-    console.debug(`Removed all cached data.`);
+    console.debug("Removed all cached data.");
   };
 
   constructor(modelClass, storeID) {
@@ -51,7 +51,7 @@ export default class Store {
     const expiration =
       lifespan == null ? undefined : DateTime.local().plus(lifespan);
 
-    const container = { value: value, tag: tag, expiration: expiration };
+    const container = { value, tag, expiration };
 
     this._storage.setItem(this.storeID, JSON.stringify(container));
     console.debug(`Stored ${this.storeID} in cache (tag:${tag}).`);
@@ -96,7 +96,7 @@ export default class Store {
       expirationJSON == null ? undefined : DateTime.fromISO(expirationJSON);
 
     console.debug(`Loaded cached ${this.storeID}.`);
-    return { value: value, tag: tag, expiration: expiration };
+    return { value, tag, expiration };
   };
 
   remove = () => {

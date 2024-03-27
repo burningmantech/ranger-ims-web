@@ -13,10 +13,10 @@ describe("ReportEntry component: display", () => {
       const author = "bucket";
       const text = "lorem ipsum…\nthere once was a Khaki named Sam…\nI am";
       const reportEntry = new ReportEntryModel({
-        created: created,
-        author: author,
-        systemEntry: systemEntry,
-        text: text,
+        created,
+        author,
+        systemEntry,
+        text,
       });
 
       render(<ReportEntry reportEntry={reportEntry} />);

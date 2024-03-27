@@ -67,7 +67,7 @@ describe("Store", () => {
     store.store(value);
 
     const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
-    expect(jsonText).toEqual(JSON.stringify({ value: value }));
+    expect(jsonText).toEqual(JSON.stringify({ value }));
   });
 
   test("store model value", () => {
@@ -91,7 +91,7 @@ describe("Store", () => {
     store.store(value, tag);
 
     const jsonText = window.localStorage.getItem(STUFF_STORE_STOREID);
-    expect(jsonText).toEqual(JSON.stringify({ value: value, tag: tag }));
+    expect(jsonText).toEqual(JSON.stringify({ value, tag }));
   });
 
   test("store lifespan", () => {
@@ -115,7 +115,7 @@ describe("Store", () => {
 
     // Test the entire container content for completeness
     expect(jsonText).toEqual(
-      JSON.stringify({ value: value, expiration: json.expiration }),
+      JSON.stringify({ value, expiration: json.expiration }),
     );
   });
 
@@ -186,7 +186,7 @@ describe("Store", () => {
 
     const container = store.load();
 
-    expect(container).toEqualByValue({ value: value, tag: tag });
+    expect(container).toEqualByValue({ value, tag });
   });
 
   test("load expiration", () => {

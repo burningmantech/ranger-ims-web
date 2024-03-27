@@ -10,8 +10,8 @@ import { openDB } from "idb";
 
 import Store from "./Store";
 import User from "./User";
+import ConcentricStreet from "./model/ConcentricStreet";
 import Event from "./model/Event";
-import ConcentricStreet from "./model/Event";
 import Incident from "./model/Incident";
 
 import { Document } from "flexsearch";
@@ -187,7 +187,7 @@ export default class IncidentManagementSystem {
       const json = await response.json();
       const value = deserialize == null ? json : deserialize(json);
       console.debug(`Retrieved ${name} from ${url} (ETag: ${eTag})`);
-      return { value: value, eTag: eTag };
+      return { value, eTag };
     }
   };
 
@@ -225,8 +225,8 @@ export default class IncidentManagementSystem {
 
   _wrapValue = (value, eTag, lifespan) => {
     return {
-      value: value,
-      eTag: eTag,
+      value,
+      eTag,
       expiration: DateTime.local().plus(lifespan).toMillis(),
     };
   };
@@ -251,7 +251,7 @@ export default class IncidentManagementSystem {
         const eTag = wrappedValue.eTag;
         const expired = this._wrappedValueIsExpired(wrappedValue);
         console.debug(`Read ${store}->${key} from cache`);
-        return { value: value, eTag: eTag, expired: expired };
+        return { value, eTag, expired };
       } else {
         console.debug(`No ${store}->${key} found in cache`);
         return { value: null, eTag: null, expired: true };
@@ -273,9 +273,9 @@ export default class IncidentManagementSystem {
     }
   };
 
-  ////
+  ///
   //  Configuration
-  ////
+  ///
 
   bagCacheLifespan = { hours: 1 };
 
@@ -288,7 +288,7 @@ export default class IncidentManagementSystem {
       this._bagStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved bag from unexpired cache`);
+      console.debug("Retrieved bag from unexpired cache");
       return cached.value;
     }
 
@@ -307,9 +307,9 @@ export default class IncidentManagementSystem {
     return fetched.value;
   };
 
-  ////
+  ///
   //  Authentication
-  ////
+  ///
 
   login = async (username, credentials) => {
     invariant(username != null, "username is required");
@@ -386,7 +386,7 @@ export default class IncidentManagementSystem {
     }
     const expiration = DateTime.fromSeconds(jwt.exp);
 
-    const imsCredentials = { token: token, expiration: expiration };
+    const imsCredentials = { token, expiration };
 
     this.user = new User(username, imsCredentials);
 
@@ -415,9 +415,9 @@ export default class IncidentManagementSystem {
     return DateTime.local() < user.credentials.expiration;
   };
 
-  ////
+  ///
   //  Data
-  ////
+  ///
 
   // Events
 
@@ -438,7 +438,7 @@ export default class IncidentManagementSystem {
       this._eventsStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved events from unexpired cache`);
+      console.debug("Retrieved events from unexpired cache");
       return deserialize(cached.value);
     }
 
@@ -501,7 +501,7 @@ export default class IncidentManagementSystem {
       this._concentricStreetsStoreKey,
     );
     if (!cached.expired) {
-      console.debug(`Retrieved concentric streets from unexpired cache`);
+      console.debug("Retrieved concentric streets from unexpired cache");
       return deserialize(cached.value);
     }
 
@@ -554,7 +554,7 @@ export default class IncidentManagementSystem {
     // Check the cache
     const cached = await this._getFromCache(this._incidentsStoreName, eventID);
     if (!cached.expired) {
-      console.debug(`Retrieved events from unexpired cache`);
+      console.debug("Retrieved events from unexpired cache");
       return deserialize(cached.value);
     }
 
@@ -683,7 +683,7 @@ export default class IncidentManagementSystem {
 
     if (!this._searchIndexByEvent.has(eventID)) {
       // Create index
-      var index = new Document({
+      const index = new Document({
         id: "number",
         index: [
           { field: "number", tokenize: "strict" },

@@ -24,12 +24,12 @@ describe("Ranger", () => {
     const enabled = true;
     const directoryID = "A637";
     const ranger = new Ranger({
-      handle: handle,
-      name: name,
-      status: status,
-      email: email,
-      enabled: enabled,
-      directoryID: directoryID,
+      handle,
+      name,
+      status,
+      email,
+      enabled,
+      directoryID,
     });
     const result = ranger.toString();
 

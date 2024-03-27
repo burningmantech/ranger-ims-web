@@ -6,7 +6,7 @@ describe("Location", () => {
     const location = new Location({});
     const result = location.toString();
 
-    expect(result).toEqual(`(no name) (no address)`);
+    expect(result).toEqual("(no name) (no address)");
   });
 
   test("toString, with address", () => {
@@ -16,12 +16,12 @@ describe("Location", () => {
     const radialHour = 9;
     const radialMinute = 0;
     const address = new RodGarettAddress({
-      description: description,
-      concentric: concentric,
-      radialHour: radialHour,
-      radialMinute: radialMinute,
+      description,
+      concentric,
+      radialHour,
+      radialMinute,
     });
-    const location = new Location({ name: name, address: address });
+    const location = new Location({ name, address });
     const result = location.toString();
 
     expect(result).toEqual(`${name} at ${address}`);
@@ -29,7 +29,7 @@ describe("Location", () => {
 
   test("toString, no address", () => {
     const name = "Log-Pile House";
-    const location = new Location({ name: name });
+    const location = new Location({ name });
     const result = location.toString();
 
     expect(result).toEqual(`${name} (no address)`);
@@ -40,9 +40,9 @@ describe("Location", () => {
     const address = new RodGarettAddress({
       description: "Here, by this stream...",
     });
-    const location = new Location({ name: name, address: address });
+    const location = new Location({ name, address });
     const locationJSON = {
-      name: name,
+      name,
       type: "garett",
       description: address.description,
       concentric: null,
@@ -56,8 +56,8 @@ describe("Location", () => {
 
   test("toJSON, no address", () => {
     const name = "Treetop House";
-    const location = new Location({ name: name });
-    const locationJSON = { name: name };
+    const location = new Location({ name });
+    const locationJSON = { name };
     const result = location.toJSON();
 
     expect(result).toEqual(locationJSON);

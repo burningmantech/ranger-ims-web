@@ -24,9 +24,13 @@ export const DispatchQueueTable = ({ table, event }) => {
         <Table striped hover id="queue_table" {...table.getTableProps()}>
           <thead>
             {table.headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr /* eslint-disable-line react/jsx-key */
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
+                  <th /* eslint-disable-line react/jsx-key */
+                    {...column.getHeaderProps()}
+                  >
                     {column.render("Header")}
                   </th>
                 ))}
@@ -34,17 +38,17 @@ export const DispatchQueueTable = ({ table, event }) => {
             ))}
           </thead>
           <tbody {...table.getTableBodyProps()}>
-            {table.page.map((row, i) => {
+            {table.page.map((row, _i) => {
               table.prepareRow(row);
               return (
-                <tr
+                <tr /* eslint-disable-line react/jsx-key */
                   className="queue_incident_row"
                   onClick={() => handleRowClick(row.cells[0].value)}
                   {...row.getRowProps()}
                 >
                   {row.cells.map((cell) => {
                     return (
-                      <td
+                      <td /* eslint-disable-line react/jsx-key */
                         className={`queue_incident_${cell.column.id}`}
                         {...cell.getCellProps()}
                       >

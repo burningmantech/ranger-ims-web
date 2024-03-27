@@ -20,7 +20,7 @@ export const DispatchQueuePage = ({ eventID }) => {
 
   const [event, setEvent] = useState(undefined);
 
-  useEvent({ eventID: eventID, setEvent: setEvent });
+  useEvent({ eventID, setEvent });
 
   // Render
 

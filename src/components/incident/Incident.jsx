@@ -31,12 +31,12 @@ const Incident = ({ incident }) => {
 
   useConcentricStreets({
     eventID: incident.eventID,
-    setConcentricStreets: setConcentricStreets,
+    setConcentricStreets,
   });
 
   // Incident State
 
-  const [incidentState, setIncidentState] = useState(incident.state);
+  // const [incidentState, setIncidentState] = useState(incident.state);
 
   const editIncident = (imsSetValue) => (value) =>
     imsSetValue(incident.eventID, incident.number, value);
@@ -51,7 +51,7 @@ const Incident = ({ incident }) => {
         <Col className="text-start" />
         <Col className="text-center">
           <SelectState
-            state={incidentState}
+            state={incident.state}
             setState={editIncident(ims.setIncidentState)}
           />
         </Col>
