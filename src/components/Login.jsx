@@ -40,7 +40,7 @@ const Login = ({ children }) => {
     async function onLogin(event) {
       event.preventDefault();
       try {
-        await ims.login(username, { password: password });
+        await ims.login(username, { password });
       } catch (e) {
         const errorMessage = e.message;
         console.warn(`Login failed: ${errorMessage}`);

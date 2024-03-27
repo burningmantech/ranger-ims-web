@@ -13,8 +13,8 @@ export const randomSample = (array, size) => {
   const minimum = i - size;
 
   while (i-- > minimum) {
-    let index = Math.floor((i + 1) * Math.random());
-    let temp = shuffled[index];
+    const index = Math.floor((i + 1) * Math.random());
+    const temp = shuffled[index];
     shuffled[index] = shuffled[i];
     shuffled[i] = temp;
   }
@@ -68,31 +68,31 @@ export const arrayOf = function* (
   );
 
   while (true) {
-    let length =
+    const length =
       Math.floor(Math.random() * (maxLength - minLength)) + minLength;
-    yield Array.from(draw(length, source, { unique: unique }));
+    yield Array.from(draw(length, source, { unique }));
   }
 };
 
 // Text
 
-export const alphabet_ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-export const alphabet_ascii_lowercase = "abcdefghijklmnopqrstuvwxyz";
-export const alphabet_ascii_letters =
-  alphabet_ascii_uppercase + alphabet_ascii_lowercase;
-export const alphabet_digits = "0123456789";
-export const alphabet_alphanumeric = alphabet_ascii_letters + alphabet_digits;
-export const alphabet_puctuation = "!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~.";
-export const alphabet_whitespace = " \t";
-export const alphabet_printable =
-  alphabet_ascii_letters +
-  alphabet_digits +
-  alphabet_puctuation +
-  alphabet_whitespace;
+export const alphabetASCIIUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const alphabetASCIILowercase = "abcdefghijklmnopqrstuvwxyz";
+export const alphabetASCIILetters =
+  alphabetASCIIUppercase + alphabetASCIILowercase;
+export const alphabetDigits = "0123456789";
+export const alphabetAlphanumeric = alphabetASCIILetters + alphabetDigits;
+export const alphabetPuctuation = "!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~.";
+export const alphabetWhitespace = " \t";
+export const alphabetPrintable =
+  alphabetASCIILetters +
+  alphabetDigits +
+  alphabetPuctuation +
+  alphabetWhitespace;
 
 export const text = function* ({ alphabet, minLength, maxLength } = {}) {
   if (alphabet === undefined) {
-    alphabet = alphabet_printable;
+    alphabet = alphabetPrintable;
   }
   if (minLength === undefined) {
     minLength = 0;
@@ -131,13 +131,13 @@ export const selectOptionValues = () => {
     draw(
       16,
       arrayOf(
-        text({ alphabet: alphabet_alphanumeric, minLength: 1, maxLength: 8 }),
+        text({ alphabet: alphabetAlphanumeric, minLength: 1, maxLength: 8 }),
         { minLength: 1, unique: true },
       ),
     ),
     (values) => {
       return {
-        values: values,
+        values,
         value: randomSample(values, 1)[0],
         nextValue: randomSample(values, 1)[0],
       };

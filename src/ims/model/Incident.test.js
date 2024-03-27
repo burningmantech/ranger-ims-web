@@ -109,17 +109,17 @@ describe("Incident", () => {
     const incidentReportNumbers = [23, 57, 104];
     const reportEntries = [];
     const incident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-      incidentReportNumbers: incidentReportNumbers,
-      reportEntries: reportEntries,
+      eventID,
+      number,
+      created,
+      state,
+      priority,
+      summary,
+      location,
+      rangerHandles,
+      incidentTypes,
+      incidentReportNumbers,
+      reportEntries,
     });
     const result = incident.toString();
 
@@ -139,29 +139,29 @@ describe("Incident", () => {
     const incidentReportNumbers = [23, 57, 104];
     const reportEntries = [];
     const incident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-      incidentReportNumbers: incidentReportNumbers,
-      reportEntries: reportEntries,
+      eventID,
+      number,
+      created,
+      state,
+      priority,
+      summary,
+      location,
+      rangerHandles,
+      incidentTypes,
+      incidentReportNumbers,
+      reportEntries,
     });
     const result = incident.toJSON();
 
     expect(JSON.stringify(result)).toEqual(
       JSON.stringify({
         event: eventID,
-        number: number,
-        created: created,
-        state: state,
-        priority: priority,
-        summary: summary,
-        location: location,
+        number,
+        created,
+        state,
+        priority,
+        summary,
+        location,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
         incident_reports: incidentReportNumbers,
@@ -182,27 +182,27 @@ describe("Incident", () => {
     const incidentReportNumbers = [23, 57, 104];
     const reportEntries = [];
     const incident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-      incidentReportNumbers: incidentReportNumbers,
-      reportEntries: reportEntries,
+      eventID,
+      number,
+      created,
+      state,
+      priority,
+      summary,
+      rangerHandles,
+      incidentTypes,
+      incidentReportNumbers,
+      reportEntries,
     });
     const result = incident.toJSON();
 
     expect(JSON.stringify(result)).toEqual(
       JSON.stringify({
         event: eventID,
-        number: number,
-        created: created,
-        state: state,
-        priority: priority,
-        summary: summary,
+        number,
+        created,
+        state,
+        priority,
+        summary,
         location: null,
         ranger_handles: rangerHandles,
         incident_types: incidentTypes,
@@ -225,17 +225,17 @@ describe("Incident", () => {
     const incidentReportNumbers = [23, 57, 104];
     const reportEntries = [];
     const incident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-      incidentReportNumbers: incidentReportNumbers,
-      reportEntries: reportEntries,
+      eventID,
+      number,
+      created,
+      state,
+      priority,
+      summary,
+      location,
+      rangerHandles,
+      incidentTypes,
+      incidentReportNumbers,
+      reportEntries,
     });
 
     expect(incident.summarize()).toEqual(summary);
@@ -254,17 +254,17 @@ describe("Incident", () => {
     const incidentReportNumbers = [23, 57, 104];
     const reportEntries = [];
     const incident = new Incident({
-      eventID: eventID,
-      number: number,
-      created: created,
-      state: state,
-      priority: priority,
-      summary: summary,
-      location: location,
-      rangerHandles: rangerHandles,
-      incidentTypes: incidentTypes,
-      incidentReportNumbers: incidentReportNumbers,
-      reportEntries: reportEntries,
+      eventID,
+      number,
+      created,
+      state,
+      priority,
+      summary,
+      location,
+      rangerHandles,
+      incidentTypes,
+      incidentReportNumbers,
+      reportEntries,
     });
 
     expect(incident.summarize()).toEqual("<summary goes here>");

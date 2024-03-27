@@ -42,7 +42,7 @@ describe("BagTable component", () => {
     });
     console._suppressErrors();
 
-    const spy = jest.spyOn(console, "warn");
+    jest.spyOn(console, "warn");
 
     renderWithIMSContext(<BagTable />, ims);
     await waitForURLBag();

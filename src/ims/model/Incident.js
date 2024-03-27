@@ -78,7 +78,7 @@ export default class Incident {
         state: json.state,
         priority: json.priority,
         summary: json.summary,
-        location: location,
+        location,
         rangerHandles: json.ranger_handles,
         incidentTypes: json.incident_types,
         reportEntries: Array.from(json.report_entries, (json) =>

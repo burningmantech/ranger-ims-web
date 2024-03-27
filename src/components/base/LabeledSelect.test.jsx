@@ -29,7 +29,7 @@ describe("LabeledSelect component", () => {
     "valueToName ($values.length)",
     ({ values }) => {
       const valueToName = (value) => {
-        if (value === undefined || value == "----") {
+        if (value === undefined || value === "----") {
           return "----";
         } else {
           return "***" + value + "***";

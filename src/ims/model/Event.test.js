@@ -14,7 +14,7 @@ describe("Event", () => {
     const id = "1";
     const name = "One";
     const event = new Event(id, name);
-    const eventJSON = { id: id, name: name };
+    const eventJSON = { id, name };
     const result = event.toJSON();
 
     expect(result).toEqual(eventJSON);
