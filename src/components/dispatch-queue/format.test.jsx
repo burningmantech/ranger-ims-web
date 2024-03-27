@@ -236,7 +236,7 @@ describe("Table cell formatting functions", () => {
     });
     const location = new Location({
       name: "Treetop House",
-      address: address,
+      address,
     });
     const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(
@@ -256,7 +256,7 @@ describe("Table cell formatting functions", () => {
       radialHour: 8,
       radialMinute: 37,
     });
-    const location = new Location({ address: address });
+    const location = new Location({ address });
     const text = formatLocation(location, concentricStreets);
     expect(text).toEqual(`${formatAddress(address, concentricStreets)}`);
   });

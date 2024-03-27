@@ -14,7 +14,7 @@ describe("ConcentricStreet", () => {
     const id = "1";
     const name = "One";
     const concentricStreet = new ConcentricStreet(id, name);
-    const concentricStreetJSON = { id: id, name: name };
+    const concentricStreetJSON = { id, name };
     const result = concentricStreet.toJSON();
 
     expect(result).toEqual(concentricStreetJSON);
@@ -33,7 +33,7 @@ describe("ConcentricStreet", () => {
 
   test("fromJSON, invalid", () => {
     expect(() => ConcentricStreet.fromJSON({})).toThrow(
-      `Invalid concentric street JSON: {}`,
+      "Invalid concentric street JSON: {}",
     );
   });
 

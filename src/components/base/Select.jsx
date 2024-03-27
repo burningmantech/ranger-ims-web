@@ -2,6 +2,8 @@ import invariant from "invariant";
 
 import Form from "react-bootstrap/Form";
 
+const controlStatusTimeout = 1000;
+
 const controlClearStatus = (control) => {
   control.classList.remove("bg-warning");
   control.classList.remove("bg-success");
@@ -19,13 +21,13 @@ const controlHadSuccess = (control) => {
   controlClearStatus(control);
   control.classList.add("bg-success");
 
-  setTimeout(() => controlClearStatus(control), 1000);
+  setTimeout(() => controlClearStatus(control), controlStatusTimeout);
 };
 
-const controlHadError = (control, timeout) => {
+const controlHadError = (control) => {
   console.debug("Control had error", control);
   control.classList.add("bg-danger");
-  setTimeout(() => controlClearStatus(control), 1000);
+  setTimeout(() => controlClearStatus(control), controlStatusTimeout);
 };
 
 const controlDidChange = async (event, callback) => {
@@ -63,7 +65,7 @@ const Select = ({ id, width, value, setValue, values, valueToName }) => {
     <Form.Select
       id={id}
       size="sm"
-      style={{ flex: "initial", width: width }}
+      style={{ flex: "initial", width }}
       value={value}
       onChange={onChange}
     >

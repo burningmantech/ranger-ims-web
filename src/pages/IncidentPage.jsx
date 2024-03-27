@@ -24,9 +24,9 @@ export const IncidentPage = ({ eventID, incidentNumber }) => {
   const [incident, setIncident] = useState(undefined);
 
   useIncident({
-    eventID: eventID,
-    incidentNumber: incidentNumber,
-    setIncident: setIncident,
+    eventID,
+    incidentNumber,
+    setIncident,
   });
 
   // Render

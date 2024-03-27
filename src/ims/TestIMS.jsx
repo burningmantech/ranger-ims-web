@@ -10,9 +10,9 @@ import { IMSContext } from "./context";
 
 /* https://stackoverflow.com/a/7616484 */
 const hashText = (text) => {
-  var hash = 0,
-    i,
-    chr;
+  let hash = 0;
+  let i;
+  let chr;
   for (i = 0; i < text.length; i++) {
     chr = text.charCodeAt(i);
     hash = (hash << 5) - hash + chr;
@@ -23,7 +23,7 @@ const hashText = (text) => {
 
 const assertFrom = (name, value, array) => {
   invariant(
-    array.indexOf(value) != -1,
+    array.indexOf(value) !== -1,
     `${name} must be one of [${array}], not ${value}`,
   );
 };
@@ -209,14 +209,14 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     // Streets are indexed by event ID
     const streetEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
-      eventIDs == streetEventIDs,
+      eventIDs === streetEventIDs,
       "Events and streets index keys mismatched: " +
         `${eventIDs} != ${streetEventIDs}`,
     );
     // Incidents are indexed by event ID
     const incidentEventIDs = cmp(Object.keys(this.testData.incidents));
     invariant(
-      eventIDs == incidentEventIDs,
+      eventIDs === incidentEventIDs,
       "Events and incidents index keys mismatched: " +
         `${eventIDs} != ${incidentEventIDs}`,
     );
@@ -226,7 +226,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       // Check incident values
       for (const incident of incidents) {
         invariant(
-          eventID == incident.event,
+          eventID === incident.event,
           `${incident} has mismatched event ID: ${incident.event}`,
         );
         assertFrom(`${incident} state`, incident.state, Incident.states);
@@ -249,7 +249,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       // Check for duplicate incident numbers
       const incidentNumbers = incidents.map((i) => i.number);
       invariant(
-        cmp(incidentNumbers) == cmp(Array.from(new Set(incidentNumbers))),
+        cmp(incidentNumbers) === cmp(Array.from(new Set(incidentNumbers))),
         `Incident numbers in event ID ${eventID} contain duplicates: ` +
           `${incidentNumbers}`,
       );
@@ -322,15 +322,15 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const username = requestJSON.identification;
     const password = requestJSON.password;
 
-    if (username != password) {
+    if (username !== password) {
       return this._authFailedResponse();
     }
 
     const responseJSON = {
-      username: username,
+      username,
     };
 
-    if (username != "No Token") {
+    if (username !== "No Token") {
       const now = Date.now() / 1000;
       const jwtPayload = {
         // iss: "TestIMS",
@@ -377,27 +377,27 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const bag = this.testData.bag;
 
     switch (true) {
-      case path == "/not_found":
+      case path === "/not_found": {
         console.debug("Issuing not found response.");
         return this._notFoundResponse();
-
-      case path == "/auth_fail_text":
+      }
+      case path === "/auth_fail_text": {
         console.debug("Issuing authentication required text response.");
         return this._authTextResponse();
-
-      case path == "/auth_fail_json_no_status":
+      }
+      case path === "/auth_fail_json_no_status": {
         console.debug("Issuing authentication required JSON response.");
         return this._authJSONResponse();
-
-      case path == "/auth_fail_json":
+      }
+      case path === "/auth_fail_json": {
         console.debug("Issuing authentication failed JSON response.");
         return this._authFailedResponse();
-
-      case path == "/forbidden":
+      }
+      case path === "/forbidden": {
         console.debug("Issuing forbidden response.");
         return this._forbiddenResponse();
-
-      case path == "/json_echo":
+      }
+      case path === "/json_echo": {
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -407,12 +407,12 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == "/text_hello":
+      }
+      case path === "/text_hello": {
         console.debug("Issuing hello text response.");
         return this._textResponse();
-
-      case path == "/ims/api/bag":
+      }
+      case path === "/ims/api/bag": {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing bag response.");
@@ -420,8 +420,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.auth:
+      }
+      case path === bag.urls.auth: {
         /* istanbul ignore else */
         if (request.method === "POST") {
           const requestJSON = await request.json();
@@ -431,8 +431,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.events:
+      }
+      case path === bag.urls.events: {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing events response.");
@@ -440,8 +440,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path.startsWith(bag.urls.events):
+      }
+      case path.startsWith(bag.urls.events): {
         let rest = path.substring(bag.urls.events.length);
         const eventID = rest.split("/", 1)[0];
 
@@ -456,7 +456,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         switch (eventChild) {
           case "incidents":
             /* istanbul ignore else */
-            if (rest != "") {
+            if (rest !== "") {
               console.debug(`Issuing event ${eventID} incidents response.`);
               return this._jsonResponse(incidents);
             }
@@ -466,8 +466,8 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
 
         /* istanbul ignore next */
         throw new Error("unimplemented");
-
-      case path == bag.urls.streets:
+      }
+      case path === bag.urls.streets: {
         /* istanbul ignore else */
         if (request.method === "GET") {
           console.debug("Issuing streets response.");
@@ -475,6 +475,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
         }
         /* istanbul ignore next */
         throw new Error("unimplemented");
+      }
     }
 
     /* istanbul ignore next */
@@ -490,7 +491,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       if (ifNoneMatch !== null && responseETag !== null) {
         for (const matchETag of ifNoneMatch.split(/, */)) {
           // Can be > 1 ETag
-          if (matchETag == responseETag) {
+          if (matchETag === responseETag) {
             console.debug("Matching ETag found; responding with NOT_MODIFIED");
             response = new Response(`Matched ETag: ${responseETag}`, {
               status: 304,
@@ -517,7 +518,7 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
     const username = "Hubcap";
     const password = username;
 
-    await this.login(username, { password: password });
+    await this.login(username, { password });
 
     return this;
   };
@@ -553,9 +554,9 @@ export class TestIncidentManagementSystem extends IncidentManagementSystem {
       event: eventID,
       number: nextIncidentNumber,
       created: created.toISO(),
-      state: state,
-      priority: priority,
-      summary: summary,
+      state,
+      priority,
+      summary,
       location: location == null ? null : location.toJSON(),
       incident_types: incidentTypes,
       ranger_handles: rangerHandles,
@@ -594,7 +595,7 @@ export const renderWithIMSContext = (content, ims, ...renderOptions) => {
   }
 
   return render(
-    <IMSContext.Provider value={{ ims: ims }}>{content}</IMSContext.Provider>,
+    <IMSContext.Provider value={{ ims }}>{content}</IMSContext.Provider>,
     ...renderOptions,
   );
 };

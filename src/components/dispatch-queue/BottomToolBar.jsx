@@ -1,4 +1,9 @@
+import invariant from "invariant";
+
 const BottomToolBar = ({ table, incidents }) => {
+  invariant(table != null, "table argument is required");
+  invariant(incidents != null, "incidents argument is required");
+
   return "";
   // return (
   //   <Row>

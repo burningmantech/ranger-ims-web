@@ -9,10 +9,10 @@ describe("ReportEntry", () => {
     const systemEntry = false;
     const text = "lorem ipsum…";
     const reportEntry = new ReportEntry({
-      created: created,
-      author: author,
-      systemEntry: systemEntry,
-      text: text,
+      created,
+      author,
+      systemEntry,
+      text,
     });
     const result = reportEntry.toString();
 
@@ -25,10 +25,10 @@ describe("ReportEntry", () => {
     const systemEntry = true;
     const text = "lorem ipsum…";
     const reportEntry = new ReportEntry({
-      created: created,
-      author: author,
-      systemEntry: systemEntry,
-      text: text,
+      created,
+      author,
+      systemEntry,
+      text,
     });
     const result = reportEntry.toString();
 
@@ -41,19 +41,19 @@ describe("ReportEntry", () => {
     const systemEntry = false;
     const text = "lorem ipsum…";
     const reportEntry = new ReportEntry({
-      created: created,
-      author: author,
-      systemEntry: systemEntry,
-      text: text,
+      created,
+      author,
+      systemEntry,
+      text,
     });
     const result = reportEntry.toJSON();
 
     expect(JSON.stringify(result)).toEqual(
       JSON.stringify({
         created: created.toUTC().toISO(),
-        author: author,
+        author,
         system_entry: systemEntry,
-        text: text,
+        text,
       }),
     );
   });
