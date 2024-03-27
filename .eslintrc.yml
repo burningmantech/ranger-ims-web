@@ -11,7 +11,7 @@ extends:
   - plugin:react/recommended
 
 parserOptions:
-  ecmaVersion: latest
+  ecmaVersion: 17
   sourceType: module
 
 plugins:
