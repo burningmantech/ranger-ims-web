@@ -1,0 +1,13 @@
+{
+  local_certs
+}
+
+caddy {
+  encode gzip
+  reverse_proxy app:3000
+}
+
+web.ims.lvh.me {
+  encode gzip
+  reverse_proxy app:3000
+}

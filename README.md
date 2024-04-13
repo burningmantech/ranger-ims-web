@@ -38,6 +38,24 @@ You'll need to install the project's dependencies before you can run the server:
 docker compose run --rm app npm install
 ```
 
+#### Trust Caddy TLS certs
+
+If you'd like to use the caddy domain routing [https://web.ims.lvh.me](https://web.ims.lvh.me) locally and not have to bypass the https error every-time you restart your browser, you'll need to configure your host OS & browser to trust the locally generated caddy certs. There are MacOs and Linux scripts provided to help with this.
+
+##### MacOs
+
+```console
+./.caddy/.macos-trust.sh
+```
+
+##### Linux
+
+Ensure you have`certutil` installed.
+
+```console
+./.caddy/.linux-trust.sh
+```
+
 #### Start the frontend server
 
 ```console

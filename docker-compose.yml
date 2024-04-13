@@ -1,10 +1,10 @@
-version: "3.7"
-
 services:
   app:
-    container_name: "ranger_ims_web"
+    container_name: "ranger_ims_web_app"
     image: "${NODE_IMG_TAG:-node:18.18.2-alpine3.17}"
     user: ":${NODE_GROUP_ID:-1420}"
+    depends_on:
+      - caddy
     ports:
       - "${NODE_PORT:-3000}:3000"
     environment:
@@ -14,7 +14,19 @@ services:
     command: "npm start"
     working_dir: "/app"
 
+  caddy:
+    container_name: "ranger_ims_web_caddy"
+    image: caddy:2.4.6-alpine
+    ports:
+      - 443:443
+    volumes:
+      - ./.caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+
 networks:
   default:
     external: true
     name: "${DOCKER_RANGERS_NETWORK:-rangers}"
+
+volumes:
+  caddy_data:
