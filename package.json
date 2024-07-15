@@ -56,7 +56,7 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.4.0",
     "eslint-plugin-react": "^7.34.3",
-    "fake-indexeddb": "^4.0.2",
+    "fake-indexeddb": "^6.0.0",
     "flush-promises": "^1.0.2",
     "http-proxy-middleware": "^3.0.0"
   }
