@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: "ranger_ims_web"
+    image: "${NODE_IMG_TAG:-node:18.18.2-alpine3.17}"
+    user: ":${NODE_GROUP_ID:-1420}"
+    ports:
+      - "${NODE_PORT:-3000}:3000"
+    environment:
+      - "BACKEND_URL=${BACKEND_URL:-http://ranger_ims_server:8080}"
+    volumes:
+      - "./:/app:cached"
+    command: "npm start"
+    working_dir: "/app"
+
+networks:
+  default:
+    external: true
+    name: "${DOCKER_RANGERS_NETWORK:-rangers}"
