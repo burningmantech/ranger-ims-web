@@ -39,17 +39,19 @@ const EventDropdown = () => {
       );
     }
 
-    return events.sort().map((event) => {
-      return (
-        <NavDropdown.Item
-          key={event.id}
-          className="nav_event_id"
-          href={URLs.event(event.id)}
-        >
-          {event.name}
-        </NavDropdown.Item>
-      );
-    });
+    return events
+      .sort((a, b) => a.localeCompare(b))
+      .map((event) => {
+        return (
+          <NavDropdown.Item
+            key={event.id}
+            className="nav_event_id"
+            href={URLs.event(event.id)}
+          >
+            {event.name}
+          </NavDropdown.Item>
+        );
+      });
   };
 
   return (

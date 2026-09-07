@@ -13,7 +13,7 @@ const ItemListCard = ({ id, title, items }) => {
     <Well id={id} title={title} size="sm">
       <ListGroup>
         {items
-          .sort()
+          .sort((a, b) => a.localeCompare(b))
           .map((item, index) => [
             <ListGroup.Item key={index}>{item}</ListGroup.Item>,
           ])}
