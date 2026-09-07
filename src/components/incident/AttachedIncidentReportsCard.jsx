@@ -13,6 +13,7 @@ const AttachedIncidentReportsCard = ({ incidentReportNumbers }) => {
       id="incident_reports_card"
       title="Attached Field Incident Reports"
       items={incidentReportNumbers}
+      sortFunc={(a, b) => b - a}
     />
   );
 };
