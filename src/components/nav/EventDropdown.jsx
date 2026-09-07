@@ -39,7 +39,7 @@ const EventDropdown = () => {
       );
     }
 
-    return events.sort().map((event) => {
+    return events.sort((a, b) => a.localeCompare(b)).map((event) => {
       return (
         <NavDropdown.Item
           key={event.id}

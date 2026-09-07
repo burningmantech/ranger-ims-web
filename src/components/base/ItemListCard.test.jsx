@@ -33,7 +33,16 @@ describe("ItemListCard component", () => {
         (item) => item.textContent,
       );
 
-      expect(displayedItems).toEqual(items.sort());
+      expect(displayedItems).toEqual(items.sort((a, b) => a.localeCompare(b)));
     },
   );
+});
+it("sorts items without byte-order quirks (locale order)", () => {
+  const items = ["Bravo", "alpha", "delta", "Charlie"];
+  render(<ItemListCard id="list" title="Sorted" items={items} />);
+  const displayedItems = Array.from(
+    document.getElementsByClassName("list-group-item"),
+    (item) => item.textContent,
+  );
+  expect(displayedItems).toEqual(["alpha", "Bravo", "Charlie", "delta"]);
 });
