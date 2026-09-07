@@ -33,7 +33,23 @@ describe("ItemListCard component", () => {
         (item) => item.textContent,
       );
 
-      expect(displayedItems).toEqual(items.sort());
+      expect(displayedItems).toEqual(items.sort((a, b) => a.localeCompare(b)));
     },
   );
+});
+it("sorts with a custom sortFunction passed as a prop", () => {
+  const items = [104, 57, 23, 23];
+  render(
+    <ItemListCard
+      id="list"
+      title="Sorted"
+      items={items}
+      sortFunc={(a, b) => b - a}
+    />,
+  );
+  const displayedItems = Array.from(
+    document.getElementsByClassName("list-group-item"),
+    (item) => item.textContent,
+  );
+  expect(displayedItems).toEqual(["104", "57", "23", "23"]);
 });
